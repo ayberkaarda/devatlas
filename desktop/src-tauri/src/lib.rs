@@ -1,29 +1,54 @@
+mod commands;
+mod db;
+mod delta;
+mod engine;
+mod error;
+mod events;
+mod http;
+mod manifest;
+mod model;
+mod queue;
+mod replica;
+mod settings;
 mod store;
+mod verify;
+
+use std::sync::Arc;
 
 use tauri::{Manager, WindowEvent};
 
-/// Reveals the main window.
-///
-/// The window is configured with `visible: false` so that nothing is painted
-/// before the UI has resolved and applied the colour theme; showing it earlier
-/// produces a flash of the wrong theme on every launch. The frontend calls this
-/// once the theme is on the document, and the two halves of that arrangement
-/// have to change together: removing `visible: false` from the window config
-/// makes this command pointless, and removing the call leaves a window that
-/// never appears.
-#[tauri::command]
-fn show_main_window(app: tauri::AppHandle) -> Result<(), String> {
-    let window = app
-        .get_webview_window("main")
-        .ok_or_else(|| "main window not found".to_string())?;
-    window.show().map_err(|e| e.to_string())?;
-    Ok(())
-}
+use crate::commands::AppState;
+use crate::db::Db;
+use crate::engine::{Engine, EngineConfig};
+use crate::events::TauriEventSink;
+use crate::http::{configured_base_url, ContentClient};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![show_main_window])
+        .invoke_handler(tauri::generate_handler![
+            commands::library_list_tracks,
+            commands::library_get_track,
+            commands::library_get_lesson,
+            commands::library_get_mind_map,
+            commands::library_refresh,
+            commands::download_enqueue,
+            commands::download_pause,
+            commands::download_resume,
+            commands::download_cancel,
+            commands::download_retry,
+            commands::download_queue_state,
+            commands::download_delete,
+            commands::progress_mark,
+            commands::progress_pending,
+            commands::progress_apply_results,
+            commands::settings_get,
+            commands::settings_set,
+            commands::session_store,
+            commands::session_load,
+            commands::session_clear,
+            commands::window_show,
+        ])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -34,6 +59,7 @@ pub fn run() {
             }
 
             let path = store::database_path(app.handle())?;
+            let partials = store::partial_directory(app.handle())?;
             let connection = store::open(&path)?;
             log::info!(
                 "local store ready at {} (schema version {})",
@@ -41,8 +67,33 @@ pub fn run() {
                 store::schema_version(&connection)?
             );
 
+            let db = Arc::new(Db::new(connection));
+            let client = ContentClient::new(configured_base_url());
+            log::info!("content endpoints at {}", client.base_url());
+
+            let engine = Engine::new(
+                db,
+                client,
+                partials,
+                Arc::new(TauriEventSink::new(app.handle().clone())),
+                EngineConfig::default(),
+            );
+
+            // A restart finds entries mid-transfer. Anything that was
+            // downloading goes back to the queue with its partial intact, and
+            // anything that was verifying keeps that state so its complete file
+            // is re-hashed rather than fetched again.
+            if let Err(error) = engine.recover() {
+                log::warn!("the download queue could not be recovered: {error}");
+            }
+
+            let resume = Arc::clone(&engine);
+            tauri::async_runtime::spawn(async move { resume.pump().await });
+
+            app.manage(AppState { engine });
+
             // Placeholder until the UI owns the reveal: the frontend does not
-            // call show_main_window yet, and without this the window would stay
+            // call window_show yet, and without this the window would stay
             // hidden forever. Remove this block in the same change that makes
             // the theme code call the command.
             if let Some(window) = app.get_webview_window("main") {

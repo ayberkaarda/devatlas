@@ -25,6 +25,20 @@ tauri-plugin-log = "2"
 # readable across Windows and Linux builds of the same release.
 rusqlite = { version = "0.32", features = ["bundled"] }
 thiserror = "2"
+# The download engine is HTTP plus verification: a streaming client so that a
+# truncated response is detectable before hashing, an async runtime to drive at
+# most three transfers at once, and SHA-256 to prove a package arrived intact.
+reqwest = { version = "0.13", features = ["json"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "fs", "io-util"] }
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+sha2 = "0.10"
+uuid = { version = "1", features = ["v7", "serde"] }
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde", "std"] }
 
 [dev-dependencies]
 tempfile = "3"
+# A real HTTP server on a real socket. The engine's contract is written in terms
+# of status codes, Range, If-Match and connections that drop mid-body; a hand
+# rolled fake of the client would only assert that the fake matches the test.
+wiremock = "0.6"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
