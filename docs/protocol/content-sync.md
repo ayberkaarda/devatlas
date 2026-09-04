@@ -207,12 +207,12 @@ anything is worth looking at.
   "generated_at": "2026-09-04T09:12:44.117Z",
   "tracks": [
     {
-      "track_id": "018f3a01-2b7c-7a41-8f10-5c9d3e77aa10",
-      "slug": "angular-path",
-      "title": "The Angular Path",
       "content_version": 47,
       "lesson_count": 32,
+      "slug": "angular-path",
+      "title": "The Angular Path",
       "total_size_bytes": 1893441,
+      "track_id": "018f3a01-2b7c-7a41-8f10-5c9d3e77aa10",
       "updated_at": "2026-09-03T18:22:10.904Z"
     }
   ]
@@ -245,53 +245,63 @@ download engine consumes.
 
 ```json
 {
-  "track_id": "018f3a01-2b7c-7a41-8f10-5c9d3e77aa10",
-  "slug": "angular-path",
   "content_version": 47,
-  "title": "The Angular Path",
   "description": "Signals, routing and the modern component model.",
-  "icon": "angular",
-  "translations": [
-    {
-      "locale": "tr",
-      "title": "Angular Yolu",
-      "body": "Sinyaller, yönlendirme ve modern bileşen modeli."
-    }
-  ],
-  "modules": [
-    {
-      "module_id": "018f3a02-4411-7f60-9c22-77b0a1e4cc90",
-      "title": "Signals and reactivity",
-      "order": 1,
-      "estimated_minutes": 90,
-      "translations": [{ "locale": "tr", "title": "Reaktivite Temelleri" }],
-      "lessons": [
-        {
-          "lesson_id": "018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70",
-          "slug": "signals-and-reactivity",
-          "title": "Introduction to signals",
-          "difficulty": "INTERMEDIATE",
-          "estimated_minutes": 25,
-          "order": 1,
-          "translations": [{ "locale": "tr", "title": "Sinyallere giriş" }]
-        }
-      ]
-    }
-  ],
   "entities": [
     {
-      "entity_type": "LESSON",
-      "entity_id": "018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70",
       "content_version": 12,
+      "entity_id": "018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70",
+      "entity_type": "LESSON",
       "sha256": "9f2c4e6a8b0d1f3579ace0246813579bdf02468ace13579bdf02468ace13579b",
       "size_bytes": 41233
     },
     {
-      "entity_type": "MIND_MAP",
-      "entity_id": "018f3b40-2a83-7e19-8f77-1c5b9e04a6d2",
       "content_version": 5,
+      "entity_id": "018f3b40-2a83-7e19-8f77-1c5b9e04a6d2",
+      "entity_type": "MIND_MAP",
       "sha256": "1a3c5e7092b4d6f8012345678abcdef0123456789abcdef0123456789abcdef0",
       "size_bytes": 8117
+    }
+  ],
+  "icon": "angular",
+  "modules": [
+    {
+      "estimated_minutes": 90,
+      "lessons": [
+        {
+          "difficulty": "INTERMEDIATE",
+          "estimated_minutes": 25,
+          "lesson_id": "018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70",
+          "order": 1,
+          "slug": "signals-and-reactivity",
+          "title": "Introduction to signals",
+          "translations": [
+            {
+              "locale": "tr",
+              "title": "Sinyallere giriş"
+            }
+          ]
+        }
+      ],
+      "module_id": "018f3a02-4411-7f60-9c22-77b0a1e4cc90",
+      "order": 1,
+      "title": "Signals and reactivity",
+      "translations": [
+        {
+          "locale": "tr",
+          "title": "Reaktivite Temelleri"
+        }
+      ]
+    }
+  ],
+  "slug": "angular-path",
+  "title": "The Angular Path",
+  "track_id": "018f3a01-2b7c-7a41-8f10-5c9d3e77aa10",
+  "translations": [
+    {
+      "body": "Sinyaller, yönlendirme ve modern bileşen modeli.",
+      "locale": "tr",
+      "title": "Angular Yolu"
     }
   ]
 }
@@ -376,6 +386,7 @@ Lesson package:
 
 ```json
 {
+  "body_markdown": "# Signals\n\nA signal is a value that...",
   "code_examples": [
     {
       "caption": "A writable signal",
@@ -392,15 +403,14 @@ Lesson package:
   "module_id": "018f3a02-4411-7f60-9c22-77b0a1e4cc90",
   "order": 3,
   "slug": "signals-basics",
+  "title": "Introduction to signals",
   "translations": [
     {
-      "body_markdown": "# Sinyaller\n\nBir sinyal, okunduğunda...",
+      "body": "# Sinyaller\n\nBir sinyal, okunduğunda...",
       "locale": "tr",
       "title": "Sinyallere giriş"
     }
-  ],
-  "body_markdown": "# Signals\n\nA signal is a value that...",
-  "title": "Introduction to signals"
+  ]
 }
 ```
 
@@ -423,13 +433,13 @@ Mind map package:
     "children": [
       {
         "children": [],
+        "id": "n2",
         "label": "Signals",
-        "lesson_id": "018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70",
-        "id": "n2"
+        "lesson_id": "018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70"
       }
     ],
-    "label": "The Angular Path",
-    "id": "n1"
+    "id": "n1",
+    "label": "The Angular Path"
   },
   "track_id": "018f3a01-2b7c-7a41-8f10-5c9d3e77aa10"
 }

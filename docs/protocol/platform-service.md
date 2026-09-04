@@ -34,11 +34,11 @@ branches on the data, not on the platform.
 export abstract class PlatformService {
   abstract readonly capabilities: PlatformCapabilities;
 
-  // Content, read
+  // Content, read — addressed by slug, see below
   abstract listTracks(): Promise<TrackSummary[]>;
-  abstract getTrack(trackId: string): Promise<TrackDetail>;
-  abstract getLesson(lessonId: string): Promise<Lesson>;
-  abstract getMindMap(trackId: string): Promise<MindMap>;
+  abstract getTrack(trackSlug: string): Promise<TrackDetail>;
+  abstract getLesson(lessonSlug: string): Promise<Lesson>;
+  abstract getMindMap(trackSlug: string): Promise<MindMap>;
 
   // Library management — meaningful only where capabilities.canDownload
   abstract refreshLibrary(trackId?: string): Promise<DeltaSummary>;
@@ -62,8 +62,26 @@ export abstract class PlatformService {
   // Preferences
   abstract getPreferences(): Promise<Preferences>;
   abstract setPreferences(patch: Partial<Preferences>): Promise<void>;
+
+  // Startup
+  abstract revealApplication(): Promise<void>;
 }
 ```
+
+**Reads are addressed by slug, not by identifier.** The public read API exposes
+`GET /lessons/{slug}` and no route that takes a UUID, so a signature taking an
+identifier is implementable on the desktop and not on the web — and a method that
+only one implementation can honour is not an abstraction. Slug works on both: the
+Tauri implementation resolves a slug against its replica before calling the
+identifier-keyed commands underneath. Downloads keep using identifiers, because
+the manifest is keyed by them.
+
+**`revealApplication()`** exists because the desktop window starts hidden until the
+theme is applied, and something has to reveal it. A component calling
+`window_show` directly is exactly the leak this abstraction prevents; by rule 1 of
+section 8, a case that seems to need one is a missing method. On the web it is a
+no-op — the document is already visible and the theme was applied by a pre-paint
+script.
 
 Every member is `abstract`, never optional. Adding a method is therefore a change
 to three files at once — the abstraction and both implementations — and the
