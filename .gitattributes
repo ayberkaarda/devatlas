@@ -1,2 +1,52 @@
-# Auto detect text files and perform LF normalization
+# Default: let git normalize text files to LF in the repository.
 * text=auto
+
+# Content and source files are pinned to LF in the WORKING TREE as well, not
+# just in the repository.
+#
+# Why this matters here specifically: the content sync protocol hashes lesson
+# bodies with SHA-256 and the manifest promises "same content -> same hash".
+# With `text=auto` alone, a checkout on Windows produces CRLF and a checkout on
+# Linux produces LF, so the identical lesson yields two different hashes and the
+# downloaded package fails verification on exactly one platform. Server-side
+# hashing normalizes to UTF-8 + LF before digesting; this file keeps the working
+# tree from disagreeing with that in the first place.
+*.md            text eol=lf
+*.java          text eol=lf
+*.rs            text eol=lf
+*.ts            text eol=lf
+*.html          text eol=lf
+*.css           text eol=lf
+*.scss          text eol=lf
+*.json          text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.sql           text eol=lf
+*.toml          text eol=lf
+*.xml           text eol=lf
+*.mjs           text eol=lf
+*.js            text eol=lf
+
+# Shell scripts must stay LF or they will not execute on Linux/macOS.
+*.sh            text eol=lf
+mvnw            text eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+mvnw.cmd        text eol=crlf
+
+# Binary files: never touched by line-ending conversion.
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.ico           binary
+*.webp          binary
+*.woff          binary
+*.woff2         binary
+*.ttf           binary
+*.otf           binary
+*.pdf           binary
+*.jar           binary
+*.zip           binary

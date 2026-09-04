@@ -1,0 +1,10 @@
+# Active only when the `dev` Spring profile is selected (SPRING_PROFILES_ACTIVE=dev).
+# Enables the OpenAPI document and Swagger UI for local exploration; neither is
+# exposed in the base configuration (see application.yml).
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

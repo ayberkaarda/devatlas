@@ -1,0 +1,66 @@
+name: frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.nvmrc'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - '.nvmrc'
+      - '.github/workflows/frontend.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: frontend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Reads .nvmrc so the runner uses the same Node — and therefore the same
+      # npm major — that wrote package-lock.json. A lockfile written by a
+      # different npm major is rejected here with "Missing: ... from lock file",
+      # and the version cannot be recovered from the lockfile itself.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npx eslint .
+
+      # Not the same as `ng build`: this checks every file under src/,
+      # including code that no entry point reaches yet.
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npx jest
+
+      # Both targets build from one codebase, so both are built. A change
+      # verified against only one of them is not verified.
+      - name: Build web target
+        run: npm run build:web
+
+      - name: Build desktop target
+        run: npm run build:tauri
+
+      # The desktop workflow consumes this to package the application.
+      - name: Upload desktop bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist-tauri
+          path: frontend/dist/tauri
+          retention-days: 1

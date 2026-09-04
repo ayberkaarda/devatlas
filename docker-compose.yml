@@ -1,0 +1,46 @@
+# Local development dependencies for DevAtlas.
+#
+# Postgres is the only service here on purpose: the architecture keeps the job
+# queue (FOR UPDATE SKIP LOCKED), full-text search (tsvector) and caching inside
+# Postgres, so there is no Redis, no message broker and no external service to
+# run alongside it.
+#
+# Tests do NOT use this instance. The server test suite starts its own throwaway
+# Postgres through Testcontainers, so `./mvnw verify` never touches the database
+# below and cannot destroy local development data.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: devatlas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-devatlas}
+      POSTGRES_USER: ${POSTGRES_USER:-devatlas}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devatlas_local_dev}
+      # Deterministic collation: index and ORDER BY behaviour must not depend on
+      # the host locale, otherwise a query ordering differs between machines.
+      POSTGRES_INITDB_ARGS: "--locale=C --encoding=UTF8"
+    ports:
+      # Host port 5433, not the default 5432. Other Postgres instances commonly
+      # already hold 5432 on a development machine (another project's compose
+      # stack, or a natively installed PostgreSQL service), and binding a port
+      # that is already allocated fails the whole `compose up`. Inside the
+      # container the port is still 5432, so the JDBC url is
+      # jdbc:postgresql://localhost:5433/devatlas from the host.
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # Flyway migrations run at application startup and fail loudly if they hit
+      # a database that is still initializing, so the health check gates on the
+      # real database rather than on the port being open.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devatlas} -d ${POSTGRES_DB:-devatlas}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres-data:
+    name: devatlas-postgres-data

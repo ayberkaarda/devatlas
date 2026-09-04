@@ -1,0 +1,19 @@
+# Test configuration. This file intentionally contains NO `spring.datasource.*`
+# block and NO port `5433` anywhere.
+#
+# Every integration test that needs a database provides its own throwaway
+# Postgres via Testcontainers (see TestcontainersConfiguration, which uses
+# @ServiceConnection to wire the container's JDBC url/credentials into the
+# Spring context automatically). That means the test suite can never reach
+# the docker-compose dev database on port 5433, on purpose: a test run must
+# not be able to read, migrate, or wipe a developer's local data.
+#
+# If a future test needs a real `spring.datasource.url`, that is a bug: it
+# means the test stopped using Testcontainers and started depending on
+# whatever database happens to be reachable on the host.
+spring:
+  flyway:
+    clean-disabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate

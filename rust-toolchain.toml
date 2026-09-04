@@ -1,0 +1,6 @@
+# Pinned so that every machine and CI runner compiles with the same toolchain.
+# The Java and Node versions are pinned the same way, in pom.xml and .nvmrc;
+# changing one of the three is a decision about all three.
+[toolchain]
+channel = "1.98.0"
+components = ["rustfmt", "clippy"]

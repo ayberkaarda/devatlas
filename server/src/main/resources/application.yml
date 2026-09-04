@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: server
+
+  # Local development datasource. This points at the docker-compose Postgres
+  # container (docker-compose.yml at the repo root), which listens on host
+  # port 5433, not the default 5432. The test suite never reads this block:
+  # src/test/resources/application-test.yml pins tests to their own
+  # Testcontainers-managed database instead.
+  datasource:
+    url: jdbc:postgresql://localhost:5433/devatlas
+    username: devatlas
+    password: devatlas_local_dev
+
+  jpa:
+    # Schema changes happen through Flyway migrations only. `validate` makes
+    # Hibernate fail startup if the mapped entities disagree with the actual
+    # schema instead of silently altering it. Never create/create-drop/update
+    # here: those settings can drop and rebuild tables holding real data.
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    # Refuses to run `flyway:clean` against this datasource, in every
+    # profile, regardless of what triggers it. `clean` drops every object in
+    # the schema and is unrecoverable against a developer's local database.
+    clean-disabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Only health and info are exposed; no env/beans/heapdump surface.
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+# springdoc/OpenAPI is wired only under the `dev` profile — see
+# application-dev.yml. It is absent here so a production/default boot never
+# exposes /v3/api-docs or /swagger-ui.
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

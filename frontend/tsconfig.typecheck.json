@@ -1,0 +1,26 @@
+/*
+ * Dedicated typecheck gate covering every TypeScript file in src/, regardless
+ * of what the build's entry point happens to reach.
+ *
+ * As generated today, tsconfig.app.json already uses include: ["src/**\/*.ts"],
+ * so it covers the same set and this config is deliberately redundant. It is
+ * kept because the build config is the CLI's to change: earlier generators
+ * emitted files: ["src/main.ts"], which type-checks only what is transitively
+ * imported from the entry point and silently skips anything not yet wired into
+ * a route — exiting 0 while real errors sit on disk.
+ *
+ * That failure mode is expensive in this project specifically: one of the two
+ * platform service implementations is unreachable dead code in every build, so
+ * a narrowed build config would let the unused half rot with a green gate.
+ * Pinning the gate to its own config makes the checked set independent of
+ * whatever the CLI generates next. Always run `npm run typecheck`.
+ */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts"]
+}

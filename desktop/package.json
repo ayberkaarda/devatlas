@@ -1,0 +1,18 @@
+{
+  "name": "devatlas-desktop",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Tauri shell for the DevAtlas desktop client",
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  },
+  "engines": {
+    "node": "^22.23.2",
+    "npm": "^10.9.0"
+  }
+}
