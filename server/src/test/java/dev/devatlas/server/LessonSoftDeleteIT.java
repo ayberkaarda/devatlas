@@ -13,12 +13,17 @@ import dev.devatlas.server.repository.ModuleRepository;
 import dev.devatlas.server.repository.TrackRepository;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import javax.sql.DataSource;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -40,6 +45,35 @@ class LessonSoftDeleteIT {
   @Autowired private TrackRepository tracks;
   @Autowired private ModuleRepository modules;
   @Autowired private LessonRepository lessons;
+  @Autowired private DataSource dataSource;
+
+  /** Fixture tracks created by this class, removed after each test. */
+  private final List<UUID> createdTrackIds = new ArrayList<>();
+
+  /**
+   * Removes this class's fixtures from the shared database.
+   *
+   * <p>The Testcontainer is reused across test classes through Spring's context cache, so rows left
+   * behind here are visible to every other test in the run, and whether another class sees them
+   * depends on execution order — which differs between a developer's machine and a clean checkout.
+   *
+   * <p>The deletes run child-first and through SQL rather than the repositories. The foreign keys
+   * between lessons, modules and tracks are deliberately not declared {@code ON DELETE CASCADE},
+   * because content deletion in this application is a soft delete that has to leave rows in place;
+   * removing a track therefore means removing what points at it first.
+   */
+  @AfterEach
+  void removeFixtures() {
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    for (UUID trackId : createdTrackIds) {
+      jdbcTemplate.update(
+          "DELETE FROM lessons WHERE module_id IN (SELECT id FROM modules WHERE track_id = ?)",
+          trackId);
+      jdbcTemplate.update("DELETE FROM modules WHERE track_id = ?", trackId);
+      jdbcTemplate.update("DELETE FROM tracks WHERE id = ?", trackId);
+    }
+    createdTrackIds.clear();
+  }
 
   @Test
   void aSoftDeletedLessonsSlugCanBeReusedByANewLesson() {
@@ -83,7 +117,9 @@ class LessonSoftDeleteIT {
     track.setContentVersion(1);
     track.setCreatedAt(now);
     track.setUpdatedAt(now);
-    return tracks.saveAndFlush(track);
+    Track saved = tracks.saveAndFlush(track);
+    createdTrackIds.add(saved.getId());
+    return saved;
   }
 
   private Module newModule(Track track) {

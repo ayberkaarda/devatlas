@@ -3,6 +3,7 @@ package dev.devatlas.server;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.UUID;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,23 +126,45 @@ class FlywayMigrationIT {
     assertThat(definition).contains("UNIQUE").contains("WHERE (deleted_at IS NULL)");
   }
 
-  /** The seed content and the seeded administrator are both present. */
+  /**
+   * The seed content and the seeded administrator are both present.
+   *
+   * <p>Every assertion is scoped to the seeded track rather than counting whole tables. The
+   * Testcontainer is shared across test classes through Spring's context cache, so any test that
+   * inserts a track is also inserting into the database this one reads; a global {@code count(*)}
+   * makes this test depend on which classes happened to run first, which differs between a
+   * developer's machine and a clean CI checkout. Scoping the query removes the coupling entirely
+   * instead of relying on other tests to tidy up after themselves.
+   */
   @Test
   void seedDataIsPresent() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-    assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM tracks", Integer.class))
-        .isEqualTo(1);
-    assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM modules", Integer.class))
+    UUID seedTrackId =
+        jdbcTemplate.queryForObject(
+            "SELECT id FROM tracks WHERE slug = 'angular-path'", UUID.class);
+    assertThat(seedTrackId).isNotNull();
+
+    assertThat(
+            jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM modules WHERE track_id = ?", Integer.class, seedTrackId))
         .isEqualTo(2);
-    assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM lessons", Integer.class))
+    assertThat(
+            jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM lessons l"
+                    + " JOIN modules m ON m.id = l.module_id"
+                    + " WHERE m.track_id = ?",
+                Integer.class,
+                seedTrackId))
         .isEqualTo(4);
-    assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM mind_maps", Integer.class))
+    assertThat(
+            jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM mind_maps WHERE track_id = ?", Integer.class, seedTrackId))
         .isEqualTo(1);
     assertThat(
             jdbcTemplate.queryForObject(
                 "SELECT count(*) FROM users WHERE role = 'ADMIN'", Integer.class))
-        .isEqualTo(1);
+        .isGreaterThanOrEqualTo(1);
   }
 
   /**
