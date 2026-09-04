@@ -38,10 +38,34 @@
   /* Code blocks */
   --color-code-bg: var(--dv-code-bg);
 
+  /* Focus ring — a single token so every interactive element agrees */
+  --color-focus: var(--dv-focus);
+
+  /* Badge used by the "not yet translated" marker */
+  --color-badge-bg: var(--dv-badge-bg);
+  --color-badge-text: var(--dv-badge-text);
+
   /* Radii */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+
+  /* Spacing scale — component styles use these rather than ad hoc lengths */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
 }
 
 :root {
@@ -61,6 +85,17 @@
   --dv-danger: #d1373f;
 
   --dv-code-bg: #f4f5f7;
+
+  --dv-focus: #2f6fed;
+  --dv-badge-bg: #fdf3dd;
+  --dv-badge-text: #7a5209;
+
+  /*
+   * Tells the user agent which palette its own widgets — scrollbars, form
+   * controls, the canvas behind the document — should use. Without it a dark
+   * page keeps a white scrollbar and a white flash between paints.
+   */
+  color-scheme: light;
 
   /* Motion — duration tokens only; animate transform/opacity only,
      and always respect prefers-reduced-motion at the call site. */
@@ -87,4 +122,44 @@
   --dv-danger: #e2626b;
 
   --dv-code-bg: #10151d;
+
+  --dv-focus: #7aa2f7;
+  --dv-badge-bg: #3a2f14;
+  --dv-badge-text: #f0cf88;
+
+  color-scheme: dark;
+}
+
+/*
+ * System preference, used only until the user makes a choice. The explicit
+ * [data-theme] attributes above are written by the pre-paint script and by the
+ * theme service, and both win over this block because they are set on the same
+ * element with a higher-specificity selector. The :not() guard is what makes a
+ * manual choice of light stick on a machine whose system preference is dark.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --dv-bg: #0d1117;
+    --dv-surface: #161b22;
+    --dv-surface-raised: #1c2330;
+    --dv-border: #2a313c;
+
+    --dv-text: #e6e9ef;
+    --dv-text-muted: #98a1b0;
+
+    --dv-accent: #5b8def;
+    --dv-accent-contrast: #0d1117;
+
+    --dv-success: #3fb873;
+    --dv-warning: #d9a441;
+    --dv-danger: #e2626b;
+
+    --dv-code-bg: #10151d;
+
+    --dv-focus: #7aa2f7;
+    --dv-badge-bg: #3a2f14;
+    --dv-badge-text: #f0cf88;
+
+    color-scheme: dark;
+  }
 }

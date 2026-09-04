@@ -10,7 +10,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "jest",
     "typecheck": "tsc -p tsconfig.typecheck.json",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "i18n:check": "node scripts/i18n-check.mjs"
   },
   "private": true,
   "packageManager": "npm@10.9.8",
@@ -21,7 +22,12 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
+    "@ngx-translate/core": "^18.0.0",
+    "@tauri-apps/api": "^2.11.1",
+    "dompurify": "^3.4.14",
+    "marked": "^16.4.2",
     "rxjs": "~7.8.0",
+    "shiki": "^4.4.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

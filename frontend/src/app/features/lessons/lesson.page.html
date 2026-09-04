@@ -1,0 +1,74 @@
+<a
+  class="text-sm text-text-muted no-underline hover:underline"
+  [routerLink]="['/tracks', trackSlug()]"
+  >{{ 'lesson.backToTrack' | translate }}</a
+>
+
+@if (loading()) {
+  <p class="mt-8 text-text-muted" role="status">{{ 'common.loading' | translate }}</p>
+} @else if (failure(); as failureKey) {
+  <div class="mt-8 rounded-md border border-border bg-surface p-4" role="alert">
+    <h2 class="font-medium">{{ 'error.heading' | translate }}</h2>
+    <p class="mt-1 text-text-muted">{{ failureKey | translate }}</p>
+    <button
+      type="button"
+      class="mt-3 rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast"
+      (click)="reload()"
+    >
+      {{ 'common.retry' | translate }}
+    </button>
+  </div>
+} @else if (lesson(); as current) {
+  <article>
+    <header class="flex flex-wrap items-start justify-between gap-3">
+      <h1 class="text-2xl font-semibold tracking-tight">{{ current.title }}</h1>
+      <app-fallback-badge [state]="current.translation" />
+    </header>
+
+    <p class="mt-2 flex flex-wrap gap-3 text-xs text-text-muted">
+      @if (current.difficulty; as difficulty) {
+        <span>
+          {{ 'lesson.difficultyLabel' | translate }}:
+          {{ 'lesson.difficulty.' + difficulty | translate }}
+        </span>
+      }
+      @if (current.estimatedMinutes; as minutes) {
+        <span>{{ 'lesson.estimated' | translate: { count: minutes } }}</span>
+      }
+    </p>
+
+    <!--
+      The markup was sanitized before it reached this binding: the markdown
+      goes through DOMPurify and only then is marked trusted, because the
+      framework's own sanitizer would strip the highlighter's inline colours.
+      Nothing else in the application binds to innerHTML.
+    -->
+    <div class="lesson-body mt-6" [innerHTML]="body()"></div>
+
+    @if (examples().length > 0) {
+      <h2 class="mt-10 text-sm font-semibold uppercase tracking-wide text-text-muted">
+        {{ 'lesson.codeExamples' | translate }}
+      </h2>
+      <div class="mt-3 space-y-4">
+        @for (example of examples(); track example.html) {
+          <figure class="rounded-md border border-border bg-code-bg p-3">
+            <!-- Sanitized by the same path as the lesson body. -->
+            <div [innerHTML]="example.html"></div>
+            @if (example.caption) {
+              <figcaption class="mt-2 text-xs text-text-muted">{{ example.caption }}</figcaption>
+            }
+          </figure>
+        }
+      </div>
+    }
+
+    <button
+      type="button"
+      class="mt-10 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text"
+      [attr.aria-pressed]="completed()"
+      (click)="toggleCompleted()"
+    >
+      {{ (completed() ? 'lesson.markIncomplete' : 'lesson.markComplete') | translate }}
+    </button>
+  </article>
+}

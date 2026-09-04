@@ -1,2 +1,102 @@
 @import "tailwindcss";
 @import "./styles/tokens.css";
+
+/*
+ * Base document styling. Everything here reads a token; a raw colour at this
+ * level would be invisible to the theme switch and would light up in the dark
+ * palette as a stripe of the wrong background.
+ */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: var(--text-base);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/*
+ * Motion is opt-in for anyone who has not asked for less of it. Transitions
+ * are declared on transform and opacity only, so honouring the preference is
+ * a single global switch rather than a per-component audit.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Rendered markdown. The markup comes from a renderer rather than from a
+ * template, so it cannot carry utility classes and is styled by element here.
+ */
+.lesson-body h2 {
+  margin-top: var(--spacing-8);
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+
+.lesson-body h3 {
+  margin-top: var(--spacing-6);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.lesson-body p,
+.lesson-body ul,
+.lesson-body ol {
+  margin-top: var(--spacing-4);
+}
+
+.lesson-body ul,
+.lesson-body ol {
+  padding-left: var(--spacing-6);
+  list-style: revert;
+}
+
+.lesson-body a {
+  color: var(--color-accent);
+}
+
+.lesson-body code {
+  background: var(--color-code-bg);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-1);
+  font-size: var(--text-sm);
+}
+
+.lesson-body pre,
+.lesson-body .shiki {
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  background: var(--color-code-bg);
+  overflow-x: auto;
+}
+
+.lesson-body pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.lesson-body blockquote {
+  margin-top: var(--spacing-4);
+  padding-left: var(--spacing-4);
+  border-left: 3px solid var(--color-border);
+  color: var(--color-text-muted);
+}

@@ -7,4 +7,5 @@ import type { AppEnvironment } from './environment.model';
 export const environment: AppEnvironment = {
   platform: 'web',
   production: true,
+  apiBaseUrl: 'https://api.devatlas.dev/api/v1',
 };

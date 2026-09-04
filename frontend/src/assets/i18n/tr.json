@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "DevAtlas",
+    "tagline": "Geliştiriciler için öğrenme yolları, çevrimiçi ve çevrimdışı.",
+    "skipToContent": "İçeriğe geç"
+  },
+  "nav": {
+    "label": "Ana gezinme",
+    "tracks": "Yollar"
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Açık",
+    "dark": "Koyu",
+    "system": "Sistem",
+    "toggle": "Temayı değiştir"
+  },
+  "language": {
+    "label": "Dil",
+    "en": "English",
+    "tr": "Türkçe",
+    "fr": "Français",
+    "de": "Deutsch"
+  },
+  "common": {
+    "loading": "Yükleniyor…",
+    "retry": "Yeniden dene",
+    "minutes": "{{count}} dk"
+  },
+  "content": {
+    "fallbackBadge": "Henüz çevrilmedi",
+    "fallbackBadgeHint": "Bu dil için henüz çeviri bulunmadığından İngilizce gösteriliyor."
+  },
+  "tracks": {
+    "heading": "Yollar",
+    "intro": "Bir yol seçin ve dersleri sırayla ilerleyin.",
+    "empty": "Gösterilecek yol henüz yok.",
+    "lessonCount": "{{count}} ders",
+    "downloaded": "{{total}} dersin {{done}} tanesi indirildi",
+    "open": "{{title}} yolunu aç"
+  },
+  "track": {
+    "backToTracks": "Tüm yollar",
+    "modules": "Modüller",
+    "empty": "Bu yolda henüz ders yok.",
+    "download": "İndir",
+    "downloadHint": "{{title}} içeriğini çevrimdışı okumak için indir",
+    "openLesson": "{{title}} dersini aç"
+  },
+  "lesson": {
+    "backToTrack": "Yola dön",
+    "codeExamples": "Kod örnekleri",
+    "markComplete": "Tamamlandı olarak işaretle",
+    "markIncomplete": "Tamamlanmadı olarak işaretle",
+    "completed": "Tamamlandı",
+    "estimated": "Yaklaşık {{count}} dk",
+    "difficultyLabel": "Zorluk",
+    "difficulty": {
+      "BEGINNER": "Başlangıç",
+      "INTERMEDIATE": "Orta",
+      "ADVANCED": "İleri"
+    }
+  },
+  "notFound": {
+    "heading": "Bu sayfa yok",
+    "description": "Adres yanlış yazılmış ya da içerik taşınmış olabilir.",
+    "backHome": "Yollara git"
+  },
+  "error": {
+    "heading": "Bir şeyler ters gitti",
+    "NETWORK_UNAVAILABLE": "Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.",
+    "TRACK_NOT_FOUND": "Bu yol artık mevcut değil.",
+    "LESSON_NOT_FOUND": "Bu ders artık mevcut değil.",
+    "ENTITY_NOT_IN_LIBRARY": "Bu içerik henüz kitaplığınızda değil.",
+    "UNSUPPORTED_ON_WEB": "Bu işlem yalnızca masaüstü uygulamasında kullanılabilir.",
+    "INTERNAL_ERROR": "Beklenmeyen bir hata oluştu. Lütfen yeniden deneyin."
+  }
+}

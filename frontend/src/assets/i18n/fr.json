@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "DevAtlas",
+    "tagline": "Des parcours d'apprentissage pour développeurs, en ligne et hors ligne.",
+    "skipToContent": "Aller au contenu"
+  },
+  "nav": {
+    "label": "Navigation principale",
+    "tracks": "Parcours"
+  },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "toggle": "Changer de thème"
+  },
+  "language": {
+    "label": "Langue",
+    "en": "English",
+    "tr": "Türkçe",
+    "fr": "Français",
+    "de": "Deutsch"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "minutes": "{{count}} min"
+  },
+  "content": {
+    "fallbackBadge": "Pas encore traduit",
+    "fallbackBadgeHint": "Affiché en anglais car aucune traduction n'existe encore pour cette langue."
+  },
+  "tracks": {
+    "heading": "Parcours",
+    "intro": "Choisissez un parcours et avancez leçon après leçon.",
+    "empty": "Aucun parcours à afficher pour le moment.",
+    "lessonCount": "{{count}} leçons",
+    "downloaded": "{{done}} sur {{total}} téléchargées",
+    "open": "Ouvrir le parcours {{title}}"
+  },
+  "track": {
+    "backToTracks": "Tous les parcours",
+    "modules": "Modules",
+    "empty": "Ce parcours ne contient pas encore de leçons.",
+    "download": "Télécharger",
+    "downloadHint": "Télécharger {{title}} pour une lecture hors ligne",
+    "openLesson": "Ouvrir la leçon {{title}}"
+  },
+  "lesson": {
+    "backToTrack": "Retour au parcours",
+    "codeExamples": "Exemples de code",
+    "markComplete": "Marquer comme terminée",
+    "markIncomplete": "Marquer comme non terminée",
+    "completed": "Terminée",
+    "estimated": "Environ {{count}} min",
+    "difficultyLabel": "Difficulté",
+    "difficulty": {
+      "BEGINNER": "Débutant",
+      "INTERMEDIATE": "Intermédiaire",
+      "ADVANCED": "Avancé"
+    }
+  },
+  "notFound": {
+    "heading": "Cette page n'existe pas",
+    "description": "L'adresse est peut-être mal saisie, ou le contenu a été déplacé.",
+    "backHome": "Aller aux parcours"
+  },
+  "error": {
+    "heading": "Une erreur est survenue",
+    "NETWORK_UNAVAILABLE": "Le serveur est injoignable. Vérifiez votre connexion et réessayez.",
+    "TRACK_NOT_FOUND": "Ce parcours n'existe plus.",
+    "LESSON_NOT_FOUND": "Cette leçon n'existe plus.",
+    "ENTITY_NOT_IN_LIBRARY": "Ce contenu n'est pas encore dans votre bibliothèque.",
+    "UNSUPPORTED_ON_WEB": "Cette action n'est disponible que dans l'application de bureau.",
+    "INTERNAL_ERROR": "Une erreur inattendue s'est produite. Veuillez réessayer."
+  }
+}

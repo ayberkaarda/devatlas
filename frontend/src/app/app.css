@@ -1,0 +1,20 @@
+/*
+ * The skip link is visible only while focused. It is not decoration: keyboard
+ * users would otherwise tab through the whole header on every navigation.
+ */
+.skip-link {
+  position: absolute;
+  left: var(--spacing-2);
+  top: calc(var(--spacing-2) * -8);
+  z-index: 10;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  text-decoration: none;
+  transition: top var(--motion-fast) var(--ease-standard);
+}
+
+.skip-link:focus {
+  top: var(--spacing-2);
+}

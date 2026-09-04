@@ -2,10 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Frontend</title>
+  <title>DevAtlas</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    /*
+     * Theme resolution before first paint.
+     *
+     * The application cannot do this itself: Angular bootstraps after the
+     * document has already been painted once, so a theme applied from a
+     * component would arrive as a visible flash of the wrong palette.
+     *
+     * This is the web path. The desktop client keeps its preferences in the
+     * local store rather than in web storage, which no synchronous script can
+     * read, so there the window stays hidden until the theme is on the
+     * document and only then is revealed. The two mechanisms cover the same
+     * requirement on the two platforms; neither is a fallback for the other.
+     *
+     * Everything here is wrapped in try/catch because web storage throws
+     * rather than returning null in a browser configured to block site data,
+     * and a thrown exception here would stop the document from rendering at
+     * all.
+     */
+    (function () {
+      var root = document.documentElement;
+      var theme = 'SYSTEM';
+      try {
+        var raw = window.localStorage.getItem('devatlas.preferences');
+        if (raw) {
+          var stored = JSON.parse(raw);
+          if (stored && typeof stored.theme === 'string') {
+            theme = stored.theme;
+          }
+          if (stored && typeof stored.locale === 'string') {
+            root.setAttribute('lang', stored.locale);
+          }
+        }
+      } catch (error) {
+        theme = 'SYSTEM';
+      }
+      if (theme !== 'LIGHT' && theme !== 'DARK') {
+        var prefersDark =
+          typeof window.matchMedia === 'function' &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        theme = prefersDark ? 'DARK' : 'LIGHT';
+      }
+      root.setAttribute('data-theme', theme === 'DARK' ? 'dark' : 'light');
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>

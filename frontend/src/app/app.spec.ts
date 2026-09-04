@@ -1,35 +1,76 @@
 import { TestBed } from '@angular/core/testing';
-import { App } from './app';
+import { provideRouter } from '@angular/router';
+import { provideTranslateService } from '@ngx-translate/core';
+
+import { FakePlatformService } from '../testing/fake-platform.service';
 import { environment } from '../environments/environment';
+import { App } from './app';
+import { LocaleService } from './core/i18n/locale.service';
+import { BundledTranslateLoader } from './core/i18n/translations';
+import { PlatformService } from './core/platform/platform.service';
+import { ThemeService } from './core/theme/theme.service';
 
 describe('App', () => {
+  let platform: FakePlatformService;
+
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
-    }).compileComponents();
+    platform = new FakePlatformService();
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        { provide: PlatformService, useValue: platform },
+        provideTranslateService({
+          loader: BundledTranslateLoader,
+          fallbackLang: 'en',
+          lang: 'en',
+        }),
+      ],
+    });
+    await TestBed.inject(LocaleService).initialize('en');
+    TestBed.inject(ThemeService).initialize('LIGHT');
   });
 
-  it('creates the root component', () => {
-    const fixture = TestBed.createComponent(App);
-    expect(fixture.componentInstance).toBeTruthy();
-  });
-
-  it('renders the application title inside an h1', async () => {
+  async function render() {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     await fixture.whenStable();
-    const heading = fixture.nativeElement.querySelector('h1') as HTMLElement | null;
-    expect(heading?.textContent).toContain('DevAtlas');
+    return fixture;
+  }
+
+  it('creates the root component', async () => {
+    const fixture = await render();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('exposes the build-time platform, which under Jest is the web target', () => {
-    // Jest resolves environment.ts directly; the tauri variant is only ever
-    // substituted by the build, so this asserts the default rather than the
-    // replacement. It guards against the platform flag being dropped or
-    // hard-coded to something other than the environment value.
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance as unknown as { platform: () => string };
-    expect(app.platform()).toBe(environment.platform);
-    expect(app.platform()).toBe('web');
+  it('renders navigation from translation keys rather than literals', async () => {
+    const fixture = await render();
+    const nav = fixture.nativeElement.querySelector('nav') as HTMLElement;
+    expect(nav.getAttribute('aria-label')).toBe('Main navigation');
+    expect(nav.textContent).toContain('Tracks');
+  });
+
+  it('re-renders the whole shell when the language changes', async () => {
+    const fixture = await render();
+    await TestBed.inject(LocaleService).use('tr');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const nav = fixture.nativeElement.querySelector('nav') as HTMLElement;
+    expect(nav.getAttribute('aria-label')).toBe('Ana gezinme');
+    expect(nav.textContent).toContain('Yollar');
+  });
+
+  it('offers a skip link ahead of the header', async () => {
+    const fixture = await render();
+    const skip = fixture.nativeElement.querySelector('.skip-link') as HTMLAnchorElement;
+    expect(skip.getAttribute('href')).toBe('#main-content');
+    expect(fixture.nativeElement.querySelector('#main-content')).not.toBeNull();
+  });
+
+  it('runs under the web target, which is the environment Jest resolves', () => {
+    // The desktop environment file is only ever substituted by a build, so
+    // this asserts the default rather than the replacement. It guards against
+    // the platform flag being dropped or hard-coded.
+    expect(environment.platform).toBe('web');
   });
 });

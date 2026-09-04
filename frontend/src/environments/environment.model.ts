@@ -16,4 +16,14 @@ export interface AppEnvironment {
    */
   readonly platform: 'web' | 'tauri';
   readonly production: boolean;
+  /**
+   * Absolute base for every REST call, including the `/api/v1` prefix and no
+   * trailing slash.
+   *
+   * It is absolute rather than same-origin because neither client is served
+   * from the API's origin: the web build is deployed to its own host and the
+   * desktop build runs from a webview origin. Both are therefore cross-origin
+   * callers and are subject to the API's CORS allow-list.
+   */
+  readonly apiBaseUrl: string;
 }

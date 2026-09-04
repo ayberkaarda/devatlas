@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "DevAtlas",
+    "tagline": "Learning tracks for developers, online and offline.",
+    "skipToContent": "Skip to content"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "tracks": "Tracks"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Change theme"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "tr": "Türkçe",
+    "fr": "Français",
+    "de": "Deutsch"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "minutes": "{{count}} min"
+  },
+  "content": {
+    "fallbackBadge": "Not yet translated",
+    "fallbackBadgeHint": "Shown in English because no translation exists for this locale yet."
+  },
+  "tracks": {
+    "heading": "Tracks",
+    "intro": "Pick a track and work through it lesson by lesson.",
+    "empty": "There are no tracks to show yet.",
+    "lessonCount": "{{count}} lessons",
+    "downloaded": "{{done}} of {{total}} downloaded",
+    "open": "Open the track {{title}}"
+  },
+  "track": {
+    "backToTracks": "All tracks",
+    "modules": "Modules",
+    "empty": "This track has no lessons yet.",
+    "download": "Download",
+    "downloadHint": "Download {{title}} for offline reading",
+    "openLesson": "Open the lesson {{title}}"
+  },
+  "lesson": {
+    "backToTrack": "Back to the track",
+    "codeExamples": "Code examples",
+    "markComplete": "Mark as completed",
+    "markIncomplete": "Mark as not completed",
+    "completed": "Completed",
+    "estimated": "About {{count}} min",
+    "difficultyLabel": "Difficulty",
+    "difficulty": {
+      "BEGINNER": "Beginner",
+      "INTERMEDIATE": "Intermediate",
+      "ADVANCED": "Advanced"
+    }
+  },
+  "notFound": {
+    "heading": "This page does not exist",
+    "description": "The address may be mistyped, or the content may have been moved.",
+    "backHome": "Go to the tracks"
+  },
+  "error": {
+    "heading": "Something went wrong",
+    "NETWORK_UNAVAILABLE": "The server could not be reached. Check your connection and try again.",
+    "TRACK_NOT_FOUND": "This track no longer exists.",
+    "LESSON_NOT_FOUND": "This lesson no longer exists.",
+    "ENTITY_NOT_IN_LIBRARY": "This content is not in your library yet.",
+    "UNSUPPORTED_ON_WEB": "This action is only available in the desktop application.",
+    "INTERNAL_ERROR": "An unexpected error occurred. Please try again."
+  }
+}

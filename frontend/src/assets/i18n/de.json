@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "DevAtlas",
+    "tagline": "Lernpfade für Entwickler, online und offline.",
+    "skipToContent": "Zum Inhalt springen"
+  },
+  "nav": {
+    "label": "Hauptnavigation",
+    "tracks": "Lernpfade"
+  },
+  "theme": {
+    "label": "Design",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System",
+    "toggle": "Design wechseln"
+  },
+  "language": {
+    "label": "Sprache",
+    "en": "English",
+    "tr": "Türkçe",
+    "fr": "Français",
+    "de": "Deutsch"
+  },
+  "common": {
+    "loading": "Wird geladen…",
+    "retry": "Erneut versuchen",
+    "minutes": "{{count}} Min."
+  },
+  "content": {
+    "fallbackBadge": "Noch nicht übersetzt",
+    "fallbackBadgeHint": "Wird auf Englisch angezeigt, weil für diese Sprache noch keine Übersetzung vorliegt."
+  },
+  "tracks": {
+    "heading": "Lernpfade",
+    "intro": "Wählen Sie einen Lernpfad und arbeiten Sie ihn Lektion für Lektion durch.",
+    "empty": "Es gibt noch keine Lernpfade.",
+    "lessonCount": "{{count}} Lektionen",
+    "downloaded": "{{done}} von {{total}} heruntergeladen",
+    "open": "Lernpfad {{title}} öffnen"
+  },
+  "track": {
+    "backToTracks": "Alle Lernpfade",
+    "modules": "Module",
+    "empty": "Dieser Lernpfad enthält noch keine Lektionen.",
+    "download": "Herunterladen",
+    "downloadHint": "{{title}} zum Offline-Lesen herunterladen",
+    "openLesson": "Lektion {{title}} öffnen"
+  },
+  "lesson": {
+    "backToTrack": "Zurück zum Lernpfad",
+    "codeExamples": "Codebeispiele",
+    "markComplete": "Als abgeschlossen markieren",
+    "markIncomplete": "Als nicht abgeschlossen markieren",
+    "completed": "Abgeschlossen",
+    "estimated": "Etwa {{count}} Min.",
+    "difficultyLabel": "Schwierigkeit",
+    "difficulty": {
+      "BEGINNER": "Einsteiger",
+      "INTERMEDIATE": "Fortgeschritten",
+      "ADVANCED": "Experte"
+    }
+  },
+  "notFound": {
+    "heading": "Diese Seite gibt es nicht",
+    "description": "Die Adresse ist möglicherweise falsch geschrieben oder der Inhalt wurde verschoben.",
+    "backHome": "Zu den Lernpfaden"
+  },
+  "error": {
+    "heading": "Etwas ist schiefgelaufen",
+    "NETWORK_UNAVAILABLE": "Der Server ist nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "TRACK_NOT_FOUND": "Diesen Lernpfad gibt es nicht mehr.",
+    "LESSON_NOT_FOUND": "Diese Lektion gibt es nicht mehr.",
+    "ENTITY_NOT_IN_LIBRARY": "Dieser Inhalt ist noch nicht in Ihrer Bibliothek.",
+    "UNSUPPORTED_ON_WEB": "Diese Aktion ist nur in der Desktop-Anwendung verfügbar.",
+    "INTERNAL_ERROR": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  }
+}
