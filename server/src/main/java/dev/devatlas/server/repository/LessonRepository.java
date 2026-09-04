@@ -1,6 +1,7 @@
 package dev.devatlas.server.repository;
 
 import dev.devatlas.server.domain.Lesson;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,4 +15,8 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
   List<Lesson> findByModuleIdAndDeletedAtIsNullOrderByDisplayOrderAsc(UUID moduleId);
 
   boolean existsBySlugAndDeletedAtIsNull(String slug);
+
+  boolean existsBySlugAndDeletedAtIsNullAndIdNot(String slug, UUID id);
+
+  long countByModuleIdInAndDeletedAtIsNull(Collection<UUID> moduleIds);
 }

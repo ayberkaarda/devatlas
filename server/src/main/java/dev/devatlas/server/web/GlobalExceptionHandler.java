@@ -1,6 +1,7 @@
 package dev.devatlas.server.web;
 
 import dev.devatlas.server.common.ApiException;
+import dev.devatlas.server.common.ApiFieldError;
 import dev.devatlas.server.common.ErrorCode;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,16 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(ApiException.class)
   public ResponseEntity<ErrorResponse> handleApiException(ApiException exception) {
-    return respond(exception.code(), exception.getMessage());
+    List<ApiFieldError> fieldErrors = exception.fieldErrors();
+    if (fieldErrors == null || fieldErrors.isEmpty()) {
+      return respond(exception.code(), exception.getMessage());
+    }
+    List<ErrorResponse.FieldError> errors =
+        fieldErrors.stream()
+            .map(e -> new ErrorResponse.FieldError(e.field(), e.code(), e.message()))
+            .toList();
+    return ResponseEntity.status(exception.code().status())
+        .body(new ErrorResponse(exception.code().name(), exception.getMessage(), errors));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

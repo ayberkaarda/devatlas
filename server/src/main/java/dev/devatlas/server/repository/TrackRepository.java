@@ -3,6 +3,8 @@ package dev.devatlas.server.repository;
 import dev.devatlas.server.domain.Track;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /** Data access for {@link Track}. */
@@ -11,4 +13,12 @@ public interface TrackRepository extends JpaRepository<Track, UUID> {
   Optional<Track> findBySlug(String slug);
 
   Optional<Track> findBySlugAndPublishedTrue(String slug);
+
+  Page<Track> findByPublishedTrue(Pageable pageable);
+
+  Page<Track> findByPublished(boolean published, Pageable pageable);
+
+  boolean existsBySlug(String slug);
+
+  boolean existsBySlugAndIdNot(String slug, UUID id);
 }
