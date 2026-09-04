@@ -917,25 +917,62 @@ pub fn progress_mark(
 /// batch growing for the life of the installation.
 #[tauri::command]
 pub fn progress_pending(state: tauri::State<'_, AppState>) -> Command<Vec<ProgressEntry>> {
-    let db = state.db();
-    db.with(|connection| {
-        let user_id = settings::active_user(connection)?;
-        let mut statement = connection.prepare(
-            "SELECT lesson_id, completed_at, client_updated_at FROM user_progress
-             WHERE user_id = ?1 AND sync_state = 'PENDING' ORDER BY client_updated_at;",
-        )?;
-        let entries: rusqlite::Result<Vec<ProgressEntry>> = statement
-            .query_map([&user_id], |row| {
-                Ok(ProgressEntry {
-                    lesson_id: row.get(0)?,
-                    completed_at: row.get(1)?,
-                    client_updated_at: row.get(2)?,
-                    sync_state: SyncState::Pending,
-                })
-            })?
-            .collect();
-        entries
-    })
+    state
+        .db()
+        .with(|connection| read_progress(connection, true))
+}
+
+/// Reads the active user's progress, either all of it or only what still owes
+/// the server a write.
+///
+/// One query behind both commands, so the two can never disagree about which
+/// rows belong to whom or how a stored `sync_state` is spelled.
+fn read_progress(
+    connection: &rusqlite::Connection,
+    pending_only: bool,
+) -> rusqlite::Result<Vec<ProgressEntry>> {
+    let user_id = settings::active_user(connection)?;
+    let sql = if pending_only {
+        "SELECT lesson_id, completed_at, client_updated_at, sync_state FROM user_progress
+         WHERE user_id = ?1 AND sync_state = 'PENDING' ORDER BY client_updated_at;"
+    } else {
+        "SELECT lesson_id, completed_at, client_updated_at, sync_state FROM user_progress
+         WHERE user_id = ?1 ORDER BY client_updated_at;"
+    };
+    let mut statement = connection.prepare(sql)?;
+    let entries: rusqlite::Result<Vec<ProgressEntry>> = statement
+        .query_map([&user_id], |row| {
+            let sync_state: String = row.get(3)?;
+            Ok(ProgressEntry {
+                lesson_id: row.get(0)?,
+                completed_at: row.get(1)?,
+                client_updated_at: row.get(2)?,
+                // A value the store cannot name is reported as pending rather
+                // than dropped: an unsendable row is worse than one sent twice,
+                // because reconciliation is last-write-wins and replaying a row
+                // changes nothing.
+                sync_state: sync_state.parse().unwrap_or(SyncState::Pending),
+            })
+        })?
+        .collect();
+    entries
+}
+
+/// Every progress row the active user holds, whatever its sync state.
+///
+/// This is what the UI reads to show a lesson as completed. It is not
+/// `progress_pending` with a wider filter: that command answers "what still
+/// owes the server a write", and using it to render completion would make a
+/// lesson look incomplete the moment its row synchronised.
+///
+/// `ORPHANED` rows are included. The server rejected them -- usually because
+/// the lesson was deleted upstream -- but the user did the work, and the row is
+/// kept precisely so it can still be shown.
+#[tauri::command]
+pub fn progress_list(state: tauri::State<'_, AppState>) -> Command<Vec<ProgressEntry>> {
+    state
+        .db()
+        .with(|connection| read_progress(connection, false))
 }
 
 /// Writes back what the server said, per row. Nothing here deletes a progress
@@ -1272,5 +1309,108 @@ fn map_transfer(error: TransferError) -> CommandError {
         TransferError::Unexpected(message) => {
             CommandError::new(codes::UNEXPECTED_RESPONSE, message)
         }
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::settings::ANONYMOUS_USER;
+    use crate::store::open_in_memory;
+
+    fn seeded() -> rusqlite::Connection {
+        let connection = open_in_memory().expect("store");
+        connection
+            .execute_batch(&format!(
+                "INSERT INTO user_progress (user_id, lesson_id, completed_at, client_updated_at, sync_state)
+                 VALUES ('{ANONYMOUS_USER}', 'l1', '2026-09-04T10:00:00.000Z', '2026-09-04T10:00:00.000Z', 'SYNCED');
+                 INSERT INTO user_progress (user_id, lesson_id, completed_at, client_updated_at, sync_state)
+                 VALUES ('{ANONYMOUS_USER}', 'l2', NULL, '2026-09-04T10:00:01.000Z', 'PENDING');
+                 INSERT INTO user_progress (user_id, lesson_id, completed_at, client_updated_at, sync_state)
+                 VALUES ('{ANONYMOUS_USER}', 'l3', '2026-09-04T10:00:02.000Z', '2026-09-04T10:00:02.000Z', 'ORPHANED');
+                 INSERT INTO user_progress (user_id, lesson_id, completed_at, client_updated_at, sync_state)
+                 VALUES ('someone-else', 'l4', '2026-09-04T10:00:03.000Z', '2026-09-04T10:00:03.000Z', 'PENDING');"
+            ))
+            .expect("seed");
+        connection
+    }
+
+    #[test]
+    fn listing_progress_returns_every_row_of_the_active_user() {
+        let connection = seeded();
+        let entries = read_progress(&connection, false).expect("list");
+
+        assert_eq!(
+            entries
+                .iter()
+                .map(|e| e.lesson_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["l1", "l2", "l3"],
+            "another account's progress is never in the answer"
+        );
+        assert_eq!(entries[0].sync_state, SyncState::Synced);
+        assert_eq!(entries[1].sync_state, SyncState::Pending);
+        assert_eq!(
+            entries[2].sync_state,
+            SyncState::Orphaned,
+            "the server rejected it, but the user did the work and it is still shown"
+        );
+    }
+
+    #[test]
+    fn listing_keeps_an_explicit_incompletion_apart_from_a_completion() {
+        let connection = seeded();
+        let entries = read_progress(&connection, false).expect("list");
+
+        let marked_incomplete = entries.iter().find(|e| e.lesson_id == "l2").expect("l2");
+        assert_eq!(
+            marked_incomplete.completed_at, None,
+            "a null completed_at is a value, not the absence of a row"
+        );
+        assert!(entries
+            .iter()
+            .find(|e| e.lesson_id == "l1")
+            .expect("l1")
+            .completed_at
+            .is_some());
+    }
+
+    #[test]
+    fn pending_is_a_strict_subset_of_the_full_list() {
+        let connection = seeded();
+        let all = read_progress(&connection, false).expect("list");
+        let pending = read_progress(&connection, true).expect("pending");
+
+        assert_eq!(
+            pending
+                .iter()
+                .map(|e| e.lesson_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["l2"]
+        );
+        assert!(
+            pending.len() < all.len(),
+            "rendering completion from the pending set would make a lesson look \
+             incomplete the moment its row synchronised"
+        );
+    }
+
+    #[test]
+    fn signing_in_changes_which_rows_are_answered_without_deleting_any() {
+        let connection = seeded();
+        settings::set(&connection, settings::KEY_ACTIVE_USER, "someone-else").expect("sign in");
+
+        let entries = read_progress(&connection, false).expect("list");
+        assert_eq!(
+            entries
+                .iter()
+                .map(|e| e.lesson_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["l4"]
+        );
+
+        let total: i64 = connection
+            .query_row("SELECT count(*) FROM user_progress;", [], |row| row.get(0))
+            .expect("count");
+        assert_eq!(total, 4, "signing in as someone else discards nothing");
     }
 }

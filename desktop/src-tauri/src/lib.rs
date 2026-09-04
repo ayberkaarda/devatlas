@@ -41,6 +41,7 @@ pub fn run() {
             commands::download_delete,
             commands::progress_mark,
             commands::progress_pending,
+            commands::progress_list,
             commands::progress_apply_results,
             commands::settings_get,
             commands::settings_set,
@@ -91,14 +92,6 @@ pub fn run() {
             tauri::async_runtime::spawn(async move { resume.pump().await });
 
             app.manage(AppState { engine });
-
-            // Placeholder until the UI owns the reveal: the frontend does not
-            // call window_show yet, and without this the window would stay
-            // hidden forever. Remove this block in the same change that makes
-            // the theme code call the command.
-            if let Some(window) = app.get_webview_window("main") {
-                window.show()?;
-            }
 
             Ok(())
         })
