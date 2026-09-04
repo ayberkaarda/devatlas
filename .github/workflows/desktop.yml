@@ -27,20 +27,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # libayatana-appindicator3-dev and the older libappindicator3-dev declare
+      # a mutual Conflicts, so asking for both leaves apt with no solution.
+      # Ubuntu 24.04 ships the ayatana fork; that is the one Tauri links against.
       - name: Install Linux build dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
             libwebkit2gtk-4.1-dev \
-            libappindicator3-dev \
+            libayatana-appindicator3-dev \
             librsvg2-dev \
             patchelf \
             build-essential \
             curl \
             wget \
             file \
-            libssl-dev \
-            libayatana-appindicator3-dev
+            libssl-dev
 
       # The toolchain version comes from rust-toolchain.toml, which also pins
       # rustfmt and clippy, so it is not repeated here.
@@ -85,10 +87,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             libwebkit2gtk-4.1-dev \
-            libappindicator3-dev \
+            libayatana-appindicator3-dev \
             librsvg2-dev \
-            patchelf \
-            libayatana-appindicator3-dev
+            patchelf
 
       - name: Set up Node
         uses: actions/setup-node@v4
