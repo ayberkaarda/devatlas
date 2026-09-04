@@ -8,3 +8,18 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+
+devatlas:
+  auth:
+    # A `Secure` cookie is never sent over plain HTTP, so a local Angular dev
+    # server on http://localhost would silently never receive the refresh
+    # token. This is the one environment where that flag is off, and it is off
+    # only here.
+    cookie-secure: false
+    allowed-origins:
+      - http://localhost:4200
+      # Desktop webview origins. They differ by platform and are listed here as
+      # the values observed in practice; verify them against the running webview
+      # rather than trusting a written table.
+      - http://tauri.localhost
+      - tauri://localhost

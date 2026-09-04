@@ -17,3 +17,23 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+# Values below are fixtures, not credentials. They exist because the
+# application refuses to start without a signing key and without a seed
+# administrator, and a test container is thrown away at the end of the run.
+# Nothing here is reachable from outside the test JVM.
+devatlas:
+  auth:
+    jwt-secret: test-only-signing-key-not-a-secret-0123456789
+    access-ttl: PT15M
+    refresh-ttl: P60D
+    refresh-grace: PT30S
+    clock-skew: PT60S
+    cookie-secure: false
+    allowed-origins:
+      - http://localhost:4200
+  seed:
+    admin-email: admin@devatlas.test
+    admin-password: seed-admin-password-for-tests

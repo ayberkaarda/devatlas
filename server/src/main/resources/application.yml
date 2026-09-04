@@ -27,6 +27,63 @@ spring:
     # the schema and is unrecoverable against a developer's local database.
     clean-disabled: true
 
+  jackson:
+    # Every JSON property on this API is snake_case, request and response
+    # alike, set once here rather than field by field. Doing it globally
+    # removes an entire class of "which casing did that field use" bug across
+    # the clients and means a newly added DTO cannot opt out by accident.
+    property-naming-strategy: SNAKE_CASE
+
+devatlas:
+  auth:
+    # HMAC signing key for access tokens. There is deliberately no default: a
+    # default signing key is a key everybody has, including whoever reads this
+    # repository. At least 32 bytes; startup fails otherwise.
+    jwt-secret: ${DEVATLAS_JWT_SECRET:}
+    # Short enough that a leaked access token has little value, long enough
+    # that an ordinary reading session makes few refresh calls.
+    access-ttl: PT15M
+    # Per token, not per family: every rotation issues a full fresh lifetime,
+    # so regular use extends a session and only absence ends it.
+    refresh-ttl: P60D
+    # Window in which a repeat of a just-rotated token is read as a lost
+    # response rather than a replay.
+    refresh-grace: PT30S
+    # Tolerance for clock drift when checking a token's time claims.
+    clock-skew: PT60S
+    cookie-name: devatlas_refresh
+    cookie-path: /api/v1/auth
+    # Off only where a browser talks to this API over plain HTTP, which is a
+    # developer's machine and nowhere else (see application-dev.yml).
+    cookie-secure: true
+    # Origins permitted to make credentialed browser requests. Empty by
+    # default: an origin list is a deployment input, and a wrong guess here
+    # either blocks a real client or admits one that should not be admitted.
+    #
+    # A deployment must include the desktop webview origins alongside the web
+    # build's own. The same application runs inside that webview and issues its
+    # calls through the browser stack, so those requests are preflighted like
+    # any other; leaving them out produces a failure that is hard to read --
+    # every desktop call fails at the preflight with no body to inspect, while
+    # identical code works in a browser.
+    allowed-origins: ${DEVATLAS_ALLOWED_ORIGINS:}
+
+  seed:
+    # The first administrator, created by the seed migration on an empty
+    # database. Both values come from the environment and neither has a usable
+    # default: this repository is public, so a literal password in a migration
+    # would be a working credential published for good, beyond the reach of any
+    # later commit to remove.
+    #
+    # Set both before the first start:
+    #   DEVATLAS_ADMIN_EMAIL=you@example.com
+    #   DEVATLAS_ADMIN_PASSWORD=<at least 12 characters>
+    #
+    # If either is missing the migration fails and the transaction rolls back,
+    # so nothing is half-applied: set the variables and start again.
+    admin-email: ${DEVATLAS_ADMIN_EMAIL:}
+    admin-password: ${DEVATLAS_ADMIN_PASSWORD:}
+
 management:
   endpoints:
     web:

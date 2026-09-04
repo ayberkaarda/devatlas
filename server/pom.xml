@@ -65,6 +65,16 @@
 			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 
+		<!-- JOSE/JWT primitives (Nimbus) for the HS256 access token. Pulled in
+		     through the Spring Security module so the version is governed by the
+		     Spring Security BOM rather than pinned by hand. Refresh tokens are
+		     deliberately NOT JWTs: they are opaque random values stored as
+		     digests, because they must be revocable. -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-jose</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
