@@ -6,6 +6,8 @@ on:
     paths:
       - 'desktop/**'
       - 'frontend/**'
+      - 'server/**'
+      - 'docs/protocol/**'
       - 'rust-toolchain.toml'
       - '.nvmrc'
       - '.github/workflows/desktop.yml'
@@ -13,6 +15,8 @@ on:
     paths:
       - 'desktop/**'
       - 'frontend/**'
+      - 'server/**'
+      - 'docs/protocol/**'
       - 'rust-toolchain.toml'
       - '.nvmrc'
       - '.github/workflows/desktop.yml'
@@ -67,6 +71,100 @@ jobs:
       - name: Test
         working-directory: desktop/src-tauri
         run: cargo test
+
+  # Every other desktop test runs against wiremock, a fake that can only ever
+  # agree with itself. This job points the real Engine at the real server and
+  # proves the two sides of the sync protocol actually interoperate: manifest
+  # shapes, digest agreement, Range/If-Match resume behaviour and version
+  # negotiation. It has its own job, separate from `check`, so that a server
+  # that is slow to boot or a network hiccup on the runner cannot turn a fast,
+  # deterministic unit-test job flaky.
+  sync:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The desktop crate links against these even to run its unit and
+      # integration tests, because it is a Tauri application crate.
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libssl-dev
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: server/pom.xml
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            desktop/src-tauri/target
+          key: ${{ runner.os }}-cargo-sync-${{ hashFiles('desktop/src-tauri/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-sync-
+
+      # Started in the background on the fixed test port so it does not
+      # collide with anything else the runner might have bound to 8080.
+      - name: Start the server
+        working-directory: server
+        run: |
+          nohup ./mvnw -q spring-boot:test-run \
+            -Dspring-boot.run.main-class=dev.devatlas.server.TestServerApplication \
+            -Dspring-boot.run.profiles=test \
+            -Dspring-boot.run.arguments=--server.port=18080 \
+            > ../server-sync.log 2>&1 &
+          echo $! > ../server-sync.pid
+
+      # Polls the protocol's own manifest endpoint rather than an actuator
+      # health check, because a 200 there is the actual precondition every
+      # live test depends on: the seed data is loaded and the sync surface is
+      # up, not merely that the JVM started.
+      - name: Wait for the server to answer the catalog endpoint
+        run: |
+          for _ in $(seq 1 120); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:18080/api/v1/manifest/catalog || true)
+            if [ "$code" = "200" ]; then
+              echo "server answered 200 after ${SECONDS}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "server never answered 200 on /api/v1/manifest/catalog within 120s"
+          cat server-sync.log || true
+          exit 1
+
+      - name: Live sync tests
+        working-directory: desktop/src-tauri
+        env:
+          DEVATLAS_API_BASE_URL: http://localhost:18080/api/v1
+        run: cargo test --lib live_ -- --ignored --test-threads=1 --nocapture
+
+      - name: Show server log on failure
+        if: failure()
+        run: cat server-sync.log || true
+
+      - name: Stop the server
+        if: always()
+        run: |
+          if [ -f server-sync.pid ]; then
+            kill "$(cat server-sync.pid)" 2>/dev/null || true
+          fi
 
   # Packaging is the only step that proves the desktop application actually
   # ships, and it is platform-specific, so it runs on both targets. macOS is
