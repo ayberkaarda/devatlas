@@ -17,6 +17,12 @@ import tools.jackson.databind.json.JsonMapper;
  * needs none of that mapper's customizations, and keeping this self-contained is what makes it
  * testable with no Spring context at all (see {@code ContentPackagerDeterminismTest}).
  *
+ * <p>Public because the manifest is hashed by the same rules: §4.2 defines a track manifest's
+ * {@code ETag} as the SHA-256 of its canonical bytes, and §5's ordering rules only produce a
+ * reproducible manifest if the same serializer writes it. The manifest endpoints therefore build a
+ * tree and hand it to this class rather than serializing through the application's own mapper,
+ * whose key order is declaration order.
+ *
  * <p>Every {@link Map} encountered -- top-level or nested, however it was built -- is copied into a
  * {@link TreeMap} before serialization, so the caller never has to pre-sort anything and two
  * packages assembled by inserting the same fields in a different order produce byte-identical
@@ -24,7 +30,7 @@ import tools.jackson.databind.json.JsonMapper;
  * Natural {@link String} ordering is Unicode code point ordering for the ASCII field names this
  * protocol uses, so {@link TreeMap}'s default ordering is exactly the rule §3.2 asks for.
  */
-final class CanonicalJson {
+public final class CanonicalJson {
 
   private static final JsonMapper MAPPER = JsonMapper.builder().build();
 
@@ -34,7 +40,7 @@ final class CanonicalJson {
    * Serializes {@code value} (a {@link Map}, ordinarily) to canonical bytes: keys sorted
    * recursively, {@code null} values dropped recursively, list order preserved.
    */
-  static byte[] bytes(Object value) {
+  public static byte[] bytes(Object value) {
     return MAPPER.writeValueAsBytes(canonicalize(value));
   }
 

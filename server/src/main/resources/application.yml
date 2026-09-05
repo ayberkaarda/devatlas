@@ -68,6 +68,16 @@ devatlas:
     # identical code works in a browser.
     allowed-origins: ${DEVATLAS_ALLOWED_ORIGINS:}
 
+  rate-limit:
+    # Per-IP budgets for the two anonymous endpoint families. They take no
+    # credentials, so there is no principal to key a limit by and the client
+    # address is what is left. The ratio is deliberate: a client reads a handful
+    # of manifests and then downloads many packages, with up to three concurrent
+    # transfers and resume, so a limit sized for manifest polling would strangle
+    # a legitimate library download.
+    manifest-per-minute: 60
+    content-per-minute: 600
+
   seed:
     # The first administrator, created by the seed migration on an empty
     # database. Both values come from the environment and neither has a usable

@@ -34,6 +34,17 @@ devatlas:
     cookie-secure: false
     allowed-origins:
       - http://localhost:4200
+  # Effectively unlimited for the suite. The counter is keyed by client IP and
+  # every test in the run shares one (127.0.0.1), so production limits here would
+  # make a green run depend on how many requests the classes ahead of this one
+  # happened to make in the same minute -- a failure that appears and disappears
+  # with test ordering. The limiter itself is exercised by lowering the budget
+  # for the duration of one test instead, which keeps the assertion explicit and
+  # the rest of the suite unaffected.
+  rate-limit:
+    manifest-per-minute: 1000000
+    content-per-minute: 1000000
+
   seed:
     admin-email: admin@devatlas.test
     admin-password: seed-admin-password-for-tests

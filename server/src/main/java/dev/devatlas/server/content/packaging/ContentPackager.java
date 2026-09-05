@@ -1,9 +1,6 @@
 package dev.devatlas.server.content.packaging;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
-import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +76,16 @@ public class ContentPackager {
         .toList();
   }
 
-  /** §5: {@code translations} sorted by {@code locale}. */
+  /**
+   * §5: {@code translations} sorted by {@code locale}.
+   *
+   * <p>The translated body is {@code body}, not {@code body_markdown}. The two names are not
+   * interchangeable and the distinction is deliberate: a lesson's own body is {@code body_markdown}
+   * at the top level of the package, while a translation entry mirrors the {@code (title, body)}
+   * shape a translation row actually has -- the same name it carries in the read API and in a track
+   * manifest's translations. A single spelling across all three is what lets a client parse a
+   * translation the same way wherever it meets one.
+   */
   private static List<Map<String, Object>> translations(List<TranslationPackageItem> items) {
     return items.stream()
         .sorted(Comparator.comparing(TranslationPackageItem::locale))
@@ -88,7 +94,7 @@ public class ContentPackager {
               Map<String, Object> map = new LinkedHashMap<>();
               map.put("locale", item.locale());
               map.put("title", item.title());
-              map.put("body_markdown", item.bodyMarkdown());
+              map.put("body", item.body());
               return map;
             })
         .toList();
@@ -96,16 +102,6 @@ public class ContentPackager {
 
   private static PackagedContent pack(Map<String, Object> canonical) {
     byte[] bytes = CanonicalJson.bytes(canonical);
-    return new PackagedContent(bytes, sha256Hex(bytes), bytes.length);
-  }
-
-  private static String sha256Hex(byte[] bytes) {
-    try {
-      MessageDigest digest = MessageDigest.getInstance("SHA-256");
-      return HexFormat.of().formatHex(digest.digest(bytes));
-    } catch (NoSuchAlgorithmException e) {
-      // Every JDK ships SHA-256; reaching this means the runtime itself is broken.
-      throw new IllegalStateException("SHA-256 is not available on this JVM.", e);
-    }
+    return new PackagedContent(bytes, Sha256.hex(bytes), bytes.length);
   }
 }

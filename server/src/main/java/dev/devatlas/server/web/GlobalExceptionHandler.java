@@ -3,6 +3,7 @@ package dev.devatlas.server.web;
 import dev.devatlas.server.common.ApiException;
 import dev.devatlas.server.common.ApiFieldError;
 import dev.devatlas.server.common.ErrorCode;
+import dev.devatlas.server.content.manifest.ContentVersionSupersededException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -56,6 +57,20 @@ public class GlobalExceptionHandler {
           Map.entry("Range", "RANGE"),
           Map.entry("Email", "FORMAT"),
           Map.entry("URL", "FORMAT"));
+
+  /**
+   * The one error that carries a number the client acts on rather than logs. A superseded package
+   * request is not a failure the download engine retries -- it re-plans against the version named
+   * here and does not consume an attempt.
+   */
+  @ExceptionHandler(ContentVersionSupersededException.class)
+  public ResponseEntity<ErrorResponse> handleSupersededVersion(
+      ContentVersionSupersededException exception) {
+    return ResponseEntity.status(exception.code().status())
+        .body(
+            new ErrorResponse(
+                exception.code().name(), exception.getMessage(), null, exception.currentVersion()));
+  }
 
   @ExceptionHandler(ApiException.class)
   public ResponseEntity<ErrorResponse> handleApiException(ApiException exception) {

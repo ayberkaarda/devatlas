@@ -38,7 +38,7 @@ class FlywayMigrationIT {
                 + " installed_rank",
             String.class);
 
-    assertThat(appliedVersions).containsExactly("1", "2", "3", "4", "5", "6");
+    assertThat(appliedVersions).containsExactly("1", "2", "3", "4", "5", "6", "7", "8", "9");
   }
 
   @Test
@@ -73,6 +73,7 @@ class FlywayMigrationIT {
             "mind_maps",
             "modules",
             "pipeline_audit_log",
+            "rate_limit_counters",
             "refresh_tokens",
             "source_updates",
             "tracks",
@@ -165,6 +166,83 @@ class FlywayMigrationIT {
             jdbcTemplate.queryForObject(
                 "SELECT count(*) FROM users WHERE role = 'ADMIN'", Integer.class))
         .isGreaterThanOrEqualTo(1);
+  }
+
+  /**
+   * The seeded track carries a real translation, with a body that is actually there.
+   *
+   * <p>This is the fixture that makes translated content reachable from a fresh database. A
+   * translation is a nested object inside the hashed package bytes and the thing the "not yet
+   * translated" fallback is measured against, so seeded content that carried none would leave every
+   * test running against it blind to that half of a package -- and a field no test ever populates
+   * is a field whose absence looks exactly like success.
+   */
+  @Test
+  void theSeededTrackCarriesATranslationWithABody() {
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+    UUID seedTrackId =
+        jdbcTemplate.queryForObject(
+            "SELECT id FROM tracks WHERE slug = 'angular-path'", UUID.class);
+
+    List<String> locales =
+        jdbcTemplate.queryForList(
+            "SELECT t.locale FROM content_translations t"
+                + " JOIN lessons l ON l.id = t.entity_id"
+                + " JOIN modules m ON m.id = l.module_id"
+                + " WHERE t.entity_type = 'LESSON' AND m.track_id = ?"
+                + " AND t.body IS NOT NULL AND btrim(t.body) <> ''"
+                + " ORDER BY t.locale",
+            String.class,
+            seedTrackId);
+
+    assertThat(locales).contains("tr");
+    assertThat(locales).hasSizeGreaterThanOrEqualTo(1);
+  }
+
+  /**
+   * Seeded content carries a stored package once the application has started.
+   *
+   * <p>The seed migration inserts lessons and a mind map with their package columns null, because a
+   * digest written by hand in SQL would be a second, unverifiable implementation of the packaging
+   * rules. A later migration clears every stored package for the same reason, whenever the package
+   * format changes. Both leave rows that no manifest may advertise until the service layer builds
+   * their bytes -- so the assertion here is that startup actually does it, and that a fresh
+   * database is therefore fully downloadable without an operator running anything by hand.
+   */
+  @Test
+  void seededContentIsPackagedByTheTimeTheApplicationHasStarted() {
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+    UUID seedTrackId =
+        jdbcTemplate.queryForObject(
+            "SELECT id FROM tracks WHERE slug = 'angular-path'", UUID.class);
+
+    assertThat(
+            jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM lessons l"
+                    + " JOIN modules m ON m.id = l.module_id"
+                    + " WHERE m.track_id = ? AND l.sha256 IS NULL",
+                Integer.class,
+                seedTrackId))
+        .isZero();
+    assertThat(
+            jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM mind_maps WHERE track_id = ? AND sha256 IS NOT NULL",
+                Integer.class,
+                seedTrackId))
+        .isEqualTo(1);
+    // The three package columns move together: a digest with no bytes behind it is the state the
+    // check constraints exist to make impossible.
+    assertThat(
+            jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM lessons l"
+                    + " JOIN modules m ON m.id = l.module_id"
+                    + " WHERE m.track_id = ?"
+                    + " AND (l.package_bytes IS NULL OR l.package_size_bytes IS NULL)",
+                Integer.class,
+                seedTrackId))
+        .isZero();
   }
 
   /**

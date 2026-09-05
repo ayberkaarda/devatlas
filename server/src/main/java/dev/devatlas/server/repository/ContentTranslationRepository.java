@@ -2,6 +2,7 @@ package dev.devatlas.server.repository;
 
 import dev.devatlas.server.domain.ContentTranslation;
 import dev.devatlas.server.domain.TranslationEntityType;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,6 +13,9 @@ public interface ContentTranslationRepository extends JpaRepository<ContentTrans
 
   List<ContentTranslation> findByEntityTypeAndEntityId(
       TranslationEntityType entityType, UUID entityId);
+
+  List<ContentTranslation> findByEntityTypeAndEntityIdIn(
+      TranslationEntityType entityType, Collection<UUID> entityIds);
 
   Optional<ContentTranslation> findByEntityTypeAndEntityIdAndLocale(
       TranslationEntityType entityType, UUID entityId, String locale);

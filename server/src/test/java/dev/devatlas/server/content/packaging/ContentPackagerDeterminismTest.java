@@ -147,6 +147,25 @@ class ContentPackagerDeterminismTest {
     assertThat(json).doesNotContain("estimated_minutes").doesNotContain("null");
   }
 
+  /**
+   * The lesson's own markdown and a translation's text are two different fields with two different
+   * names, and a package that used one name for both would be unparseable without knowing which
+   * level it was reading. {@code body_markdown} belongs to the lesson, at the top level, and
+   * appears exactly once; a translation entry carries {@code body}, the same name the translation
+   * row, the read API and a track manifest all use.
+   */
+  @Test
+  void aTranslationCarriesBodyWhileTheLessonsOwnMarkdownStaysBodyMarkdown() {
+    byte[] bytes = packager.packageLesson(sampleLesson("# Signals\n")).bytes();
+    String json = new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
+
+    // Canonical key order inside the translation entry: body, locale, title.
+    assertThat(json)
+        .contains(
+            "{\"body\":\"Sinyaller hakkinda.\",\"locale\":\"tr\",\"title\":\"Sinyallere giris\"}");
+    assertThat(json.split("\"body_markdown\"", -1).length - 1).isEqualTo(1);
+  }
+
   private static LessonPackage sampleLesson(String bodyMarkdown) {
     return new LessonPackage(
         UUID.fromString("018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70"),
