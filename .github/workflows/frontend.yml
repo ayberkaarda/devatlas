@@ -41,6 +41,14 @@ jobs:
       - name: Lint
         run: npx eslint .
 
+      # Locale parity plus a check that every key the templates ask for exists.
+      # Four locale files that are missing the same key stay perfectly in
+      # parity, so the parity check alone cannot see it — and the interface
+      # renders the key itself, which reads as a layout bug rather than a
+      # translation one.
+      - name: Translations
+        run: npm run i18n:check
+
       # Not the same as `ng build`: this checks every file under src/,
       # including code that no entry point reaches yet.
       - name: Typecheck
