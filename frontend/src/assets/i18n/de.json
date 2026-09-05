@@ -6,13 +6,12 @@
   },
   "nav": {
     "label": "Hauptnavigation",
-    "tracks": "Lernpfade"
+    "tracks": "Lernpfade",
+    "downloads": "Downloads"
   },
   "theme": {
-    "label": "Design",
     "light": "Hell",
     "dark": "Dunkel",
-    "system": "System",
     "toggle": "Design wechseln"
   },
   "language": {
@@ -25,6 +24,7 @@
   "common": {
     "loading": "Wird geladen…",
     "retry": "Erneut versuchen",
+    "cancel": "Abbrechen",
     "minutes": "{{count}} Min."
   },
   "content": {
@@ -43,23 +43,91 @@
     "backToTracks": "Alle Lernpfade",
     "modules": "Module",
     "empty": "Dieser Lernpfad enthält noch keine Lektionen.",
-    "download": "Herunterladen",
-    "downloadHint": "{{title}} zum Offline-Lesen herunterladen",
-    "openLesson": "Lektion {{title}} öffnen"
+    "openLesson": "Lektion {{title}} öffnen",
+    "mindMap": "Mindmap",
+    "mindMapHint": "Mindmap für {{title}} öffnen"
   },
   "lesson": {
     "backToTrack": "Zurück zum Lernpfad",
     "codeExamples": "Codebeispiele",
     "markComplete": "Als abgeschlossen markieren",
     "markIncomplete": "Als nicht abgeschlossen markieren",
-    "completed": "Abgeschlossen",
     "estimated": "Etwa {{count}} Min.",
     "difficultyLabel": "Schwierigkeit",
     "difficulty": {
       "BEGINNER": "Einsteiger",
       "INTERMEDIATE": "Fortgeschritten",
       "ADVANCED": "Experte"
+    },
+    "notDownloaded": "Diese Lektion wurde noch nicht auf dieses Gerät heruntergeladen."
+  },
+  "download": {
+    "action": {
+      "cancel": "Abbrechen",
+      "confirmDelete": "Ja, löschen",
+      "delete": "Löschen",
+      "download": "Herunterladen",
+      "pause": "Pausieren",
+      "resume": "Fortsetzen",
+      "retry": "Erneut versuchen",
+      "update": "Aktualisieren"
+    },
+    "containerProgress": "{{downloaded}} von {{total}} heruntergeladen",
+    "deleteHint": "Diese heruntergeladene Kopie von diesem Gerät löschen?",
+    "progress": "{{done}} von {{total}}",
+    "hint": {
+      "cancel": "Download von {{title}} abbrechen",
+      "delete": "Heruntergeladene Kopie von {{title}} löschen",
+      "download": "{{title}} zum Offline-Lesen herunterladen",
+      "pause": "Download von {{title}} pausieren",
+      "resume": "Download von {{title}} fortsetzen",
+      "retry": "Download von {{title}} erneut versuchen",
+      "update": "Heruntergeladene Kopie von {{title}} aktualisieren"
+    },
+    "state": {
+      "QUEUED": "In Warteschlange",
+      "DOWNLOADING": "Wird heruntergeladen",
+      "VERIFYING": "Wird geprüft",
+      "DONE": "Heruntergeladen",
+      "FAILED": "Fehlgeschlagen",
+      "PAUSED": "Pausiert",
+      "PAUSED_INSUFFICIENT_STORAGE": "Pausiert (Speicherplatz reicht nicht aus)",
+      "DOWNLOADED": "Heruntergeladen",
+      "UPDATE_AVAILABLE": "Update verfügbar",
+      "LOCAL_AHEAD": "Neuer als der Server",
+      "LOCAL_AHEAD_HINT": "Ihre lokale Kopie ist neuer als die vom Server gemeldete Version. Sie wird nicht automatisch überschrieben.",
+      "WITHDRAWN": "Zurückgezogen",
+      "WITHDRAWN_HINT": "Dieser Inhalt wurde aus der Bibliothek zurückgezogen. Ihre heruntergeladene Kopie funktioniert weiterhin, erhält aber keine Updates mehr."
     }
+  },
+  "downloads": {
+    "anomaly": "Versionskonflikt bei {{entityType}} — lokale Version {{local}}, Serverversion {{manifest}}.",
+    "checkForUpdates": "Nach Updates suchen",
+    "checking": "Wird geprüft…",
+    "empty": "Sie haben noch nichts heruntergeladen.",
+    "entityLesson": "Lektion",
+    "entityMindMap": "Mindmap",
+    "heading": "Downloads",
+    "intro": "Alles, was Sie auf diesem Gerät für die Offline-Nutzung gespeichert haben.",
+    "newAvailable": "{{count}} neue Lektionen verfügbar",
+    "onlyOnDesktop": "Downloads sind nur in der Desktop-Anwendung verfügbar.",
+    "sectionDone": "Heruntergeladen",
+    "storageUsed": "{{size}} auf diesem Gerät belegt",
+    "upToDate": "Ihre Bibliothek ist aktuell.",
+    "updatedCount": "{{count}} Lektionen aktualisiert",
+    "withdrawnCount": "{{count}} Einträge zurückgezogen"
+  },
+  "mindMap": {
+    "backToTrack": "Zurück zum Lernpfad",
+    "heading": "Mindmap",
+    "loading": "Wird geladen…",
+    "notDownloaded": "Diese Mindmap wurde noch nicht auf dieses Gerät heruntergeladen.",
+    "notInLibrary": "Nicht heruntergeladen",
+    "nodeDownloadHint": "{{title}} zum Lesen herunterladen",
+    "nodeHint": "Lektion {{title}} öffnen",
+    "nodeQueuedHint": "{{title}} wird heruntergeladen",
+    "treeLabel": "Mindmap für {{title}}",
+    "unavailable": "Dieser Lernpfad hat keine Mindmap."
   },
   "notFound": {
     "heading": "Diese Seite gibt es nicht",
@@ -73,6 +141,18 @@
     "LESSON_NOT_FOUND": "Diese Lektion gibt es nicht mehr.",
     "ENTITY_NOT_IN_LIBRARY": "Dieser Inhalt ist noch nicht in Ihrer Bibliothek.",
     "UNSUPPORTED_ON_WEB": "Diese Aktion ist nur in der Desktop-Anwendung verfügbar.",
-    "INTERNAL_ERROR": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    "INTERNAL_ERROR": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "MIND_MAP_NOT_FOUND": "Diese Mindmap gibt es nicht mehr.",
+    "STORE_UNAVAILABLE": "Der lokale Speicher ist nicht erreichbar. Bitte versuchen Sie es erneut.",
+    "ALREADY_QUEUED": "Dieser Eintrag wird bereits heruntergeladen.",
+    "NOTHING_TO_DO": "Hier gibt es nichts zu tun.",
+    "INVALID_ARGUMENT": "Diese Anfrage konnte nicht verarbeitet werden. Bitte versuchen Sie es erneut.",
+    "UNEXPECTED_RESPONSE": "Der Server hat eine unerwartete Antwort gesendet. Bitte versuchen Sie es erneut.",
+    "RATE_LIMITED": "Zu viele Anfragen. Bitte warten Sie einen Moment und versuchen Sie es erneut.",
+    "CONTENT_VERSION_SUPERSEDED": "Es ist eine neuere Version dieses Inhalts verfügbar. Versuchen Sie es erneut, um sie zu erhalten.",
+    "CONTENT_CHANGED_DURING_RESUME": "Der Inhalt hat sich während der Fortsetzung geändert. Bitte versuchen Sie den Download erneut.",
+    "DIGEST_MISMATCH": "Die heruntergeladene Datei hat die Prüfung nicht bestanden. Bitte versuchen Sie es erneut.",
+    "INSUFFICIENT_STORAGE": "Auf diesem Gerät ist nicht genug Speicherplatz vorhanden, um fortzufahren.",
+    "SERVICE_UNAVAILABLE": "Der Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in Kürze erneut."
   }
 }

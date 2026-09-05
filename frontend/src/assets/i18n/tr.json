@@ -6,13 +6,12 @@
   },
   "nav": {
     "label": "Ana gezinme",
-    "tracks": "Yollar"
+    "tracks": "Yollar",
+    "downloads": "İndirilenler"
   },
   "theme": {
-    "label": "Tema",
     "light": "Açık",
     "dark": "Koyu",
-    "system": "Sistem",
     "toggle": "Temayı değiştir"
   },
   "language": {
@@ -25,6 +24,7 @@
   "common": {
     "loading": "Yükleniyor…",
     "retry": "Yeniden dene",
+    "cancel": "İptal",
     "minutes": "{{count}} dk"
   },
   "content": {
@@ -43,23 +43,91 @@
     "backToTracks": "Tüm yollar",
     "modules": "Modüller",
     "empty": "Bu yolda henüz ders yok.",
-    "download": "İndir",
-    "downloadHint": "{{title}} içeriğini çevrimdışı okumak için indir",
-    "openLesson": "{{title}} dersini aç"
+    "openLesson": "{{title}} dersini aç",
+    "mindMap": "Zihin haritası",
+    "mindMapHint": "{{title}} için zihin haritasını aç"
   },
   "lesson": {
     "backToTrack": "Yola dön",
     "codeExamples": "Kod örnekleri",
     "markComplete": "Tamamlandı olarak işaretle",
     "markIncomplete": "Tamamlanmadı olarak işaretle",
-    "completed": "Tamamlandı",
     "estimated": "Yaklaşık {{count}} dk",
     "difficultyLabel": "Zorluk",
     "difficulty": {
       "BEGINNER": "Başlangıç",
       "INTERMEDIATE": "Orta",
       "ADVANCED": "İleri"
+    },
+    "notDownloaded": "Bu ders henüz bu cihaza indirilmedi."
+  },
+  "download": {
+    "action": {
+      "cancel": "İptal Et",
+      "confirmDelete": "Evet, sil",
+      "delete": "Sil",
+      "download": "İndir",
+      "pause": "Duraklat",
+      "resume": "Devam Et",
+      "retry": "Yeniden Dene",
+      "update": "Güncelle"
+    },
+    "containerProgress": "{{total}} öğeden {{downloaded}} tanesi indirildi",
+    "deleteHint": "Bu indirilmiş kopya cihazdan silinsin mi?",
+    "progress": "{{total}} üzerinden {{done}}",
+    "hint": {
+      "cancel": "{{title}} indirmesini iptal et",
+      "delete": "{{title}} için indirilmiş kopyayı sil",
+      "download": "{{title}} içeriğini çevrimdışı okumak için indir",
+      "pause": "{{title}} indirmesini duraklat",
+      "resume": "{{title}} indirmesine devam et",
+      "retry": "{{title}} indirmesini yeniden dene",
+      "update": "{{title}} için indirilmiş kopyayı güncelle"
+    },
+    "state": {
+      "QUEUED": "Sırada",
+      "DOWNLOADING": "İndiriliyor",
+      "VERIFYING": "Doğrulanıyor",
+      "DONE": "İndirildi",
+      "FAILED": "Başarısız",
+      "PAUSED": "Duraklatıldı",
+      "PAUSED_INSUFFICIENT_STORAGE": "Duraklatıldı (depolama alanı yetersiz)",
+      "DOWNLOADED": "İndirildi",
+      "UPDATE_AVAILABLE": "Güncelleme var",
+      "LOCAL_AHEAD": "Sunucudan daha yeni",
+      "LOCAL_AHEAD_HINT": "Cihazınızdaki kopya sunucunun bildirdiğinden daha yeni. Otomatik olarak üzerine yazılmayacak.",
+      "WITHDRAWN": "Kaldırıldı",
+      "WITHDRAWN_HINT": "Bu içerik kütüphaneden kaldırıldı. İndirilmiş kopyanız çalışmaya devam eder ancak artık güncelleme almaz."
     }
+  },
+  "downloads": {
+    "anomaly": "{{entityType}} sürüm uyuşmazlığı — sizde sürüm {{local}}, sunucuda sürüm {{manifest}}.",
+    "checkForUpdates": "Güncellemeleri kontrol et",
+    "checking": "Kontrol ediliyor…",
+    "empty": "Henüz hiçbir şey indirmediniz.",
+    "entityLesson": "Ders",
+    "entityMindMap": "Zihin haritası",
+    "heading": "İndirilenler",
+    "intro": "Çevrimdışı kullanım için bu cihazda sakladığınız her şey.",
+    "newAvailable": "{{count}} yeni ders mevcut",
+    "onlyOnDesktop": "İndirme özelliği yalnızca masaüstü uygulamasında kullanılabilir.",
+    "sectionDone": "İndirildi",
+    "storageUsed": "Bu cihazda {{size}} kullanılıyor",
+    "upToDate": "Kütüphaneniz güncel.",
+    "updatedCount": "{{count}} ders güncellendi",
+    "withdrawnCount": "{{count}} öğe kaldırıldı"
+  },
+  "mindMap": {
+    "backToTrack": "Yola dön",
+    "heading": "Zihin haritası",
+    "loading": "Yükleniyor…",
+    "notDownloaded": "Bu zihin haritası henüz bu cihaza indirilmedi.",
+    "notInLibrary": "İndirilmedi",
+    "nodeDownloadHint": "Okumak için {{title}} dersini indir",
+    "nodeHint": "{{title}} dersini aç",
+    "nodeQueuedHint": "{{title}} indiriliyor",
+    "treeLabel": "{{title}} için zihin haritası",
+    "unavailable": "Bu yolun zihin haritası yok."
   },
   "notFound": {
     "heading": "Bu sayfa yok",
@@ -73,6 +141,18 @@
     "LESSON_NOT_FOUND": "Bu ders artık mevcut değil.",
     "ENTITY_NOT_IN_LIBRARY": "Bu içerik henüz kitaplığınızda değil.",
     "UNSUPPORTED_ON_WEB": "Bu işlem yalnızca masaüstü uygulamasında kullanılabilir.",
-    "INTERNAL_ERROR": "Beklenmeyen bir hata oluştu. Lütfen yeniden deneyin."
+    "INTERNAL_ERROR": "Beklenmeyen bir hata oluştu. Lütfen yeniden deneyin.",
+    "MIND_MAP_NOT_FOUND": "Bu zihin haritası artık mevcut değil.",
+    "STORE_UNAVAILABLE": "Yerel depolamaya ulaşılamadı. Lütfen tekrar deneyin.",
+    "ALREADY_QUEUED": "Bu öğe zaten indiriliyor.",
+    "NOTHING_TO_DO": "Burada yapılacak bir şey yok.",
+    "INVALID_ARGUMENT": "Bu istek işlenemedi. Lütfen tekrar deneyin.",
+    "UNEXPECTED_RESPONSE": "Sunucudan beklenmeyen bir yanıt geldi. Lütfen tekrar deneyin.",
+    "RATE_LIMITED": "Çok fazla istek gönderildi. Lütfen biraz bekleyip tekrar deneyin.",
+    "CONTENT_VERSION_SUPERSEDED": "Bu içeriğin daha yeni bir sürümü yayınlandı. Almak için yeniden deneyin.",
+    "CONTENT_CHANGED_DURING_RESUME": "İndirme devam ederken içerik değişti. Lütfen yeniden deneyin.",
+    "DIGEST_MISMATCH": "İndirilen dosya doğrulamadan geçemedi. Lütfen yeniden deneyin.",
+    "INSUFFICIENT_STORAGE": "Devam etmek için cihazınızda yeterli depolama alanı yok.",
+    "SERVICE_UNAVAILABLE": "Hizmet geçici olarak kullanılamıyor. Lütfen kısa süre sonra tekrar deneyin."
   }
 }

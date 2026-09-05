@@ -6,13 +6,12 @@
   },
   "nav": {
     "label": "Main navigation",
-    "tracks": "Tracks"
+    "tracks": "Tracks",
+    "downloads": "Downloads"
   },
   "theme": {
-    "label": "Theme",
     "light": "Light",
     "dark": "Dark",
-    "system": "System",
     "toggle": "Change theme"
   },
   "language": {
@@ -25,6 +24,7 @@
   "common": {
     "loading": "Loading…",
     "retry": "Try again",
+    "cancel": "Cancel",
     "minutes": "{{count}} min"
   },
   "content": {
@@ -43,23 +43,91 @@
     "backToTracks": "All tracks",
     "modules": "Modules",
     "empty": "This track has no lessons yet.",
-    "download": "Download",
-    "downloadHint": "Download {{title}} for offline reading",
-    "openLesson": "Open the lesson {{title}}"
+    "openLesson": "Open the lesson {{title}}",
+    "mindMap": "Mind map",
+    "mindMapHint": "Open the mind map for {{title}}"
   },
   "lesson": {
     "backToTrack": "Back to the track",
     "codeExamples": "Code examples",
     "markComplete": "Mark as completed",
     "markIncomplete": "Mark as not completed",
-    "completed": "Completed",
     "estimated": "About {{count}} min",
     "difficultyLabel": "Difficulty",
     "difficulty": {
       "BEGINNER": "Beginner",
       "INTERMEDIATE": "Intermediate",
       "ADVANCED": "Advanced"
+    },
+    "notDownloaded": "This lesson has not been downloaded to this device yet."
+  },
+  "download": {
+    "action": {
+      "cancel": "Cancel",
+      "confirmDelete": "Yes, delete",
+      "delete": "Delete",
+      "download": "Download",
+      "pause": "Pause",
+      "resume": "Resume",
+      "retry": "Retry",
+      "update": "Update"
+    },
+    "containerProgress": "{{downloaded}} of {{total}} downloaded",
+    "deleteHint": "Delete this downloaded copy from this device?",
+    "progress": "{{done}} of {{total}}",
+    "hint": {
+      "cancel": "Cancel the download of {{title}}",
+      "delete": "Delete the downloaded copy of {{title}}",
+      "download": "Download {{title}} for offline reading",
+      "pause": "Pause the download of {{title}}",
+      "resume": "Resume the download of {{title}}",
+      "retry": "Retry the download of {{title}}",
+      "update": "Update the downloaded copy of {{title}}"
+    },
+    "state": {
+      "QUEUED": "Queued",
+      "DOWNLOADING": "Downloading",
+      "VERIFYING": "Verifying",
+      "DONE": "Downloaded",
+      "FAILED": "Failed",
+      "PAUSED": "Paused",
+      "PAUSED_INSUFFICIENT_STORAGE": "Paused (not enough storage)",
+      "DOWNLOADED": "Downloaded",
+      "UPDATE_AVAILABLE": "Update available",
+      "LOCAL_AHEAD": "Newer than the server",
+      "LOCAL_AHEAD_HINT": "Your local copy is newer than what the server reports. It will not be overwritten automatically.",
+      "WITHDRAWN": "Withdrawn",
+      "WITHDRAWN_HINT": "This content was withdrawn from the library. Your downloaded copy still works, but it will no longer receive updates."
     }
+  },
+  "downloads": {
+    "anomaly": "{{entityType}} version mismatch — local version {{local}}, server version {{manifest}}.",
+    "checkForUpdates": "Check for updates",
+    "checking": "Checking…",
+    "empty": "You have not downloaded anything yet.",
+    "entityLesson": "Lesson",
+    "entityMindMap": "Mind map",
+    "heading": "Downloads",
+    "intro": "Everything you have stored on this device for offline use.",
+    "newAvailable": "{{count}} new lessons available",
+    "onlyOnDesktop": "Downloads are only available in the desktop application.",
+    "sectionDone": "Downloaded",
+    "storageUsed": "{{size}} used on this device",
+    "upToDate": "Your library is up to date.",
+    "updatedCount": "{{count}} lessons updated",
+    "withdrawnCount": "{{count}} items withdrawn"
+  },
+  "mindMap": {
+    "backToTrack": "Back to the track",
+    "heading": "Mind map",
+    "loading": "Loading…",
+    "notDownloaded": "This mind map has not been downloaded to this device yet.",
+    "notInLibrary": "Not downloaded",
+    "nodeDownloadHint": "Download {{title}} to read it",
+    "nodeHint": "Open the lesson {{title}}",
+    "nodeQueuedHint": "{{title}} is downloading",
+    "treeLabel": "Mind map for {{title}}",
+    "unavailable": "This track has no mind map."
   },
   "notFound": {
     "heading": "This page does not exist",
@@ -73,6 +141,18 @@
     "LESSON_NOT_FOUND": "This lesson no longer exists.",
     "ENTITY_NOT_IN_LIBRARY": "This content is not in your library yet.",
     "UNSUPPORTED_ON_WEB": "This action is only available in the desktop application.",
-    "INTERNAL_ERROR": "An unexpected error occurred. Please try again."
+    "INTERNAL_ERROR": "An unexpected error occurred. Please try again.",
+    "MIND_MAP_NOT_FOUND": "This mind map no longer exists.",
+    "STORE_UNAVAILABLE": "The local storage could not be reached. Please try again.",
+    "ALREADY_QUEUED": "This item is already downloading.",
+    "NOTHING_TO_DO": "There is nothing to do here.",
+    "INVALID_ARGUMENT": "This request could not be processed. Please try again.",
+    "UNEXPECTED_RESPONSE": "The server returned an unexpected response. Please try again.",
+    "RATE_LIMITED": "Too many requests. Please wait a moment and try again.",
+    "CONTENT_VERSION_SUPERSEDED": "A newer version of this content is now available. Please retry to get it.",
+    "CONTENT_CHANGED_DURING_RESUME": "The content changed while resuming. Please retry the download.",
+    "DIGEST_MISMATCH": "The downloaded file did not pass verification. Please retry.",
+    "INSUFFICIENT_STORAGE": "There is not enough storage on this device to continue.",
+    "SERVICE_UNAVAILABLE": "The service is temporarily unavailable. Please try again shortly."
   }
 }

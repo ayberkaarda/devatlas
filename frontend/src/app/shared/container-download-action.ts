@@ -14,6 +14,7 @@ import { DownloadStore } from '../core/library/download-store';
 import { errorKey } from '../core/platform/error-key';
 import type { DownloadScope, LessonSummary } from '../core/platform/models';
 import { PlatformService } from '../core/platform/platform.service';
+import { BytesFormatPipe } from './bytes.pipe';
 
 /**
  * The download action for a module or a track: neither has an `Availability`
@@ -29,7 +30,7 @@ import { PlatformService } from '../core/platform/platform.service';
 @Component({
   selector: 'app-container-download-action',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, BytesFormatPipe],
   templateUrl: './container-download-action.html',
 })
 export class ContainerDownloadAction {

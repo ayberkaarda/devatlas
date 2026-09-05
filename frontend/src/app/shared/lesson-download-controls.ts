@@ -13,6 +13,7 @@ import { DownloadStore } from '../core/library/download-store';
 import { errorKey, queueErrorKey } from '../core/platform/error-key';
 import { contentAvailability, type Availability, type QueueState } from '../core/platform/models';
 import { PlatformService } from '../core/platform/platform.service';
+import { BytesFormatPipe } from './bytes.pipe';
 
 /**
  * The download control for exactly one lesson: a download/update button, a
@@ -33,7 +34,7 @@ import { PlatformService } from '../core/platform/platform.service';
 @Component({
   selector: 'app-lesson-download-controls',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, BytesFormatPipe],
   templateUrl: './lesson-download-controls.html',
 })
 export class LessonDownloadControls {

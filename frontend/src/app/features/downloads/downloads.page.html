@@ -74,11 +74,10 @@
       @for (batch of batches(); track batch.batchId) {
         <section class="rounded-lg border border-border bg-surface p-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
+            @let batchReceived = batch.receivedBytes | bytesFormat;
+            @let batchTotal = batch.totalBytes | bytesFormat;
             <span class="text-xs text-text-muted">
-              {{
-                'download.progress'
-                  | translate: { done: batch.receivedBytes, total: batch.totalBytes }
-              }}
+              {{ 'download.progress' | translate: { done: batchReceived, total: batchTotal } }}
             </span>
             <div class="flex gap-2">
               @if (batch.anyPaused) {
@@ -133,11 +132,12 @@
                     }}</span>
                   }
                   @default {
+                    @let entryReceived = entry.receivedBytes | bytesFormat;
+                    @let entryTotal = entry.totalBytes | bytesFormat;
                     <span class="ml-auto text-xs text-text-muted">
                       {{ 'download.state.' + entry.state | translate }}
                       ({{
-                        'download.progress'
-                          | translate: { done: entry.receivedBytes, total: entry.totalBytes }
+                        'download.progress' | translate: { done: entryReceived, total: entryTotal }
                       }})
                     </span>
                   }

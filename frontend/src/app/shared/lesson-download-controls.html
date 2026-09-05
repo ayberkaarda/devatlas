@@ -25,12 +25,12 @@
     }
 
     @if (transfer(); as active) {
+      @let activeDone = active.bytesDone | bytesFormat;
+      @let activeTotal = active.bytesTotal | bytesFormat;
       <span class="text-xs text-text-muted">
         {{ 'download.state.' + active.state | translate }}
         @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
-          ({{
-            'download.progress' | translate: { done: active.bytesDone, total: active.bytesTotal }
-          }})
+          ({{ 'download.progress' | translate: { done: activeDone, total: activeTotal } }})
         }
         @if (active.state === 'FAILED' && transferLastErrorKey(); as reasonKey) {
           — {{ reasonKey | translate }}

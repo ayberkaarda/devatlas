@@ -6,13 +6,12 @@
   },
   "nav": {
     "label": "Navigation principale",
-    "tracks": "Parcours"
+    "tracks": "Parcours",
+    "downloads": "Téléchargements"
   },
   "theme": {
-    "label": "Thème",
     "light": "Clair",
     "dark": "Sombre",
-    "system": "Système",
     "toggle": "Changer de thème"
   },
   "language": {
@@ -25,6 +24,7 @@
   "common": {
     "loading": "Chargement…",
     "retry": "Réessayer",
+    "cancel": "Annuler",
     "minutes": "{{count}} min"
   },
   "content": {
@@ -43,23 +43,91 @@
     "backToTracks": "Tous les parcours",
     "modules": "Modules",
     "empty": "Ce parcours ne contient pas encore de leçons.",
-    "download": "Télécharger",
-    "downloadHint": "Télécharger {{title}} pour une lecture hors ligne",
-    "openLesson": "Ouvrir la leçon {{title}}"
+    "openLesson": "Ouvrir la leçon {{title}}",
+    "mindMap": "Carte mentale",
+    "mindMapHint": "Ouvrir la carte mentale de {{title}}"
   },
   "lesson": {
     "backToTrack": "Retour au parcours",
     "codeExamples": "Exemples de code",
     "markComplete": "Marquer comme terminée",
     "markIncomplete": "Marquer comme non terminée",
-    "completed": "Terminée",
     "estimated": "Environ {{count}} min",
     "difficultyLabel": "Difficulté",
     "difficulty": {
       "BEGINNER": "Débutant",
       "INTERMEDIATE": "Intermédiaire",
       "ADVANCED": "Avancé"
+    },
+    "notDownloaded": "Cette leçon n'a pas encore été téléchargée sur cet appareil."
+  },
+  "download": {
+    "action": {
+      "cancel": "Annuler",
+      "confirmDelete": "Oui, supprimer",
+      "delete": "Supprimer",
+      "download": "Télécharger",
+      "pause": "Mettre en pause",
+      "resume": "Reprendre",
+      "retry": "Réessayer",
+      "update": "Mettre à jour"
+    },
+    "containerProgress": "{{downloaded}} sur {{total}} téléchargés",
+    "deleteHint": "Supprimer cette copie téléchargée de cet appareil ?",
+    "progress": "{{done}} sur {{total}}",
+    "hint": {
+      "cancel": "Annuler le téléchargement de {{title}}",
+      "delete": "Supprimer la copie téléchargée de {{title}}",
+      "download": "Télécharger {{title}} pour une lecture hors ligne",
+      "pause": "Mettre en pause le téléchargement de {{title}}",
+      "resume": "Reprendre le téléchargement de {{title}}",
+      "retry": "Réessayer le téléchargement de {{title}}",
+      "update": "Mettre à jour la copie téléchargée de {{title}}"
+    },
+    "state": {
+      "QUEUED": "En attente",
+      "DOWNLOADING": "Téléchargement en cours",
+      "VERIFYING": "Vérification",
+      "DONE": "Téléchargée",
+      "FAILED": "Échec",
+      "PAUSED": "En pause",
+      "PAUSED_INSUFFICIENT_STORAGE": "En pause (espace de stockage insuffisant)",
+      "DOWNLOADED": "Téléchargée",
+      "UPDATE_AVAILABLE": "Mise à jour disponible",
+      "LOCAL_AHEAD": "Plus récente que le serveur",
+      "LOCAL_AHEAD_HINT": "Votre copie locale est plus récente que celle indiquée par le serveur. Elle ne sera pas remplacée automatiquement.",
+      "WITHDRAWN": "Retirée",
+      "WITHDRAWN_HINT": "Ce contenu a été retiré de la bibliothèque. Votre copie téléchargée fonctionne toujours, mais ne recevra plus de mises à jour."
     }
+  },
+  "downloads": {
+    "anomaly": "Incohérence de version pour {{entityType}} — version locale {{local}}, version serveur {{manifest}}.",
+    "checkForUpdates": "Vérifier les mises à jour",
+    "checking": "Vérification…",
+    "empty": "Vous n'avez encore rien téléchargé.",
+    "entityLesson": "Leçon",
+    "entityMindMap": "Carte mentale",
+    "heading": "Téléchargements",
+    "intro": "Tout ce que vous avez enregistré sur cet appareil pour une utilisation hors ligne.",
+    "newAvailable": "{{count}} nouvelles leçons disponibles",
+    "onlyOnDesktop": "Les téléchargements ne sont disponibles que dans l'application de bureau.",
+    "sectionDone": "Téléchargées",
+    "storageUsed": "{{size}} utilisés sur cet appareil",
+    "upToDate": "Votre bibliothèque est à jour.",
+    "updatedCount": "{{count}} leçons mises à jour",
+    "withdrawnCount": "{{count}} éléments retirés"
+  },
+  "mindMap": {
+    "backToTrack": "Retour au parcours",
+    "heading": "Carte mentale",
+    "loading": "Chargement…",
+    "notDownloaded": "Cette carte mentale n'a pas encore été téléchargée sur cet appareil.",
+    "notInLibrary": "Non téléchargée",
+    "nodeDownloadHint": "Télécharger {{title}} pour la lire",
+    "nodeHint": "Ouvrir la leçon {{title}}",
+    "nodeQueuedHint": "{{title}} est en cours de téléchargement",
+    "treeLabel": "Carte mentale de {{title}}",
+    "unavailable": "Ce parcours n'a pas de carte mentale."
   },
   "notFound": {
     "heading": "Cette page n'existe pas",
@@ -73,6 +141,18 @@
     "LESSON_NOT_FOUND": "Cette leçon n'existe plus.",
     "ENTITY_NOT_IN_LIBRARY": "Ce contenu n'est pas encore dans votre bibliothèque.",
     "UNSUPPORTED_ON_WEB": "Cette action n'est disponible que dans l'application de bureau.",
-    "INTERNAL_ERROR": "Une erreur inattendue s'est produite. Veuillez réessayer."
+    "INTERNAL_ERROR": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "MIND_MAP_NOT_FOUND": "Cette carte mentale n'existe plus.",
+    "STORE_UNAVAILABLE": "Le stockage local est inaccessible. Veuillez réessayer.",
+    "ALREADY_QUEUED": "Cet élément est déjà en cours de téléchargement.",
+    "NOTHING_TO_DO": "Il n'y a rien à faire ici.",
+    "INVALID_ARGUMENT": "Cette demande n'a pas pu être traitée. Veuillez réessayer.",
+    "UNEXPECTED_RESPONSE": "Le serveur a renvoyé une réponse inattendue. Veuillez réessayer.",
+    "RATE_LIMITED": "Trop de requêtes. Veuillez patienter un instant puis réessayer.",
+    "CONTENT_VERSION_SUPERSEDED": "Une nouvelle version de ce contenu est disponible. Réessayez pour l'obtenir.",
+    "CONTENT_CHANGED_DURING_RESUME": "Le contenu a changé pendant la reprise. Veuillez réessayer le téléchargement.",
+    "DIGEST_MISMATCH": "Le fichier téléchargé n'a pas passé la vérification. Veuillez réessayer.",
+    "INSUFFICIENT_STORAGE": "L'espace de stockage de cet appareil est insuffisant pour continuer.",
+    "SERVICE_UNAVAILABLE": "Le service est temporairement indisponible. Veuillez réessayer sous peu."
   }
 }
