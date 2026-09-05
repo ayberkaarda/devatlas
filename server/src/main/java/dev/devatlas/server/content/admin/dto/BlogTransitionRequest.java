@@ -1,0 +1,17 @@
+package dev.devatlas.server.content.admin.dto;
+
+import dev.devatlas.server.domain.BlogStatus;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+/**
+ * The one request shape every lifecycle transition endpoint shares (§5.5.2): {@code submit}, {@code
+ * approve}, {@code reject}, {@code publish}, {@code unpublish}.
+ *
+ * <p>{@code expectedStatus} is required on every transition, so two callers racing the same post
+ * can never both succeed silently. {@code reason} is required (10-500 chars) for {@code reject} and
+ * {@code unpublish} and optional elsewhere -- a class-level rule the service enforces, since which
+ * action is being performed is not something this shared DTO can see.
+ */
+public record BlogTransitionRequest(
+    @NotNull BlogStatus expectedStatus, @Size(max = 500) String reason) {}

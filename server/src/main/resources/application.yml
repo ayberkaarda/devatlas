@@ -78,6 +78,20 @@ devatlas:
     manifest-per-minute: 60
     content-per-minute: 600
 
+  pipeline:
+    # Every six hours, ShedLock'ed per whitelist source (§5.7 of the REST
+    # contract). Spring cron: second minute hour day month weekday.
+    fetch-cron: "0 0 0/6 * * *"
+    http-connect-timeout: PT5S
+    http-read-timeout: PT10S
+    # Minimum normalized length a fetched item's raw content must have to pass
+    # the CONTENT_SANITY check; guards against a well-formed but empty entry.
+    min-content-length: 40
+    # POST /admin/whitelist-sources/{id}/fetch, per source (§3.6).
+    manual-fetch-per-hour: 6
+    lock-at-most-for: PT10M
+    lock-at-least-for: PT1S
+
   seed:
     # The first administrator, created by the seed migration on an empty
     # database. Both values come from the environment and neither has a usable

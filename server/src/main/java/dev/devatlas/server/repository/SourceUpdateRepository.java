@@ -10,4 +10,6 @@ public interface SourceUpdateRepository extends JpaRepository<SourceUpdate, UUID
 
   Optional<SourceUpdate> findByWhitelistSourceIdAndContentHash(
       UUID whitelistSourceId, String contentHash);
+
+  boolean existsByWhitelistSourceId(UUID whitelistSourceId);
 }

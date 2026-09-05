@@ -45,6 +45,22 @@ devatlas:
     manifest-per-minute: 1000000
     content-per-minute: 1000000
 
+  pipeline:
+    # Effectively unlimited, for the same reason as the rate-limit block above: the
+    # counter is keyed per whitelist source, but a suite that creates several fixture
+    # sources and calls the manual trigger more than a handful of times must not fail
+    # because of test ordering. Any test that exercises the limit itself lowers this
+    # budget for its own duration instead.
+    manual-fetch-per-hour: 1000000
+    http-connect-timeout: PT2S
+    http-read-timeout: PT3S
+    # Zero, unlike the 1-second production floor: ShedLock holds a lock for at least
+    # this long even after an explicit unlock(), specifically so a fast scheduled tick
+    # cannot immediately re-fire. A dedup test that calls the manual trigger twice in a
+    # row within the same second would otherwise see the second call collide with the
+    # first one's own just-released lock and get a false PIPELINE_RUN_IN_PROGRESS.
+    lock-at-least-for: PT0S
+
   seed:
     admin-email: admin@devatlas.test
     admin-password: seed-admin-password-for-tests

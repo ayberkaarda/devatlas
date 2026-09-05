@@ -12,4 +12,8 @@ public interface WhitelistSourceRepository extends JpaRepository<WhitelistSource
   List<WhitelistSource> findByEnabledTrue();
 
   Optional<WhitelistSource> findByName(String name);
+
+  boolean existsByName(String name);
+
+  boolean existsByNameAndIdNot(String name, UUID id);
 }

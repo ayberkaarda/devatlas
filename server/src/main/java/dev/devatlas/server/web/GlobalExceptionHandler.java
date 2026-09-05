@@ -3,6 +3,7 @@ package dev.devatlas.server.web;
 import dev.devatlas.server.common.ApiException;
 import dev.devatlas.server.common.ApiFieldError;
 import dev.devatlas.server.common.ErrorCode;
+import dev.devatlas.server.common.RateLimitedException;
 import dev.devatlas.server.content.manifest.ContentVersionSupersededException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -70,6 +72,18 @@ public class GlobalExceptionHandler {
         .body(
             new ErrorResponse(
                 exception.code().name(), exception.getMessage(), null, exception.currentVersion()));
+  }
+
+  /**
+   * The one error whose response carries a header a caller is expected to honour rather than just a
+   * body: {@code Retry-After}, in seconds, matching the convention the anonymous manifest/content
+   * rate limiter already uses (§3.6).
+   */
+  @ExceptionHandler(RateLimitedException.class)
+  public ResponseEntity<ErrorResponse> handleRateLimited(RateLimitedException exception) {
+    return ResponseEntity.status(exception.code().status())
+        .header(HttpHeaders.RETRY_AFTER, Long.toString(exception.retryAfterSeconds()))
+        .body(new ErrorResponse(exception.code().name(), exception.getMessage()));
   }
 
   @ExceptionHandler(ApiException.class)
