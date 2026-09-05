@@ -1,0 +1,208 @@
+<h1 class="text-2xl font-semibold tracking-tight">{{ 'downloads.heading' | translate }}</h1>
+<p class="mt-1 text-text-muted">{{ 'downloads.intro' | translate }}</p>
+
+@if (!canDownload) {
+  <p class="mt-8 text-text-muted" role="status">{{ 'downloads.onlyOnDesktop' | translate }}</p>
+} @else {
+  <section class="mt-6 rounded-lg border border-border bg-surface p-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        @let size = downloaded().bytes | bytesFormat;
+        <p class="text-sm text-text">
+          {{ 'downloads.storageUsed' | translate: { size } }}
+        </p>
+        @if (delta(); as summary) {
+          @if (summary.updatedEntities > 0) {
+            <p class="mt-1 text-sm font-medium text-accent">
+              {{ 'downloads.updatedCount' | translate: { count: summary.updatedEntities } }}
+            </p>
+          } @else {
+            <p class="mt-1 text-sm text-text-muted">{{ 'downloads.upToDate' | translate }}</p>
+          }
+          @if (summary.newEntitiesAvailable > 0) {
+            <p class="mt-1 text-xs text-text-muted">
+              {{ 'downloads.newAvailable' | translate: { count: summary.newEntitiesAvailable } }}
+            </p>
+          }
+          @if (summary.withdrawnEntities > 0) {
+            <p class="mt-1 text-xs text-text-muted">
+              {{ 'downloads.withdrawnCount' | translate: { count: summary.withdrawnEntities } }}
+            </p>
+          }
+          @for (anomaly of summary.anomalies; track anomaly.entityId) {
+            @let anomalyEntityType = entityTypeLabelKey(anomaly.entityType) | translate;
+            <p class="mt-1 text-xs text-text-muted">
+              {{
+                'downloads.anomaly'
+                  | translate
+                    : {
+                        entityType: anomalyEntityType,
+                        local: anomaly.localVersion,
+                        manifest: anomaly.manifestVersion,
+                      }
+              }}
+            </p>
+          }
+        }
+      </div>
+
+      <button
+        type="button"
+        class="rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast disabled:opacity-50"
+        [disabled]="checking()"
+        (click)="checkForUpdates()"
+      >
+        {{ (checking() ? 'downloads.checking' : 'downloads.checkForUpdates') | translate }}
+      </button>
+    </div>
+
+    @if (checkErrorKey(); as key) {
+      <p class="mt-2 text-xs text-danger" role="alert">{{ key | translate }}</p>
+    }
+  </section>
+
+  @if (actionErrorKey(); as key) {
+    <p class="mt-4 text-sm text-danger" role="alert">{{ key | translate }}</p>
+  }
+
+  @if (batches().length === 0 && done().length === 0) {
+    <p class="mt-8 text-text-muted">{{ 'downloads.empty' | translate }}</p>
+  }
+
+  @if (batches().length > 0) {
+    <div class="mt-8 space-y-4">
+      @for (batch of batches(); track batch.batchId) {
+        <section class="rounded-lg border border-border bg-surface p-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <span class="text-xs text-text-muted">
+              {{
+                'download.progress'
+                  | translate: { done: batch.receivedBytes, total: batch.totalBytes }
+              }}
+            </span>
+            <div class="flex gap-2">
+              @if (batch.anyPaused) {
+                <button
+                  type="button"
+                  class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                  (click)="resumeBatch(batch.batchId)"
+                >
+                  {{ 'download.action.resume' | translate }}
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                  (click)="pauseBatch(batch.batchId)"
+                >
+                  {{ 'download.action.pause' | translate }}
+                </button>
+              }
+              <button
+                type="button"
+                class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                (click)="cancelBatch(batch.batchId)"
+              >
+                {{ 'download.action.cancel' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <ul class="mt-3 divide-y divide-border">
+            @for (entry of batch.entries; track entry.entityId) {
+              <li class="flex flex-wrap items-center gap-2 py-2 text-sm">
+                <span class="text-xs uppercase tracking-wide text-text-muted">
+                  {{ entityLabelKey(entry) | translate }}
+                </span>
+                <span>{{ entry.title ?? entry.entityId }}</span>
+
+                @switch (entry.state) {
+                  @case ('FAILED') {
+                    <span class="text-xs text-danger">{{ failureKey(entry) | translate }}</span>
+                    <button
+                      type="button"
+                      class="ml-auto rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast"
+                      (click)="retryEntity(entry.entityId)"
+                    >
+                      {{ 'download.action.retry' | translate }}
+                    </button>
+                  }
+                  @case ('PAUSED') {
+                    <span class="ml-auto text-xs text-text-muted">{{
+                      pauseReasonKey(entry) | translate
+                    }}</span>
+                  }
+                  @default {
+                    <span class="ml-auto text-xs text-text-muted">
+                      {{ 'download.state.' + entry.state | translate }}
+                      ({{
+                        'download.progress'
+                          | translate: { done: entry.receivedBytes, total: entry.totalBytes }
+                      }})
+                    </span>
+                  }
+                }
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  }
+
+  @if (done().length > 0) {
+    <div class="mt-8">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-text-muted">
+        {{ 'downloads.sectionDone' | translate }}
+      </h2>
+      <ul class="mt-3 divide-y divide-border rounded-lg border border-border bg-surface">
+        @for (entry of done(); track entry.entityId) {
+          <li class="flex flex-wrap items-center gap-2 p-3 text-sm">
+            <span class="text-xs uppercase tracking-wide text-text-muted">
+              {{ entityLabelKey(entry) | translate }}
+            </span>
+            <span>{{ entry.title ?? entry.entityId }}</span>
+            @let size = entry.totalBytes | bytesFormat;
+            <span class="text-xs text-text-muted">{{ size }}</span>
+
+            @if (isDeletable(entry)) {
+              @if (confirmingDeleteId() === entry.entityId) {
+                <span class="ml-auto text-xs text-text-muted">{{
+                  'download.deleteHint' | translate
+                }}</span>
+                <button
+                  type="button"
+                  class="rounded-md bg-danger px-2 py-1 text-xs text-accent-contrast"
+                  (click)="confirmDelete(entry.entityId)"
+                >
+                  {{ 'download.action.confirmDelete' | translate }}
+                </button>
+                <button
+                  type="button"
+                  class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                  (click)="cancelDeleteRequest()"
+                >
+                  {{ 'common.cancel' | translate }}
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="ml-auto rounded-md border border-border px-2 py-1 text-xs text-text"
+                  [attr.aria-label]="
+                    'download.hint.delete' | translate: { title: entry.title ?? entry.entityId }
+                  "
+                  [title]="
+                    'download.hint.delete' | translate: { title: entry.title ?? entry.entityId }
+                  "
+                  (click)="requestDelete(entry.entityId)"
+                >
+                  {{ 'download.action.delete' | translate }}
+                </button>
+              }
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  }
+}

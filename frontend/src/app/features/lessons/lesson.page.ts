@@ -5,10 +5,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { MarkdownService } from '../../core/markdown/markdown.service';
 import { errorKey } from '../../core/platform/error-key';
-import type { Lesson } from '../../core/platform/models';
+import { PlatformError } from '../../core/platform/errors';
+import type { Lesson, LessonSummary } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { FallbackBadge } from '../../shared/fallback-badge';
+import { LessonDownloadControls } from '../../shared/lesson-download-controls';
 
 interface RenderedExample {
   readonly caption: string | null;
@@ -19,7 +21,7 @@ interface RenderedExample {
 @Component({
   selector: 'app-lesson-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, FallbackBadge],
+  imports: [RouterLink, TranslatePipe, FallbackBadge, LessonDownloadControls],
   templateUrl: './lesson.page.html',
 })
 export class LessonPage {
@@ -36,6 +38,23 @@ export class LessonPage {
   protected readonly loading = signal(true);
   protected readonly failure = signal<string | null>(null);
   protected readonly completed = signal(false);
+
+  /**
+   * The lesson's entry in its track's manifest — structural data, already a
+   * local read on the desktop — kept alongside the full lesson so the
+   * download control has an identifier and a precise availability to render,
+   * whichever branch below is showing.
+   */
+  protected readonly lessonSummary = signal<LessonSummary | null>(null);
+
+  /**
+   * Set when the read failed because the lesson has not been downloaded, on a
+   * build that could download it. This is a normal state, not the generic
+   * error path: reads never fall back to the network, so a lesson a user
+   * navigated to directly is exactly this case, and the right response is to
+   * offer the download, not to say something went wrong.
+   */
+  protected readonly notDownloaded = signal(false);
 
   constructor() {
     // Re-runs when the lesson changes and when the palette does, because a
@@ -69,6 +88,13 @@ export class LessonPage {
   private async load(slug: string, theme: 'light' | 'dark'): Promise<void> {
     this.loading.set(true);
     this.failure.set(null);
+    this.notDownloaded.set(false);
+    this.lessonSummary.set(null);
+
+    const summaryPromise = this.platform.capabilities.canDownload
+      ? this.resolveLessonSummary(slug)
+      : Promise.resolve(null);
+
     try {
       const lesson = await this.platform.getLesson(slug);
       this.lesson.set(lesson);
@@ -84,13 +110,40 @@ export class LessonPage {
             })),
         ),
       );
+      this.lessonSummary.set(await summaryPromise);
     } catch (error) {
       this.lesson.set(null);
       this.body.set(null);
       this.examples.set([]);
-      this.failure.set(errorKey(error));
+      const summary = await summaryPromise;
+      if (error instanceof PlatformError && error.code === 'ENTITY_NOT_IN_LIBRARY' && summary) {
+        this.lessonSummary.set(summary);
+        this.notDownloaded.set(true);
+      } else {
+        this.failure.set(errorKey(error));
+      }
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  /**
+   * Looks the lesson up by slug in its track's manifest, already-read
+   * structural data rather than a fallback content read, so the download
+   * control has the identifier and availability it needs. Best-effort: a
+   * failure here never blocks the main lesson read, it just means no download
+   * control is offered.
+   */
+  private async resolveLessonSummary(slug: string): Promise<LessonSummary | null> {
+    try {
+      const track = await this.platform.getTrack(this.trackSlug());
+      return (
+        track.modules
+          .flatMap((module) => module.lessons)
+          .find((candidate) => candidate.slug === slug) ?? null
+      );
+    } catch {
+      return null;
     }
   }
 }

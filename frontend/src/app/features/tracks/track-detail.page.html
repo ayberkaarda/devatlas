@@ -24,17 +24,23 @@
         <p class="mt-1 text-text-muted">{{ detail.description }}</p>
       }
     </div>
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
       <app-fallback-badge [state]="detail.translation" />
-      @if (canDownload) {
-        <button
-          type="button"
-          class="rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast"
-          [attr.aria-label]="'track.downloadHint' | translate: { title: detail.title }"
-          (click)="download()"
+      @if (detail.hasMindMap) {
+        <a
+          class="rounded-md border border-border px-3 py-1.5 text-sm text-text no-underline hover:bg-surface-raised"
+          [routerLink]="['/tracks', detail.slug, 'mindmap']"
+          [attr.aria-label]="'track.mindMapHint' | translate: { title: detail.title }"
         >
-          {{ 'track.download' | translate }}
-        </button>
+          {{ 'track.mindMap' | translate }}
+        </a>
+      }
+      @if (canDownload) {
+        <app-container-download-action
+          [scope]="{ kind: 'TRACK', id: detail.id }"
+          [title]="detail.title"
+          [lessons]="allLessons()"
+        />
       }
     </div>
   </div>
@@ -48,9 +54,18 @@
     <div class="mt-3 space-y-6">
       @for (module of detail.modules; track module.id) {
         <section class="rounded-lg border border-border bg-surface p-4">
-          <div class="flex items-center justify-between gap-2">
-            <h3 class="font-medium">{{ module.title }}</h3>
-            <app-fallback-badge [state]="module.translation" />
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <h3 class="font-medium">{{ module.title }}</h3>
+              <app-fallback-badge [state]="module.translation" />
+            </div>
+            @if (canDownload) {
+              <app-container-download-action
+                [scope]="{ kind: 'MODULE', id: module.id }"
+                [title]="module.title"
+                [lessons]="module.lessons"
+              />
+            }
           </div>
 
           <ul class="mt-3 divide-y divide-border">
@@ -71,10 +86,14 @@
                   </span>
                 }
 
-                @if (lesson.availability.transfer; as transfer) {
-                  <span class="ml-auto text-xs text-text-muted">
-                    {{ transfer.bytesDone }} / {{ transfer.bytesTotal }}
-                  </span>
+                @if (canDownload) {
+                  <div class="ml-auto">
+                    <app-lesson-download-controls
+                      [lessonId]="lesson.id"
+                      [title]="lesson.title"
+                      [baseAvailability]="lesson.availability.availability"
+                    />
+                  </div>
                 }
               </li>
             }

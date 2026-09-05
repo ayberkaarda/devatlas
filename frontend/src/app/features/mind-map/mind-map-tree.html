@@ -1,0 +1,95 @@
+<div class="overflow-x-auto rounded-lg border border-border bg-surface">
+  <svg
+    [attr.viewBox]="'0 0 ' + layout().width + ' ' + layout().height"
+    [attr.width]="layout().width"
+    [attr.height]="layout().height"
+    role="tree"
+    [attr.aria-label]="'mindMap.treeLabel' | translate: { title: trackTitle() }"
+    class="block"
+  >
+    <g>
+      @for (link of layout().links; track link.sourceId + '->' + link.targetId) {
+        @let midpoint = (link.source.cx + link.target.cx) / 2;
+        <path
+          class="stroke-border"
+          fill="none"
+          stroke-width="1.5"
+          [attr.d]="
+            'M ' +
+            link.source.cx +
+            ',' +
+            link.source.cy +
+            ' C ' +
+            midpoint +
+            ',' +
+            link.source.cy +
+            ' ' +
+            midpoint +
+            ',' +
+            link.target.cy +
+            ' ' +
+            link.target.cx +
+            ',' +
+            link.target.cy
+          "
+        />
+      }
+    </g>
+
+    <g>
+      @for (node of layout().nodes; track node.id) {
+        @let lesson = lessonFor(node);
+        @let readable = !!lesson?.availability?.readable;
+        @let downloading = isDownloading(node);
+        <g
+          role="treeitem"
+          [attr.data-node-id]="node.id"
+          [attr.aria-selected]="focusedId() === node.id"
+          [attr.aria-expanded]="node.hasChildren ? true : null"
+          [attr.tabindex]="focusedId() === node.id ? 0 : -1"
+          [attr.aria-label]="
+            !node.lessonId
+              ? node.label
+              : ((readable
+                  ? 'mindMap.nodeHint'
+                  : downloading
+                    ? 'mindMap.nodeQueuedHint'
+                    : 'mindMap.nodeDownloadHint'
+                ) | translate: { title: node.label })
+          "
+          class="cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          (click)="setFocus(node.id); activate(node)"
+          (focus)="setFocus(node.id)"
+          (keydown)="onKeydown($event, node)"
+        >
+          <circle
+            [attr.cx]="node.cx"
+            [attr.cy]="node.cy"
+            r="8"
+            [attr.class]="
+              !node.lessonId
+                ? 'fill-surface-raised stroke-border'
+                : readable
+                  ? 'fill-accent'
+                  : 'fill-surface-raised stroke-border'
+            "
+            [attr.stroke-dasharray]="node.lessonId && !readable ? '3,2' : null"
+            stroke-width="1.5"
+          />
+          <text [attr.x]="node.cx + 14" [attr.y]="node.cy + 4" class="fill-text text-sm">
+            {{ node.label }}
+          </text>
+          @if (node.lessonId && !readable) {
+            <text [attr.x]="node.cx + 14" [attr.y]="node.cy + 18" class="fill-text-muted text-xs">
+              {{ (downloading ? 'mindMap.nodeQueuedHint' : 'mindMap.notInLibrary') | translate }}
+            </text>
+          }
+        </g>
+      }
+    </g>
+  </svg>
+</div>
+
+@if (enqueueErrorKey(); as key) {
+  <p class="mt-2 text-xs text-danger" role="alert">{{ key | translate }}</p>
+}

@@ -1,16 +1,32 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { errorKey } from '../../core/platform/error-key';
-import type { TrackDetail } from '../../core/platform/models';
+import type { LessonSummary, TrackDetail } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
+import { ContainerDownloadAction } from '../../shared/container-download-action';
 import { FallbackBadge } from '../../shared/fallback-badge';
+import { LessonDownloadControls } from '../../shared/lesson-download-controls';
 
 @Component({
   selector: 'app-track-detail-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, FallbackBadge],
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    FallbackBadge,
+    ContainerDownloadAction,
+    LessonDownloadControls,
+  ],
   templateUrl: './track-detail.page.html',
 })
 export class TrackDetailPage {
@@ -25,6 +41,12 @@ export class TrackDetailPage {
 
   protected readonly canDownload = this.platform.capabilities.canDownload;
 
+  /** Every lesson in the track, flattened, for the track-level download action. */
+  protected readonly allLessons = computed<readonly LessonSummary[]>(() => {
+    const detail = this.track();
+    return detail ? detail.modules.flatMap((module) => module.lessons) : [];
+  });
+
   constructor() {
     effect(() => {
       void this.load(this.trackSlug());
@@ -33,26 +55,6 @@ export class TrackDetailPage {
 
   protected reload(): void {
     void this.load(this.trackSlug());
-  }
-
-  /**
-   * Offers the track for download.
-   *
-   * The download scope names the entity in the manifest, so it carries the
-   * identifier rather than the slug. The control that calls this is only
-   * rendered where the capability exists, which is why there is no branch
-   * here: an unavailable control is not rendered and disabled, it is absent.
-   */
-  protected async download(): Promise<void> {
-    const current = this.track();
-    if (!current) {
-      return;
-    }
-    try {
-      await this.platform.enqueueDownload({ kind: 'TRACK', id: current.id });
-    } catch (error) {
-      this.failure.set(errorKey(error));
-    }
   }
 
   private async load(slug: string): Promise<void> {

@@ -15,6 +15,15 @@
         >
           {{ 'nav.tracks' | translate }}
         </a>
+        @if (canDownload) {
+          <a
+            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+            routerLink="/downloads"
+            routerLinkActive="bg-surface-raised text-text"
+          >
+            {{ 'nav.downloads' | translate }}
+          </a>
+        }
       </nav>
 
       <div class="ml-auto flex items-center gap-2">

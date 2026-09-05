@@ -20,8 +20,16 @@ export const routes: Routes = [
       import('./features/tracks/track-detail.page').then((m) => m.TrackDetailPage),
   },
   {
+    path: 'tracks/:trackSlug/mindmap',
+    loadComponent: () => import('./features/mind-map/mind-map.page').then((m) => m.MindMapPage),
+  },
+  {
     path: 'tracks/:trackSlug/lessons/:lessonSlug',
     loadComponent: () => import('./features/lessons/lesson.page').then((m) => m.LessonPage),
+  },
+  {
+    path: 'downloads',
+    loadComponent: () => import('./features/downloads/downloads.page').then((m) => m.DownloadsPage),
   },
   {
     path: '**',

@@ -1,0 +1,112 @@
+@if (canDownload) {
+  <div class="flex flex-wrap items-center gap-2" data-testid="container-download-action">
+    <span class="text-xs text-text-muted">
+      {{
+        'download.containerProgress'
+          | translate: { downloaded: counts().downloadedCount, total: counts().totalCount }
+      }}
+    </span>
+
+    @if (counts().transfer; as active) {
+      <span class="text-xs text-text-muted">
+        {{ 'download.state.' + active.state | translate }}
+        @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
+          ({{
+            'download.progress' | translate: { done: active.bytesDone, total: active.bytesTotal }
+          }})
+        }
+      </span>
+    }
+
+    @if (!counts().transfer) {
+      @if (counts().downloadedCount < counts().totalCount || counts().updateAvailableCount > 0) {
+        <button
+          type="button"
+          class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+          [disabled]="busy()"
+          [attr.aria-label]="
+            (counts().updateAvailableCount > 0 ? 'download.hint.update' : 'download.hint.download')
+              | translate: { title: title() }
+          "
+          [title]="
+            (counts().updateAvailableCount > 0 ? 'download.hint.update' : 'download.hint.download')
+              | translate: { title: title() }
+          "
+          (click)="onDownload()"
+        >
+          {{
+            (counts().updateAvailableCount > 0
+              ? 'download.action.update'
+              : 'download.action.download'
+            ) | translate
+          }}
+        </button>
+      } @else {
+        <span class="text-xs text-text-muted">{{ 'download.state.DOWNLOADED' | translate }}</span>
+      }
+    } @else {
+      @switch (counts().transfer!.state) {
+        @case ('PAUSED') {
+          <button
+            type="button"
+            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+            [disabled]="busy()"
+            [attr.aria-label]="'download.hint.resume' | translate: { title: title() }"
+            [title]="'download.hint.resume' | translate: { title: title() }"
+            (click)="onResume()"
+          >
+            {{ 'download.action.resume' | translate }}
+          </button>
+          <button
+            type="button"
+            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+            [disabled]="busy()"
+            [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
+            [title]="'download.hint.cancel' | translate: { title: title() }"
+            (click)="onCancel()"
+          >
+            {{ 'download.action.cancel' | translate }}
+          </button>
+        }
+        @case ('FAILED') {
+          <button
+            type="button"
+            class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+            [disabled]="busy()"
+            [attr.aria-label]="'download.hint.retry' | translate: { title: title() }"
+            [title]="'download.hint.retry' | translate: { title: title() }"
+            (click)="onRetry()"
+          >
+            {{ 'download.action.retry' | translate }}
+          </button>
+        }
+        @default {
+          <button
+            type="button"
+            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+            [disabled]="busy()"
+            [attr.aria-label]="'download.hint.pause' | translate: { title: title() }"
+            [title]="'download.hint.pause' | translate: { title: title() }"
+            (click)="onPause()"
+          >
+            {{ 'download.action.pause' | translate }}
+          </button>
+          <button
+            type="button"
+            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+            [disabled]="busy()"
+            [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
+            [title]="'download.hint.cancel' | translate: { title: title() }"
+            (click)="onCancel()"
+          >
+            {{ 'download.action.cancel' | translate }}
+          </button>
+        }
+      }
+    }
+
+    @if (actionErrorKey(); as key) {
+      <span class="text-xs text-danger" role="alert">{{ key | translate }}</span>
+    }
+  </div>
+}

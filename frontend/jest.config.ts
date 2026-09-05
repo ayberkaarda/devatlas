@@ -25,6 +25,20 @@ const config: Config = {
      */
     '^marked$': '<rootDir>/node_modules/marked/lib/marked.umd.js',
   },
+  /*
+   * The tree layout library ships as an ES module only, with no CommonJS build
+   * to fall back to and no UMD bundle to point at, so it has to be transformed
+   * rather than mapped elsewhere.
+   *
+   * This list EXTENDS the preset's rather than replacing it. The preset already
+   * transforms `.mjs` files and Angular's locale data, and dropping those makes
+   * every suite fail on Angular's own ES modules — the failure appears in files
+   * that have nothing to do with the library being added, which makes it easy
+   * to misread.
+   */
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\\.mjs$|@angular/common/locales/.*\\.js$|d3-hierarchy/.*\\.js$))',
+  ],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/dist/', '<rootDir>/.angular/'],
 };
 
