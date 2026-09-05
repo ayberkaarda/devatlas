@@ -5,6 +5,8 @@ mod engine;
 mod error;
 mod events;
 mod http;
+#[cfg(test)]
+mod live_tests;
 mod manifest;
 mod model;
 mod queue;
