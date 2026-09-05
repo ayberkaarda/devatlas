@@ -346,7 +346,7 @@ pub fn write_package(
                         lesson.entity_id,
                         translation.locale,
                         translation.title,
-                        translation.body_markdown,
+                        translation.body,
                         lesson.content_version,
                         sha256
                     ],
@@ -540,7 +540,7 @@ mod tests {
                 "entity_type":"LESSON","entity_id":"l1","content_version":3,"module_id":"m1",
                 "slug":"signals","title":"Signals","body_markdown":"# Signals","order":1,
                 "code_examples":[{"caption":"c","code":"x","language":"typescript","order":1}],
-                "translations":[{"locale":"tr","title":"Sinyaller","body_markdown":"# Sinyaller"}]
+                "translations":[{"locale":"tr","title":"Sinyaller","body":"# Sinyaller"}]
             }"##,
         )
         .expect("parse package");
@@ -616,5 +616,74 @@ mod tests {
             .expect("query");
         assert_eq!(rows, 1, "the lesson stays offerable");
         assert_eq!(progress, 1, "deleting content never deletes progress");
+    }
+
+    /// The whole path, from the bytes the server actually sends to the row a
+    /// reader will be served.
+    ///
+    /// The fixture below is deliberately written the way the server writes a
+    /// package rather than the way this crate happened to model one. A fixture
+    /// that mirrors the reader instead of the writer proves only that the
+    /// reader agrees with itself: the earlier version of this suite passed with
+    /// a green digest, a completed queue entry and an empty Turkish body,
+    /// because both the parser and the fixture were reading a field name the
+    /// server never sends.
+    #[test]
+    fn a_translation_body_reaches_the_replica_with_content_in_it() {
+        let mut connection = open_in_memory().expect("store");
+        apply(&mut connection, &manifest_json(&["l1"]));
+
+        let package: Package = serde_json::from_str(
+            r##"{
+                "code_examples": [],
+                "content_version": 3,
+                "entity_id": "l1",
+                "entity_type": "LESSON",
+                "module_id": "m1",
+                "order": 1,
+                "slug": "signals-basics",
+                "title": "Introduction to signals",
+                "translations": [
+                    { "body": "# Sinyaller\n\nBir sinyal, okundugunda...", "locale": "tr", "title": "Sinyallere giris" }
+                ],
+                "body_markdown": "# Signals\n\nA signal is a value that...",
+                "difficulty": "INTERMEDIATE"
+            }"##,
+        )
+        .expect("parse package");
+
+        let tx = connection.transaction().expect("tx");
+        write_package(&tx, &package, "aa", 10).expect("write");
+        tx.commit().expect("commit");
+
+        let stored: Option<String> = connection
+            .query_row(
+                "SELECT body FROM content_translations
+                 WHERE entity_type = 'LESSON' AND entity_id = 'l1' AND locale = 'tr';",
+                [],
+                |row| row.get(0),
+            )
+            .expect("query the translation");
+
+        let stored = stored.expect("the Turkish body must not be stored as NULL");
+        assert!(
+            !stored.trim().is_empty(),
+            "a reader opening the Turkish lesson must not find it empty"
+        );
+        assert!(stored.starts_with("# Sinyaller"));
+
+        // The English text is a different field on a different object and must
+        // not have been overwritten by the translation, or vice versa.
+        let english: Option<String> = connection
+            .query_row(
+                "SELECT body_markdown FROM lessons WHERE lesson_id = 'l1';",
+                [],
+                |row| row.get(0),
+            )
+            .expect("query the lesson");
+        assert_eq!(
+            english.as_deref(),
+            Some("# Signals\n\nA signal is a value that...")
+        );
     }
 }

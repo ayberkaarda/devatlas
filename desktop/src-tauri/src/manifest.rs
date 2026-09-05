@@ -171,13 +171,23 @@ pub struct PackageCodeExample {
     pub order: i64,
 }
 
+/// One non-English rendering of a lesson, as a package carries it.
+///
+/// The body field is `body`, not `body_markdown`. That is the name a
+/// translation row carries everywhere it appears -- in the read API, in a track
+/// manifest and here -- while `body_markdown` belongs to the lesson's own
+/// canonical text. The two are different fields on different objects, and
+/// reading the wrong one is silent: `serde(default)` turns the miss into
+/// `None`, the digest still matches because it covers the raw bytes, the entry
+/// still reaches `DONE`, and the reader simply opens a translated lesson with
+/// nothing in it.
 #[derive(Debug, Clone, Deserialize)]
 pub struct PackageTranslation {
     pub locale: String,
     #[serde(default)]
     pub title: Option<String>,
     #[serde(default)]
-    pub body_markdown: Option<String>,
+    pub body: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -258,7 +268,7 @@ mod tests {
             "estimated_minutes": 25,
             "order": 3,
             "code_examples": [{ "caption": "A writable signal", "code": "const c = signal(0);", "language": "typescript", "order": 1 }],
-            "translations": [{ "locale": "tr", "title": "Sinyallere giris", "body_markdown": "# Sinyaller\n" }]
+            "translations": [{ "locale": "tr", "title": "Sinyallere giris", "body": "# Sinyaller\n" }]
         }"##;
         match serde_json::from_str::<Package>(lesson).expect("parse lesson package") {
             Package::Lesson(p) => {
@@ -294,6 +304,48 @@ mod tests {
         }"##;
         match serde_json::from_str::<Package>(json).expect("parse") {
             Package::Lesson(p) => assert!(p.translations.is_empty()),
+            other => panic!("expected a lesson package, got {other:?}"),
+        }
+    }
+
+    /// A translation whose body field is spelled the way the server spells it
+    /// has to arrive with that body present.
+    ///
+    /// The field is optional, so a rename on either side does not fail the
+    /// parse -- it produces `None`. Nothing downstream notices: the digest is
+    /// computed over the raw bytes and still matches, the queue entry still
+    /// reaches its terminal success state, and the loss only surfaces when a
+    /// reader opens the translated lesson and finds it empty. Asserting the
+    /// value is `Some` and non-empty is what turns that into a failing test
+    /// instead of a support ticket.
+    #[test]
+    fn a_translation_body_survives_the_parse_under_the_name_the_server_sends() {
+        let json = r##"{
+            "entity_type": "LESSON",
+            "entity_id": "018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70",
+            "content_version": 12,
+            "module_id": "018f3a02-4411-7f60-9c22-77b0a1e4cc90",
+            "slug": "signals-basics",
+            "title": "Introduction to signals",
+            "body_markdown": "# Signals",
+            "translations": [
+                { "body": "# Sinyaller", "locale": "tr", "title": "Sinyallere giris" }
+            ]
+        }"##;
+
+        match serde_json::from_str::<Package>(json).expect("parse") {
+            Package::Lesson(package) => {
+                let translation = &package.translations[0];
+                let body = translation
+                    .body
+                    .as_deref()
+                    .expect("the translation body must not be dropped");
+                assert_eq!(body, "# Sinyaller");
+                assert_eq!(
+                    package.body_markdown, "# Signals",
+                    "the lesson's own canonical text keeps its own field name"
+                );
+            }
             other => panic!("expected a lesson package, got {other:?}"),
         }
     }
