@@ -78,6 +78,12 @@
             @let batchTotal = batch.totalBytes | bytesFormat;
             <span class="text-xs text-text-muted">
               {{ 'download.progress' | translate: { done: batchReceived, total: batchTotal } }}
+              @let batchPercent = percentOf(batch.receivedBytes, batch.totalBytes);
+              @if (batchPercent !== null) {
+                <span data-testid="batch-percent">
+                  · {{ 'download.percent' | translate: { percent: batchPercent } }}
+                </span>
+              }
             </span>
             <div class="flex gap-2">
               @if (batch.anyPaused) {
@@ -105,6 +111,14 @@
                 {{ 'download.action.cancel' | translate }}
               </button>
             </div>
+          </div>
+
+          <div class="mt-3">
+            <app-progress-bar
+              [done]="batch.receivedBytes"
+              [total]="batch.totalBytes"
+              labelKey="download.batchProgressLabel"
+            />
           </div>
 
           <ul class="mt-3 divide-y divide-border">
@@ -140,6 +154,9 @@
                         'download.progress' | translate: { done: entryReceived, total: entryTotal }
                       }})
                     </span>
+                    <div class="w-24">
+                      <app-progress-bar [done]="entry.receivedBytes" [total]="entry.totalBytes" />
+                    </div>
                   }
                 }
               </li>
@@ -150,59 +167,124 @@
     </div>
   }
 
-  @if (done().length > 0) {
+  @if (doneGroups().length > 0) {
     <div class="mt-8">
       <h2 class="text-sm font-semibold uppercase tracking-wide text-text-muted">
         {{ 'downloads.sectionDone' | translate }}
       </h2>
-      <ul class="mt-3 divide-y divide-border rounded-lg border border-border bg-surface">
-        @for (entry of done(); track entry.entityId) {
-          <li class="flex flex-wrap items-center gap-2 p-3 text-sm">
-            <span class="text-xs uppercase tracking-wide text-text-muted">
-              {{ entityLabelKey(entry) | translate }}
-            </span>
-            <span>{{ entry.title ?? entry.entityId }}</span>
-            @let size = entry.totalBytes | bytesFormat;
-            <span class="text-xs text-text-muted">{{ size }}</span>
 
-            @if (isDeletable(entry)) {
-              @if (confirmingDeleteId() === entry.entityId) {
-                <span class="ml-auto text-xs text-text-muted">{{
-                  'download.deleteHint' | translate
-                }}</span>
-                <button
-                  type="button"
-                  class="rounded-md bg-danger px-2 py-1 text-xs text-accent-contrast"
-                  (click)="confirmDelete(entry.entityId)"
-                >
-                  {{ 'download.action.confirmDelete' | translate }}
-                </button>
-                <button
-                  type="button"
-                  class="rounded-md border border-border px-2 py-1 text-xs text-text"
-                  (click)="cancelDeleteRequest()"
-                >
-                  {{ 'common.cancel' | translate }}
-                </button>
-              } @else {
-                <button
-                  type="button"
-                  class="ml-auto rounded-md border border-border px-2 py-1 text-xs text-text"
-                  [attr.aria-label]="
-                    'download.hint.delete' | translate: { title: entry.title ?? entry.entityId }
-                  "
-                  [title]="
-                    'download.hint.delete' | translate: { title: entry.title ?? entry.entityId }
-                  "
-                  (click)="requestDelete(entry.entityId)"
-                >
-                  {{ 'download.action.delete' | translate }}
-                </button>
+      <div class="mt-3 space-y-6">
+        @for (group of doneGroups(); track group.trackId ?? 'untracked') {
+          @let groupTitle = group.trackTitle ?? ('downloads.unknownTrack' | translate);
+          <section class="rounded-lg border border-border bg-surface p-4" data-testid="track-group">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h3 class="text-sm font-medium text-text" data-testid="track-group-title">
+                {{ groupTitle }}
+              </h3>
+
+              @if (group.trackId; as trackId) {
+                @if (confirmingDeleteTrackId() === trackId) {
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs text-text-muted">{{
+                      'download.deleteTrackHint' | translate
+                    }}</span>
+                    <button
+                      type="button"
+                      class="rounded-md bg-danger px-2 py-1 text-xs text-accent-contrast"
+                      data-testid="track-confirm-delete"
+                      (click)="confirmDeleteTrack(trackId)"
+                    >
+                      {{ 'download.action.confirmDeleteTrack' | translate }}
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                      (click)="cancelDeleteTrackRequest()"
+                    >
+                      {{ 'common.cancel' | translate }}
+                    </button>
+                  </div>
+                } @else {
+                  <button
+                    type="button"
+                    class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                    data-testid="track-delete"
+                    [attr.aria-label]="
+                      'download.hint.deleteTrack' | translate: { title: groupTitle }
+                    "
+                    [title]="'download.hint.deleteTrack' | translate: { title: groupTitle }"
+                    (click)="requestDeleteTrack(trackId)"
+                  >
+                    {{ 'download.action.deleteTrack' | translate }}
+                  </button>
+                }
               }
-            }
-          </li>
+            </div>
+
+            <ul class="mt-3 divide-y divide-border">
+              @for (entry of group.entries; track entry.entityId) {
+                <li class="flex flex-wrap items-center gap-2 py-2 text-sm">
+                  <span class="text-xs uppercase tracking-wide text-text-muted">
+                    {{ entityLabelKey(entry) | translate }}
+                  </span>
+                  <span>{{ entry.title ?? entry.entityId }}</span>
+                  @let size = entry.totalBytes | bytesFormat;
+                  <span class="text-xs text-text-muted">{{ size }}</span>
+                  @if (entry.locales.length > 0) {
+                    <span
+                      class="text-xs uppercase tracking-wide text-text-muted"
+                      data-testid="entry-locales"
+                      [title]="'downloads.localesHint' | translate"
+                    >
+                      {{ localeCodes(entry) }}
+                    </span>
+                  }
+
+                  @if (isDeletable(entry)) {
+                    @if (confirmingDeleteId() === entry.entityId) {
+                      <span class="ml-auto text-xs text-text-muted">{{
+                        'download.deleteHint' | translate
+                      }}</span>
+                      <button
+                        type="button"
+                        class="rounded-md bg-danger px-2 py-1 text-xs text-accent-contrast"
+                        data-testid="lesson-confirm-delete"
+                        (click)="confirmDelete(entry.entityId)"
+                      >
+                        {{ 'download.action.confirmDelete' | translate }}
+                      </button>
+                      <button
+                        type="button"
+                        class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                        (click)="cancelDeleteRequest()"
+                      >
+                        {{ 'common.cancel' | translate }}
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        class="ml-auto rounded-md border border-border px-2 py-1 text-xs text-text"
+                        data-testid="lesson-delete"
+                        [attr.aria-label]="
+                          'download.hint.delete'
+                            | translate: { title: entry.title ?? entry.entityId }
+                        "
+                        [title]="
+                          'download.hint.delete'
+                            | translate: { title: entry.title ?? entry.entityId }
+                        "
+                        (click)="requestDelete(entry.entityId)"
+                      >
+                        {{ 'download.action.delete' | translate }}
+                      </button>
+                    }
+                  }
+                </li>
+              }
+            </ul>
+          </section>
         }
-      </ul>
+      </div>
     </div>
   }
 }

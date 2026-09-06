@@ -9,12 +9,13 @@ import {
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { aggregateLessons } from '../core/library/aggregate';
+import { aggregateLessons, type DownloadUnit } from '../core/library/aggregate';
 import { DownloadStore } from '../core/library/download-store';
 import { errorKey } from '../core/platform/error-key';
 import type { DownloadScope, LessonSummary } from '../core/platform/models';
 import { PlatformService } from '../core/platform/platform.service';
 import { BytesFormatPipe } from './bytes.pipe';
+import { ProgressBar } from './progress-bar';
 
 /**
  * The download action for a module or a track: neither has an `Availability`
@@ -30,7 +31,7 @@ import { BytesFormatPipe } from './bytes.pipe';
 @Component({
   selector: 'app-container-download-action',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, BytesFormatPipe],
+  imports: [TranslatePipe, BytesFormatPipe, ProgressBar],
   templateUrl: './container-download-action.html',
 })
 export class ContainerDownloadAction {
@@ -40,6 +41,12 @@ export class ContainerDownloadAction {
   readonly scope = input.required<DownloadScope>();
   readonly title = input.required<string>();
   readonly lessons = input.required<readonly LessonSummary[]>();
+  /**
+   * Downloadable units this container holds beyond its lessons — a track's
+   * mind map is the one that exists today. A module has none and passes
+   * nothing, which leaves the counts exactly as they were.
+   */
+  readonly extraUnits = input<readonly DownloadUnit[]>([]);
 
   protected readonly canDownload = this.platform.capabilities.canDownload;
 
@@ -48,8 +55,9 @@ export class ContainerDownloadAction {
   protected readonly counts = computed(() =>
     aggregateLessons(
       this.lessons(),
-      (lessonId) => this.store.transferFor(lessonId),
+      (entityId) => this.store.transferFor(entityId),
       this.locallyCompleted(),
+      this.extraUnits(),
     ),
   );
 
@@ -57,16 +65,19 @@ export class ContainerDownloadAction {
   protected readonly actionErrorKey = signal<string | null>(null);
 
   constructor() {
-    // Marks a lesson as held locally as soon as its own transfer completes,
+    // Marks a unit as held locally as soon as its own transfer completes,
     // rather than waiting for the parent screen to re-fetch the whole track.
     effect(() => {
-      const list = this.lessons();
+      const ids = [
+        ...this.lessons().map((lesson) => lesson.id),
+        ...this.extraUnits().map((unit) => unit.id),
+      ];
       const current = this.locallyCompleted();
       let next: Set<string> | null = null;
-      for (const lesson of list) {
-        if (this.store.rawStateFor(lesson.id) === 'DONE' && !current.has(lesson.id)) {
+      for (const id of ids) {
+        if (id !== null && this.store.rawStateFor(id) === 'DONE' && !current.has(id)) {
           next ??= new Set(current);
-          next.add(lesson.id);
+          next.add(id);
         }
       }
       if (next) {
@@ -101,13 +112,13 @@ export class ContainerDownloadAction {
   }
 
   protected async onRetry(): Promise<void> {
-    const activeLessonId = this.counts().activeLessonId;
-    await this.run(() => this.store.retry(activeLessonId ?? undefined));
+    const activeEntityId = this.counts().activeEntityId;
+    await this.run(() => this.store.retry(activeEntityId ?? undefined));
   }
 
   private activeBatchId(): string | null {
-    const activeLessonId = this.counts().activeLessonId;
-    return activeLessonId ? this.store.batchIdFor(activeLessonId) : null;
+    const activeEntityId = this.counts().activeEntityId;
+    return activeEntityId ? this.store.batchIdFor(activeEntityId) : null;
   }
 
   private async run(action: () => Promise<unknown>): Promise<void> {

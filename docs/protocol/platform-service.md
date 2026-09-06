@@ -178,6 +178,58 @@ view-model value for it, that requirement would have nowhere to surface.
 Components use `readable` and `capabilities.canDownload`. They do not compare the
 enum: a component that special-cases `REMOTE` has learned it is on the web.
 
+**A track's mind map is a unit of content, not a boolean.** `TrackDetail`
+carries
+
+```typescript
+export interface MindMapSummary {
+  readonly id: string | null;          // web: null, nothing addresses it there
+  readonly availability: ContentAvailability;
+  readonly sizeBytes: number | null;
+}
+```
+
+rather than `hasMindMap: boolean`. The boolean answers "is there one", which is
+the question the navigation link asks and the only question it can answer; every
+control that offers to *acquire* content needs the second axis as well. Reducing
+the summary the store already returns to one bit is what leaves a track whose
+lessons are all downloaded with a mind map it cannot be asked to fetch: the
+container control aggregates over lessons, finds them complete, and hides the
+only button. A container that includes a mind map counts it as one more unit, so
+"4 of 5" is what a track with four downloaded lessons and a missing mind map
+reports.
+
+On the web `availability` is `REMOTE` with a `null` transfer, the same value the
+platform reports for anything it serves live, and `id` is `null` because the read
+API addresses a mind map by track slug and never exposes its identifier.
+
+**Removal is offered at the level the user thinks in.** A queue row carries its
+`trackId` and `trackTitle`, and the downloads screen groups by them so a track
+can be removed in one confirmed action. Without it the screen can only delete
+one lesson at a time, which leaves any entity that has no scope of its own --
+a mind map is acquired with its track and can only be released with it --
+downloadable but not removable. Content the interface can acquire and cannot
+release is a one-way door, and there should be none.
+
+**A downloaded package is multilingual, so `QueueEntry` reports a set.**
+`locales` lists what a stored entity actually holds -- base locale first, then
+alphabetically -- and is empty until something is stored. A screen showing "this
+lesson is in Turkish" would be wrong about a package that also carries English
+and French.
+
+**An empty local read is a screen's job, not the service's.** Where reads are
+served from a local replica, that replica starts out empty and no read fills it:
+a track list with nothing in it and a track with no modules are both legitimate
+answers meaning "never fetched". A screen that receives one and stops there
+renders an application that can never acquire content, so a screen that can
+download -- `capabilities.canDownload` -- follows an empty read with a single
+`refreshLibrary()` for the list, or `refreshLibrary(trackId)` for the track, and
+reads again. Once, not in a loop: the second empty answer is an answer.
+
+A rejected refresh does not replace what the local read returned. Being offline
+is an ordinary condition here, and a screen that trades a correct empty list for
+an error state has made it look like a fault.
+
 ---
 
 ## 5. What each implementation does

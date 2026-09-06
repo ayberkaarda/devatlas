@@ -177,6 +177,34 @@ describe('WebPlatformService', () => {
     });
   });
 
+  it('reports a mind map as a live-served unit with no identifier of its own', async () => {
+    const promise = service.getTrack('angular-path');
+    http.expectOne(`${BASE}/tracks/angular-path`).flush({
+      id: 'track-1',
+      slug: 'angular-path',
+      title: 'Track',
+      description: null,
+      icon: null,
+      order: 1,
+      locale: 'en',
+      requested_locale: 'en',
+      is_fallback: false,
+      content_version: 1,
+      has_mind_map: true,
+      updated_at: '2026-08-29T11:20:04.771Z',
+      modules: [],
+    });
+
+    // The read API addresses a mind map by its track's slug and never exposes
+    // an identifier, and nothing is stored here, so REMOTE is the honest value
+    // rather than a plausible-looking DOWNLOADED.
+    expect((await promise).mindMap).toEqual({
+      id: null,
+      sizeBytes: null,
+      availability: { availability: 'REMOTE', transfer: null, readable: true },
+    });
+  });
+
   it('marks progress through the sync endpoint, sending null for an un-completion', async () => {
     const promise = service.markProgress('lesson-1', false);
     const request = http.expectOne(`${BASE}/sync/progress`);

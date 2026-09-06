@@ -36,155 +36,160 @@
           — {{ reasonKey | translate }}
         }
       </span>
+      @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
+        <div class="w-24">
+          <app-progress-bar [done]="active.bytesDone" [total]="active.bytesTotal" />
+        </div>
+      }
     }
 
-    @if (!transfer()) {
-      @switch (availability().availability) {
-        @case ('NOT_DOWNLOADED') {
-          <button
-            type="button"
-            class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.download' | translate: { title: title() }"
-            [title]="'download.hint.download' | translate: { title: title() }"
-            (click)="onDownload()"
-          >
-            {{ 'download.action.download' | translate }}
-          </button>
+    @if (!confirmingDelete()) {
+      @if (!transfer()) {
+        @switch (availability().availability) {
+          @case ('NOT_DOWNLOADED') {
+            <button
+              type="button"
+              class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.download' | translate: { title: title() }"
+              [title]="'download.hint.download' | translate: { title: title() }"
+              (click)="onDownload()"
+            >
+              {{ 'download.action.download' | translate }}
+            </button>
+          }
+          @case ('UPDATE_AVAILABLE') {
+            <button
+              type="button"
+              class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.update' | translate: { title: title() }"
+              [title]="'download.hint.update' | translate: { title: title() }"
+              (click)="onDownload()"
+            >
+              {{ 'download.action.update' | translate }}
+            </button>
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
+              [title]="'download.hint.delete' | translate: { title: title() }"
+              (click)="requestDelete()"
+            >
+              {{ 'download.action.delete' | translate }}
+            </button>
+          }
+          @case ('DOWNLOADED') {
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
+              [title]="'download.hint.delete' | translate: { title: title() }"
+              (click)="requestDelete()"
+            >
+              {{ 'download.action.delete' | translate }}
+            </button>
+          }
+          @case ('WITHDRAWN') {
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
+              [title]="'download.hint.delete' | translate: { title: title() }"
+              (click)="requestDelete()"
+            >
+              {{ 'download.action.delete' | translate }}
+            </button>
+          }
+          @case ('LOCAL_AHEAD') {
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
+              [title]="'download.hint.delete' | translate: { title: title() }"
+              (click)="requestDelete()"
+            >
+              {{ 'download.action.delete' | translate }}
+            </button>
+          }
         }
-        @case ('UPDATE_AVAILABLE') {
-          <button
-            type="button"
-            class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.update' | translate: { title: title() }"
-            [title]="'download.hint.update' | translate: { title: title() }"
-            (click)="onDownload()"
-          >
-            {{ 'download.action.update' | translate }}
-          </button>
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
-            [title]="'download.hint.delete' | translate: { title: title() }"
-            (click)="requestDelete()"
-          >
-            {{ 'download.action.delete' | translate }}
-          </button>
-        }
-        @case ('DOWNLOADED') {
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
-            [title]="'download.hint.delete' | translate: { title: title() }"
-            (click)="requestDelete()"
-          >
-            {{ 'download.action.delete' | translate }}
-          </button>
-        }
-        @case ('WITHDRAWN') {
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
-            [title]="'download.hint.delete' | translate: { title: title() }"
-            (click)="requestDelete()"
-          >
-            {{ 'download.action.delete' | translate }}
-          </button>
-        }
-        @case ('LOCAL_AHEAD') {
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
-            [title]="'download.hint.delete' | translate: { title: title() }"
-            (click)="requestDelete()"
-          >
-            {{ 'download.action.delete' | translate }}
-          </button>
+      } @else {
+        @switch (transfer()!.state) {
+          @case ('PAUSED') {
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.resume' | translate: { title: title() }"
+              [title]="'download.hint.resume' | translate: { title: title() }"
+              (click)="onResume()"
+            >
+              {{ 'download.action.resume' | translate }}
+            </button>
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
+              [title]="'download.hint.cancel' | translate: { title: title() }"
+              (click)="onCancel()"
+            >
+              {{ 'download.action.cancel' | translate }}
+            </button>
+          }
+          @case ('FAILED') {
+            <button
+              type="button"
+              class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.retry' | translate: { title: title() }"
+              [title]="'download.hint.retry' | translate: { title: title() }"
+              (click)="onRetry()"
+            >
+              {{ 'download.action.retry' | translate }}
+            </button>
+          }
+          @case ('VERIFYING') {
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
+              [title]="'download.hint.cancel' | translate: { title: title() }"
+              (click)="onCancel()"
+            >
+              {{ 'download.action.cancel' | translate }}
+            </button>
+          }
+          @default {
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.pause' | translate: { title: title() }"
+              [title]="'download.hint.pause' | translate: { title: title() }"
+              (click)="onPause()"
+            >
+              {{ 'download.action.pause' | translate }}
+            </button>
+            <button
+              type="button"
+              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              [disabled]="busy()"
+              [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
+              [title]="'download.hint.cancel' | translate: { title: title() }"
+              (click)="onCancel()"
+            >
+              {{ 'download.action.cancel' | translate }}
+            </button>
+          }
         }
       }
     } @else {
-      @switch (transfer()!.state) {
-        @case ('PAUSED') {
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.resume' | translate: { title: title() }"
-            [title]="'download.hint.resume' | translate: { title: title() }"
-            (click)="onResume()"
-          >
-            {{ 'download.action.resume' | translate }}
-          </button>
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
-            [title]="'download.hint.cancel' | translate: { title: title() }"
-            (click)="onCancel()"
-          >
-            {{ 'download.action.cancel' | translate }}
-          </button>
-        }
-        @case ('FAILED') {
-          <button
-            type="button"
-            class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.retry' | translate: { title: title() }"
-            [title]="'download.hint.retry' | translate: { title: title() }"
-            (click)="onRetry()"
-          >
-            {{ 'download.action.retry' | translate }}
-          </button>
-        }
-        @case ('VERIFYING') {
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
-            [title]="'download.hint.cancel' | translate: { title: title() }"
-            (click)="onCancel()"
-          >
-            {{ 'download.action.cancel' | translate }}
-          </button>
-        }
-        @default {
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.pause' | translate: { title: title() }"
-            [title]="'download.hint.pause' | translate: { title: title() }"
-            (click)="onPause()"
-          >
-            {{ 'download.action.pause' | translate }}
-          </button>
-          <button
-            type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-            [disabled]="busy()"
-            [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
-            [title]="'download.hint.cancel' | translate: { title: title() }"
-            (click)="onCancel()"
-          >
-            {{ 'download.action.cancel' | translate }}
-          </button>
-        }
-      }
-    }
-
-    @if (confirmingDelete()) {
       <span class="text-xs text-text-muted">{{ 'download.deleteHint' | translate }}</span>
       <button
         type="button"

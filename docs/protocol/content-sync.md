@@ -636,6 +636,46 @@ them. Progress data is never touched by any of this.
 The UI reports the result as a count: "3 lessons updated". The count is of
 entities, not bytes, because that is what the user recognizes.
 
+### 8.1 Discovery is not delta
+
+The loop above answers "what changed in what I have". It deliberately never
+answers "what is there", and a client that treats it as if it did can reach a
+state from which it cannot recover: a store holding nothing has nothing to
+compare, so it plans no work, so it keeps holding nothing.
+
+The two reads that answer "what is there" are the ones in section 4, and a
+client that renders from a local replica has to call them at the two moments
+its own screens ask the question:
+
+```
+listing tracks and the local catalogue is empty  ->  GET /manifest/catalog
+opening a track whose structure is not stored    ->  GET /manifest/track/{id}
+```
+
+Both are conditional requests after the first time (`If-None-Match`, `304`), so
+the steady-state cost of asking is one round trip with no body.
+
+Three properties follow, and they are requirements rather than observations:
+
+- **Discovery is driven by the interface, not by the store.** The moment a user
+  looks at something is the moment its manifest is worth fetching. A client
+  whose reads silently fetch on their own behalf loses the ability to say which
+  source answered, and an offline screen becomes indistinguishable from an
+  online one.
+- **Discovery does not download.** Applying a manifest writes structure —
+  modules, lesson titles, the mind map's existence, the entity list with its
+  digests. Bodies still arrive only through an explicit download, exactly as
+  section 8 says. A structural row and a downloaded entity must stay
+  distinguishable in storage, or "not downloaded yet" and "never asked" collapse
+  into the same empty state.
+- **A structural row is not evidence of a fresh manifest.** A track summary
+  taken from the catalog carries the track's own `content_version` but none of
+  its entities. A client that stores both in one place cannot later tell whether
+  it has ever applied that track's manifest, and any staleness test it writes
+  against that field compares the catalog to itself. Keep the manifest's own
+  provenance — its `ETag`, or the version it was applied at — recorded
+  separately.
+
 ---
 
 ## 9. Progress events

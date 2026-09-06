@@ -22,7 +22,13 @@
   <h1 class="mt-4 text-2xl font-semibold tracking-tight">{{ 'mindMap.heading' | translate }}</h1>
   <p class="mt-1 text-text-muted">{{ detail.title }}</p>
 
-  @if (!detail.hasMindMap) {
+  @if (noteKey(); as key) {
+    <p class="mt-2 text-xs text-text-muted" role="status" data-testid="discovery-note">
+      {{ key | translate }}
+    </p>
+  }
+
+  @if (!detail.mindMap) {
     <p class="mt-8 text-text-muted">{{ 'mindMap.unavailable' | translate }}</p>
   } @else if (mindMapNotDownloaded()) {
     <div class="mt-8 rounded-md border border-border bg-surface p-4">
@@ -32,6 +38,7 @@
           [scope]="{ kind: 'TRACK', id: detail.id }"
           [title]="detail.title"
           [lessons]="allLessons()"
+          [extraUnits]="mindMapUnits()"
         />
       </div>
     </div>

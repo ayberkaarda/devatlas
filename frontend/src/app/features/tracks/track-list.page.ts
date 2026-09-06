@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { LibraryDiscovery } from '../../core/library/library-discovery';
 import { errorKey } from '../../core/platform/error-key';
 import type { TrackSummary } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
@@ -15,6 +16,7 @@ import { FallbackBadge } from '../../shared/fallback-badge';
 })
 export class TrackListPage {
   private readonly platform = inject(PlatformService);
+  private readonly discovery = inject(LibraryDiscovery);
 
   /**
    * Read once, at construction. The list is the same whichever implementation
@@ -23,6 +25,8 @@ export class TrackListPage {
   protected readonly tracks = signal<readonly TrackSummary[]>([]);
   protected readonly loading = signal(true);
   protected readonly failure = signal<string | null>(null);
+  /** A discovery attempt that failed. Non-blocking: the list above still renders. */
+  protected readonly noteKey = signal<string | null>(null);
 
   /**
    * Whether a download count means anything here. The question is about the
@@ -38,8 +42,12 @@ export class TrackListPage {
   protected async load(): Promise<void> {
     this.loading.set(true);
     this.failure.set(null);
+    this.noteKey.set(null);
     try {
-      this.tracks.set(await this.platform.listTracks());
+      const initial = await this.platform.listTracks();
+      const outcome = await this.discovery.discoverTracks(initial);
+      this.tracks.set(outcome.value);
+      this.noteKey.set(outcome.noteKey);
     } catch (error) {
       this.failure.set(errorKey(error));
     } finally {

@@ -162,6 +162,9 @@ interface IpcQueueEntry {
   attempt: number;
   pauseReason: string | null;
   errorCode: string | null;
+  locales: string[];
+  trackId: string | null;
+  trackTitle: string | null;
 }
 
 interface IpcProgressEntry {
@@ -257,7 +260,19 @@ export class TauriPlatformService extends PlatformService {
       description: detail.description,
       icon: detail.icon,
       contentVersion: detail.contentVersion,
-      hasMindMap: detail.mindMap !== null,
+      // The mind map is joined with the queue exactly as a lesson is: it is a
+      // downloadable unit of its own, and one that is being fetched right now
+      // has to read as downloading rather than as merely absent.
+      mindMap: detail.mindMap
+        ? {
+            id: detail.mindMap.mindMapId,
+            availability: contentAvailability(
+              detail.mindMap.availability,
+              transfers.get(detail.mindMap.mindMapId) ?? null,
+            ),
+            sizeBytes: detail.mindMap.sizeBytes,
+          }
+        : null,
       translation: translationOf(detail, requested),
       modules: detail.modules.map((module) => ({
         id: module.moduleId,
@@ -369,6 +384,12 @@ export class TauriPlatformService extends PlatformService {
       attempt: row.attempt,
       pauseReason: row.pauseReason,
       errorCode: row.errorCode,
+      // An entity that has not been stored yet reports no locales at all, and
+      // a row that arrives without the field is in exactly that position, so
+      // the empty set is the same honest answer either way.
+      locales: row.locales ?? [],
+      trackId: row.trackId ?? null,
+      trackTitle: row.trackTitle ?? null,
     }));
   }
 

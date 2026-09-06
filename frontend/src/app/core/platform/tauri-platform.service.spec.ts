@@ -15,6 +15,7 @@ import { TauriPlatformService } from './tauri-platform.service';
 
 const TRACK_ID = '018f3a01-2b7c-7a41-8f10-5c9d3e77aa10';
 const LESSON_ID = '018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70';
+const MIND_MAP_ID = '018f3d90-1a55-7c88-b0e2-6f31c4a9d502';
 
 function trackSummaryRow() {
   return {
@@ -34,7 +35,11 @@ function trackSummaryRow() {
   };
 }
 
-function trackDetailRow(availability: string) {
+function mindMapRow(availability = 'DOWNLOADED') {
+  return { mindMapId: MIND_MAP_ID, availability, contentVersion: 3, sizeBytes: 12 };
+}
+
+function trackDetailRow(availability: string, mindMap: unknown = mindMapRow()) {
   return {
     trackId: TRACK_ID,
     slug: 'angular-path',
@@ -42,7 +47,7 @@ function trackDetailRow(availability: string) {
     description: null,
     icon: null,
     contentVersion: 47,
-    mindMap: { mindMapId: 'map-1', availability: 'DOWNLOADED', contentVersion: 3, sizeBytes: 12 },
+    mindMap,
     modules: [
       {
         moduleId: 'module-1',
@@ -187,6 +192,118 @@ describe('TauriPlatformService', () => {
     // Completion is expressed by the availability axis; a finished transfer
     // lingering in the view model would be rendered twice.
     expect(track.modules[0].lessons[0].availability.transfer).toBeNull();
+  });
+
+  it('carries a mind map through as a unit, joined with the queue like a lesson', async () => {
+    respondWith(async (command) => {
+      if (command === 'library_list_tracks') return [trackSummaryRow()];
+      if (command === 'library_get_track') {
+        return trackDetailRow('DOWNLOADED', mindMapRow('NOT_DOWNLOADED'));
+      }
+      if (command === 'download_queue_state') {
+        return [
+          {
+            entityId: MIND_MAP_ID,
+            entityType: 'MIND_MAP',
+            title: null,
+            batchId: 'batch-1',
+            state: 'DOWNLOADING',
+            receivedBytes: 4,
+            totalBytes: 12,
+            attempt: 1,
+            pauseReason: null,
+            errorCode: null,
+            locales: [],
+          },
+        ];
+      }
+      throw new Error(`unexpected ${command}`);
+    });
+
+    const track = await service.getTrack('angular-path');
+
+    // Not the boolean the view model used to carry: a control that offers to
+    // fetch the mind map needs its size and both availability axes, and a
+    // mind map being fetched right now has to read as downloading.
+    expect(track.mindMap).toEqual({
+      id: MIND_MAP_ID,
+      sizeBytes: 12,
+      availability: {
+        availability: 'NOT_DOWNLOADED',
+        readable: false,
+        transfer: {
+          state: 'DOWNLOADING',
+          bytesDone: 4,
+          bytesTotal: 12,
+          attempts: 1,
+          lastError: null,
+        },
+      },
+    });
+  });
+
+  it('reports no mind map for a track that has none', async () => {
+    respondWith(async (command) => {
+      if (command === 'library_list_tracks') return [trackSummaryRow()];
+      if (command === 'library_get_track') return trackDetailRow('DOWNLOADED', null);
+      if (command === 'download_queue_state') return [];
+      throw new Error(`unexpected ${command}`);
+    });
+
+    expect((await service.getTrack('angular-path')).mindMap).toBeNull();
+  });
+
+  it('carries the locales a stored package holds, in the order the store gave them', async () => {
+    respondWith(async (command) => {
+      if (command === 'download_queue_state') {
+        return [
+          {
+            entityId: LESSON_ID,
+            entityType: 'LESSON',
+            title: 'Introduction to signals',
+            batchId: 'batch-1',
+            state: 'DONE',
+            receivedBytes: 41233,
+            totalBytes: 41233,
+            attempt: 1,
+            pauseReason: null,
+            errorCode: null,
+            locales: ['en', 'fr', 'tr'],
+          },
+        ];
+      }
+      throw new Error(`unexpected ${command}`);
+    });
+
+    const queue = await service.queueState();
+    // A package delivers a lesson and its translations together, so the set is
+    // the answer and its order is the store's to decide, not this mapping's.
+    expect(queue[0].locales).toEqual(['en', 'fr', 'tr']);
+  });
+
+  it('reports an empty locale set for an entity nothing is stored for yet', async () => {
+    respondWith(async (command) => {
+      if (command === 'download_queue_state') {
+        return [
+          {
+            entityId: LESSON_ID,
+            entityType: 'LESSON',
+            title: null,
+            batchId: 'batch-1',
+            state: 'QUEUED',
+            receivedBytes: 0,
+            totalBytes: 0,
+            attempt: 0,
+            pauseReason: null,
+            errorCode: null,
+            locales: [],
+          },
+        ];
+      }
+      throw new Error(`unexpected ${command}`);
+    });
+
+    expect((await service.queueState())[0].locales).toEqual([]);
   });
 
   it('reads a lesson and reports the store fallback flag it carries', async () => {

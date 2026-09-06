@@ -41,6 +41,7 @@ export class FakePlatformService extends PlatformService {
   readonly preferenceWrites: Partial<Preferences>[] = [];
   readonly progressWrites: { lessonId: string; completed: boolean }[] = [];
   readonly enqueued: DownloadScope[] = [];
+  readonly deletedScopes: DownloadScope[] = [];
   revealed = 0;
 
   async listTracks(): Promise<TrackSummary[]> {
@@ -96,8 +97,8 @@ export class FakePlatformService extends PlatformService {
     return [];
   }
 
-  async deleteLocal(): Promise<void> {
-    // Accepted and ignored: no test asserts on the queue.
+  async deleteLocal(scope: DownloadScope): Promise<void> {
+    this.deletedScopes.push(scope);
   }
 
   downloadProgress(): Observable<DownloadProgress> {

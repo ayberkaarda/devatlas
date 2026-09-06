@@ -6,6 +6,8 @@ import { errorKey, queueErrorKey } from '../../core/platform/error-key';
 import type { DownloadScope, QueueEntry } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { BytesFormatPipe } from '../../shared/bytes.pipe';
+import { progressPercent } from '../../shared/progress';
+import { ProgressBar } from '../../shared/progress-bar';
 
 interface BatchGroup {
   readonly batchId: string;
@@ -13,6 +15,17 @@ interface BatchGroup {
   readonly receivedBytes: number;
   readonly totalBytes: number;
   readonly anyPaused: boolean;
+}
+
+/**
+ * Downloaded rows for one track. `trackId` is null only for the defensive
+ * path -- a row whose track went missing from the store -- and such a group
+ * carries no track-level action, since there is no id to scope it to.
+ */
+interface TrackGroup {
+  readonly trackId: string | null;
+  readonly trackTitle: string | null;
+  readonly entries: readonly QueueEntry[];
 }
 
 /**
@@ -31,7 +44,7 @@ interface BatchGroup {
 @Component({
   selector: 'app-downloads-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, BytesFormatPipe],
+  imports: [TranslatePipe, BytesFormatPipe, ProgressBar],
   templateUrl: './downloads.page.html',
 })
 export class DownloadsPage {
@@ -46,6 +59,13 @@ export class DownloadsPage {
   protected readonly checkErrorKey = signal<string | null>(null);
   protected readonly actionErrorKey = signal<string | null>(null);
   protected readonly confirmingDeleteId = signal<string | null>(null);
+  /**
+   * Kept apart from `confirmingDeleteId`: a lesson-level and a track-level
+   * confirmation are different operations at different scopes, and letting
+   * one clear or trigger the other would let a confirm click on one row
+   * delete a whole track, or vice versa.
+   */
+  protected readonly confirmingDeleteTrackId = signal<string | null>(null);
 
   protected readonly batches = computed<readonly BatchGroup[]>(() => {
     const map = new Map<string, QueueEntry[]>();
@@ -69,6 +89,27 @@ export class DownloadsPage {
   protected readonly done = computed(() =>
     this.store.queue().filter((entry) => entry.state === 'DONE'),
   );
+
+  /**
+   * Downloaded rows grouped by the track they belong to, in first-seen order.
+   * A mind map has no download scope of its own -- it arrives with its track
+   * and is released with it -- so grouping is what gives it a removal action
+   * at all: the group's track-level delete covers every row in it, mind maps
+   * included.
+   */
+  protected readonly doneGroups = computed<readonly TrackGroup[]>(() => {
+    const map = new Map<string | null, QueueEntry[]>();
+    for (const entry of this.done()) {
+      const list = map.get(entry.trackId) ?? [];
+      list.push(entry);
+      map.set(entry.trackId, list);
+    }
+    return [...map.entries()].map(([trackId, entries]) => ({
+      trackId,
+      trackTitle: entries[0]?.trackTitle ?? null,
+      entries,
+    }));
+  });
 
   constructor() {
     if (this.canDownload) {
@@ -103,6 +144,26 @@ export class DownloadsPage {
     return entityType === 'MIND_MAP' ? 'downloads.entityMindMap' : 'downloads.entityLesson';
   }
 
+  /**
+   * The share of a batch that has arrived, as a whole percent, or null while
+   * its size is still unknown — see `progressPercent`. Null renders nothing
+   * rather than a "0%" that would be a guess.
+   */
+  protected percentOf(done: number, total: number): number | null {
+    return progressPercent(done, total);
+  }
+
+  /**
+   * The locales a stored package holds, as short codes.
+   *
+   * These are language codes, not interface text, so they are not translated:
+   * a French reader looking for the Turkish body wants to see TR. The label
+   * explaining what the codes are is a translation key on the element's title.
+   */
+  protected localeCodes(entry: QueueEntry): string {
+    return entry.locales.map((locale) => locale.toUpperCase()).join(' · ');
+  }
+
   /** A downloaded mind map has no independent download scope: it only ever
    * arrives as part of its track, so it cannot be deleted on its own either. */
   protected isDeletable(entry: QueueEntry): boolean {
@@ -126,6 +187,7 @@ export class DownloadsPage {
   }
 
   protected requestDelete(entityId: string): void {
+    this.confirmingDeleteTrackId.set(null);
     this.confirmingDeleteId.set(entityId);
   }
 
@@ -136,6 +198,21 @@ export class DownloadsPage {
   protected async confirmDelete(entityId: string): Promise<void> {
     this.confirmingDeleteId.set(null);
     const scope: DownloadScope = { kind: 'LESSON', id: entityId };
+    await this.run(() => this.store.deleteLocal(scope));
+  }
+
+  protected requestDeleteTrack(trackId: string): void {
+    this.confirmingDeleteId.set(null);
+    this.confirmingDeleteTrackId.set(trackId);
+  }
+
+  protected cancelDeleteTrackRequest(): void {
+    this.confirmingDeleteTrackId.set(null);
+  }
+
+  protected async confirmDeleteTrack(trackId: string): Promise<void> {
+    this.confirmingDeleteTrackId.set(null);
+    const scope: DownloadScope = { kind: 'TRACK', id: trackId };
     await this.run(() => this.store.deleteLocal(scope));
   }
 

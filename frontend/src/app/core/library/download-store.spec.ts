@@ -38,6 +38,7 @@ function queueEntry(overrides: Partial<QueueEntry> = {}): QueueEntry {
     attempt: 1,
     pauseReason: null,
     errorCode: null,
+    locales: [],
     ...overrides,
   };
 }

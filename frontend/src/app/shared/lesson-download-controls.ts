@@ -14,6 +14,7 @@ import { errorKey, queueErrorKey } from '../core/platform/error-key';
 import { contentAvailability, type Availability, type QueueState } from '../core/platform/models';
 import { PlatformService } from '../core/platform/platform.service';
 import { BytesFormatPipe } from './bytes.pipe';
+import { ProgressBar } from './progress-bar';
 
 /**
  * The download control for exactly one lesson: a download/update button, a
@@ -34,7 +35,7 @@ import { BytesFormatPipe } from './bytes.pipe';
 @Component({
   selector: 'app-lesson-download-controls',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, BytesFormatPipe],
+  imports: [TranslatePipe, BytesFormatPipe, ProgressBar],
   templateUrl: './lesson-download-controls.html',
 })
 export class LessonDownloadControls {

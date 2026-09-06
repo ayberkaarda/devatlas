@@ -99,7 +99,12 @@ export class WebPlatformService extends PlatformService {
       description: track.description,
       icon: track.icon,
       contentVersion: track.content_version,
-      hasMindMap: track.has_mind_map,
+      // Served live, like everything else here, and with no identifier: the
+      // read API addresses a mind map by its track's slug and never exposes
+      // one.
+      mindMap: track.has_mind_map
+        ? { id: null, availability: contentAvailability('REMOTE'), sizeBytes: null }
+        : null,
       translation: translationOf(track),
       modules: track.modules.map((module) => ({
         id: module.id,

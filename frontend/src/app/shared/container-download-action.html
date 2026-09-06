@@ -1,11 +1,13 @@
 @if (canDownload) {
   <div class="flex flex-wrap items-center gap-2" data-testid="container-download-action">
-    <span class="text-xs text-text-muted">
-      {{
-        'download.containerProgress'
-          | translate: { downloaded: counts().downloadedCount, total: counts().totalCount }
-      }}
-    </span>
+    @if (counts().totalCount > 0) {
+      <span class="text-xs text-text-muted">
+        {{
+          'download.containerProgress'
+            | translate: { downloaded: counts().downloadedCount, total: counts().totalCount }
+        }}
+      </span>
+    }
 
     @if (counts().transfer; as active) {
       @let activeDone = active.bytesDone | bytesFormat;
@@ -16,10 +18,15 @@
           ({{ 'download.progress' | translate: { done: activeDone, total: activeTotal } }})
         }
       </span>
+      @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
+        <div class="w-24">
+          <app-progress-bar [done]="active.bytesDone" [total]="active.bytesTotal" />
+        </div>
+      }
     }
 
     @if (!counts().transfer) {
-      @if (counts().downloadedCount < counts().totalCount || counts().updateAvailableCount > 0) {
+      @if (!counts().complete) {
         <button
           type="button"
           class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"

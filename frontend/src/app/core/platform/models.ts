@@ -121,6 +121,23 @@ export interface ModuleDetail {
   readonly translation: TranslationState;
 }
 
+/**
+ * A track's mind map, as a unit of content rather than a boolean.
+ *
+ * "Is there one" is the only question a boolean can answer, and it is the only
+ * question the navigation link asks. Every control that offers to *acquire*
+ * content needs the second axis as well: a track whose lessons are all held
+ * locally but whose mind map is not is a normal state, and reducing the mind
+ * map to one bit is what leaves such a track with content it can never be
+ * asked to fetch.
+ */
+export interface MindMapSummary {
+  /** Null on the web, where the read API addresses a mind map by track slug. */
+  readonly id: string | null;
+  readonly availability: ContentAvailability;
+  readonly sizeBytes: number | null;
+}
+
 export interface TrackDetail {
   readonly id: string;
   readonly slug: string;
@@ -128,7 +145,7 @@ export interface TrackDetail {
   readonly description: string | null;
   readonly icon: string | null;
   readonly contentVersion: number;
-  readonly hasMindMap: boolean;
+  readonly mindMap: MindMapSummary | null;
   readonly modules: readonly ModuleDetail[];
   readonly translation: TranslationState;
 }
@@ -225,6 +242,22 @@ export interface QueueEntry {
   readonly attempt: number;
   readonly pauseReason: string | null;
   readonly errorCode: string | null;
+  /**
+   * Which locales the stored entity actually holds, base locale first and the
+   * rest alphabetically. A package delivers a lesson and its translations
+   * together, so "which language is this download in" has no single answer.
+   * Empty until something is stored, and always empty where nothing is.
+   */
+  readonly locales: readonly string[];
+  /**
+   * The track this entity belongs to, and its title in the active locale
+   * (with the usual fallback). A queue is a flat list, but the thing a user
+   * removes to reclaim space is a track, and a screen that cannot group its
+   * rows cannot offer that. `trackTitle` is null only when the track row
+   * itself is missing from the store, which a queue row should never outlive.
+   */
+  readonly trackId: string | null;
+  readonly trackTitle: string | null;
 }
 
 export interface BatchProgress {
