@@ -39,6 +39,9 @@ bytelore:
       # next free one. Listing it here keeps a manual browser session working
       # without weakening what the suite itself allows.
       - http://localhost:4300
+      # A second local round serves the web build alongside the desktop one, so
+      # both can be looked at without stopping either.
+      - http://localhost:4301
   # Effectively unlimited for the suite. The counter is keyed by client IP and
   # every test in the run shares one (127.0.0.1), so production limits here would
   # make a green run depend on how many requests the classes ahead of this one
