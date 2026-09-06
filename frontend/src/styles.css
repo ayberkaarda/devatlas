@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "./styles/tokens.css";
+@import 'tailwindcss';
+@import './styles/tokens.css';
 
 /*
  * Base document styling. Everything here reads a token; a raw colour at this
@@ -13,13 +13,28 @@ body {
   min-height: 100%;
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
     sans-serif;
   font-size: var(--text-base);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+ * The focus ring is one colour for the whole application, and that colour is
+ * not the accent. A ring drawn in the accent vanishes the moment it lands on
+ * an accent-filled button — the exact element a keyboard user reaches first.
+ * --color-focus is chosen to clear 3:1 (WCAG non-text contrast) against all
+ * three grounds the ring can appear on: the page, a card surface, and the
+ * accent fill itself. The offset keeps a band of the underlying surface
+ * between element and ring so the two never read as one thick border.
+ */
 *:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
@@ -39,6 +54,61 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+ * A select that matches the other header controls without stopping being a
+ * select.
+ *
+ * The element stays native: its popup, its type-ahead, its keyboard model and
+ * the way a screen reader announces it are worth more than the appearance, and
+ * a hand-built listbox would have to re-earn all of it. Only the closed state
+ * is restyled — appearance:none removes the platform chrome, and the arrow is
+ * drawn here as two triangles cut out of gradients, because there is no icon
+ * package in this project and an image file would be one more asset to ship.
+ *
+ * The rule lives in the global sheet rather than in the component because the
+ * one thing it must not do is drift from the buttons beside it: any other
+ * select in the application should be able to opt into exactly this look.
+ */
+.bl-select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  /* The same box as the buttons on either side of it — 1.5 and 3 steps of the
+     spacing scale around a 1.25rem line — rather than a height of its own, so
+     the row of header controls shares one baseline and one cap height. The
+     right side is opened up to leave the arrow its own space. */
+  padding-block: calc(var(--spacing) * 1.5);
+  padding-left: var(--spacing-3);
+  padding-right: var(--spacing-8);
+  line-height: calc(var(--spacing) * 5);
+
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+
+  /* Two 5px squares, each half-filled on the diagonal, meeting as a chevron.
+     They are painted in the muted text tone so the arrow reads as furniture
+     rather than as a second piece of content. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--color-text-muted) 50%),
+    linear-gradient(135deg, var(--color-text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) center,
+    calc(100% - 13px) center;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+}
+
+.bl-select:hover {
+  border-color: var(--color-text-muted);
 }
 
 /*

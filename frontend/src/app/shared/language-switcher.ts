@@ -14,6 +14,11 @@ import type { Locale } from '../core/platform/models';
  * The language names are deliberately not translated — a reader looking for
  * their own language looks for its own name, not for the current language's
  * word for it.
+ *
+ * It stays a native select. The visual gap with the buttons next to it is
+ * closed by the shared .bl-select rule in the global stylesheet, which is a
+ * far smaller price than re-implementing a listbox's keyboard and screen
+ * reader behaviour.
  */
 @Component({
   selector: 'app-language-switcher',
@@ -23,7 +28,7 @@ import type { Locale } from '../core/platform/models';
     <label class="sr-only" for="language-switcher">{{ 'language.label' | translate }}</label>
     <select
       id="language-switcher"
-      class="rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text"
+      class="bl-select"
       [attr.aria-label]="'language.label' | translate"
       [value]="locale.current()"
       (change)="select($event)"
