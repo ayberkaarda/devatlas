@@ -91,6 +91,17 @@ bytelore:
     manual-fetch-per-hour: 6
     lock-at-most-for: PT10M
     lock-at-least-for: PT1S
+    # Optional GitHub personal access token, attached only to a request whose host is exactly
+    # api.github.com (most whitelist sources' verify_url_pattern; a few feed_urls too). Anonymous
+    # GitHub API calls are capped at 60/hour; a token raises that to 5000/hour, which the sweep
+    # across every enabled source needs to stay under. No default, and CI never supplies one: a
+    # missing token logs one warning at startup and the pipeline proceeds anonymously rather than
+    # failing to boot.
+    github-token: ${BYTELORE_GITHUB_TOKEN:}
+    # ITEM_RECENT cutoff: a feed item older than this by its own published/updated timestamp is
+    # rejected before the pipeline ever spends a network request confirming its version. A missing
+    # timestamp passes the check rather than failing it (§5.7).
+    max-item-age: P14D
 
   seed:
     # The first administrator, created by the seed migration on an empty

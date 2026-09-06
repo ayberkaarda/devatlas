@@ -1343,6 +1343,8 @@ All paths prefixed `/api/v1/admin`.
     "verify_status": "VERIFIED",
     "verify_checks": [
       { "check": "SOURCE_WHITELISTED", "passed": true, "detail": "enabled=true" },
+      { "check": "ITEM_RECENT", "passed": true, "detail": "published=2026-08-20T11:00:00Z cutoff=2026-08-06T11:58:42Z" },
+      { "check": "STABLE_RELEASE", "passed": true, "detail": null },
       { "check": "VERSION_CONFIRMED", "passed": true, "detail": "https://api.github.com/repos/spring-projects/spring-boot/releases/tags/v4.1.1 → 4.1.1" },
       { "check": "HASH_NOT_SEEN", "passed": true, "detail": null },
       { "check": "CONTENT_SANITY", "passed": true, "detail": "length=4182" },
@@ -1355,7 +1357,12 @@ All paths prefixed `/api/v1/admin`.
 
 **`source_update` is `null` for a manually written post.** A post reaches `PENDING_REVIEW` from either direction: the pipeline drafted it from a fetched source, or a person wrote it and submitted it. Only the first has a fetch to show. A review screen therefore renders one panel rather than two in that case, and must not treat the absence as an error.
 
-`verify_status` ∈ `PENDING | VERIFIED | REJECTED`. `verify_checks` is ordered as executed; the first failing entry is the reason a `REJECTED` update never became a draft. `raw_content` is the feed item's text as fetched and normalized.
+`verify_status` ∈ `PENDING | VERIFIED | REJECTED`. `verify_checks` is ordered as executed — `SOURCE_WHITELISTED`, `ITEM_RECENT`, `STABLE_RELEASE`, `VERSION_CONFIRMED`, `HASH_NOT_SEEN`, `CONTENT_SANITY`, `DRAFT_VALIDATION` — and the first failing entry is the reason a `REJECTED` update never became a draft. `raw_content` is the feed item's text as fetched and normalized.
+
+**`ITEM_RECENT` and `STABLE_RELEASE` run before `VERSION_CONFIRMED`, at zero network cost.** Both are pure checks over the feed item and the already-extracted version string, deliberately placed ahead of the one check that makes a request, so an item that would fail for a reason visible without any network call never causes one.
+
+- **`ITEM_RECENT`** passes if the feed item's own `published`/`updated` timestamp is no older than `bytelore.pipeline.max-item-age` (default 14 days), or if the item carries no such timestamp at all — a missing date is not evidence the release is old, and some whitelisted feeds (the announcement-style ones, unlike GitHub Releases) do not reliably carry one.
+- **`STABLE_RELEASE`** passes if the extracted version string is exactly its numeric core, with nothing trailing it: no `-`/`+`-separated pre-release tag (`-rc1`, `-beta.1`, `-M1`, `+14`), and no bare-letter suffix directly attached with no separator either (`3.15.0b2`). The version extractor captures such a suffix whole rather than truncating at the numeric core, specifically so this check can see it — a truncated `"3.15.0"` extracted from `"3.15.0b2"` could otherwise be confirmed by `VERSION_CONFIRMED` against a verify endpoint whose body legitimately contains `"3.15.0"` as a substring of its real announcement, and reach the review queue mislabeled as the stable release it only previews.
 
 **`VERSION_CONFIRMED` — the definition.** This check is the load-bearing one in the chain, and "we made a second request" is not a definition anyone can implement twice the same way. It passes if and only if **both** hold:
 
@@ -1364,7 +1371,7 @@ All paths prefixed `/api/v1/admin`.
 
 Both halves are required. Status alone is worthless: an API that answers `200` with `{"message": "not found"}`, a site that serves a soft-404 page, or a CDN that returns a generic landing page all satisfy a status check while confirming nothing. A body match alone is equally worthless — a `404` page that echoes the requested version back in its error text would "confirm" any string a caller invented.
 
-Anything else fails the check and the update is rejected with an audit entry: a non-200 status, a redirect chain ending anywhere but 200, a timeout, a TLS failure, or a 200 whose body lacks the literal.
+Anything else fails the check and the update is rejected with an audit entry: a non-200 status, a redirect chain ending anywhere but 200, a timeout, a TLS failure, or a 200 whose body lacks the literal — **with one deliberate exception**. A `403` or `429` from the verify request is not treated as a failed check: most `verify_url_pattern` rows point at `api.github.com`, whose anonymous rate limit (60/hour) a sweep across every enabled source can exhaust well before an optional `bytelore.pipeline.github-token` raises it to 5000/hour, and a status that means "the endpoint is rate-limited right now" is not evidence the claimed version is fake. The item is **deferred**, not rejected: no `SourceUpdate` row is written for it (so its `content_hash` is never recorded as processed), a `PipelineAuditLog` entry names it as deferred rather than rejected, and it is retried in full on the next fetch cycle. Rejecting it as an ordinary `VERSION_CONFIRMED` failure instead would do lasting damage a retry could otherwise undo: the `SourceUpdate` row a rejection writes is exactly what the dedup check at the top of the pipeline uses to recognize "already processed," so a transient rate limit would otherwise become a permanent block on that item, on every future cycle, long after the rate limit itself has cleared.
 
 **The version string is validated before it is ever placed in a URL.** It must match `^[A-Za-z0-9._+-]{1,64}$`; a value that does not is rejected outright and never interpolated. On substitution it is additionally percent-encoded as a URL path segment. Both steps are required and neither replaces the other: the pattern is what stops `../`, a scheme, an authority, a query separator or whitespace from reaching URL construction, and the encoding is what handles the characters the pattern legitimately allows. Without them, a feed — remote input, from a source whose *feed* is trusted but whose *field contents* are not — chooses part of the URL the server then fetches, which is how a whitelist becomes a server-side request forgery primitive against the one component that is supposed to be verifying trust.
 
@@ -1454,7 +1461,9 @@ The call is **synchronous** and returns when the cycle completes, because the op
 }
 ```
 
-`fetched` counts feed items seen; `created` new `SourceUpdate` rows; `duplicates` items whose `content_hash` was already known; `rejected` items that failed the verification chain. `created + duplicates + rejected` equals `fetched`. The chain's last check is `DRAFT_VALIDATION`: the drafted body is offered to the same allow-list an authored body faces (§2.8), and an item whose draft would be refused is rejected as a failed check — visibly, with the rest of the feed still processed — rather than aborting the cycle. An item that fails in some other way is reported with the check name `ITEM_FAILED`; it too costs only that item. Every outcome is written to `PipelineAuditLog` exactly as a scheduled run would write it, with `actor_user_id` set to the calling administrator — a manual run is attributable, a scheduled one is not.
+`fetched` counts items that reached a decision this cycle; `created` new `SourceUpdate` rows; `duplicates` items whose `content_hash` was already known; `rejected` items that failed the verification chain. **`created + duplicates + rejected` equals `fetched`, always** — this is not merely descriptive, it is the whole reason `fetched` is defined the way it is (see the next paragraph). The chain's last check is `DRAFT_VALIDATION`: the drafted body is offered to the same allow-list an authored body faces (§2.8), and an item whose draft would be refused is rejected as a failed check — visibly, with the rest of the feed still processed — rather than aborting the cycle. An item that fails in some other way is reported with the check name `ITEM_FAILED`; it too costs only that item. Every outcome is written to `PipelineAuditLog` exactly as a scheduled run would write it, with `actor_user_id` set to the calling administrator — a manual run is attributable, a scheduled one is not.
+
+**A deferred item (see `VERSION_CONFIRMED` above) is not counted anywhere in this response, not merely excluded from `rejected`.** The feed may have carried more items than `fetched` reports; the difference, if any, is the number of items deferred this cycle. This is a deliberate design choice, not an oversight: a deferred item was skipped, not decided, so folding it into `fetched` (as an items-seen count) while excluding it from the three counts that must sum to `fetched` would break the invariant above, and counting it under `rejected` would misrepresent it to any caller that treats `rejected` as "this item failed verification" — which is exactly what a deferred item did not do. Its only visible trace in this API is a `PipelineAuditLog` row (`GET /admin/blog/posts/{id}/audit-log` for a post-scoped trail; there is no source-scoped audit-log endpoint in this phase). An operator who needs to know a fetch was rate-limited reads the audit log, not this response's counts.
 
 If the scheduler (or another manual run) currently holds the lock, the request returns `409 PIPELINE_RUN_IN_PROGRESS` immediately rather than queueing or blocking.
 
@@ -1614,7 +1623,7 @@ Every non-2xx response body is exactly:
 
 | Code | HTTP | When |
 |---|---|---|
-| `VALIDATION_FAILED` | 400 | Bean Validation rejected one or more fields |
+| `VALIDATION_FAILED` | 400 | Bean Validation rejected one or more fields, **or** a write reached the database and violated a constraint that mirrors a validation rule (§7's "database constraints mirror them so a bypass fails loudly") — the latter carries no `errors[]` array, only `code` and `message` |
 | `MALFORMED_REQUEST` | 400 | Body is not parseable JSON, or a field has the wrong JSON type |
 | `INVALID_PARAMETER` | 400 | A query parameter is present but not a legal value |
 | `UNSUPPORTED_LOCALE` | 400 | `locale` outside `en\|tr\|fr\|de` |

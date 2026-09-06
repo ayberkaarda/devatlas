@@ -41,7 +41,7 @@ class FlywayMigrationIT {
             String.class);
 
     assertThat(appliedVersions)
-        .containsExactly("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
+        .containsExactly("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
   }
 
   @Test
@@ -249,7 +249,13 @@ class FlywayMigrationIT {
   }
 
   /**
-   * Every seeded whitelist source is shaped so the pipeline can actually use it.
+   * Every seeded whitelist source is shaped so the pipeline can actually use it, except the one
+   * seeded row V12 disables on purpose (see that migration): OpenJDK's GitHub tags ({@code
+   * "jdk-26+14"}) carry no dot, so the extractor -- which requires one, like every other
+   * whitelisted source's version shape -- can never produce a candidate from it. That row is
+   * asserted disabled explicitly below, rather than silently excluded, so a future migration that
+   * re-enables it without also fixing {@code verify_url_pattern} is not mistaken for a passing
+   * test.
    *
    * <p>The database already refuses a non-https URL and a verify pattern with no placeholder, but
    * it cannot count placeholders, and a pattern with two of them would be filled twice and fetch a
@@ -263,14 +269,17 @@ class FlywayMigrationIT {
   void seededWhitelistSourcesAreWellFormed() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
+    String disabledOpenJdkId = "019205a0-6000-7000-8000-000000000003";
+
     List<Map<String, Object>> rows =
         jdbcTemplate.queryForList(
-            "SELECT name, feed_url, verify_url_pattern, enabled FROM whitelist_sources"
+            "SELECT id, name, feed_url, verify_url_pattern, enabled FROM whitelist_sources"
                 + " WHERE id::text LIKE '019205a0-6000-7000-8000-%' ORDER BY id");
 
     assertThat(rows).hasSize(44);
 
     for (Map<String, Object> row : rows) {
+      String id = row.get("id").toString();
       String name = (String) row.get("name");
       String feedUrl = (String) row.get("feed_url");
       String pattern = (String) row.get("verify_url_pattern");
@@ -287,7 +296,10 @@ class FlywayMigrationIT {
       assertThat(pattern.split(Pattern.quote("{version}"), -1))
           .as("exactly one {version} placeholder in %s", name)
           .hasSize(2);
-      assertThat((Boolean) row.get("enabled")).as("enabled flag of %s", name).isTrue();
+      boolean expectedEnabled = !id.equals(disabledOpenJdkId);
+      assertThat((Boolean) row.get("enabled"))
+          .as("enabled flag of %s", name)
+          .isEqualTo(expectedEnabled);
     }
 
     assertThat(rows.stream().map(row -> row.get("name")).distinct()).hasSize(rows.size());

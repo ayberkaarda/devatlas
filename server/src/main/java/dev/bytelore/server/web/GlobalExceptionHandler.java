@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -176,6 +177,30 @@ public class GlobalExceptionHandler {
     return respond(
         ErrorCode.VERSION_CONFLICT,
         "The resource was modified concurrently; re-read it and retry.");
+  }
+
+  /**
+   * A database constraint rejected a write that reached the database at all -- meaning the
+   * service-layer validation meant to catch it did not (line 1720 of the REST contract: "database
+   * constraints mirror them so a bypass fails loudly rather than storing bad data"). {@code
+   * DataIntegrityViolationException} is Spring's own umbrella for this family (a check constraint,
+   * a foreign key, a unique index, a not-null column), so this one handler is the fail-loud half of
+   * that promise for whichever mirrored constraint the service layer's own check missed.
+   *
+   * <p>Mapped to the existing {@code VALIDATION_FAILED} code rather than a new one: from the
+   * client's perspective, a write refused because the data was invalid is the same category of
+   * failure regardless of which layer caught it, and inventing a second code for "the database
+   * caught it instead" would be a distinction with no client-observable use. The full driver
+   * message goes to the log, not the response -- it can name a column, a constraint or a literal
+   * value from the request, none of which belongs in a body sent back over the wire.
+   */
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+      DataIntegrityViolationException exception) {
+    log.warn("Database constraint violation escaped to the API boundary.", exception);
+    return respond(
+        ErrorCode.VALIDATION_FAILED,
+        "The request violates a stored data constraint and cannot be saved as given.");
   }
 
   /**

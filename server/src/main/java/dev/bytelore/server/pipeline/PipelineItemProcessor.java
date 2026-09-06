@@ -118,8 +118,58 @@ public class PipelineItemProcessor {
     }
 
     if (failedCheck == null) {
+      Instant published = item.published();
+      Instant cutoff = now().minus(properties.getMaxItemAge());
+      // No timestamp passes by default: some whitelisted feeds (announcement-style ones, unlike
+      // GitHub Releases) do not reliably carry one, and a missing date is not evidence of an old
+      // release.
+      boolean recent = published == null || !published.isBefore(cutoff);
+      String detail =
+          published == null
+              ? "no published/updated timestamp on the feed item; passes by default"
+              : "published=%s cutoff=%s".formatted(published, cutoff);
+      checks.add(new VerifyCheckRecord(VerifyCheckRecord.ITEM_RECENT, recent, detail));
+      if (!recent) {
+        failedCheck = VerifyCheckRecord.ITEM_RECENT;
+        failedDetail = detail;
+      }
+    }
+
+    if (failedCheck == null) {
+      boolean stable = !VersionExtractor.isPreRelease(versionString);
+      String detail =
+          stable
+              ? null
+              : "'%s' carries a suffix after its numeric core and is treated as a pre-release."
+                  .formatted(versionString);
+      checks.add(new VerifyCheckRecord(VerifyCheckRecord.STABLE_RELEASE, stable, detail));
+      if (!stable) {
+        failedCheck = VerifyCheckRecord.STABLE_RELEASE;
+        failedDetail = detail;
+      }
+    }
+
+    if (failedCheck == null) {
       VersionConfirmationService.VerifyOutcome verify =
           versionConfirmation.confirm(source.getVerifyUrlPattern(), versionString);
+      // A transient refusal from the endpoint being asked is not a fact about the item, and it
+      // must not be recorded as one: a rejected item is remembered by its content hash, so a
+      // rate-limited minute would decide this item forever and the next cycle would skip it as
+      // already seen. Nothing is written, and the item is offered again on the next run.
+      if (verify.deferred()) {
+        auditor.record(
+            PipelineStep.VERIFY,
+            null,
+            null,
+            source.getId(),
+            actorUserId,
+            null,
+            null,
+            "Deferred at %s for version %s: %s"
+                .formatted(VerifyCheckRecord.VERSION_CONFIRMED, versionString, verify.detail()));
+        return ItemOutcome.deferred(
+            new Deferral(versionString, VerifyCheckRecord.VERSION_CONFIRMED, verify.detail()));
+      }
       checks.add(
           new VerifyCheckRecord(
               VerifyCheckRecord.VERSION_CONFIRMED, verify.passed(), verify.detail()));

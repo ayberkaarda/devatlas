@@ -12,7 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -41,8 +43,27 @@ final class FakeHttpsFeedServer implements AutoCloseable {
 
   private final HttpsServer server;
 
+  /**
+   * Every {@code Authorization} header value this server has ever received, across every path.
+   * Exists so a test can assert a header was <em>never</em> sent -- proof that {@code
+   * PipelineHttpClient} really does scope a configured token to {@code api.github.com} and never to
+   * a source's own feed or verify host, this server included.
+   */
+  private final List<String> receivedAuthorizationHeaders = new CopyOnWriteArrayList<>();
+
   private FakeHttpsFeedServer(HttpsServer server) {
     this.server = server;
+  }
+
+  List<String> receivedAuthorizationHeaders() {
+    return receivedAuthorizationHeaders;
+  }
+
+  private void recordAuthorizationHeader(com.sun.net.httpserver.HttpExchange exchange) {
+    List<String> values = exchange.getRequestHeaders().get("Authorization");
+    if (values != null) {
+      receivedAuthorizationHeaders.addAll(values);
+    }
   }
 
   static FakeHttpsFeedServer start() throws Exception {
@@ -80,6 +101,7 @@ final class FakeHttpsFeedServer implements AutoCloseable {
     server.createContext(
         path,
         exchange -> {
+          recordAuthorizationHeader(exchange);
           byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
           exchange.getResponseHeaders().add("Content-Type", "application/xml; charset=utf-8");
           exchange.sendResponseHeaders(status, bytes.length);
@@ -97,6 +119,7 @@ final class FakeHttpsFeedServer implements AutoCloseable {
     server.createContext(
         pathPrefix,
         exchange -> {
+          recordAuthorizationHeader(exchange);
           HandlerResult result = handler.apply(exchange.getRequestURI().getPath());
           byte[] bytes = result.body().getBytes(StandardCharsets.UTF_8);
           exchange.getResponseHeaders().add("Content-Type", "text/plain; charset=utf-8");

@@ -109,6 +109,7 @@ public class BlogIngestPipelineService {
     int created = 0;
     int duplicates = 0;
     int rejected = 0;
+    int deferred = 0;
     List<UUID> createdIds = new ArrayList<>();
     List<Rejection> rejections = new ArrayList<>();
     for (FeedItem item : items) {
@@ -144,14 +145,25 @@ public class BlogIngestPipelineService {
           rejected++;
           rejections.add(outcome.rejection());
         }
+        case DEFERRED -> deferred++;
       }
     }
 
     touchLastFetchedAt(source, start);
+    if (deferred > 0) {
+      log.info(
+          "Fetch cycle for whitelist source '{}' deferred {} item(s) to the next cycle (transient"
+              + " rate limit).",
+          source.getName(),
+          deferred);
+    }
     long durationMs = Duration.between(start, Instant.now(clock)).toMillis();
+    // Deliberately created + duplicates + rejected, not items.size(): a deferred item was skipped
+    // for this cycle rather than decided, so it is excluded from every count in the response, not
+    // only from `rejected` (§5.7 documents this explicitly).
     return new FetchCycleResult(
         source.getId(),
-        items.size(),
+        created + duplicates + rejected,
         created,
         duplicates,
         rejected,

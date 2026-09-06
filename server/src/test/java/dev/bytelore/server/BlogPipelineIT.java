@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import dev.bytelore.server.common.UuidV7;
 import dev.bytelore.server.content.admin.dto.AdminBlogPostResponse;
 import dev.bytelore.server.content.admin.dto.BlogTransitionRequest;
@@ -28,18 +30,22 @@ import dev.bytelore.server.repository.WhitelistSourceRepository;
 import java.net.http.HttpClient;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.X509ExtendedTrustManager;
 import net.javacrumbs.shedlock.core.SimpleLock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +53,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.JsonNode;
 
@@ -120,6 +128,20 @@ class BlogPipelineIT extends ContentApiTestSupport {
       "This release includes a number of bug fixes, performance improvements and dependency "
           + "upgrades that are worth reading about in detail.";
 
+  /**
+   * A recognisable, obviously-fake token value, configured for every test in this class via {@link
+   * #pipelineProperties}. None of this class's fixtures point at a host equal to {@code
+   * api.github.com} (they all use {@link FakeHttpsFeedServer}, at {@code 127.0.0.1}), so a
+   * configured token here changes no other test's behaviour -- {@code PipelineHttpClient} never
+   * attaches it to a request whose host does not match.
+   */
+  private static final String TEST_GITHUB_TOKEN = "ghp_TestOnlyFixtureToken1234567890abcdefEXAMPLE";
+
+  @DynamicPropertySource
+  static void pipelineProperties(DynamicPropertyRegistry registry) {
+    registry.add("bytelore.pipeline.github-token", () -> TEST_GITHUB_TOKEN);
+  }
+
   @Autowired private WhitelistSourceRepository whitelistSources;
   @Autowired private SourceUpdateRepository sourceUpdates;
   @Autowired private BlogPostRepository blogPosts;
@@ -175,6 +197,18 @@ class BlogPipelineIT extends ContentApiTestSupport {
     return saved;
   }
 
+  /**
+   * A timestamp comfortably inside the {@code ITEM_RECENT} window (§5.7, default {@code
+   * max-item-age} of 14 days) no matter which day this suite runs, computed from the wall clock
+   * rather than written as a literal -- a fixed literal ages out of the window the moment more than
+   * {@code max-item-age} elapses between when it was written and when the suite runs, which is
+   * exactly the failure mode {@code #anItemOlderThanTheMaxAgeIsRejectedByItemRecent()} exists to
+   * catch on purpose, for a different item.
+   */
+  private static String recentTimestamp() {
+    return Instant.now().minus(java.time.Duration.ofHours(1)).toString();
+  }
+
   private static String atomFeed(String entryId, String title, String link, String content) {
     return """
         <?xml version="1.0" encoding="UTF-8"?>
@@ -184,12 +218,12 @@ class BlogPipelineIT extends ContentApiTestSupport {
             <id>%s</id>
             <title>%s</title>
             <link href="%s"/>
-            <updated>2026-01-01T00:00:00Z</updated>
+            <updated>%s</updated>
             <content type="html">%s</content>
           </entry>
         </feed>
         """
-        .formatted(entryId, title, link, content);
+        .formatted(entryId, title, link, recentTimestamp(), content);
   }
 
   private static String atomFeed(List<String[]> entries) {
@@ -201,11 +235,11 @@ class BlogPipelineIT extends ContentApiTestSupport {
               <id>%s</id>
               <title>%s</title>
               <link href="%s"/>
-              <updated>2026-01-01T00:00:00Z</updated>
+              <updated>%s</updated>
               <content type="html">%s</content>
             </entry>
           """
-              .formatted(entry[0], entry[1], entry[2], entry[3]));
+              .formatted(entry[0], entry[1], entry[2], recentTimestamp(), entry[3]));
     }
     return """
         <?xml version="1.0" encoding="UTF-8"?>
@@ -214,6 +248,47 @@ class BlogPipelineIT extends ContentApiTestSupport {
         %s</feed>
         """
         .formatted(body);
+  }
+
+  /**
+   * Like {@link #atomFeed(String, String, String, String)}, but with an explicit {@code updated}.
+   */
+  private static String atomFeedWithTimestamp(
+      String entryId, String title, String link, String content, String updated) {
+    return """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Fixture Feed</title>
+          <entry>
+            <id>%s</id>
+            <title>%s</title>
+            <link href="%s"/>
+            <updated>%s</updated>
+            <content type="html">%s</content>
+          </entry>
+        </feed>
+        """
+        .formatted(entryId, title, link, updated, content);
+  }
+
+  /**
+   * Like {@link #atomFeed(String, String, String, String)}, but with no {@code <updated>} at all.
+   */
+  private static String atomFeedWithoutTimestamp(
+      String entryId, String title, String link, String content) {
+    return """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Fixture Feed</title>
+          <entry>
+            <id>%s</id>
+            <title>%s</title>
+            <link href="%s"/>
+            <content type="html">%s</content>
+          </entry>
+        </feed>
+        """
+        .formatted(entryId, title, link, content);
   }
 
   private WhitelistSourceFetchResponse fetchAs(String token, UUID sourceId) throws Exception {
@@ -420,6 +495,240 @@ class BlogPipelineIT extends ContentApiTestSupport {
                 Integer.class,
                 stored.get(0).getId());
     assertThat(postCount).isZero();
+  }
+
+  // ---- ITEM_RECENT ----------------------------------------------------------------------------
+
+  @Test
+  void anItemOlderThanMaxItemAgeIsRejectedWithoutHittingTheNetwork() throws Exception {
+    server = FakeHttpsFeedServer.start();
+    String link = server.baseUrl() + "/release/10.0.0";
+    String longAgo = Instant.now().minus(Duration.ofDays(30)).toString();
+    server.respond(
+        "/feed",
+        200,
+        atomFeedWithTimestamp("tag:old", "v10.0.0", link, LONG_ENOUGH_CONTENT, longAgo));
+    AtomicInteger verifyCalls = new AtomicInteger();
+    server.respondDynamic(
+        "/verify/",
+        path -> {
+          verifyCalls.incrementAndGet();
+          return new FakeHttpsFeedServer.HandlerResult(200, "v10.0.0 is out");
+        });
+
+    WhitelistSource source =
+        createSource(server.baseUrl() + "/feed", server.baseUrl() + "/verify/{version}");
+
+    WhitelistSourceFetchResponse response = fetchAs(adminToken(), source.getId());
+
+    assertThat(response.created()).isZero();
+    assertThat(response.rejected()).isEqualTo(1);
+    var rejection = response.rejections().get(0);
+    assertThat(rejection.failedCheck()).isEqualTo("ITEM_RECENT");
+    // ITEM_RECENT runs before VERSION_CONFIRMED specifically so an old item costs no network
+    // request; a call reaching the verify endpoint at all would mean the ordering regressed.
+    assertThat(verifyCalls.get()).isZero();
+
+    List<SourceUpdate> stored = findSourceUpdates(source.getId());
+    assertThat(stored.get(0).getVerifyChecks()).contains("ITEM_RECENT").contains("false");
+  }
+
+  @Test
+  void anItemWithNoPublishedTimestampPassesItemRecentByDefault() throws Exception {
+    server = FakeHttpsFeedServer.start();
+    String link = server.baseUrl() + "/release/11.0.0";
+    server.respond(
+        "/feed", 200, atomFeedWithoutTimestamp("tag:notime", "v11.0.0", link, LONG_ENOUGH_CONTENT));
+    server.respondDynamic(
+        "/verify/", path -> new FakeHttpsFeedServer.HandlerResult(200, "v11.0.0 is out"));
+
+    WhitelistSource source =
+        createSource(server.baseUrl() + "/feed", server.baseUrl() + "/verify/{version}");
+
+    WhitelistSourceFetchResponse response = fetchAs(adminToken(), source.getId());
+
+    assertThat(response.created()).isEqualTo(1);
+  }
+
+  // ---- STABLE_RELEASE ---------------------------------------------------------------------------
+
+  @Test
+  void aPreReleaseVersionIsRejectedByStableReleaseWithoutHittingTheNetwork() throws Exception {
+    server = FakeHttpsFeedServer.start();
+    String link = server.baseUrl() + "/release/12.0.0-rc1";
+    server.respond("/feed", 200, atomFeed("tag:rc", "v12.0.0-rc1", link, LONG_ENOUGH_CONTENT));
+    AtomicInteger verifyCalls = new AtomicInteger();
+    server.respondDynamic(
+        "/verify/",
+        path -> {
+          verifyCalls.incrementAndGet();
+          return new FakeHttpsFeedServer.HandlerResult(200, "v12.0.0-rc1 is out");
+        });
+
+    WhitelistSource source =
+        createSource(server.baseUrl() + "/feed", server.baseUrl() + "/verify/{version}");
+
+    WhitelistSourceFetchResponse response = fetchAs(adminToken(), source.getId());
+
+    assertThat(response.created()).isZero();
+    assertThat(response.rejected()).isEqualTo(1);
+    var rejection = response.rejections().get(0);
+    assertThat(rejection.failedCheck()).isEqualTo("STABLE_RELEASE");
+    assertThat(verifyCalls.get()).isZero();
+  }
+
+  /**
+   * The regression case for the extractor's silent-truncation bug: a title with a pre-release
+   * suffix directly attached to its numeric core, no separator at all. Before {@link
+   * dev.bytelore.server.pipeline.VersionExtractor} was fixed to capture the whole thing, this shape
+   * was cut down to {@code "3.15.0"} -- which is a genuine substring of the verify endpoint's real
+   * response body below, so a pre-release build could sail through {@code VERSION_CONFIRMED} and be
+   * published labeled as the stable release it is only a preview of. Fixed, the full candidate
+   * {@code "3.15.0b2"} is extracted, {@code STABLE_RELEASE} catches the attached suffix, and the
+   * verify endpoint is never even asked.
+   */
+  @Test
+  void aPreReleaseSuffixWithNoSeparatorIsCaughtNotSilentlyTruncated() throws Exception {
+    server = FakeHttpsFeedServer.start();
+    String link = server.baseUrl() + "/release/3.15.0b2";
+    server.respond("/feed", 200, atomFeed("tag:adjacent", "3.15.0b2", link, LONG_ENOUGH_CONTENT));
+    AtomicInteger verifyCalls = new AtomicInteger();
+    server.respondDynamic(
+        "/verify/",
+        path -> {
+          verifyCalls.incrementAndGet();
+          return new FakeHttpsFeedServer.HandlerResult(200, "Now shipping 3.15.0b2");
+        });
+
+    WhitelistSource source =
+        createSource(server.baseUrl() + "/feed", server.baseUrl() + "/verify/{version}");
+
+    WhitelistSourceFetchResponse response = fetchAs(adminToken(), source.getId());
+
+    assertThat(response.created()).isZero();
+    assertThat(response.rejected()).isEqualTo(1);
+    var rejection = response.rejections().get(0);
+    assertThat(rejection.failedCheck()).isEqualTo("STABLE_RELEASE");
+    assertThat(rejection.versionString()).isEqualTo("3.15.0b2");
+    assertThat(verifyCalls.get()).isZero();
+  }
+
+  // ---- Rate-limit deferral (VERSION_CONFIRMED) -------------------------------------------------
+
+  /**
+   * The behaviour §5.7 requires of a {@code 403}/{@code 429} from the verify endpoint: the item is
+   * deferred, not rejected, so it leaves no {@code SourceUpdate} row and therefore no dedup hash --
+   * a later cycle can retry it in full once the rate limit clears, which this test proves by
+   * flipping the fake endpoint from rate-limited to confirming and running a second cycle.
+   */
+  @Test
+  void aRateLimitedVerifyResponseDefersTheItemInsteadOfPermanentlyRejectingIt() throws Exception {
+    server = FakeHttpsFeedServer.start();
+    String link = server.baseUrl() + "/release/13.0.0";
+    server.respond("/feed", 200, atomFeed("tag:ratelimited", "v13.0.0", link, LONG_ENOUGH_CONTENT));
+    AtomicBoolean rateLimited = new AtomicBoolean(true);
+    server.respondDynamic(
+        "/verify/",
+        path ->
+            rateLimited.get()
+                ? new FakeHttpsFeedServer.HandlerResult(403, "API rate limit exceeded")
+                : new FakeHttpsFeedServer.HandlerResult(200, "v13.0.0 is out"));
+
+    WhitelistSource source =
+        createSource(server.baseUrl() + "/feed", server.baseUrl() + "/verify/{version}");
+
+    WhitelistSourceFetchResponse first = fetchAs(adminToken(), source.getId());
+
+    // Not a rejection: excluded from every count, not merely from `rejected`.
+    assertThat(first.fetched()).isZero();
+    assertThat(first.created()).isZero();
+    assertThat(first.duplicates()).isZero();
+    assertThat(first.rejected()).isZero();
+    assertThat(first.rejections()).isEmpty();
+    assertThat(sourceUpdates.existsByWhitelistSourceId(source.getId())).isFalse();
+
+    // Still audited, and distinguishable from an ordinary rejection.
+    List<PipelineAuditLog> trail = findByWhitelistSource(source.getId());
+    assertThat(trail)
+        .anySatisfy(
+            row -> {
+              assertThat(row.getStep()).isEqualTo(PipelineStep.VERIFY);
+              assertThat(row.getReason()).containsIgnoringCase("deferred");
+            });
+
+    rateLimited.set(false);
+    WhitelistSourceFetchResponse second = fetchAs(adminToken(), source.getId());
+    assertThat(second.created()).isEqualTo(1);
+    assertThat(second.duplicates()).isZero();
+    assertThat(sourceUpdates.existsByWhitelistSourceId(source.getId())).isTrue();
+  }
+
+  @Test
+  void aTooManyRequestsVerifyResponseAlsoDefersRatherThanRejecting() throws Exception {
+    server = FakeHttpsFeedServer.start();
+    String link = server.baseUrl() + "/release/14.0.0";
+    server.respond("/feed", 200, atomFeed("tag:429", "v14.0.0", link, LONG_ENOUGH_CONTENT));
+    server.respondDynamic(
+        "/verify/", path -> new FakeHttpsFeedServer.HandlerResult(429, "too many requests"));
+
+    WhitelistSource source =
+        createSource(server.baseUrl() + "/feed", server.baseUrl() + "/verify/{version}");
+
+    WhitelistSourceFetchResponse response = fetchAs(adminToken(), source.getId());
+
+    assertThat(response.fetched()).isZero();
+    assertThat(response.rejected()).isZero();
+    assertThat(sourceUpdates.existsByWhitelistSourceId(source.getId())).isFalse();
+  }
+
+  // ---- GitHub token secrecy ---------------------------------------------------------------------
+
+  /**
+   * The configured GitHub token (see {@link #pipelineProperties}) never reaches a log message, an
+   * audit reason, or the fetch response body -- and, since none of this fixture's URLs have host
+   * {@code api.github.com}, the fake server never receives it as a header either, proving the
+   * host-scoping in {@code PipelineHttpClient} holds over a real request, not only in the pure unit
+   * test written directly against it.
+   */
+  @Test
+  void theGithubTokenNeverLeaksToLogsAuditOrTheFetchResponse() throws Exception {
+    ch.qos.logback.classic.Logger rootLogger =
+        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+    ListAppender<ILoggingEvent> appender = new ListAppender<>();
+    appender.start();
+    rootLogger.addAppender(appender);
+    try {
+      server = FakeHttpsFeedServer.start();
+      String link = server.baseUrl() + "/release/15.0.0";
+      server.respond("/feed", 200, atomFeed("tag:token", "v15.0.0", link, LONG_ENOUGH_CONTENT));
+      server.respondDynamic(
+          "/verify/", path -> new FakeHttpsFeedServer.HandlerResult(200, "v15.0.0 is out"));
+
+      WhitelistSource source =
+          createSource(server.baseUrl() + "/feed", server.baseUrl() + "/verify/{version}");
+
+      MvcResult result =
+          mockMvc
+              .perform(
+                  post("/api/v1/admin/whitelist-sources/{id}/fetch", source.getId())
+                      .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken()))
+              .andReturn();
+      assertThat(result.getResponse().getStatus()).isEqualTo(200);
+      String rawBody = result.getResponse().getContentAsString();
+      assertThat(rawBody).doesNotContain(TEST_GITHUB_TOKEN);
+
+      assertThat(server.receivedAuthorizationHeaders()).isEmpty();
+
+      List<String> logMessages =
+          appender.list.stream().map(ILoggingEvent::getFormattedMessage).toList();
+      assertThat(logMessages).noneMatch(message -> message.contains(TEST_GITHUB_TOKEN));
+
+      List<PipelineAuditLog> auditRows = findByWhitelistSource(source.getId());
+      assertThat(auditRows)
+          .noneMatch(row -> row.getReason() != null && row.getReason().contains(TEST_GITHUB_TOKEN));
+    } finally {
+      rootLogger.detachAppender(appender);
+    }
   }
 
   // ---- Happy path -----------------------------------------------------------------------------

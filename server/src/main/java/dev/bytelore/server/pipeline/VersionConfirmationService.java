@@ -35,13 +35,36 @@ public class VersionConfirmationService {
     this.httpClient = httpClient;
   }
 
-  /** The outcome of one confirmation attempt. */
-  public record VerifyOutcome(boolean passed, String detail) {}
+  /**
+   * The outcome of one confirmation attempt.
+   *
+   * @param passed whether the check passed
+   * @param deferred true if the verify request itself answered {@code 403} or {@code 429} --
+   *     signals a transient rate limit on the endpoint being asked, not a fact about the version
+   *     being confirmed. A deferred outcome is always also a failed one ({@code passed} is {@code
+   *     false}), but the caller must not treat it as a normal check failure: see {@link
+   *     dev.bytelore.server.pipeline.PipelineItemProcessor} for why a rejection here would do
+   *     permanent damage a retry could otherwise have avoided.
+   * @param detail human-readable detail
+   */
+  public record VerifyOutcome(boolean passed, boolean deferred, String detail) {
+
+    static VerifyOutcome passed(String detail) {
+      return new VerifyOutcome(true, false, detail);
+    }
+
+    static VerifyOutcome failed(String detail) {
+      return new VerifyOutcome(false, false, detail);
+    }
+
+    static VerifyOutcome deferred(String detail) {
+      return new VerifyOutcome(false, true, detail);
+    }
+  }
 
   public VerifyOutcome confirm(String verifyUrlPattern, String versionString) {
     if (versionString == null || !VERSION_PATTERN.matcher(versionString).matches()) {
-      return new VerifyOutcome(
-          false,
+      return VerifyOutcome.failed(
           "Version string '%s' does not match the required pattern; it was never placed in a URL."
               .formatted(versionString));
     }
@@ -53,23 +76,35 @@ public class VersionConfirmationService {
     try {
       result = httpClient.get(url);
     } catch (Exception e) {
-      return new VerifyOutcome(
-          false, "Verify request to '%s' failed: %s".formatted(url, e.getMessage()));
+      return VerifyOutcome.failed(
+          "Verify request to '%s' failed: %s".formatted(url, e.getMessage()));
     }
 
     if (result.statusCode() != 200) {
-      return new VerifyOutcome(
-          false, "HTTP %d from verify URL %s".formatted(result.statusCode(), url));
+      // 403 and 429 are the two statuses a rate-limited API answers with (GitHub's REST API uses
+      // both, depending on which limit was tripped). Treated as a signal about the endpoint's
+      // current load, not about whether the claimed version is real -- see the class doing
+      // something about it, dev.bytelore.server.pipeline.PipelineItemProcessor, for why a rejection
+      // here instead would be a bug in its own right: it would persist a SourceUpdate row keyed by
+      // this item's content hash, so a later retry -- once the rate limit clears -- would see the
+      // hash as already processed and never try this item again.
+      if (result.statusCode() == 403 || result.statusCode() == 429) {
+        return VerifyOutcome.deferred(
+            "HTTP %d from verify URL %s; treated as a transient rate limit, not a confirmation"
+                + " failure -- retried on the next fetch cycle."
+                    .formatted(result.statusCode(), url));
+      }
+      return VerifyOutcome.failed("HTTP %d from verify URL %s".formatted(result.statusCode(), url));
     }
 
     String normalizedBody =
         Normalizer.normalize(result.body() == null ? "" : result.body(), Normalizer.Form.NFC);
     String normalizedVersion = Normalizer.normalize(versionString, Normalizer.Form.NFC);
     if (!normalizedBody.contains(normalizedVersion)) {
-      return new VerifyOutcome(
-          false, "Response body from %s did not contain '%s'.".formatted(url, versionString));
+      return VerifyOutcome.failed(
+          "Response body from %s did not contain '%s'.".formatted(url, versionString));
     }
 
-    return new VerifyOutcome(true, "%s -> %s".formatted(url, versionString));
+    return VerifyOutcome.passed("%s -> %s".formatted(url, versionString));
   }
 }

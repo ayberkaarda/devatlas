@@ -38,17 +38,48 @@ public class PipelineHttpClient {
   /** The HTTP outcome of one request: final status code and body, after any redirects. */
   public record HttpFetchResult(int statusCode, String body) {}
 
+  /**
+   * The one host a configured GitHub token is ever attached to. Compared against {@link
+   * URI#getHost()}, never against the raw URL string, specifically so a value crafted to merely
+   * *contain* this host -- as a subdomain ({@code api.github.com.evil.com}), or as path/query text
+   * on an unrelated host ({@code evil.com/api.github.com}) -- cannot pass: {@link URI} parses the
+   * authority component once, correctly, and a host comparison against its result cannot be fooled
+   * by where else the substring appears in the string.
+   */
+  private static final String GITHUB_API_HOST = "api.github.com";
+
   public HttpFetchResult get(String url) throws IOException, InterruptedException {
-    HttpRequest request =
-        HttpRequest.newBuilder(URI.create(url))
+    HttpRequest request = buildRequest(URI.create(url));
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    return new HttpFetchResult(response.statusCode(), response.body());
+  }
+
+  /**
+   * Package-private so a test can assert on the built request directly -- header presence and
+   * absence alike -- without sending it anywhere.
+   */
+  HttpRequest buildRequest(URI uri) {
+    HttpRequest.Builder builder =
+        HttpRequest.newBuilder(uri)
             .timeout(properties.getHttpReadTimeout())
             .header("User-Agent", "ByteLore-Pipeline/1.0")
             .header(
                 "Accept",
                 "application/atom+xml, application/rss+xml, application/xml, text/xml, */*")
-            .GET()
-            .build();
-    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    return new HttpFetchResult(response.statusCode(), response.body());
+            .GET();
+    String token = properties.getGithubToken();
+    if (token != null && !token.isBlank() && isGithubApiHost(uri)) {
+      // Cross-host redirects (java.net.http.HttpClient, followRedirects=NORMAL) already drop every
+      // request header including this one before replaying the request against the new host, so no
+      // further check is needed at the point a redirect is followed -- only at the point this
+      // header is first attached.
+      builder.header("Authorization", "Bearer " + token);
+    }
+    return builder.build();
+  }
+
+  static boolean isGithubApiHost(URI uri) {
+    String host = uri.getHost();
+    return host != null && GITHUB_API_HOST.equalsIgnoreCase(host);
   }
 }
