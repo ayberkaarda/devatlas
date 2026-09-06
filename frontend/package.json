@@ -5,6 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:tauri": "ng serve --configuration tauri-development --port 4300",
     "build": "ng build",
     "build:web": "ng build --configuration web",
     "build:tauri": "ng build --configuration tauri",

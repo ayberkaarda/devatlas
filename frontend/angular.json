@@ -3,9 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -27,9 +25,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "styles": ["src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -95,6 +91,17 @@
                 }
               ],
               "outputPath": "dist/tauri"
+            },
+            "tauri-development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.tauri-development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -107,6 +114,9 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "tauri-development": {
+              "buildTarget": "frontend:build:tauri-development"
             }
           },
           "defaultConfiguration": "development"
@@ -114,10 +124,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }

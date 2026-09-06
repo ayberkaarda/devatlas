@@ -5,8 +5,8 @@
   "identifier": "dev.bytelore.desktop",
   "build": {
     "frontendDist": "../../frontend/dist/tauri/browser",
-    "devUrl": "http://localhost:4200",
-    "beforeDevCommand": "npm --prefix ../frontend run start",
+    "devUrl": "http://localhost:4300",
+    "beforeDevCommand": "npm --prefix ../frontend run start:tauri",
     "beforeBuildCommand": "npm --prefix ../frontend run build:tauri"
   },
   "app": {
@@ -25,7 +25,7 @@
     ],
     "security": {
       "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.bytelore.invalid; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
-      "devCsp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.bytelore.invalid http://localhost:8080; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+      "devCsp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.bytelore.invalid http://localhost:18080; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
     }
   },
   "bundle": {
