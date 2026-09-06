@@ -460,6 +460,84 @@ async fn live_resume_from_a_partial_uses_range_and_if_match() {
     );
 }
 
+/// The discovery path a freshly installed client actually walks: refresh, then
+/// refresh the track it just learned about.
+///
+/// Every other test in this file seeds the replica by applying a manifest it
+/// fetched itself, which means the store is already full before the code under
+/// test runs. This one starts from an empty store and drives
+/// `commands::refresh_library` instead, so the two halves of the contract are
+/// both exercised against the real server: a refresh with no track applies only
+/// the catalog, and a refresh naming a track brings that track's structure in.
+#[tokio::test]
+#[ignore]
+async fn live_refresh_fills_a_fresh_store_from_the_catalog_and_then_the_manifest() {
+    /// The seeded `angular-path` track, as the sync protocol's worked examples
+    /// describe it.
+    const SEEDED_TRACK: &str = "019205a0-1000-7000-8000-000000000001";
+
+    let harness = LiveHarness::new();
+    let count = |table: &'static str| {
+        let sql = format!("SELECT count(*) FROM {table};");
+        harness
+            .db
+            .with(move |c| c.query_row(&sql, [], |row| row.get::<_, i64>(0)))
+            .expect("count rows")
+    };
+
+    assert_eq!(
+        (count("tracks"), count("lessons")),
+        (0, 0),
+        "this test only means anything from an empty store"
+    );
+
+    let summary = crate::commands::refresh_library(&harness.engine, None)
+        .await
+        .expect("refresh with no track");
+    assert_eq!(
+        summary.checked_tracks, 0,
+        "with nothing held locally there is no track to compare"
+    );
+    assert!(
+        count("tracks") >= 1,
+        "the catalog must make the published track visible"
+    );
+    assert_eq!(
+        (count("modules"), count("lessons"), count("mind_maps")),
+        (0, 0, 0),
+        "the catalog carries no structure, and a refresh does not go looking for it"
+    );
+
+    let summary = crate::commands::refresh_library(&harness.engine, Some(SEEDED_TRACK.to_string()))
+        .await
+        .unwrap_or_else(|error| {
+            panic!("refresh of the seeded track {SEEDED_TRACK} failed: {error:?}")
+        });
+    assert_eq!(summary.checked_tracks, 1);
+
+    assert_eq!(
+        (count("modules"), count("lessons"), count("mind_maps")),
+        (2, 4, 1),
+        "the seeded track publishes two modules, four lessons and one mind map"
+    );
+
+    let entities: i64 = harness
+        .db
+        .with(|c| {
+            c.query_row(
+                "SELECT (SELECT count(*) FROM lessons WHERE manifest_content_version IS NOT NULL)
+                      + (SELECT count(*) FROM mind_maps WHERE manifest_content_version IS NOT NULL);",
+                [],
+                |row| row.get(0),
+            )
+        })
+        .expect("count manifest entities");
+    assert_eq!(
+        entities, 5,
+        "every manifest entity must land with a version the engine can download"
+    );
+}
+
 /// A manifest fetched with its own `ETag` must revalidate as `304`.
 #[tokio::test]
 #[ignore]

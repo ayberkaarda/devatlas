@@ -100,6 +100,17 @@ expired session and no connectivity.
 
 Every track the user has any content from, plus tracks seen in the catalog.
 
+"Seen" means a catalog response has been applied at some point. Nothing here
+fetches one: the catalog is read by `library_refresh`, and a store that has
+never refreshed answers with an empty list rather than an error. That is the
+contract working as intended, not a failure to report -- but it does mean the
+caller, not this command, is responsible for asking. A screen that finds an
+empty library and stops there presents a client that can never acquire content;
+a screen that finds one and calls `library_refresh` presents an application that
+is merely empty for the moment. The same holds one level down: a track whose
+manifest has never been applied has no modules, and it is the caller that turns
+that into `library_refresh(trackId)`.
+
 ```json
 [
   {
@@ -240,14 +251,33 @@ The full queue, for a UI that has just started and missed the events so far.
     "totalBytes": 41233,
     "attempt": 1,
     "pauseReason": null,
-    "errorCode": null
+    "errorCode": null,
+    "locales": ["en", "tr"],
+    "trackId": "018f3a01-2b7c-7a41-8f10-5c9d3e77aa10",
+    "trackTitle": "The Angular Path"
   }
 ]
 ```
 
+`trackId` and `trackTitle` say which track the entity belongs to, the title in
+the active locale with the usual fallback. A queue is a flat list of entities,
+but the thing a user removes to reclaim space is a track, and a screen that
+cannot group its rows cannot offer that. `trackTitle` is `null` only when the
+track row itself is not in the store, which a queue row should never outlive.
+
 The UI reconciles by calling this on startup and then following events. Events
 alone are not enough: they describe changes, and a screen opened mid-download has
 no history to replay.
+
+`locales` lists the locales whose body this entity actually holds in the store,
+the base locale first and the rest alphabetically. A package delivers a lesson
+and its translations together, so "which language is this download in" has no
+single answer -- the honest answer is the set, and a user deciding whether a
+download is worth keeping is deciding about all of it. The field is `[]` while
+nothing is stored yet (`QUEUED`, `DOWNLOADING`, or a `FAILED` first attempt) and
+is filled from what the package delivered once the entity is stored. A
+`MIND_MAP` reports `["en"]` once stored: mind map labels are not translatable in
+this version, which the read API states in its own terms.
 
 ### `download_delete(scope) -> DeleteSummary`
 
