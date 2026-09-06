@@ -1,6 +1,7 @@
 {
   "name": "bytelore-desktop",
   "version": "0.0.0",
+  "license": "MIT",
   "private": true,
   "description": "Tauri shell for the ByteLore desktop client",
   "scripts": {
