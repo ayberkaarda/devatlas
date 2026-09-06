@@ -1293,6 +1293,7 @@ All paths prefixed `/api/v1/admin`.
 | 37 | `GET` | `/admin/source-updates/{id}` | `EDITOR`, `ADMIN` |
 | 38 | `GET` | `/admin/blog/posts/{id}/audit-log` | `EDITOR`, `ADMIN` |
 | 39 | `GET` | `/admin/whitelist-sources` | `ADMIN` |
+| 39a | `GET` | `/admin/whitelist-sources/{id}` | `ADMIN` |
 | 40 | `POST` | `/admin/whitelist-sources` | `ADMIN` |
 | 41 | `PATCH` | `/admin/whitelist-sources/{id}` | `ADMIN` |
 | 42 | `DELETE` | `/admin/whitelist-sources/{id}` | `ADMIN` |
@@ -1336,6 +1337,8 @@ All paths prefixed `/api/v1/admin`.
   }
 }
 ```
+
+**`source_update` is `null` for a manually written post.** A post reaches `PENDING_REVIEW` from either direction: the pipeline drafted it from a fetched source, or a person wrote it and submitted it. Only the first has a fetch to show. A review screen therefore renders one panel rather than two in that case, and must not treat the absence as an error.
 
 `verify_status` ∈ `PENDING | VERIFIED | REJECTED`. `verify_checks` is ordered as executed; the first failing entry is the reason a `REJECTED` update never became a draft. `raw_content` is the sanitized stored source text.
 
@@ -1383,7 +1386,7 @@ The check runs against the whitelist source's stored `verify_url_pattern` only. 
 }
 ```
 
-`step` ∈ `FETCH | NORMALIZE | VERIFY | DRAFT | SUBMIT | APPROVE | REJECT | PUBLISH`. `actor_user_id` is `null` for machine steps and non-null for every human decision — that distinction is the audit trail's whole purpose. The audit log is append-only; there is no write endpoint for it on this API.
+`step` ∈ `FETCH | NORMALIZE | VERIFY | DRAFT | SUBMIT | APPROVE | REJECT | PUBLISH | UNPUBLISH`. `actor_user_id` is `null` for machine steps and non-null for every human decision — that distinction is the audit trail's whole purpose. The audit log is append-only; there is no write endpoint for it on this API.
 
 `POST /admin/whitelist-sources`:
 

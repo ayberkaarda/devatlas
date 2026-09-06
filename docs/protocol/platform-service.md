@@ -283,3 +283,32 @@ empty store.
    `PlatformService` and never touch either real one.
 6. Every view model is identical in both implementations. A field that only one
    can populate is either derived, or given an honest value like `REMOTE`.
+
+## 9. What stays outside the abstraction
+
+The abstraction exists to hide one difference: whether the data lives in a local
+replica or arrives over HTTP. Where no such difference exists, routing a call
+through it adds two identical implementations and a third place to keep them in
+step.
+
+Session-bearing administration endpoints are the clear case. They are online by
+definition — a draft awaiting review is not replicated to anyone's machine, and
+an approval is not something a client can decide alone. Both platforms would
+issue the same request with the same headers and parse the same response, so
+the abstract method would be answered twice with one body of code.
+
+These calls therefore go through a plain HTTP client injected directly into the
+screens that need them, the same way the blog client already works underneath
+`TauriPlatformService`. A component that calls one still learns nothing about
+the platform: it sees a typed client, not a transport.
+
+The boundary this draws is worth stating plainly, because it is easy to read the
+rule in section 1 as "everything goes through the abstraction":
+
+- A capability whose value would be identical in both implementations does not
+  belong in `PlatformCapabilities` — it is dead configuration that invites a
+  component to branch on something that never varies.
+- A method whose two implementations would be the same code does not belong on
+  `PlatformService` for the same reason.
+- Role, on this reading, is not a platform fact. What a person may do comes from
+  their session, and the answer is the same whichever build they are running.

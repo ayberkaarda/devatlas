@@ -34,6 +34,10 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class AdminReviewQueueService {
 
+  private static final Map<String, String> SORT_FIELDS =
+      Map.of(
+          "created_at", "createdAt",
+          "updated_at", "updatedAt");
   private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, "createdAt");
 
   private final BlogPostRepository blogPosts;
@@ -55,7 +59,7 @@ public class AdminReviewQueueService {
   @Transactional(readOnly = true)
   public PageResponse<AdminBlogPostResponse> list(
       String source, Integer page, Integer size, List<String> sort) {
-    Pageable pageable = PageQuery.resolve(page, size, sort, Map.of(), DEFAULT_SORT);
+    Pageable pageable = PageQuery.resolve(page, size, sort, SORT_FIELDS, DEFAULT_SORT);
     Page<BlogPost> result =
         (source == null || source.isBlank())
             ? blogPosts.findByStatus(BlogStatus.PENDING_REVIEW, pageable)

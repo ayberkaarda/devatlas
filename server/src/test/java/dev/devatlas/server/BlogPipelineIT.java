@@ -8,7 +8,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import dev.devatlas.server.common.UuidV7;
 import dev.devatlas.server.content.admin.dto.AdminBlogPostResponse;
 import dev.devatlas.server.content.admin.dto.BlogTransitionRequest;
+import dev.devatlas.server.content.admin.dto.CreateBlogPostRequest;
 import dev.devatlas.server.content.admin.dto.CreateWhitelistSourceRequest;
+import dev.devatlas.server.content.admin.dto.UpdateBlogPostRequest;
 import dev.devatlas.server.content.admin.dto.WhitelistSourceFetchResponse;
 import dev.devatlas.server.domain.BlogPost;
 import dev.devatlas.server.domain.BlogSource;
@@ -46,6 +48,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MvcResult;
+import tools.jackson.databind.JsonNode;
 
 /**
  * The blog ingest pipeline end to end, against a real Postgres Testcontainer and a local fake HTTPS
@@ -124,6 +127,7 @@ class BlogPipelineIT extends ContentApiTestSupport {
   @Autowired private PipelineLockService lockService;
 
   private final List<UUID> createdSourceIds = new ArrayList<>();
+  private final List<UUID> createdManualPostIds = new ArrayList<>();
   private FakeHttpsFeedServer server;
 
   @AfterEach
@@ -132,6 +136,11 @@ class BlogPipelineIT extends ContentApiTestSupport {
       server.close();
     }
     JdbcTemplate jdbc = new JdbcTemplate(dataSource);
+    for (UUID postId : createdManualPostIds) {
+      jdbc.update("DELETE FROM pipeline_audit_log WHERE blog_post_id = ?", postId);
+      jdbc.update("DELETE FROM blog_posts WHERE id = ?", postId);
+    }
+    createdManualPostIds.clear();
     for (UUID sourceId : createdSourceIds) {
       jdbc.update("DELETE FROM pipeline_audit_log WHERE whitelist_source_id = ?", sourceId);
       jdbc.update(
@@ -193,6 +202,56 @@ class BlogPipelineIT extends ContentApiTestSupport {
     assertThat(result.getResponse().getStatus()).isEqualTo(200);
     return jsonMapper.readValue(
         result.getResponse().getContentAsString(), WhitelistSourceFetchResponse.class);
+  }
+
+  private AdminBlogPostResponse createManualPost(String token, String sourceUrl) throws Exception {
+    CreateBlogPostRequest request =
+        new CreateBlogPostRequest(
+            uniqueSlug("manual-post"), "A Manual Post", LONG_ENOUGH_CONTENT, sourceUrl);
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(request)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(201);
+    AdminBlogPostResponse response =
+        jsonMapper.readValue(
+            result.getResponse().getContentAsString(), AdminBlogPostResponse.class);
+    createdManualPostIds.add(response.id());
+    return response;
+  }
+
+  private void submitPost(String token, UUID postId) throws Exception {
+    BlogTransitionRequest submit = new BlogTransitionRequest(BlogStatus.DRAFT, null);
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts/{id}/submit", postId)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(submit)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(200);
+  }
+
+  private List<UUID> reviewQueueOrder(String token, String sort) throws Exception {
+    MvcResult result =
+        mockMvc
+            .perform(
+                get("/api/v1/admin/review-queue")
+                    .param("size", "100")
+                    .param("sort", sort)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(200);
+    List<UUID> ids = new ArrayList<>();
+    for (JsonNode item : json(result).path("items")) {
+      ids.add(UUID.fromString(item.path("id").asString()));
+    }
+    return ids;
   }
 
   // ---- Whitelist enforcement -----------------------------------------------------------------
@@ -579,6 +638,177 @@ class BlogPipelineIT extends ContentApiTestSupport {
     } finally {
       held.get().unlock();
     }
+  }
+
+  // ---- Review queue sort whitelist -------------------------------------------------------------
+
+  /**
+   * The direct case the sort whitelist exists for: requesting {@code created_at,desc} over real
+   * HTTP has to genuinely reverse the page relative to {@code created_at,asc}, not merely be
+   * accepted with the direction silently dropped. {@code updated_at} -- the other documented field
+   * -- is checked too, unqualified, so both whitelist entries are exercised end to end.
+   */
+  @Test
+  void reviewQueueSortAcceptsBothFieldsAndAnExplicitDirectionReversesTheOrder() throws Exception {
+    String token = adminToken();
+    AdminBlogPostResponse first = createManualPost(token, null);
+    submitPost(token, first.id());
+    Thread.sleep(5);
+    AdminBlogPostResponse second = createManualPost(token, null);
+    submitPost(token, second.id());
+
+    List<UUID> ascending = reviewQueueOrder(token, "created_at,asc");
+    assertThat(ascending.indexOf(first.id())).isLessThan(ascending.indexOf(second.id()));
+
+    List<UUID> descending = reviewQueueOrder(token, "created_at,desc");
+    assertThat(descending.indexOf(second.id())).isLessThan(descending.indexOf(first.id()));
+
+    List<UUID> byUpdatedAt = reviewQueueOrder(token, "updated_at");
+    assertThat(byUpdatedAt).contains(first.id(), second.id());
+  }
+
+  @Test
+  void reviewQueueRejectsAnUnsupportedSortField() throws Exception {
+    MvcResult result =
+        mockMvc
+            .perform(
+                get("/api/v1/admin/review-queue")
+                    .param("sort", "bogus")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken()))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(400);
+    assertThat(errorCode(result)).isEqualTo("INVALID_SORT_FIELD");
+  }
+
+  // ---- Manual post source_url validation --------------------------------------------------------
+
+  @Test
+  void manualPostSourceUrlAcceptsAnAbsoluteHttpsLinkOnCreate() throws Exception {
+    AdminBlogPostResponse created =
+        createManualPost(adminToken(), "https://example.com/announcement");
+    assertThat(created.sourceUrl()).isEqualTo("https://example.com/announcement");
+  }
+
+  @Test
+  void manualPostSourceUrlAcceptsNullOrBlankOnCreate() throws Exception {
+    AdminBlogPostResponse withNull = createManualPost(adminToken(), null);
+    assertThat(withNull.sourceUrl()).isNull();
+  }
+
+  @Test
+  void manualPostSourceUrlRejectsAPlainHttpLinkOnCreate() throws Exception {
+    CreateBlogPostRequest request =
+        new CreateBlogPostRequest(
+            uniqueSlug("manual-post"),
+            "A Manual Post",
+            LONG_ENOUGH_CONTENT,
+            "http://example.com/announcement");
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(request)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(422);
+    assertThat(errorCode(result)).isEqualTo("INSECURE_SOURCE_URL");
+  }
+
+  @Test
+  void manualPostSourceUrlRejectsAJavascriptLinkOnCreate() throws Exception {
+    CreateBlogPostRequest request =
+        new CreateBlogPostRequest(
+            uniqueSlug("manual-post"), "A Manual Post", LONG_ENOUGH_CONTENT, "javascript:alert(1)");
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(request)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(422);
+    assertThat(errorCode(result)).isEqualTo("INSECURE_SOURCE_URL");
+  }
+
+  @Test
+  void manualPostSourceUrlRejectsANonHttpsLinkOnUpdate() throws Exception {
+    String token = adminToken();
+    AdminBlogPostResponse created = createManualPost(token, null);
+
+    UpdateBlogPostRequest update =
+        new UpdateBlogPostRequest(
+            null, null, null, "http://example.com/somewhere", created.version());
+    MvcResult result =
+        mockMvc
+            .perform(
+                patch("/api/v1/admin/blog/posts/{id}", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(update)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(422);
+    assertThat(errorCode(result)).isEqualTo("INSECURE_SOURCE_URL");
+  }
+
+  // ---- Transition reason lower bound
+  // -------------------------------------------------------------
+
+  @Test
+  void transitionReasonAtLeastTenCharactersIsAcceptedOnAnOptionalTransition() throws Exception {
+    String token = adminToken();
+    AdminBlogPostResponse created = createManualPost(token, null);
+
+    BlogTransitionRequest submit =
+        new BlogTransitionRequest(BlogStatus.DRAFT, "Ten chars or more, exactly enough.");
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts/{id}/submit", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(submit)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(200);
+  }
+
+  @Test
+  void transitionReasonUnderTenCharactersIsRejectedEvenOnAnOptionalTransition() throws Exception {
+    String token = adminToken();
+    AdminBlogPostResponse created = createManualPost(token, null);
+
+    BlogTransitionRequest submit = new BlogTransitionRequest(BlogStatus.DRAFT, "too short");
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts/{id}/submit", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(submit)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(400);
+    assertThat(errorCode(result)).isEqualTo("VALIDATION_FAILED");
+
+    BlogPost stillDraft = blogPosts.findById(created.id()).orElseThrow();
+    assertThat(stillDraft.getStatus()).isEqualTo(BlogStatus.DRAFT);
+  }
+
+  @Test
+  void transitionReasonIsStillOptionalOnATransitionThatDoesNotRequireOne() throws Exception {
+    String token = adminToken();
+    AdminBlogPostResponse created = createManualPost(token, null);
+
+    BlogTransitionRequest submit = new BlogTransitionRequest(BlogStatus.DRAFT, null);
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts/{id}/submit", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(submit)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(200);
   }
 
   // ---- helpers -------------------------------------------------------------------------------

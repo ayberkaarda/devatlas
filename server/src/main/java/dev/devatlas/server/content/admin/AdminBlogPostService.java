@@ -90,6 +90,8 @@ public class AdminBlogPostService {
           "A blog post already exists with slug '%s'.".formatted(request.slug()));
     }
 
+    requireValidSourceUrlIfPresent(request.sourceUrl());
+
     Instant now = now();
     BlogPost post = new BlogPost();
     post.setId(UuidV7.randomUuid());
@@ -173,6 +175,7 @@ public class AdminBlogPostService {
       changed = true;
     }
     if (request.sourceUrl() != null && post.getSource() == BlogSource.MANUAL) {
+      requireValidSourceUrlIfPresent(request.sourceUrl());
       post.setSourceUrl(request.sourceUrl());
       changed = true;
     }
@@ -457,6 +460,24 @@ public class AdminBlogPostService {
           ErrorCode.INVALID_STATE_TRANSITION,
           "Post '%s' is '%s', not '%s', or this transition is not legal from that status."
               .formatted(post.getId(), post.getStatus(), expected));
+    }
+  }
+
+  /**
+   * A blank or absent {@code source_url} is fine on a {@code MANUAL} post -- the source link isn't
+   * required outside the pipeline -- but a value that is present has to be an absolute {@code
+   * https://} URL, the same rule already applied to a whitelist source's own URLs, so a relative
+   * path, a plain {@code http://} link or a {@code javascript:} value can never be stored as
+   * provenance for a post.
+   */
+  private static void requireValidSourceUrlIfPresent(String sourceUrl) {
+    if (sourceUrl == null || sourceUrl.isBlank()) {
+      return;
+    }
+    if (!sourceUrl.startsWith("https://")) {
+      throw new ApiException(
+          ErrorCode.INSECURE_SOURCE_URL,
+          "'source_url' must be an absolute https:// URL when provided.");
     }
   }
 
