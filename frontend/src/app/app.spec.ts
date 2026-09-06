@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { provideTranslateService } from '@ngx-translate/core';
+import { TranslateService, provideTranslateService } from '@ngx-translate/core';
 
 import { FakeAuthSession } from '../testing/fake-auth-session';
 import { FakePlatformService } from '../testing/fake-platform.service';
@@ -51,7 +51,16 @@ describe('App', () => {
     const fixture = await render();
     const nav = fixture.nativeElement.querySelector('nav') as HTMLElement;
     expect(nav.getAttribute('aria-label')).toBe('Main navigation');
-    expect(nav.textContent).toContain('Tracks');
+    // Taken from the catalogue, not written here: the subject is that the
+    // navigation renders a translated value rather than a literal, which a
+    // hard-coded word would keep asserting long after the wording moved on.
+    // The second expectation is what keeps the first honest -- a missing key
+    // renders as the key itself, and the catalogue lookup would return that
+    // same string, so the two would agree while the screen showed nothing a
+    // reader could use.
+    const label = TestBed.inject(TranslateService).instant('nav.tracks');
+    expect(label).not.toBe('nav.tracks');
+    expect(nav.textContent).toContain(label);
   });
 
   it('re-renders the whole shell when the language changes', async () => {
@@ -62,7 +71,7 @@ describe('App', () => {
 
     const nav = fixture.nativeElement.querySelector('nav') as HTMLElement;
     expect(nav.getAttribute('aria-label')).toBe('Ana gezinme');
-    expect(nav.textContent).toContain('Yollar');
+    expect(nav.textContent).toContain(TestBed.inject(TranslateService).instant('nav.tracks'));
   });
 
   it('offers a skip link ahead of the header', async () => {

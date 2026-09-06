@@ -125,7 +125,7 @@ jobs:
         working-directory: server
         run: |
           nohup ./mvnw -q spring-boot:test-run \
-            -Dspring-boot.run.main-class=dev.devatlas.server.TestServerApplication \
+            -Dspring-boot.run.main-class=dev.bytelore.server.TestServerApplication \
             -Dspring-boot.run.profiles=test \
             -Dspring-boot.run.arguments=--server.port=18080 \
             > ../server-sync.log 2>&1 &
@@ -152,7 +152,7 @@ jobs:
       - name: Live sync tests
         working-directory: desktop/src-tauri
         env:
-          DEVATLAS_API_BASE_URL: http://localhost:18080/api/v1
+          BYTELORE_API_BASE_URL: http://localhost:18080/api/v1
         run: cargo test --lib live_ -- --ignored --test-threads=1 --nocapture
 
       - name: Show server log on failure
@@ -227,7 +227,7 @@ jobs:
       - name: Upload installers
         uses: actions/upload-artifact@v4
         with:
-          name: devatlas-${{ matrix.os }}
+          name: bytelore-${{ matrix.os }}
           path: |
             desktop/src-tauri/target/debug/bundle/**
           retention-days: 7

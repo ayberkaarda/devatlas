@@ -24,8 +24,17 @@ export class LoginPage {
   private readonly session = inject(AuthSession);
   private readonly router = inject(Router);
 
-  /** Where the visitor was headed when a guard sent them here. */
-  readonly returnUrl = input('/');
+  /**
+   * Where the visitor was headed when a guard sent them here.
+   *
+   * A query parameter absent from the URL does not leave `input()`'s own
+   * default in place: the router's component-input binding still calls the
+   * setter, and it calls it with `undefined`. Without this transform,
+   * visiting `/login` with no query at all would make `returnUrl()` read
+   * back as `undefined`, and `destination()` below would throw calling
+   * `.startsWith` on it instead of falling back to the root route.
+   */
+  readonly returnUrl = input('/', { transform: (value: string | undefined) => value ?? '/' });
 
   protected readonly email = signal('');
   protected readonly password = signal('');

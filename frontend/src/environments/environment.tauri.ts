@@ -7,5 +7,5 @@ import type { AppEnvironment } from './environment.model';
 export const environment: AppEnvironment = {
   platform: 'tauri',
   production: true,
-  apiBaseUrl: 'https://api.devatlas.dev/api/v1',
+  apiBaseUrl: 'https://api.bytelore.invalid/api/v1',
 };

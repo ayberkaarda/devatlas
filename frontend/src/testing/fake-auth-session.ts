@@ -18,7 +18,7 @@ type PublicAuthSession = { [K in keyof AuthSession]: AuthSession[K] };
 export function fakeSessionUser(role: Role): SessionUser {
   return {
     id: `user-${role.toLowerCase()}`,
-    email: `${role.toLowerCase()}@devatlas.test`,
+    email: `${role.toLowerCase()}@bytelore.test`,
     displayName: role.toLowerCase(),
     role,
     preferredLocale: 'en',

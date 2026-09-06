@@ -1,12 +1,12 @@
 {
   "app": {
-    "title": "DevAtlas",
+    "title": "ByteLore",
     "tagline": "Geliştiriciler için öğrenme yolları, çevrimiçi ve çevrimdışı.",
     "skipToContent": "İçeriğe geç"
   },
   "nav": {
     "label": "Ana gezinme",
-    "tracks": "Yollar",
+    "tracks": "Öğrenme yolları",
     "downloads": "İndirilenler",
     "admin": "Yönetim",
     "signIn": "Giriş yap"
@@ -34,23 +34,23 @@
     "fallbackBadgeHint": "Bu dil için henüz çeviri bulunmadığından İngilizce gösteriliyor."
   },
   "tracks": {
-    "heading": "Yollar",
-    "intro": "Bir yol seçin ve dersleri sırayla ilerleyin.",
-    "empty": "Gösterilecek yol henüz yok.",
+    "heading": "Öğrenme yolları",
+    "intro": "Bir öğrenme yolu seçin ve dersleri sırayla ilerleyin.",
+    "empty": "Gösterilecek öğrenme yolu henüz yok.",
     "lessonCount": "{{count}} ders",
     "downloaded": "{{total}} dersin {{done}} tanesi indirildi",
-    "open": "{{title}} yolunu aç"
+    "open": "{{title}} öğrenme yolunu aç"
   },
   "track": {
-    "backToTracks": "Tüm yollar",
+    "backToTracks": "Tüm öğrenme yolları",
     "modules": "Modüller",
-    "empty": "Bu yolda henüz ders yok.",
+    "empty": "Bu öğrenme yolunda henüz ders yok.",
     "openLesson": "{{title}} dersini aç",
     "mindMap": "Zihin haritası",
     "mindMapHint": "{{title}} için zihin haritasını aç"
   },
   "lesson": {
-    "backToTrack": "Yola dön",
+    "backToTrack": "Öğrenme yoluna dön",
     "codeExamples": "Kod örnekleri",
     "markComplete": "Tamamlandı olarak işaretle",
     "markIncomplete": "Tamamlanmadı olarak işaretle",
@@ -120,7 +120,7 @@
     "withdrawnCount": "{{count}} öğe kaldırıldı"
   },
   "mindMap": {
-    "backToTrack": "Yola dön",
+    "backToTrack": "Öğrenme yoluna dön",
     "heading": "Zihin haritası",
     "loading": "Yükleniyor…",
     "notDownloaded": "Bu zihin haritası henüz bu cihaza indirilmedi.",
@@ -129,17 +129,17 @@
     "nodeHint": "{{title}} dersini aç",
     "nodeQueuedHint": "{{title}} indiriliyor",
     "treeLabel": "{{title}} için zihin haritası",
-    "unavailable": "Bu yolun zihin haritası yok."
+    "unavailable": "Bu öğrenme yolunun zihin haritası yok."
   },
   "notFound": {
     "heading": "Bu sayfa yok",
     "description": "Adres yanlış yazılmış ya da içerik taşınmış olabilir.",
-    "backHome": "Yollara git"
+    "backHome": "Öğrenme yollarına git"
   },
   "error": {
     "heading": "Bir şeyler ters gitti",
     "NETWORK_UNAVAILABLE": "Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.",
-    "TRACK_NOT_FOUND": "Bu yol artık mevcut değil.",
+    "TRACK_NOT_FOUND": "Bu öğrenme yolu artık mevcut değil.",
     "LESSON_NOT_FOUND": "Bu ders artık mevcut değil.",
     "ENTITY_NOT_IN_LIBRARY": "Bu içerik henüz kitaplığınızda değil.",
     "UNSUPPORTED_ON_WEB": "Bu işlem yalnızca masaüstü uygulamasında kullanılabilir.",
@@ -197,10 +197,10 @@
     "PUBLISHED_DELETE_BLOCKED": "Yayınlanmış öğeler silinemez. Önce yayından kaldırın.",
     "ORDER_SET_INCOMPLETE": "Yeni sıralama her öğeyi tam olarak bir kez içermiyor. Lütfen tekrar deneyin.",
     "PIPELINE_RUN_IN_PROGRESS": "Bu kaynak için bir alma işlemi zaten çalışıyor. Lütfen bitmesini bekleyin.",
-    "SANITIZED_CONTENT_EMPTY": "Güvenli olmayan biçimlendirme kaldırıldıktan sonra geriye hiçbir şey kalmadı. Lütfen içerik ekleyip tekrar deneyin.",
+    "UNSAFE_HTML": "İçeriğiniz sunucunun izin vermediği bir biçimlendirme içeriyor, bu yüzden hiçbir şey kaydedilmedi. Hatada adı geçen ögeleri kaldırıp tekrar deneyin.",
     "AUTO_POST_SOURCE_LINK_REQUIRED": "Otomatik bir yazının taslaktan çıkabilmesi için bir kaynak bağlantısına ihtiyacı var.",
     "CANONICAL_LOCALE_NOT_ALLOWED": "İngilizce bu içeriğin özgün dilidir ve bir çeviri olarak kaydedilemez.",
-    "MIND_MAP_INVALID": "Bu zihin haritası geçerli değil. Yinelenen düğümleri, çok derin bir dalı veya bu yolun dışına çıkan bir ders bağlantısını kontrol edin.",
+    "MIND_MAP_INVALID": "Bu zihin haritası geçerli değil. Yinelenen düğümleri, çok derin bir dalı veya bu öğrenme yolunun dışına çıkan bir ders bağlantısını kontrol edin.",
     "INSECURE_SOURCE_URL": "Bu bağlantı güvenli (https) bir adres kullanmalı.",
     "INVALID_VERIFY_URL_PATTERN": "Doğrulama bağlantısı deseni geçerli değil. Tam olarak bir sürüm yer tutucusu içermelidir.",
     "CURRENT_PASSWORD_INCORRECT": "Mevcut parolanız hatalı.",
@@ -208,7 +208,7 @@
   },
   "auth": {
     "heading": "Giriş yap",
-    "intro": "Devam etmek için DevAtlas hesabınızla giriş yapın.",
+    "intro": "Devam etmek için ByteLore hesabınızla giriş yapın.",
     "email": "E-posta",
     "password": "Parola",
     "submit": "Giriş yap",
@@ -469,7 +469,7 @@
     "forbidden": {
       "heading": "Bu sayfaya erişiminiz yok",
       "description": "Hesap rolünüz yönetim alanının bu bölümünü kapsamıyor.",
-      "backToTracks": "Yollara git"
+      "backToTracks": "Öğrenme yollarına git"
     },
     "role": {
       "USER": "Kullanıcı",

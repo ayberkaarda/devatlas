@@ -66,7 +66,7 @@ it hands over the rows that need sending and writes back what the server said.
 {
   "code": "STORE_UNAVAILABLE",
   "message": "The local store could not be opened",
-  "details": { "path": "C:\\Users\\…\\devatlas.db" }
+  "details": { "path": "C:\\Users\\…\\bytelore.db" }
 }
 ```
 

@@ -1,9 +1,9 @@
-# DevAtlas
+# ByteLore
 
 An offline-first learning platform for programming languages and frameworks: lessons,
 runnable code examples, interactive mind maps and a blog.
 
-DevAtlas ships as two clients built from one Angular codebase:
+ByteLore ships as two clients built from one Angular codebase:
 
 - **Desktop application (primary)** — Tauri 2. Download a single lesson, a whole
   module, or an entire track, then work through it with no network at all. Downloads
@@ -72,17 +72,17 @@ It listens on **port 5433**, not the default 5432, so it does not collide with a
 PostgreSQL already running on the machine. From the host the connection string is:
 
 ```
-jdbc:postgresql://localhost:5433/devatlas
+jdbc:postgresql://localhost:5433/bytelore
 ```
 
-Credentials default to `devatlas` / `devatlas_local_dev` and can be overridden with
+Credentials default to `bytelore` / `bytelore_local_dev` and can be overridden with
 `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` and `POSTGRES_PORT`.
 
 The test suite does not use this instance. Server tests start a throwaway PostgreSQL
 through Testcontainers, so running them cannot touch local development data.
 
 Stop it with `docker compose stop`. Note that `docker compose down -v` deletes the
-`devatlas-postgres-data` volume and every row in it.
+`bytelore-postgres-data` volume and every row in it.
 
 ## Repository layout
 

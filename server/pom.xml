@@ -8,7 +8,7 @@
 		<version>4.1.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>dev.devatlas</groupId>
+	<groupId>dev.bytelore</groupId>
 	<artifactId>server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>server</name>
@@ -32,6 +32,7 @@
 		<springdoc.version>3.1.0</springdoc.version>
 		<shedlock.version>7.9.0</shedlock.version>
 		<owasp-sanitizer.version>20260313.1</owasp-sanitizer.version>
+		<commonmark.version>0.30.0</commonmark.version>
 		<spotless-maven-plugin.version>3.10.1</spotless-maven-plugin.version>
 		<google-java-format.version>1.36.1</google-java-format.version>
 	</properties>
@@ -108,13 +109,23 @@
 			<version>${shedlock.version}</version>
 		</dependency>
 
-		<!-- Server-side markdown/HTML sanitization. Untrusted markdown is never
-		     rendered to the DOM unsanitized; the browser clients sanitize again
-		     with DOMPurify. -->
+		<!-- Server-side markdown/HTML safety. An authored markdown body is stored
+		     exactly as written; it is admitted only after being rendered to HTML
+		     and checked against the allow-list policy below, so nothing outside
+		     that list is ever persisted. The browser clients sanitize the same
+		     markdown again with DOMPurify at render time. -->
 		<dependency>
 			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
 			<artifactId>owasp-java-html-sanitizer</artifactId>
 			<version>${owasp-sanitizer.version}</version>
+		</dependency>
+		<!-- CommonMark reference implementation, used only to produce the HTML the
+		     allow-list check inspects. It never renders anything that is served:
+		     the clients render the stored markdown themselves. -->
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>${commonmark.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

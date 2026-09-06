@@ -1,5 +1,7 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
+import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { FakeAuthSession } from '../../../testing/fake-auth-session';
@@ -135,5 +137,80 @@ describe('LoginPage', () => {
     expect(alert.textContent).toContain('The email or password is incorrect.');
     expect(alert.textContent).not.toContain('Bad password for user 41.');
     expect(navigations).toEqual([]);
+  });
+});
+
+/** Wherever the login page's own navigation lands, in these tests. */
+@Component({ selector: 'app-destination-stub', template: '' })
+class DestinationStub {}
+
+/**
+ * These tests drive the page through an actual `Router.navigateByUrl`, with
+ * `withComponentInputBinding()` wired up exactly as `app.config.ts` wires it,
+ * instead of `fixture.componentRef.setInput('returnUrl', …)`. `setInput`
+ * always supplies a value, so it cannot reproduce what the router itself
+ * does to a `/login` visited with no `returnUrl` in the query string at
+ * all — passing `undefined` to the input's setter, which bypasses the
+ * default `input('/')` would otherwise hold.
+ */
+describe('LoginPage reached through real router navigation', () => {
+  let session: FakeAuthSession;
+
+  beforeEach(async () => {
+    session = new FakeAuthSession();
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter(
+          [
+            { path: 'login', component: LoginPage },
+            { path: '', pathMatch: 'full', component: DestinationStub },
+            { path: 'admin/review/:id', component: DestinationStub },
+          ],
+          withComponentInputBinding(),
+        ),
+        { provide: PlatformService, useValue: new FakePlatformService() },
+        { provide: AuthSession, useValue: session },
+        provideTranslateService({
+          loader: BundledTranslateLoader,
+          fallbackLang: 'en',
+          lang: 'en',
+        }),
+      ],
+    });
+    await TestBed.inject(LocaleService).initialize('en');
+  });
+
+  function fillAndSubmit(root: HTMLElement, email: string, password: string): void {
+    const emailInput = root.querySelector('#login-email') as HTMLInputElement;
+    emailInput.value = email;
+    emailInput.dispatchEvent(new Event('input'));
+    const passwordInput = root.querySelector('#login-password') as HTMLInputElement;
+    passwordInput.value = password;
+    passwordInput.dispatchEvent(new Event('input'));
+    root.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true }));
+  }
+
+  it('signs in and reaches the root route when /login carries no returnUrl at all', async () => {
+    const harness = await RouterTestingHarness.create('/login');
+    const root = harness.routeNativeElement as HTMLElement;
+
+    fillAndSubmit(root, 'eda@example.com', 'kayseri-uzun-parola-2026');
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+
+    expect(TestBed.inject(Router).url).toBe('/');
+    expect(root.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('signs in and follows a returnUrl that is actually present in the URL', async () => {
+    const harness = await RouterTestingHarness.create('/login?returnUrl=%2Fadmin%2Freview%2F42');
+    const root = harness.routeNativeElement as HTMLElement;
+
+    fillAndSubmit(root, 'eda@example.com', 'kayseri-uzun-parola-2026');
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+
+    expect(TestBed.inject(Router).url).toBe('/admin/review/42');
   });
 });

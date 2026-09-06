@@ -24,7 +24,7 @@ spring:
 # application refuses to start without a signing key and without a seed
 # administrator, and a test container is thrown away at the end of the run.
 # Nothing here is reachable from outside the test JVM.
-devatlas:
+bytelore:
   auth:
     jwt-secret: test-only-signing-key-not-a-secret-0123456789
     access-ttl: PT15M
@@ -34,6 +34,11 @@ devatlas:
     cookie-secure: false
     allowed-origins:
       - http://localhost:4200
+      # The framework default serve port is taken by another application on this
+      # machine, the same way the default server port is, so a local round uses the
+      # next free one. Listing it here keeps a manual browser session working
+      # without weakening what the suite itself allows.
+      - http://localhost:4300
   # Effectively unlimited for the suite. The counter is keyed by client IP and
   # every test in the run shares one (127.0.0.1), so production limits here would
   # make a green run depend on how many requests the classes ahead of this one
@@ -62,5 +67,5 @@ devatlas:
     lock-at-least-for: PT0S
 
   seed:
-    admin-email: admin@devatlas.test
+    admin-email: admin@bytelore.test
     admin-password: seed-admin-password-for-tests

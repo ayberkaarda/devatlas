@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { FakeAdminApiClient } from '../../../../testing/fake-admin-api.client';
@@ -160,5 +161,63 @@ describe('BlogPostListPage', () => {
       [],
       expect.objectContaining({ queryParams: { page: '1' } }),
     );
+  });
+});
+
+/**
+ * These tests drive the page through an actual `Router.navigateByUrl`, with
+ * `withComponentInputBinding()` wired up exactly as `app.config.ts` wires it,
+ * instead of relying on `input()`'s own defaults staying in place. A
+ * component test that never navigates never observes what the router does
+ * to a query parameter that is simply absent from the URL: it calls the
+ * input's setter with `undefined` rather than leaving the default alone, and
+ * only a real navigation to a bare `/admin/blog` reproduces that.
+ */
+describe('BlogPostListPage reached through real router navigation', () => {
+  let api: FakeAdminApiClient;
+
+  beforeEach(async () => {
+    api = new FakeAdminApiClient();
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter(
+          [{ path: 'admin/blog', component: BlogPostListPage }],
+          withComponentInputBinding(),
+        ),
+        { provide: AdminApiClient, useValue: api },
+        { provide: PlatformService, useValue: new FakePlatformService() },
+        provideTranslateService({
+          loader: BundledTranslateLoader,
+          fallbackLang: 'en',
+          lang: 'en',
+        }),
+      ],
+    });
+    await TestBed.inject(LocaleService).initialize('en');
+  });
+
+  it('loads the first page with no filters and shows no error banner on a bare /admin/blog', async () => {
+    api.listBlogPostsCalls.mockResolvedValue(pageOf([summary({ title: 'A Post' })]));
+
+    const harness = await RouterTestingHarness.create('/admin/blog');
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+    const root = harness.routeNativeElement as HTMLElement;
+
+    expect(api.listBlogPostsCalls.lastArgs).toEqual([
+      {
+        status: undefined,
+        source: undefined,
+        q: undefined,
+        sort: ['created_at,desc'],
+        page: 0,
+        size: 20,
+      },
+    ]);
+    expect(root.querySelector('[role="alert"]')).toBeNull();
+    const searchBox = root.querySelector('#posts-filter-search') as HTMLInputElement;
+    expect(searchBox.value).not.toContain('undefined');
+    expect(searchBox.value).toBe('');
   });
 });

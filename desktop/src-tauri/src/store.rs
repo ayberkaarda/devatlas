@@ -11,7 +11,7 @@ use rusqlite::Connection;
 use tauri::{AppHandle, Manager};
 
 /// File name of the store inside the resolved application data directory.
-const DATABASE_FILE_NAME: &str = "devatlas.db";
+const DATABASE_FILE_NAME: &str = "bytelore.db";
 
 /// Ordered schema migrations. Index `i` upgrades the schema from
 /// `user_version = i` to `user_version = i + 1`, so steps are append-only:
@@ -418,7 +418,7 @@ mod tests {
         // Tests never touch the real application data directory: a developer's
         // downloaded content and progress live there.
         let dir = tempfile::tempdir().expect("temp dir");
-        let path = dir.path().join("devatlas-test.db");
+        let path = dir.path().join("bytelore-test.db");
 
         let connection = open(&path).expect("open store");
         assert_eq!(

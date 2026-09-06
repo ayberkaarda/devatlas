@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "DevAtlas",
+    "title": "ByteLore",
     "tagline": "Lernpfade für Entwickler, online und offline.",
     "skipToContent": "Zum Inhalt springen"
   },
@@ -197,7 +197,7 @@
     "PUBLISHED_DELETE_BLOCKED": "Veröffentlichte Einträge können nicht gelöscht werden. Heben Sie die Veröffentlichung zuerst auf.",
     "ORDER_SET_INCOMPLETE": "Die neue Reihenfolge enthält nicht jeden Eintrag genau einmal. Bitte versuchen Sie es erneut.",
     "PIPELINE_RUN_IN_PROGRESS": "Für diese Quelle läuft bereits ein Abruf. Bitte warten Sie, bis er abgeschlossen ist.",
-    "SANITIZED_CONTENT_EMPTY": "Nach dem Entfernen unsicherer Formatierung blieb nichts übrig. Bitte fügen Sie Inhalt hinzu und versuchen Sie es erneut.",
+    "UNSAFE_HTML": "Ihr Inhalt enthält Formatierungen, die der Server nicht zulässt, daher wurde nichts gespeichert. Entfernen Sie die in der Fehlermeldung genannten Elemente und versuchen Sie es erneut.",
     "AUTO_POST_SOURCE_LINK_REQUIRED": "Ein automatisch erstellter Beitrag benötigt einen Quelllink, um den Entwurfsstatus zu verlassen.",
     "CANONICAL_LOCALE_NOT_ALLOWED": "Englisch ist die Originalsprache dieses Inhalts und kann nicht als Übersetzung gespeichert werden.",
     "MIND_MAP_INVALID": "Diese Mindmap ist ungültig. Prüfen Sie doppelte Knoten, einen zu tiefen Zweig oder einen Lektionslink außerhalb dieses Lernpfads.",
@@ -208,7 +208,7 @@
   },
   "auth": {
     "heading": "Anmelden",
-    "intro": "Melden Sie sich mit Ihrem DevAtlas-Konto an, um fortzufahren.",
+    "intro": "Melden Sie sich mit Ihrem ByteLore-Konto an, um fortzufahren.",
     "email": "E-Mail",
     "password": "Passwort",
     "submit": "Anmelden",

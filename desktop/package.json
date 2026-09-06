@@ -1,8 +1,8 @@
 {
-  "name": "devatlas-desktop",
+  "name": "bytelore-desktop",
   "version": "0.0.0",
   "private": true,
-  "description": "Tauri shell for the DevAtlas desktop client",
+  "description": "Tauri shell for the ByteLore desktop client",
   "scripts": {
     "tauri": "tauri",
     "dev": "tauri dev",

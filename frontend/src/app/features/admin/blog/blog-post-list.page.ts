@@ -62,13 +62,29 @@ export class BlogPostListPage {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
+  /**
+   * A query parameter missing from the URL still runs the router's
+   * component-input binding, which calls the setter with `undefined` rather
+   * than leaving `input()`'s own default in place. Visiting `/admin/blog`
+   * with no query string at all would otherwise leave every field below
+   * holding `undefined`: the search box would render the literal text
+   * "undefined", and `q.trim()` in `load()` would throw before a request is
+   * ever sent. Each transform folds a missing parameter back onto the value
+   * the field already uses to mean "no filter" (or, for `page`, the first
+   * page).
+   */
+
   /** `''` means "every status"; anything else is a literal `BlogStatus`. */
-  readonly status = input<string>('');
+  readonly status = input('', { transform: (value: string | undefined) => value ?? '' });
   /** `''` means "every source". */
-  readonly source = input<string>('');
-  readonly q = input<string>('');
-  readonly sort = input<string>('created_at,desc');
-  readonly page = input(0, { transform: numberAttribute });
+  readonly source = input('', { transform: (value: string | undefined) => value ?? '' });
+  readonly q = input('', { transform: (value: string | undefined) => value ?? '' });
+  readonly sort = input('created_at,desc', {
+    transform: (value: string | undefined) => value ?? 'created_at,desc',
+  });
+  readonly page = input(0, {
+    transform: (value: string | undefined) => numberAttribute(value, 0),
+  });
 
   protected readonly statusOptions = STATUS_OPTIONS;
   protected readonly sourceOptions = SOURCE_OPTIONS;

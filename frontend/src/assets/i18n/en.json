@@ -1,12 +1,12 @@
 {
   "app": {
-    "title": "DevAtlas",
-    "tagline": "Learning tracks for developers, online and offline.",
+    "title": "ByteLore",
+    "tagline": "Learning paths for developers, online and offline.",
     "skipToContent": "Skip to content"
   },
   "nav": {
     "label": "Main navigation",
-    "tracks": "Tracks",
+    "tracks": "Learning paths",
     "downloads": "Downloads",
     "admin": "Admin",
     "signIn": "Sign in"
@@ -34,23 +34,23 @@
     "fallbackBadgeHint": "Shown in English because no translation exists for this locale yet."
   },
   "tracks": {
-    "heading": "Tracks",
-    "intro": "Pick a track and work through it lesson by lesson.",
-    "empty": "There are no tracks to show yet.",
+    "heading": "Learning paths",
+    "intro": "Pick a learning path and work through it lesson by lesson.",
+    "empty": "There are no learning paths to show yet.",
     "lessonCount": "{{count}} lessons",
     "downloaded": "{{done}} of {{total}} downloaded",
-    "open": "Open the track {{title}}"
+    "open": "Open the learning path {{title}}"
   },
   "track": {
-    "backToTracks": "All tracks",
+    "backToTracks": "All learning paths",
     "modules": "Modules",
-    "empty": "This track has no lessons yet.",
+    "empty": "This learning path has no lessons yet.",
     "openLesson": "Open the lesson {{title}}",
     "mindMap": "Mind map",
     "mindMapHint": "Open the mind map for {{title}}"
   },
   "lesson": {
-    "backToTrack": "Back to the track",
+    "backToTrack": "Back to the learning path",
     "codeExamples": "Code examples",
     "markComplete": "Mark as completed",
     "markIncomplete": "Mark as not completed",
@@ -120,7 +120,7 @@
     "withdrawnCount": "{{count}} items withdrawn"
   },
   "mindMap": {
-    "backToTrack": "Back to the track",
+    "backToTrack": "Back to the learning path",
     "heading": "Mind map",
     "loading": "Loading…",
     "notDownloaded": "This mind map has not been downloaded to this device yet.",
@@ -129,17 +129,17 @@
     "nodeHint": "Open the lesson {{title}}",
     "nodeQueuedHint": "{{title}} is downloading",
     "treeLabel": "Mind map for {{title}}",
-    "unavailable": "This track has no mind map."
+    "unavailable": "This learning path has no mind map."
   },
   "notFound": {
     "heading": "This page does not exist",
     "description": "The address may be mistyped, or the content may have been moved.",
-    "backHome": "Go to the tracks"
+    "backHome": "Go to the learning paths"
   },
   "error": {
     "heading": "Something went wrong",
     "NETWORK_UNAVAILABLE": "The server could not be reached. Check your connection and try again.",
-    "TRACK_NOT_FOUND": "This track no longer exists.",
+    "TRACK_NOT_FOUND": "This learning path no longer exists.",
     "LESSON_NOT_FOUND": "This lesson no longer exists.",
     "ENTITY_NOT_IN_LIBRARY": "This content is not in your library yet.",
     "UNSUPPORTED_ON_WEB": "This action is only available in the desktop application.",
@@ -197,10 +197,10 @@
     "PUBLISHED_DELETE_BLOCKED": "Published items can't be deleted. Unpublish it first.",
     "ORDER_SET_INCOMPLETE": "The new order doesn't include every item exactly once. Please try again.",
     "PIPELINE_RUN_IN_PROGRESS": "A fetch for this source is already running. Please wait for it to finish.",
-    "SANITIZED_CONTENT_EMPTY": "Nothing was left after removing unsafe formatting. Please add some content and try again.",
+    "UNSAFE_HTML": "Your content includes formatting the server does not allow, so nothing was saved. Remove the elements named in the error and try again.",
     "AUTO_POST_SOURCE_LINK_REQUIRED": "An automated post needs a source link before it can leave draft.",
     "CANONICAL_LOCALE_NOT_ALLOWED": "English is the original language for this content and can't be stored as a translation.",
-    "MIND_MAP_INVALID": "This mind map isn't valid. Check for duplicate nodes, a branch that's too deep, or a lesson link outside this track.",
+    "MIND_MAP_INVALID": "This mind map isn't valid. Check for duplicate nodes, a branch that's too deep, or a lesson link outside this learning path.",
     "INSECURE_SOURCE_URL": "This link must use a secure (https) address.",
     "INVALID_VERIFY_URL_PATTERN": "The verification link pattern isn't valid. It must contain exactly one version placeholder.",
     "CURRENT_PASSWORD_INCORRECT": "Your current password is incorrect.",
@@ -208,7 +208,7 @@
   },
   "auth": {
     "heading": "Sign in",
-    "intro": "Sign in with your DevAtlas account to continue.",
+    "intro": "Sign in with your ByteLore account to continue.",
     "email": "Email",
     "password": "Password",
     "submit": "Sign in",
@@ -469,7 +469,7 @@
     "forbidden": {
       "heading": "You don't have access to this page",
       "description": "Your account role doesn't include this section of the admin area.",
-      "backToTracks": "Go to the tracks"
+      "backToTracks": "Go to the learning paths"
     },
     "role": {
       "USER": "User",

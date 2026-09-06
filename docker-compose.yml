@@ -1,4 +1,4 @@
-# Local development dependencies for DevAtlas.
+# Local development dependencies for ByteLore.
 #
 # Postgres is the only service here on purpose: the architecture keeps the job
 # queue (FOR UPDATE SKIP LOCKED), full-text search (tsvector) and caching inside
@@ -12,12 +12,12 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: devatlas-postgres
+    container_name: bytelore-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-devatlas}
-      POSTGRES_USER: ${POSTGRES_USER:-devatlas}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devatlas_local_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-bytelore}
+      POSTGRES_USER: ${POSTGRES_USER:-bytelore}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bytelore_local_dev}
       # Deterministic collation: index and ORDER BY behaviour must not depend on
       # the host locale, otherwise a query ordering differs between machines.
       POSTGRES_INITDB_ARGS: "--locale=C --encoding=UTF8"
@@ -27,7 +27,7 @@ services:
       # stack, or a natively installed PostgreSQL service), and binding a port
       # that is already allocated fails the whole `compose up`. Inside the
       # container the port is still 5432, so the JDBC url is
-      # jdbc:postgresql://localhost:5433/devatlas from the host.
+      # jdbc:postgresql://localhost:5433/bytelore from the host.
       - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -35,7 +35,7 @@ services:
       # Flyway migrations run at application startup and fail loudly if they hit
       # a database that is still initializing, so the health check gates on the
       # real database rather than on the port being open.
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devatlas} -d ${POSTGRES_DB:-devatlas}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bytelore} -d ${POSTGRES_DB:-bytelore}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -43,4 +43,4 @@ services:
 
 volumes:
   postgres-data:
-    name: devatlas-postgres-data
+    name: bytelore-postgres-data

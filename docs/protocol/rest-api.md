@@ -1,4 +1,4 @@
-# DevAtlas REST API Contract
+# ByteLore REST API Contract
 
 **Status:** frozen contract, v1.1 — every question left open in v1.0 is now decided (§8)
 **Base path:** `/api/v1`
@@ -158,13 +158,27 @@ The response carries `Content-Language` set to the locale used for the **root** 
 
 Locale negotiation applies to *content*. Interface strings are a client concern and never travel over this API.
 
-### 2.8 Sanitization
+### 2.8 Markdown safety at the write boundary
 
-Markdown and mind-map label text are sanitized **on write, before persistence**, using the OWASP Java HTML Sanitizer with a conservative allow-list (no `<script>`, no `<style>`, no event handlers, no `javascript:`/`data:` URLs, no `<iframe>`/`<object>`/`<embed>`). Consequences the clients must know:
+Markdown bodies and mind-map labels are checked **on write, before persistence**, against a server-side allow-list. The check is a **predicate, not a rewrite**: what you `POST`, normalized (§3.1), is byte for byte what you `GET` back, or the write is refused with `422 UNSAFE_HTML`.
 
-- What you `POST` is not necessarily what you `GET` back; the response of a write echoes the stored, sanitized value.
-- If sanitization removes everything and leaves a blank body, the write is rejected with `422 SANITIZED_CONTENT_EMPTY` rather than storing an empty lesson.
-- Because content is already sanitized server-side, client-side sanitization is a second layer, not the first.
+This matters because the stored form is markdown *source*, and it is the form that is hashed and shipped to the desktop client. Running an HTML sanitizer over markdown source and storing its output rewrites the text: the OWASP serializer entity-encodes nine printable ASCII characters unconditionally (`"`, `&`, `'`, `+`, `<`, `=`, `>`, `@`, `` ` ``), so a code fence, an apostrophe, an e-mail address or a `>` opening a blockquote could not survive a save. The server therefore asks the sanitizer only *whether it would discard anything*, and stores the author's own bytes.
+
+The check has three parts, and a body must clear all three:
+
+1. **No raw markup declarations.** Any raw-HTML node containing `<!` or `<?` — an HTML comment, a CDATA section, a doctype, a processing instruction — is refused. A content body has no use for them, and the sanitizer's comment lexer does not agree with the HTML5 parser about where a comment ends, so a construct like `<!-->` can hide markup from the allow-list entirely.
+2. **Link and image destinations.** The destination is resolved the way a browser resolves an attribute value — character references decoded whether or not they end in a semicolon, ignored characters stripped — and its scheme must be `http`, `https`, `mailto`, or absent (a relative reference). `[x](javascript:…)` and `[x](&#106avascript:…)` are refused alike.
+3. **The element and attribute allow-list**, applied to the HTML the body renders to.
+
+**The allow-list.** Block structure (`p`, `div`, `h1`–`h6`, `ul`, `ol`, `li`, `blockquote`, `pre`, `hr`), inline formatting (`b`, `i`, `em`, `strong`, `code`, `br`, `span`, `sub`, `sup`, …), links (`a[href]`, restricted to the schemes above), images (`img[src|alt|title]`), tables, and `details`/`summary`. Attributes outside this list — including presentational ones such as `class` on anything but a `code` element carrying a `language-*` value, `style`, and `data-*` — are not admitted.
+
+Consequences the clients must know:
+
+- A write echoes exactly what was sent, after normalization. An editor never has to reload to discover what was stored.
+- A refusal names the offending elements and attributes in `message`, which is the information needed to fix a paste. Content pasted from a rich-text editor or a web page will often hit this.
+- Because the boundary refuses rather than strips, a body can no longer become empty by being sanitized; blankness is ordinary field validation.
+- **Automatically sourced (`AUTO`) blog drafts are the one exception.** Feed content genuinely is HTML, so the pipeline's excerpt is passed *through* the sanitizer rather than checked by it, and the resulting entity encoding is visible in the draft body. Such a draft is reviewed by a human before it can be published.
+- Client-side sanitization at render time (DOMPurify) remains a second layer, and is load-bearing: the server's CommonMark implementation and the client's are two implementations of one specification.
 
 ### 2.9 CORS and cookies
 
@@ -174,7 +188,7 @@ The web build is served from a different origin than the API. CORS is configured
 
 | Origin | Where it comes from |
 |---|---|
-| `https://app.devatlas.dev` (example) | Deployed web build; environment-provided |
+| `https://app.bytelore.invalid` (example) | Deployed web build; environment-provided |
 | `http://localhost:4200` | Local Angular dev server; only in the `dev` profile, environment-provided |
 | `http://tauri.localhost` | Tauri webview on Windows |
 | `tauri://localhost` | Tauri webview on Linux and macOS |
@@ -258,7 +272,7 @@ The server holds **only the digest**. It cannot reproduce the plaintext of any t
 
 A family therefore lives as long as it is used, with no upper bound by default. If an absolute session cap is later required (a compliance rule, or a policy that no session may outlive a password change by more than N days), it is added as a separate `family_max_age` checked against the family's `created_at` at refresh time, not by shortening the per-token TTL. That knob is deliberately absent in v1: it has no requirement behind it, and a wrong value silently signs everyone out.
 
-These are configuration values (`devatlas.auth.access-ttl`, `devatlas.auth.refresh-ttl`), not compile-time constants.
+These are configuration values (`bytelore.auth.access-ttl`, `bytelore.auth.refresh-ttl`), not compile-time constants.
 
 ### 3.3 Refresh rotation
 
@@ -375,7 +389,7 @@ Refresh tokens reach the two clients differently — the web build receives a co
 
 This rule exists because the alternative is an exfiltration primitive. If `refresh` honoured a client-chosen `token_delivery`, script injected into the web build could call `refresh` with `{"token_delivery": "BODY"}`; the browser would attach the `HttpOnly` cookie automatically, and the server would obligingly hand the token's plaintext back to JavaScript — converting an `HttpOnly` cookie into a readable one on request, and turning a transient XSS into a 60-day session theft. Channel-follows-request closes that path with no cost to either client.
 
-Deployment constraint that comes with `SameSite=Strict`: the web build and the API must be **same-site** — `app.example.com` and `api.example.com` share the registrable domain `example.com` and satisfy it; `devatlas-app.dev` calling `devatlas-api.dev` does not, and the cookie will simply not be sent. This constrains DNS and must be settled before the first deployment, not discovered from an empty cookie jar afterwards. Cross-site hosting would force `SameSite=None`, which reopens CSRF considerations and would require a separate decision.
+Deployment constraint that comes with `SameSite=Strict`: the web build and the API must be **same-site** — `app.example.com` and `api.example.com` share the registrable domain `example.com` and satisfy it; `bytelore-app.invalid` calling `bytelore-api.invalid` does not, and the cookie will simply not be sent. This constrains DNS and must be settled before the first deployment, not discovered from an empty cookie jar afterwards. Cross-site hosting would force `SameSite=None`, which reopens CSRF considerations and would require a separate decision.
 
 The cookie path is `/api/v1/auth` rather than `/api/v1/auth/refresh` so that `POST /auth/logout` receives it too; logout must be able to revoke the token it is being asked to revoke.
 
@@ -1068,11 +1082,11 @@ Errors: `VALIDATION_FAILED`, `TRACK_NOT_FOUND` (404), `MODULE_NOT_FOUND` (404), 
 }
 ```
 
-`body_markdown` in the response is the **sanitized** stored text, which may differ from what was sent (§2.8).
+`body_markdown` in the response is the stored text, which is byte for byte what was sent after normalization (§2.8) — a write that would have had to alter it is refused instead.
 
 `PATCH` accepts any subset of the create fields plus `module_id` (to move the lesson) and the mandatory `version`.
 
-Errors: `VALIDATION_FAILED`, `SLUG_ALREADY_EXISTS` (409), `MODULE_NOT_FOUND` (404), `LESSON_NOT_FOUND` (404), `SANITIZED_CONTENT_EMPTY` (422), `VERSION_CONFLICT`, `ORDER_SET_INCOMPLETE`, `PAYLOAD_TOO_LARGE`, `FORBIDDEN_ROLE`.
+Errors: `VALIDATION_FAILED`, `SLUG_ALREADY_EXISTS` (409), `MODULE_NOT_FOUND` (404), `LESSON_NOT_FOUND` (404), `UNSAFE_HTML` (422), `VERSION_CONFLICT`, `ORDER_SET_INCOMPLETE`, `PAYLOAD_TOO_LARGE`, `FORBIDDEN_ROLE`.
 
 #### 5.4.5 Code examples
 
@@ -1085,7 +1099,7 @@ Errors: `VALIDATION_FAILED`, `SLUG_ALREADY_EXISTS` (409), `MODULE_NOT_FOUND` (40
 ```json
 {
   "language": "rust",
-  "code": "fn main() {\n    let s = String::from(\"devatlas\");\n    takes_ownership(s);\n}",
+  "code": "fn main() {\n    let s = String::from(\"bytelore\");\n    takes_ownership(s);\n}",
   "caption": "Ownership moves into the callee",
   "order": 1
 }
@@ -1100,7 +1114,7 @@ Errors: `VALIDATION_FAILED`, `SLUG_ALREADY_EXISTS` (409), `MODULE_NOT_FOUND` (40
   "id": "018f5d73-04c7-7d90-91ab-c3e8f2107744",
   "lesson_id": "018f5d72-b910-7fe4-8ac0-71d5093e6a12",
   "language": "rust",
-  "code": "fn main() {\n    let s = String::from(\"devatlas\");\n    takes_ownership(s);\n}",
+  "code": "fn main() {\n    let s = String::from(\"bytelore\");\n    takes_ownership(s);\n}",
   "caption": "Ownership moves into the callee",
   "order": 1,
   "lesson_content_version": 2,
@@ -1215,7 +1229,7 @@ Transition endpoints share one request body:
 
 An unpublish makes the post `404` on the public endpoints immediately. A URL that resolved yesterday returns `404` today — the accepted cost of the simple design, and the reason unpublishing is `ADMIN`-only and audited rather than routine. If published posts are ever linked externally at volume, revisit this with a tombstone response instead of a bare `404`.
 
-Errors: `VALIDATION_FAILED`, `SLUG_ALREADY_EXISTS` (409), `BLOG_POST_NOT_FOUND` (404), `INVALID_STATE_TRANSITION` (409), `AUTO_POST_APPROVAL_REQUIRED` (409), `AUTO_POST_SOURCE_LINK_REQUIRED` (422), `SOURCE_UPDATE_NOT_VERIFIED` (409), `AUTO_POST_NOT_EDITABLE` (403), `SANITIZED_CONTENT_EMPTY` (422), `PUBLISHED_DELETE_BLOCKED` (409), `VERSION_CONFLICT`, `FORBIDDEN_ROLE`.
+Errors: `VALIDATION_FAILED`, `SLUG_ALREADY_EXISTS` (409), `BLOG_POST_NOT_FOUND` (404), `INVALID_STATE_TRANSITION` (409), `AUTO_POST_APPROVAL_REQUIRED` (409), `AUTO_POST_SOURCE_LINK_REQUIRED` (422), `SOURCE_UPDATE_NOT_VERIFIED` (409), `AUTO_POST_NOT_EDITABLE` (403), `UNSAFE_HTML` (422), `PUBLISHED_DELETE_BLOCKED` (409), `VERSION_CONFLICT`, `FORBIDDEN_ROLE`.
 
 ### 5.6 Translations
 
@@ -1280,7 +1294,7 @@ The alternative — accepting a title-only lesson translation — was rejected b
 
 `locale` = `en` is rejected with `422 CANONICAL_LOCALE_NOT_ALLOWED`: English lives in the entity's own columns, and allowing a second English copy would create two answers to "what is the English title".
 
-Errors: `VALIDATION_FAILED`, `UNSUPPORTED_LOCALE` (400), `CANONICAL_LOCALE_NOT_ALLOWED` (422), `ENTITY_TYPE_UNSUPPORTED` (400 — includes `MIND_MAP`), `TRANSLATION_NOT_FOUND` (404), `TRACK_NOT_FOUND` / `MODULE_NOT_FOUND` / `LESSON_NOT_FOUND` / `BLOG_POST_NOT_FOUND` (404), `VERSION_CONFLICT`, `FORBIDDEN_ROLE`.
+Errors: `VALIDATION_FAILED`, `UNSUPPORTED_LOCALE` (400), `CANONICAL_LOCALE_NOT_ALLOWED` (422), `ENTITY_TYPE_UNSUPPORTED` (400 — includes `MIND_MAP`), `TRANSLATION_NOT_FOUND` (404), `TRACK_NOT_FOUND` / `MODULE_NOT_FOUND` / `LESSON_NOT_FOUND` / `BLOG_POST_NOT_FOUND` (404), `UNSAFE_HTML` (422), `VERSION_CONFLICT`, `FORBIDDEN_ROLE`.
 
 ### 5.7 Review queue, sources, audit
 
@@ -1331,7 +1345,8 @@ All paths prefixed `/api/v1/admin`.
       { "check": "SOURCE_WHITELISTED", "passed": true, "detail": "enabled=true" },
       { "check": "VERSION_CONFIRMED", "passed": true, "detail": "https://api.github.com/repos/spring-projects/spring-boot/releases/tags/v4.1.1 → 4.1.1" },
       { "check": "HASH_NOT_SEEN", "passed": true, "detail": null },
-      { "check": "CONTENT_SANITY", "passed": true, "detail": "length=4182" }
+      { "check": "CONTENT_SANITY", "passed": true, "detail": "length=4182" },
+      { "check": "DRAFT_VALIDATION", "passed": true, "detail": null }
     ],
     "raw_content": "Spring Boot 4.1.1 has been released and is available from Maven Central. This release includes 43 bug fixes, documentation improvements and dependency upgrades..."
   }
@@ -1340,7 +1355,7 @@ All paths prefixed `/api/v1/admin`.
 
 **`source_update` is `null` for a manually written post.** A post reaches `PENDING_REVIEW` from either direction: the pipeline drafted it from a fetched source, or a person wrote it and submitted it. Only the first has a fetch to show. A review screen therefore renders one panel rather than two in that case, and must not treat the absence as an error.
 
-`verify_status` ∈ `PENDING | VERIFIED | REJECTED`. `verify_checks` is ordered as executed; the first failing entry is the reason a `REJECTED` update never became a draft. `raw_content` is the sanitized stored source text.
+`verify_status` ∈ `PENDING | VERIFIED | REJECTED`. `verify_checks` is ordered as executed; the first failing entry is the reason a `REJECTED` update never became a draft. `raw_content` is the feed item's text as fetched and normalized.
 
 **`VERSION_CONFIRMED` — the definition.** This check is the load-bearing one in the chain, and "we made a second request" is not a definition anyone can implement twice the same way. It passes if and only if **both** hold:
 
@@ -1439,7 +1454,7 @@ The call is **synchronous** and returns when the cycle completes, because the op
 }
 ```
 
-`fetched` counts feed items seen; `created` new `SourceUpdate` rows; `duplicates` items whose `content_hash` was already known; `rejected` items that failed the verification chain. `created + duplicates + rejected` equals `fetched`. Every outcome is written to `PipelineAuditLog` exactly as a scheduled run would write it, with `actor_user_id` set to the calling administrator — a manual run is attributable, a scheduled one is not.
+`fetched` counts feed items seen; `created` new `SourceUpdate` rows; `duplicates` items whose `content_hash` was already known; `rejected` items that failed the verification chain. `created + duplicates + rejected` equals `fetched`. The chain's last check is `DRAFT_VALIDATION`: the drafted body is offered to the same allow-list an authored body faces (§2.8), and an item whose draft would be refused is rejected as a failed check — visibly, with the rest of the feed still processed — rather than aborting the cycle. An item that fails in some other way is reported with the check name `ITEM_FAILED`; it too costs only that item. Every outcome is written to `PipelineAuditLog` exactly as a scheduled run would write it, with `actor_user_id` set to the calling administrator — a manual run is attributable, a scheduled one is not.
 
 If the scheduler (or another manual run) currently holds the lock, the request returns `409 PIPELINE_RUN_IN_PROGRESS` immediately rather than queueing or blocking.
 
@@ -1669,7 +1684,7 @@ Every non-2xx response body is exactly:
 
 | Code | HTTP | When |
 |---|---|---|
-| `SANITIZED_CONTENT_EMPTY` | 422 | Sanitization removed all content from a markdown body |
+| `UNSAFE_HTML` | 422 | A markdown body or plain-text field carries markup outside the server allow-list (§2.8). `message` names the elements and attributes |
 | `AUTO_POST_SOURCE_LINK_REQUIRED` | 422 | An `AUTO` post has no source link and cannot leave `DRAFT` |
 | `CANONICAL_LOCALE_NOT_ALLOWED` | 422 | Attempt to store `en` as a `ContentTranslation` row |
 | `MIND_MAP_INVALID` | 422 | Node/depth limits, duplicate node id, or a `lesson_id` outside the track |
@@ -1757,7 +1772,7 @@ Bulk reorder (`PUT …/order`) is the only way to express a wholesale rearrangem
 |---|---|
 | `slug` | `@NotBlank`, slug pattern, **globally unique among non-deleted lessons** |
 | `title` | `@NotBlank @Size(max = 200)` |
-| `body_markdown` | markdown body rules; sanitized before persistence; empty after sanitization → `SANITIZED_CONTENT_EMPTY` |
+| `body_markdown` | markdown body rules; checked against the allow-list before persistence and stored unchanged (§2.8); markup outside it → `UNSAFE_HTML` |
 | `difficulty` | `@NotNull`, enum `BEGINNER\|INTERMEDIATE\|ADVANCED` |
 | `estimated_minutes` | optional/nullable, `@Min(1) @Max(600)` |
 | `order` | optional, order range |
@@ -1787,7 +1802,7 @@ Any change to `slug` bumps `content_version` (§5.4.1).
 | `root.lesson_id` | optional/nullable; must reference a lesson in the same track |
 | `root.children` | `@NotNull` (may be `[]`); depth ≤ 8; ≤ 500 nodes total |
 
-Structural violations report `MIND_MAP_INVALID` (422) rather than `VALIDATION_FAILED`, because they are graph-level, not field-level.
+Structural violations report `MIND_MAP_INVALID` (422) rather than `VALIDATION_FAILED`, because they are graph-level, not field-level. A node label carrying markup reports `UNSAFE_HTML` (422): a label is plain text by contract, rendered by interpolation, so the boundary asserts there is no markup in it rather than deleting any (§2.8).
 
 ### 7.7 ContentTranslation
 

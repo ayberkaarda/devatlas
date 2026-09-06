@@ -8,9 +8,9 @@ spring:
   # src/test/resources/application-test.yml pins tests to their own
   # Testcontainers-managed database instead.
   datasource:
-    url: jdbc:postgresql://localhost:5433/devatlas
-    username: devatlas
-    password: devatlas_local_dev
+    url: jdbc:postgresql://localhost:5433/bytelore
+    username: bytelore
+    password: bytelore_local_dev
 
   jpa:
     # Schema changes happen through Flyway migrations only. `validate` makes
@@ -34,12 +34,12 @@ spring:
     # the clients and means a newly added DTO cannot opt out by accident.
     property-naming-strategy: SNAKE_CASE
 
-devatlas:
+bytelore:
   auth:
     # HMAC signing key for access tokens. There is deliberately no default: a
     # default signing key is a key everybody has, including whoever reads this
     # repository. At least 32 bytes; startup fails otherwise.
-    jwt-secret: ${DEVATLAS_JWT_SECRET:}
+    jwt-secret: ${BYTELORE_JWT_SECRET:}
     # Short enough that a leaked access token has little value, long enough
     # that an ordinary reading session makes few refresh calls.
     access-ttl: PT15M
@@ -51,7 +51,7 @@ devatlas:
     refresh-grace: PT30S
     # Tolerance for clock drift when checking a token's time claims.
     clock-skew: PT60S
-    cookie-name: devatlas_refresh
+    cookie-name: bytelore_refresh
     cookie-path: /api/v1/auth
     # Off only where a browser talks to this API over plain HTTP, which is a
     # developer's machine and nowhere else (see application-dev.yml).
@@ -66,7 +66,7 @@ devatlas:
     # any other; leaving them out produces a failure that is hard to read --
     # every desktop call fails at the preflight with no body to inspect, while
     # identical code works in a browser.
-    allowed-origins: ${DEVATLAS_ALLOWED_ORIGINS:}
+    allowed-origins: ${BYTELORE_ALLOWED_ORIGINS:}
 
   rate-limit:
     # Per-IP budgets for the two anonymous endpoint families. They take no
@@ -100,13 +100,13 @@ devatlas:
     # later commit to remove.
     #
     # Set both before the first start:
-    #   DEVATLAS_ADMIN_EMAIL=you@example.com
-    #   DEVATLAS_ADMIN_PASSWORD=<at least 12 characters>
+    #   BYTELORE_ADMIN_EMAIL=you@example.com
+    #   BYTELORE_ADMIN_PASSWORD=<at least 12 characters>
     #
     # If either is missing the migration fails and the transaction rolls back,
     # so nothing is half-applied: set the variables and start again.
-    admin-email: ${DEVATLAS_ADMIN_EMAIL:}
-    admin-password: ${DEVATLAS_ADMIN_PASSWORD:}
+    admin-email: ${BYTELORE_ADMIN_EMAIL:}
+    admin-password: ${BYTELORE_ADMIN_PASSWORD:}
 
 management:
   endpoints:

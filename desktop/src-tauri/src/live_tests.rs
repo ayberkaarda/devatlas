@@ -13,7 +13,7 @@
 //! are not part of the fast local suite. Run them with:
 //!
 //! ```text
-//! DEVATLAS_API_BASE_URL=http://localhost:18080/api/v1 \
+//! BYTELORE_API_BASE_URL=http://localhost:18080/api/v1 \
 //!     cargo test --lib live_ -- --ignored --test-threads=1 --nocapture
 //! ```
 //!
@@ -53,11 +53,11 @@ fn required_base_url() -> String {
                 "\n\n{API_BASE_URL_ENV} is not set, so there is no live server to test against.\n\
                  Start one first:\n\n  \
                  cd server && ./mvnw -q spring-boot:test-run \\\n    \
-                 -Dspring-boot.run.main-class=dev.devatlas.server.TestServerApplication \\\n    \
+                 -Dspring-boot.run.main-class=dev.bytelore.server.TestServerApplication \\\n    \
                  -Dspring-boot.run.profiles=test \\\n    \
                  -Dspring-boot.run.arguments=--server.port=18080\n\n\
                  then re-run with:\n\n  \
-                 DEVATLAS_API_BASE_URL=http://localhost:18080/api/v1 \\\n    \
+                 BYTELORE_API_BASE_URL=http://localhost:18080/api/v1 \\\n    \
                  cargo test --lib live_ -- --ignored --test-threads=1 --nocapture\n"
             )
         })
@@ -83,7 +83,7 @@ impl LiveHarness {
         std::fs::create_dir_all(&partials).expect("create partials dir");
 
         let connection =
-            store::open(&dir.path().join("devatlas-live.db")).expect("open a real sqlite store");
+            store::open(&dir.path().join("bytelore-live.db")).expect("open a real sqlite store");
         let db = Arc::new(Db::new(connection));
         let client = ContentClient::new(base_url);
         let sink = Arc::new(RecordingSink::default());

@@ -1,7 +1,7 @@
 /**
  * The admin REST payloads exactly as they arrive on and go out over the wire.
  *
- * `snake_case`, matching `dev.devatlas.server.content.admin.dto` and
+ * `snake_case`, matching `dev.bytelore.server.content.admin.dto` and
  * `docs/protocol/rest-api.md` §5.5–§5.7 — field names below are read off the
  * DTO source, not guessed from the prose. Declared separately from the view
  * models in `admin-models.ts` for the same reason `rest-wire.ts` is separate

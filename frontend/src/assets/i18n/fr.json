@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "DevAtlas",
+    "title": "ByteLore",
     "tagline": "Des parcours d'apprentissage pour développeurs, en ligne et hors ligne.",
     "skipToContent": "Aller au contenu"
   },
@@ -197,7 +197,7 @@
     "PUBLISHED_DELETE_BLOCKED": "Les éléments publiés ne peuvent pas être supprimés. Dépubliez-les d'abord.",
     "ORDER_SET_INCOMPLETE": "Le nouvel ordre ne contient pas chaque élément exactement une fois. Veuillez réessayer.",
     "PIPELINE_RUN_IN_PROGRESS": "Une récupération est déjà en cours pour cette source. Veuillez attendre qu'elle se termine.",
-    "SANITIZED_CONTENT_EMPTY": "Il ne restait plus rien après la suppression du formatage non sécurisé. Veuillez ajouter du contenu et réessayer.",
+    "UNSAFE_HTML": "Votre contenu comporte une mise en forme que le serveur n'autorise pas ; rien n'a été enregistré. Supprimez les éléments indiqués dans l'erreur, puis réessayez.",
     "AUTO_POST_SOURCE_LINK_REQUIRED": "Un article automatique a besoin d'un lien source pour sortir de l'état brouillon.",
     "CANONICAL_LOCALE_NOT_ALLOWED": "L'anglais est la langue d'origine de ce contenu et ne peut pas être enregistré comme traduction.",
     "MIND_MAP_INVALID": "Cette carte mentale n'est pas valide. Vérifiez les nœuds en double, une branche trop profonde ou un lien de leçon extérieur à ce parcours.",
@@ -208,7 +208,7 @@
   },
   "auth": {
     "heading": "Connexion",
-    "intro": "Connectez-vous avec votre compte DevAtlas pour continuer.",
+    "intro": "Connectez-vous avec votre compte ByteLore pour continuer.",
     "email": "E-mail",
     "password": "Mot de passe",
     "submit": "Se connecter",

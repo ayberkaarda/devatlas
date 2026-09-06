@@ -39,7 +39,17 @@ export class AuditLogPage {
   private readonly route = inject(ActivatedRoute);
 
   readonly id = input.required<string>();
-  readonly page = input(0, { transform: numberAttribute });
+  /**
+   * A query parameter missing from the URL still runs the router's
+   * component-input binding, which calls the setter with `undefined` rather
+   * than leaving `input()`'s own default in place. `numberAttribute` on its
+   * own turns that `undefined` into `NaN`, which is not a page number this
+   * screen (or the server it queries) should ever see; the explicit fallback
+   * keeps a bare `/admin/blog/:id/audit` on page zero.
+   */
+  readonly page = input(0, {
+    transform: (value: string | undefined) => numberAttribute(value, 0),
+  });
 
   protected readonly items = signal<readonly AuditLogItem[]>([]);
   protected readonly totalPages = signal(0);

@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "DevAtlas",
+  "productName": "ByteLore",
   "version": "0.1.0",
-  "identifier": "dev.devatlas.desktop",
+  "identifier": "dev.bytelore.desktop",
   "build": {
     "frontendDist": "../../frontend/dist/tauri/browser",
     "devUrl": "http://localhost:4200",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "DevAtlas",
+        "title": "ByteLore",
         "width": 1280,
         "height": 800,
         "minWidth": 960,
@@ -24,8 +24,8 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.devatlas.dev; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
-      "devCsp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.devatlas.dev http://localhost:8080; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.bytelore.invalid; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "devCsp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.bytelore.invalid http://localhost:8080; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
     }
   },
   "bundle": {

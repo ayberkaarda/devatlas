@@ -39,7 +39,7 @@ import {
 } from './rest-wire';
 
 /** Where the web build keeps its preferences. Read by the pre-paint script. */
-export const PREFERENCES_STORAGE_KEY = 'devatlas.preferences';
+export const PREFERENCES_STORAGE_KEY = 'bytelore.preferences';
 
 const DEFAULT_PREFERENCES: Preferences = { locale: 'en', theme: 'SYSTEM' };
 

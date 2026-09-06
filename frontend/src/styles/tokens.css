@@ -1,5 +1,5 @@
 /*
- * DevAtlas design token layer — single source of truth for color, radius
+ * ByteLore design token layer — single source of truth for color, radius
  * and motion values used across the app.
  *
  * Tailwind 4 is CSS-first: values declared inside @theme become both a
@@ -8,7 +8,7 @@
  * rounded-md, ...). There is no tailwind.config.js — this file is the
  * theme source.
  *
- * Colors are indirected through a --dv-* variable so the same @theme keys
+ * Colors are indirected through a --bl-* variable so the same @theme keys
  * can be redefined per data-theme without touching the @theme block
  * itself: light values live on :root, dark values override them under
  * [data-theme="dark"]. Components must consume tokens (Tailwind utility
@@ -17,39 +17,39 @@
 
 @theme {
   /* Surfaces */
-  --color-bg: var(--dv-bg);
-  --color-surface: var(--dv-surface);
-  --color-surface-raised: var(--dv-surface-raised);
-  --color-border: var(--dv-border);
+  --color-bg: var(--bl-bg);
+  --color-surface: var(--bl-surface);
+  --color-surface-raised: var(--bl-surface-raised);
+  --color-border: var(--bl-border);
 
   /* Text */
-  --color-text: var(--dv-text);
-  --color-text-muted: var(--dv-text-muted);
+  --color-text: var(--bl-text);
+  --color-text-muted: var(--bl-text-muted);
 
   /* Accent */
-  --color-accent: var(--dv-accent);
-  --color-accent-contrast: var(--dv-accent-contrast);
+  --color-accent: var(--bl-accent);
+  --color-accent-contrast: var(--bl-accent-contrast);
 
   /* State */
-  --color-success: var(--dv-success);
-  --color-warning: var(--dv-warning);
-  --color-danger: var(--dv-danger);
+  --color-success: var(--bl-success);
+  --color-warning: var(--bl-warning);
+  --color-danger: var(--bl-danger);
 
   /* Code blocks */
-  --color-code-bg: var(--dv-code-bg);
+  --color-code-bg: var(--bl-code-bg);
 
   /* Focus ring — a single token so every interactive element agrees */
-  --color-focus: var(--dv-focus);
+  --color-focus: var(--bl-focus);
 
   /* Badge used by the "not yet translated" marker */
-  --color-badge-bg: var(--dv-badge-bg);
-  --color-badge-text: var(--dv-badge-text);
+  --color-badge-bg: var(--bl-badge-bg);
+  --color-badge-text: var(--bl-badge-text);
 
   /* Word-level diff backgrounds, used by the review screen's client-side
      diff (added/removed spans) -- no server-shipped diff format, so these
      exist purely for the admin UI's own rendering. */
-  --color-diff-add-bg: var(--dv-diff-add-bg);
-  --color-diff-remove-bg: var(--dv-diff-remove-bg);
+  --color-diff-add-bg: var(--bl-diff-add-bg);
+  --color-diff-remove-bg: var(--bl-diff-remove-bg);
 
   /* Radii */
   --radius-sm: 0.25rem;
@@ -75,29 +75,29 @@
 }
 
 :root {
-  --dv-bg: #ffffff;
-  --dv-surface: #f4f5f7;
-  --dv-surface-raised: #ffffff;
-  --dv-border: #dde1e6;
+  --bl-bg: #ffffff;
+  --bl-surface: #f4f5f7;
+  --bl-surface-raised: #ffffff;
+  --bl-border: #dde1e6;
 
-  --dv-text: #1a1d21;
-  --dv-text-muted: #5b6270;
+  --bl-text: #1a1d21;
+  --bl-text-muted: #5b6270;
 
-  --dv-accent: #2f6fed;
-  --dv-accent-contrast: #ffffff;
+  --bl-accent: #2f6fed;
+  --bl-accent-contrast: #ffffff;
 
-  --dv-success: #1f9254;
-  --dv-warning: #b7791f;
-  --dv-danger: #d1373f;
+  --bl-success: #1f9254;
+  --bl-warning: #b7791f;
+  --bl-danger: #d1373f;
 
-  --dv-code-bg: #f4f5f7;
+  --bl-code-bg: #f4f5f7;
 
-  --dv-focus: #2f6fed;
-  --dv-badge-bg: #fdf3dd;
-  --dv-badge-text: #7a5209;
+  --bl-focus: #2f6fed;
+  --bl-badge-bg: #fdf3dd;
+  --bl-badge-text: #7a5209;
 
-  --dv-diff-add-bg: #e3f6e9;
-  --dv-diff-remove-bg: #fbe7e8;
+  --bl-diff-add-bg: #e3f6e9;
+  --bl-diff-remove-bg: #fbe7e8;
 
   /*
    * Tells the user agent which palette its own widgets — scrollbars, form
@@ -115,29 +115,29 @@
 }
 
 [data-theme='dark'] {
-  --dv-bg: #0d1117;
-  --dv-surface: #161b22;
-  --dv-surface-raised: #1c2330;
-  --dv-border: #2a313c;
+  --bl-bg: #0d1117;
+  --bl-surface: #161b22;
+  --bl-surface-raised: #1c2330;
+  --bl-border: #2a313c;
 
-  --dv-text: #e6e9ef;
-  --dv-text-muted: #98a1b0;
+  --bl-text: #e6e9ef;
+  --bl-text-muted: #98a1b0;
 
-  --dv-accent: #5b8def;
-  --dv-accent-contrast: #0d1117;
+  --bl-accent: #5b8def;
+  --bl-accent-contrast: #0d1117;
 
-  --dv-success: #3fb873;
-  --dv-warning: #d9a441;
-  --dv-danger: #e2626b;
+  --bl-success: #3fb873;
+  --bl-warning: #d9a441;
+  --bl-danger: #e2626b;
 
-  --dv-code-bg: #10151d;
+  --bl-code-bg: #10151d;
 
-  --dv-focus: #7aa2f7;
-  --dv-badge-bg: #3a2f14;
-  --dv-badge-text: #f0cf88;
+  --bl-focus: #7aa2f7;
+  --bl-badge-bg: #3a2f14;
+  --bl-badge-text: #f0cf88;
 
-  --dv-diff-add-bg: #103524;
-  --dv-diff-remove-bg: #3a1a1e;
+  --bl-diff-add-bg: #103524;
+  --bl-diff-remove-bg: #3a1a1e;
 
   color-scheme: dark;
 }
@@ -151,29 +151,29 @@
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --dv-bg: #0d1117;
-    --dv-surface: #161b22;
-    --dv-surface-raised: #1c2330;
-    --dv-border: #2a313c;
+    --bl-bg: #0d1117;
+    --bl-surface: #161b22;
+    --bl-surface-raised: #1c2330;
+    --bl-border: #2a313c;
 
-    --dv-text: #e6e9ef;
-    --dv-text-muted: #98a1b0;
+    --bl-text: #e6e9ef;
+    --bl-text-muted: #98a1b0;
 
-    --dv-accent: #5b8def;
-    --dv-accent-contrast: #0d1117;
+    --bl-accent: #5b8def;
+    --bl-accent-contrast: #0d1117;
 
-    --dv-success: #3fb873;
-    --dv-warning: #d9a441;
-    --dv-danger: #e2626b;
+    --bl-success: #3fb873;
+    --bl-warning: #d9a441;
+    --bl-danger: #e2626b;
 
-    --dv-code-bg: #10151d;
+    --bl-code-bg: #10151d;
 
-    --dv-focus: #7aa2f7;
-    --dv-badge-bg: #3a2f14;
-    --dv-badge-text: #f0cf88;
+    --bl-focus: #7aa2f7;
+    --bl-badge-bg: #3a2f14;
+    --bl-badge-text: #f0cf88;
 
-    --dv-diff-add-bg: #103524;
-    --dv-diff-remove-bg: #3a1a1e;
+    --bl-diff-add-bg: #103524;
+    --bl-diff-remove-bg: #3a1a1e;
 
     color-scheme: dark;
   }

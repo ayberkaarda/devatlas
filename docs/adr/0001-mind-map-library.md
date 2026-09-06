@@ -71,8 +71,8 @@ in spirit to what this screen needs, on paper.
   `highlight.js`, `katex` and `prismjs` — none of it relevant to rendering a
   tree of lesson titles.
 - Minus: labels render inside SVG `foreignObject` elements as parsed HTML.
-  Making that safe under the sanitize-before-DOM rule this project already
-  enforces (project rule I8, `frontend-guard`) is extra surface for content
+  Making that safe under the rule that nothing reaches the DOM without passing
+  through the sanitiser first is extra surface for content
   that in our case is always plain text — a cost paid for a feature (rich
   markdown per node) nothing here uses.
 - Minus: theming is a colour list handed to the library
@@ -101,8 +101,8 @@ A lightweight, dependency-free mind-mapping library.
   using it read-only means finding and disabling every one of those
   affordances rather than building on top of a viewer that never had them. A
   content-editable node in a screen whose entire job is to *navigate*
-  published content is also a sanitisation question (project rule I8) this
-  library was never designed to answer.
+  published content is also a sanitisation question this library was never
+  designed to answer.
 - Minus: styling is a named theme (a bundled CSS file per palette, e.g.
   `jsmind.orange.css`), swapped by CSS class, not consumed as custom
   properties — again a translation layer between our tokens and its

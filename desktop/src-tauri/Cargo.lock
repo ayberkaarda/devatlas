@@ -241,6 +241,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 
 [[package]]
+name = "bytelore-desktop"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "futures-util",
+ "log",
+ "reqwest",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-log",
+ "tempfile",
+ "thiserror 2.0.20",
+ "tokio",
+ "uuid",
+ "wiremock",
+]
+
+[[package]]
 name = "bytemuck"
 version = "1.25.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -694,28 +716,6 @@ dependencies = [
  "quote",
  "rustc_version",
  "syn 2.0.119",
-]
-
-[[package]]
-name = "devatlas-desktop"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "futures-util",
- "log",
- "reqwest",
- "rusqlite",
- "serde",
- "serde_json",
- "sha2",
- "tauri",
- "tauri-build",
- "tauri-plugin-log",
- "tempfile",
- "thiserror 2.0.20",
- "tokio",
- "uuid",
- "wiremock",
 ]
 
 [[package]]

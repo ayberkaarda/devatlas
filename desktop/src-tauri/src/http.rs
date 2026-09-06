@@ -22,7 +22,7 @@ use crate::model::EntityType;
 /// Where the API lives. The desktop build talks to one deployment at a time and
 /// has no UI for changing it, so it is read from the environment once at
 /// startup and defaults to the local development server.
-pub const API_BASE_URL_ENV: &str = "DEVATLAS_API_BASE_URL";
+pub const API_BASE_URL_ENV: &str = "BYTELORE_API_BASE_URL";
 const DEFAULT_API_BASE_URL: &str = "http://localhost:8080/api/v1";
 
 pub fn configured_base_url() -> String {
@@ -110,7 +110,7 @@ impl ContentClient {
             // system decides. A whole-request timeout is deliberately not set:
             // it would abort a slow but healthy transfer.
             .connect_timeout(Duration::from_secs(10))
-            .user_agent("devatlas-desktop")
+            .user_agent("bytelore-desktop")
             .build()
             .unwrap_or_default();
         Self {
