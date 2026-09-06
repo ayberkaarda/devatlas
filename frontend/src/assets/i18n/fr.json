@@ -7,7 +7,9 @@
   "nav": {
     "label": "Navigation principale",
     "tracks": "Parcours",
-    "downloads": "Téléchargements"
+    "downloads": "Téléchargements",
+    "admin": "Administration",
+    "signIn": "Se connecter"
   },
   "theme": {
     "light": "Clair",
@@ -153,6 +155,326 @@
     "CONTENT_CHANGED_DURING_RESUME": "Le contenu a changé pendant la reprise. Veuillez réessayer le téléchargement.",
     "DIGEST_MISMATCH": "Le fichier téléchargé n'a pas passé la vérification. Veuillez réessayer.",
     "INSUFFICIENT_STORAGE": "L'espace de stockage de cet appareil est insuffisant pour continuer.",
-    "SERVICE_UNAVAILABLE": "Le service est temporairement indisponible. Veuillez réessayer sous peu."
+    "SERVICE_UNAVAILABLE": "Le service est temporairement indisponible. Veuillez réessayer sous peu.",
+    "VALIDATION_FAILED": "Certaines informations saisies ne sont pas valides. Veuillez vérifier les champs signalés et réessayer.",
+    "MALFORMED_REQUEST": "Une erreur s'est produite lors de l'envoi de votre demande. Veuillez réessayer.",
+    "INVALID_PARAMETER": "Une des valeurs de votre demande n'est pas valide. Veuillez la vérifier et réessayer.",
+    "UNSUPPORTED_LOCALE": "Cette langue n'est pas prise en charge. Veuillez choisir une langue disponible.",
+    "UNSUPPORTED_LANGUAGE": "Ce langage de programmation n'est pas pris en charge pour la coloration syntaxique.",
+    "ENTITY_TYPE_UNSUPPORTED": "Ce type de contenu ne prend pas en charge les traductions.",
+    "INVALID_SORT_FIELD": "Cette liste ne peut pas être triée selon le critère choisi.",
+    "PAGE_SIZE_EXCEEDED": "Vous avez demandé trop d'éléments à la fois. Veuillez demander une page plus petite.",
+    "DUPLICATE_ITEM_IN_BATCH": "Le même élément est apparu deux fois dans un même envoi. Veuillez retirer le doublon et réessayer.",
+    "AMBIGUOUS_TOKEN_DELIVERY": "Votre session n'a pas pu être identifiée car elle est arrivée par deux canaux à la fois. Veuillez vous reconnecter.",
+    "PAYLOAD_TOO_LARGE": "Ce que vous envoyez est trop volumineux. Veuillez le raccourcir et réessayer.",
+    "SYNC_BATCH_TOO_LARGE": "Trop d'éléments à synchroniser à la fois. Ils seront envoyés automatiquement en plus petits lots.",
+    "UNSUPPORTED_MEDIA_TYPE": "Ce type de fichier ou de contenu n'est pas pris en charge ici.",
+    "METHOD_NOT_ALLOWED": "Cette action n'est pas disponible ici.",
+    "AUTH_REQUIRED": "Vous devez vous connecter pour faire cela.",
+    "INVALID_CREDENTIALS": "L'e-mail ou le mot de passe est incorrect.",
+    "ACCESS_TOKEN_EXPIRED": "Votre session doit être renouvelée. Veuillez patienter un instant.",
+    "ACCESS_TOKEN_INVALID": "Votre session n'est plus valide. Veuillez vous reconnecter.",
+    "REFRESH_TOKEN_INVALID": "Votre session a pris fin. Veuillez vous reconnecter.",
+    "REFRESH_TOKEN_EXPIRED": "Votre session a expiré. Veuillez vous reconnecter.",
+    "REFRESH_TOKEN_REUSED": "Votre session a été fermée pour des raisons de sécurité. Veuillez vous reconnecter.",
+    "FORBIDDEN_ROLE": "Vous n'avez pas la permission de faire cela.",
+    "ACCOUNT_DISABLED": "Ce compte a été désactivé. Veuillez contacter un administrateur.",
+    "AUTO_POST_NOT_EDITABLE": "Cet article a été créé automatiquement ; son contenu ou son lien source ne peuvent pas être modifiés directement.",
+    "MODULE_NOT_FOUND": "Ce module n'existe plus.",
+    "CODE_EXAMPLE_NOT_FOUND": "Cet exemple de code n'existe plus.",
+    "BLOG_POST_NOT_FOUND": "Cet article n'existe plus.",
+    "TRANSLATION_NOT_FOUND": "Aucune traduction n'existe encore pour ce contenu.",
+    "SOURCE_UPDATE_NOT_FOUND": "Cette mise à jour de source n'existe plus.",
+    "WHITELIST_SOURCE_NOT_FOUND": "Cette source n'existe plus.",
+    "USER_NOT_FOUND": "Cet utilisateur n'existe plus.",
+    "EMAIL_ALREADY_REGISTERED": "Un compte existe déjà avec cette adresse e-mail.",
+    "SLUG_ALREADY_EXISTS": "Cette adresse est déjà utilisée. Veuillez en choisir une autre.",
+    "VERSION_CONFLICT": "Quelqu'un d'autre a modifié cet élément pendant que vous l'éditiez. Veuillez actualiser et réessayer.",
+    "INVALID_STATE_TRANSITION": "Cette action n'est pas possible dans l'état actuel de l'élément. Veuillez actualiser et réessayer.",
+    "AUTO_POST_APPROVAL_REQUIRED": "Cet article automatique doit être approuvé par un administrateur avant de pouvoir être publié.",
+    "SOURCE_UPDATE_NOT_VERIFIED": "Cette mise à jour n'a pas encore été vérifiée et ne peut pas être approuvée.",
+    "PARENT_NOT_EMPTY": "Cet élément contient encore d'autres éléments et ne peut pas être supprimé. Retirez-les d'abord.",
+    "PUBLISHED_DELETE_BLOCKED": "Les éléments publiés ne peuvent pas être supprimés. Dépubliez-les d'abord.",
+    "ORDER_SET_INCOMPLETE": "Le nouvel ordre ne contient pas chaque élément exactement une fois. Veuillez réessayer.",
+    "PIPELINE_RUN_IN_PROGRESS": "Une récupération est déjà en cours pour cette source. Veuillez attendre qu'elle se termine.",
+    "SANITIZED_CONTENT_EMPTY": "Il ne restait plus rien après la suppression du formatage non sécurisé. Veuillez ajouter du contenu et réessayer.",
+    "AUTO_POST_SOURCE_LINK_REQUIRED": "Un article automatique a besoin d'un lien source pour sortir de l'état brouillon.",
+    "CANONICAL_LOCALE_NOT_ALLOWED": "L'anglais est la langue d'origine de ce contenu et ne peut pas être enregistré comme traduction.",
+    "MIND_MAP_INVALID": "Cette carte mentale n'est pas valide. Vérifiez les nœuds en double, une branche trop profonde ou un lien de leçon extérieur à ce parcours.",
+    "INSECURE_SOURCE_URL": "Ce lien doit utiliser une adresse sécurisée (https).",
+    "INVALID_VERIFY_URL_PATTERN": "Le modèle de lien de vérification n'est pas valide. Il doit contenir exactement un espace réservé de version.",
+    "CURRENT_PASSWORD_INCORRECT": "Votre mot de passe actuel est incorrect.",
+    "CONTENT_PACKAGE_TOO_LARGE": "Ce contenu est trop volumineux pour être empaqueté en vue du téléchargement. Veuillez le diviser en parties plus petites."
+  },
+  "auth": {
+    "heading": "Connexion",
+    "intro": "Connectez-vous avec votre compte DevAtlas pour continuer.",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion en cours…",
+    "emailRequired": "Veuillez saisir votre adresse e-mail.",
+    "passwordRequired": "Veuillez saisir votre mot de passe.",
+    "signedInAs": "Connecté en tant que {{email}}",
+    "signOut": "Se déconnecter"
+  },
+  "admin": {
+    "nav": {
+      "label": "Navigation d'administration",
+      "posts": "Articles",
+      "review": "Relecture",
+      "sources": "Sources"
+    },
+    "common": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "previousPage": "Aller à la page précédente",
+      "nextPage": "Aller à la page suivante",
+      "pageOfTotal": "Page {{current}} sur {{total}}",
+      "pagination": "Pagination"
+    },
+    "posts": {
+      "heading": "Articles de blog",
+      "newPost": "Nouvel article",
+      "empty": "Aucun article ne correspond à ces filtres.",
+      "viewAudit": "Journal d'audit",
+      "filter": {
+        "status": "Statut",
+        "allStatuses": "Tous les statuts",
+        "source": "Source",
+        "allSources": "Toutes les sources",
+        "sort": "Trier par",
+        "search": "Rechercher",
+        "searchPlaceholder": "Rechercher un titre ou un slug…"
+      },
+      "column": {
+        "title": "Titre",
+        "status": "Statut",
+        "source": "Source",
+        "updatedAt": "Mis à jour",
+        "audit": "Audit"
+      },
+      "sort": {
+        "created_at,desc": "Plus récents d'abord",
+        "created_at,asc": "Plus anciens d'abord",
+        "updated_at,desc": "Récemment mis à jour",
+        "updated_at,asc": "Mis à jour il y a le plus longtemps",
+        "published_at,desc": "Publiés récemment",
+        "published_at,asc": "Publiés en premier",
+        "title,asc": "Titre (A-Z)",
+        "title,desc": "Titre (Z-A)"
+      }
+    },
+    "editor": {
+      "headingNew": "Nouvel article",
+      "headingEdit": "Modifier l'article",
+      "slug": "Slug",
+      "title": "Titre",
+      "sourceUrl": "Lien source",
+      "body": "Contenu",
+      "preview": "Aperçu",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "actionsHeading": "Actions",
+      "reasonLabel": "Motif",
+      "reasonPlaceholder": "Expliquez pourquoi",
+      "confirmAction": "Confirmer",
+      "error": {
+        "slugRequired": "Un slug est requis.",
+        "slugLength": "Le slug doit comporter entre 3 et 80 caractères.",
+        "slugPattern": "Le slug ne peut contenir que des lettres minuscules, des chiffres et des tirets.",
+        "titleRequired": "Un titre est requis.",
+        "titleLength": "Le titre ne doit pas dépasser 200 caractères.",
+        "bodyRequired": "Un contenu est requis.",
+        "bodyLength": "Le contenu ne doit pas dépasser 200 000 caractères.",
+        "sourceUrlLength": "Le lien source ne doit pas dépasser 2 000 caractères.",
+        "sourceUrlInsecure": "Le lien source doit être une adresse https:// absolue.",
+        "reasonTooShort": "Le motif doit comporter au moins 10 caractères."
+      }
+    },
+    "post": {
+      "status": {
+        "DRAFT": "Brouillon",
+        "PENDING_REVIEW": "En attente de relecture",
+        "PUBLISHED": "Publié",
+        "REJECTED": "Rejeté"
+      },
+      "source": {
+        "MANUAL": "Manuel",
+        "AUTO": "Automatique"
+      },
+      "action": {
+        "submit": "Soumettre",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "publish": "Publier",
+        "unpublish": "Dépublier",
+        "delete": "Supprimer"
+      },
+      "hint": {
+        "autoBodyReadOnly": "Cet article a été créé automatiquement ; seul un administrateur peut modifier son slug, son titre ou son contenu.",
+        "autoSourceUrlReadOnly": "Le lien source d'un article créé automatiquement ne peut être modifié par aucun rôle."
+      }
+    },
+    "audit": {
+      "heading": "Journal d'audit",
+      "backToPost": "Retour à l'article",
+      "empty": "Aucun historique pour le moment.",
+      "machineStep": "Pipeline",
+      "humanStep": "Décision humaine",
+      "column": {
+        "step": "Étape",
+        "type": "Type",
+        "from": "De",
+        "to": "À",
+        "reason": "Motif",
+        "occurredAt": "Quand"
+      },
+      "step": {
+        "FETCH": "Récupération",
+        "NORMALIZE": "Normalisation",
+        "VERIFY": "Vérification",
+        "DRAFT": "Brouillon",
+        "SUBMIT": "Soumission",
+        "APPROVE": "Approbation",
+        "REJECT": "Rejet",
+        "PUBLISH": "Publication",
+        "UNPUBLISH": "Dépublication"
+      }
+    },
+    "review": {
+      "queueHeading": "File de relecture",
+      "queueIntro": "Articles en attente d'une décision éditoriale.",
+      "sourceFilter": "Source",
+      "sourceAll": "Toutes les sources",
+      "queueEmpty": "Rien n'attend de relecture.",
+      "rawPanelHeading": "Source récupérée",
+      "draftPanelHeading": "Brouillon généré",
+      "diffHeading": "Modifications",
+      "diffTooLarge": "Cette mise à jour est trop volumineuse pour être affichée sous forme de différence mot à mot. Comparez plutôt les deux panneaux ci-dessus.",
+      "diffAddedLabel": "Ajouté :",
+      "diffRemovedLabel": "Supprimé :",
+      "verifyHeading": "Vérification",
+      "checkPassed": "Réussi",
+      "checkFailed": "Échoué",
+      "firstFailingNote": "C'est ce contrôle qui a provoqué le rejet de la mise à jour.",
+      "viewSourceUpdate": "Voir la mise à jour source",
+      "noSourceUpdate": "Cet article a été rédigé à la main — il n'y a pas de source récupérée à comparer.",
+      "decisionHeading": "Décision",
+      "reasonLabel": "Motif",
+      "reasonTooShort": "Veuillez écrire au moins 10 caractères pour expliquer votre décision.",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "editorReadOnlyNote": "Vous n'avez pas la permission d'approuver ou de rejeter un article. Demandez à un administrateur.",
+      "verifyStatus": {
+        "PENDING": "En attente",
+        "VERIFIED": "Vérifié",
+        "REJECTED": "Rejeté"
+      },
+      "check": {
+        "SOURCE_WHITELISTED": "Source autorisée",
+        "VERSION_CONFIRMED": "Version confirmée",
+        "HASH_NOT_SEEN": "Contenu inédit",
+        "CONTENT_SANITY": "Contrôle de cohérence du contenu"
+      }
+    },
+    "sourceUpdate": {
+      "heading": "Mise à jour source",
+      "source": "Source",
+      "feedUrl": "URL du flux",
+      "versionString": "Version",
+      "fetchedAt": "Récupérée le",
+      "contentHash": "Empreinte du contenu",
+      "verifyStatus": "Statut de vérification",
+      "checksHeading": "Contrôles de vérification",
+      "rawContentHeading": "Contenu brut"
+    },
+    "sources": {
+      "heading": "Sources autorisées",
+      "newSource": "Nouvelle source",
+      "empty": "Aucune source autorisée pour le moment.",
+      "filter": {
+        "sort": "Trier par"
+      },
+      "sort": {
+        "name,asc": "Nom (A-Z)",
+        "name,desc": "Nom (Z-A)",
+        "created_at,desc": "Plus récentes d'abord",
+        "created_at,asc": "Plus anciennes d'abord",
+        "updated_at,desc": "Récemment mises à jour",
+        "updated_at,asc": "Mises à jour il y a le plus longtemps",
+        "last_fetched_at,desc": "Récupérées récemment",
+        "last_fetched_at,asc": "Récupérées il y a le plus longtemps"
+      },
+      "column": {
+        "name": "Nom",
+        "feedUrl": "URL du flux",
+        "enabled": "Activée",
+        "lastFetchedAt": "Dernière récupération",
+        "actions": "Actions"
+      },
+      "enabledYes": "Oui",
+      "enabledNo": "Non",
+      "neverFetched": "Jamais",
+      "enable": "Activer",
+      "disable": "Désactiver",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "confirmDelete": "Supprimer cette source ?",
+      "confirmDeleteYes": "Oui, supprimer",
+      "parentNotEmptyHint": "Cette source contient encore des mises à jour récupérées et ne peut pas être supprimée. Désactivez-la à la place.",
+      "fetch": {
+        "action": "Récupérer maintenant",
+        "running": "Récupération…",
+        "hint": "Cela peut prendre jusqu'à une minute — le flux est récupéré et vérifié en temps réel.",
+        "resultFor": "Résultat de la récupération pour {{name}}",
+        "resultHeading": "Résultat de la récupération",
+        "fetched": "Récupérés",
+        "created": "Créés",
+        "duplicates": "Doublons",
+        "rejected": "Rejetés",
+        "duration": "A pris {{seconds}} s",
+        "createdUpdatesHeading": "Mises à jour créées",
+        "viewSourceUpdate": "Voir la mise à jour source",
+        "rejectionsHeading": "Rejets",
+        "column": {
+          "version": "Version",
+          "check": "Contrôle échoué",
+          "detail": "Détail"
+        }
+      },
+      "editor": {
+        "headingNew": "Nouvelle source",
+        "headingEdit": "Modifier la source",
+        "name": "Nom",
+        "feedUrl": "URL du flux",
+        "verifyUrlPattern": "Modèle d'URL de vérification",
+        "verifyUrlPatternHint": "Doit être une adresse https:// absolue contenant exactement un espace réservé {version}, par exemple https://example.com/releases/{version}.",
+        "enabled": "Activée",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "error": {
+          "nameRequired": "Un nom est requis.",
+          "nameLength": "Le nom ne doit pas dépasser 120 caractères.",
+          "feedUrlRequired": "Une URL de flux est requise.",
+          "feedUrlLength": "L'URL du flux ne doit pas dépasser 2 000 caractères.",
+          "feedUrlInsecure": "L'URL du flux doit être une adresse https:// absolue.",
+          "verifyUrlPatternRequired": "Un modèle d'URL de vérification est requis.",
+          "verifyUrlPatternLength": "Le modèle d'URL de vérification ne doit pas dépasser 2 000 caractères.",
+          "verifyUrlPatternInsecure": "Le modèle d'URL de vérification doit être une adresse https:// absolue.",
+          "verifyUrlPatternPlaceholder": "Le modèle d'URL de vérification doit contenir exactement un espace réservé {version}."
+        }
+      }
+    },
+    "forbidden": {
+      "heading": "Vous n'avez pas accès à cette page",
+      "description": "Le rôle de votre compte ne couvre pas cette section de l'administration.",
+      "backToTracks": "Aller aux parcours"
+    },
+    "role": {
+      "USER": "Utilisateur",
+      "EDITOR": "Éditeur",
+      "ADMIN": "Administrateur"
+    }
   }
 }

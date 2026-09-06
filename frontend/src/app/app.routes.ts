@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { requireRole } from './core/auth/role.guard';
+
 /**
  * Every feature route is loaded on demand. The shell is what the first paint
  * needs; a track the user has not asked for is not.
@@ -30,6 +32,15 @@ export const routes: Routes = [
   {
     path: 'downloads',
     loadComponent: () => import('./features/downloads/downloads.page').then((m) => m.DownloadsPage),
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./features/auth/login.page').then((m) => m.LoginPage),
+  },
+  {
+    path: 'admin',
+    canActivate: [requireRole(['EDITOR', 'ADMIN'])],
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
   {
     path: '**',

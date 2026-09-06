@@ -1,0 +1,32 @@
+<nav
+  class="flex items-center gap-1 border-b border-border pb-2"
+  [attr.aria-label]="'admin.nav.label' | translate"
+>
+  <a
+    class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+    routerLink="/admin/blog"
+    routerLinkActive="bg-surface-raised text-text"
+  >
+    {{ 'admin.nav.posts' | translate }}
+  </a>
+  <a
+    class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+    routerLink="/admin/review"
+    routerLinkActive="bg-surface-raised text-text"
+  >
+    {{ 'admin.nav.review' | translate }}
+  </a>
+  @if (session.isAdmin()) {
+    <a
+      class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+      routerLink="/admin/sources"
+      routerLinkActive="bg-surface-raised text-text"
+    >
+      {{ 'admin.nav.sources' | translate }}
+    </a>
+  }
+</nav>
+
+<div class="mt-6">
+  <router-outlet />
+</div>

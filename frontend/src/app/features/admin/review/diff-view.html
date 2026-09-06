@@ -1,0 +1,27 @@
+@if (tooLarge()) {
+  <p class="rounded-md border border-border bg-surface p-3 text-sm text-text-muted" role="status">
+    {{ 'admin.review.diffTooLarge' | translate }}
+  </p>
+} @else {
+  <p class="whitespace-pre-wrap break-words text-sm leading-relaxed">
+    @for (segment of segments(); track $index) {
+      @switch (segment.kind) {
+        @case ('added') {
+          <span class="rounded-sm bg-diff-add-bg underline decoration-2"
+            ><span class="sr-only">{{ 'admin.review.diffAddedLabel' | translate }} </span
+            >{{ segment.text }}</span
+          >
+        }
+        @case ('removed') {
+          <span class="rounded-sm bg-diff-remove-bg line-through"
+            ><span class="sr-only">{{ 'admin.review.diffRemovedLabel' | translate }} </span
+            >{{ segment.text }}</span
+          >
+        }
+        @default {
+          <span>{{ segment.text }}</span>
+        }
+      }
+    }
+  </p>
+}

@@ -1,0 +1,63 @@
+<div class="mx-auto max-w-sm">
+  <h1 class="text-2xl font-semibold tracking-tight">{{ 'auth.heading' | translate }}</h1>
+  <p class="mt-1 text-text-muted">{{ 'auth.intro' | translate }}</p>
+
+  <form class="mt-8 flex flex-col gap-4" (submit)="submit($event)">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium" for="login-email">{{ 'auth.email' | translate }}</label>
+      <input
+        id="login-email"
+        class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+        type="email"
+        name="email"
+        autocomplete="username"
+        [attr.aria-invalid]="emailMissing()"
+        [attr.aria-describedby]="emailMissing() ? 'login-email-error' : null"
+        [value]="email()"
+        (input)="onEmail($event)"
+      />
+      @if (emailMissing()) {
+        <p id="login-email-error" class="text-sm text-text-muted" role="alert">
+          {{ 'auth.emailRequired' | translate }}
+        </p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium" for="login-password">
+        {{ 'auth.password' | translate }}
+      </label>
+      <input
+        id="login-password"
+        class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+        type="password"
+        name="password"
+        autocomplete="current-password"
+        [attr.aria-invalid]="passwordMissing()"
+        [attr.aria-describedby]="passwordMissing() ? 'login-password-error' : null"
+        [value]="password()"
+        (input)="onPassword($event)"
+      />
+      @if (passwordMissing()) {
+        <p id="login-password-error" class="text-sm text-text-muted" role="alert">
+          {{ 'auth.passwordRequired' | translate }}
+        </p>
+      }
+    </div>
+
+    @if (failure(); as failureKey) {
+      <div class="rounded-md border border-border bg-surface p-3" role="alert">
+        <p class="text-sm font-medium">{{ 'error.heading' | translate }}</p>
+        <p class="mt-1 text-sm text-text-muted">{{ failureKey | translate }}</p>
+      </div>
+    }
+
+    <button
+      class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast disabled:opacity-60"
+      type="submit"
+      [disabled]="submitting()"
+    >
+      {{ (submitting() ? 'auth.submitting' : 'auth.submit') | translate }}
+    </button>
+  </form>
+</div>

@@ -2,8 +2,10 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { AuthSession } from './core/auth/auth-session';
 import { PlatformService } from './core/platform/platform.service';
 import { LanguageSwitcher } from './shared/language-switcher';
+import { SessionMenu } from './shared/session-menu';
 import { ThemeToggle } from './shared/theme-toggle';
 
 /**
@@ -26,6 +28,7 @@ import { ThemeToggle } from './shared/theme-toggle';
     RouterLinkActive,
     TranslatePipe,
     LanguageSwitcher,
+    SessionMenu,
     ThemeToggle,
   ],
   styleUrl: './app.css',
@@ -35,4 +38,5 @@ export class App {
   private readonly platform = inject(PlatformService);
 
   protected readonly canDownload = this.platform.capabilities.canDownload;
+  protected readonly session = inject(AuthSession);
 }

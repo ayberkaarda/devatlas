@@ -7,7 +7,9 @@
   "nav": {
     "label": "Ana gezinme",
     "tracks": "Yollar",
-    "downloads": "İndirilenler"
+    "downloads": "İndirilenler",
+    "admin": "Yönetim",
+    "signIn": "Giriş yap"
   },
   "theme": {
     "light": "Açık",
@@ -153,6 +155,326 @@
     "CONTENT_CHANGED_DURING_RESUME": "İndirme devam ederken içerik değişti. Lütfen yeniden deneyin.",
     "DIGEST_MISMATCH": "İndirilen dosya doğrulamadan geçemedi. Lütfen yeniden deneyin.",
     "INSUFFICIENT_STORAGE": "Devam etmek için cihazınızda yeterli depolama alanı yok.",
-    "SERVICE_UNAVAILABLE": "Hizmet geçici olarak kullanılamıyor. Lütfen kısa süre sonra tekrar deneyin."
+    "SERVICE_UNAVAILABLE": "Hizmet geçici olarak kullanılamıyor. Lütfen kısa süre sonra tekrar deneyin.",
+    "VALIDATION_FAILED": "Girdiğiniz bilgilerden bazıları geçerli değil. Lütfen işaretli alanları kontrol edip tekrar deneyin.",
+    "MALFORMED_REQUEST": "İsteğiniz gönderilirken bir sorun oluştu. Lütfen tekrar deneyin.",
+    "INVALID_PARAMETER": "İsteğinizdeki değerlerden biri geçerli değil. Lütfen kontrol edip tekrar deneyin.",
+    "UNSUPPORTED_LOCALE": "Bu dil desteklenmiyor. Lütfen kullanılabilir dillerden birini seçin.",
+    "UNSUPPORTED_LANGUAGE": "Bu programlama dili kod vurgulama için desteklenmiyor.",
+    "ENTITY_TYPE_UNSUPPORTED": "Bu içerik türü çeviriyi desteklemiyor.",
+    "INVALID_SORT_FIELD": "Bu liste seçtiğiniz ölçüte göre sıralanamıyor.",
+    "PAGE_SIZE_EXCEEDED": "Tek seferde çok fazla öğe istediniz. Lütfen daha küçük bir sayfa isteyin.",
+    "DUPLICATE_ITEM_IN_BATCH": "Aynı öğe bir gönderimde iki kez yer aldı. Lütfen yinelenen kaydı kaldırıp tekrar deneyin.",
+    "AMBIGUOUS_TOKEN_DELIVERY": "Oturumunuz iki kanaldan birden geldiği için tanımlanamadı. Lütfen yeniden giriş yapın.",
+    "PAYLOAD_TOO_LARGE": "Gönderdiğiniz içerik çok büyük. Lütfen kısaltıp tekrar deneyin.",
+    "SYNC_BATCH_TOO_LARGE": "Tek seferde senkronize edilecek çok fazla öğe var. Bunlar otomatik olarak daha küçük gruplar hâlinde gönderilecek.",
+    "UNSUPPORTED_MEDIA_TYPE": "Bu dosya veya içerik türü burada desteklenmiyor.",
+    "METHOD_NOT_ALLOWED": "Bu işlem burada kullanılamıyor.",
+    "AUTH_REQUIRED": "Bunu yapmak için giriş yapmanız gerekiyor.",
+    "INVALID_CREDENTIALS": "E-posta veya parola hatalı.",
+    "ACCESS_TOKEN_EXPIRED": "Oturumunuzun yenilenmesi gerekiyor. Lütfen bir an bekleyin.",
+    "ACCESS_TOKEN_INVALID": "Oturumunuz artık geçerli değil. Lütfen yeniden giriş yapın.",
+    "REFRESH_TOKEN_INVALID": "Oturumunuz sona erdi. Lütfen yeniden giriş yapın.",
+    "REFRESH_TOKEN_EXPIRED": "Oturumunuzun süresi doldu. Lütfen yeniden giriş yapın.",
+    "REFRESH_TOKEN_REUSED": "Güvenlik nedeniyle oturumunuz kapatıldı. Lütfen yeniden giriş yapın.",
+    "FORBIDDEN_ROLE": "Bunu yapmaya yetkiniz yok.",
+    "ACCOUNT_DISABLED": "Bu hesap devre dışı bırakıldı. Lütfen bir yöneticiyle iletişime geçin.",
+    "AUTO_POST_NOT_EDITABLE": "Bu yazı otomatik olarak oluşturuldu; gövdesi veya kaynak bağlantısı doğrudan düzenlenemez.",
+    "MODULE_NOT_FOUND": "Bu modül artık mevcut değil.",
+    "CODE_EXAMPLE_NOT_FOUND": "Bu kod örneği artık mevcut değil.",
+    "BLOG_POST_NOT_FOUND": "Bu yazı artık mevcut değil.",
+    "TRANSLATION_NOT_FOUND": "Bu içerik için henüz bir çeviri yok.",
+    "SOURCE_UPDATE_NOT_FOUND": "Bu kaynak güncellemesi artık mevcut değil.",
+    "WHITELIST_SOURCE_NOT_FOUND": "Bu kaynak artık mevcut değil.",
+    "USER_NOT_FOUND": "Bu kullanıcı artık mevcut değil.",
+    "EMAIL_ALREADY_REGISTERED": "Bu e-posta adresiyle zaten bir hesap var.",
+    "SLUG_ALREADY_EXISTS": "Bu adres zaten kullanılıyor. Lütfen başka bir tane seçin.",
+    "VERSION_CONFLICT": "Siz düzenlerken bunu başka biri değiştirdi. Lütfen sayfayı yenileyip tekrar deneyin.",
+    "INVALID_STATE_TRANSITION": "Bu işlem öğenin mevcut durumunda yapılamıyor. Lütfen yenileyip tekrar deneyin.",
+    "AUTO_POST_APPROVAL_REQUIRED": "Bu otomatik yazının yayınlanabilmesi için bir yöneticinin onayı gerekiyor.",
+    "SOURCE_UPDATE_NOT_VERIFIED": "Bu güncelleme henüz doğrulanmadığı için onaylanamıyor.",
+    "PARENT_NOT_EMPTY": "Bu öğe hâlâ başka öğeler içerdiği için silinemiyor. Önce onları kaldırın.",
+    "PUBLISHED_DELETE_BLOCKED": "Yayınlanmış öğeler silinemez. Önce yayından kaldırın.",
+    "ORDER_SET_INCOMPLETE": "Yeni sıralama her öğeyi tam olarak bir kez içermiyor. Lütfen tekrar deneyin.",
+    "PIPELINE_RUN_IN_PROGRESS": "Bu kaynak için bir alma işlemi zaten çalışıyor. Lütfen bitmesini bekleyin.",
+    "SANITIZED_CONTENT_EMPTY": "Güvenli olmayan biçimlendirme kaldırıldıktan sonra geriye hiçbir şey kalmadı. Lütfen içerik ekleyip tekrar deneyin.",
+    "AUTO_POST_SOURCE_LINK_REQUIRED": "Otomatik bir yazının taslaktan çıkabilmesi için bir kaynak bağlantısına ihtiyacı var.",
+    "CANONICAL_LOCALE_NOT_ALLOWED": "İngilizce bu içeriğin özgün dilidir ve bir çeviri olarak kaydedilemez.",
+    "MIND_MAP_INVALID": "Bu zihin haritası geçerli değil. Yinelenen düğümleri, çok derin bir dalı veya bu yolun dışına çıkan bir ders bağlantısını kontrol edin.",
+    "INSECURE_SOURCE_URL": "Bu bağlantı güvenli (https) bir adres kullanmalı.",
+    "INVALID_VERIFY_URL_PATTERN": "Doğrulama bağlantısı deseni geçerli değil. Tam olarak bir sürüm yer tutucusu içermelidir.",
+    "CURRENT_PASSWORD_INCORRECT": "Mevcut parolanız hatalı.",
+    "CONTENT_PACKAGE_TOO_LARGE": "Bu içerik indirme için paketlenemeyecek kadar büyük. Lütfen daha küçük parçalara bölün."
+  },
+  "auth": {
+    "heading": "Giriş yap",
+    "intro": "Devam etmek için DevAtlas hesabınızla giriş yapın.",
+    "email": "E-posta",
+    "password": "Parola",
+    "submit": "Giriş yap",
+    "submitting": "Giriş yapılıyor…",
+    "emailRequired": "Lütfen e-posta adresinizi girin.",
+    "passwordRequired": "Lütfen parolanızı girin.",
+    "signedInAs": "{{email}} olarak giriş yaptınız",
+    "signOut": "Çıkış yap"
+  },
+  "admin": {
+    "nav": {
+      "label": "Yönetim gezinmesi",
+      "posts": "Yazılar",
+      "review": "İnceleme",
+      "sources": "Kaynaklar"
+    },
+    "common": {
+      "previous": "Önceki",
+      "next": "Sonraki",
+      "previousPage": "Önceki sayfaya git",
+      "nextPage": "Sonraki sayfaya git",
+      "pageOfTotal": "Sayfa {{current}} / {{total}}",
+      "pagination": "Sayfalama"
+    },
+    "posts": {
+      "heading": "Blog yazıları",
+      "newPost": "Yeni yazı",
+      "empty": "Bu filtrelere uyan yazı yok.",
+      "viewAudit": "Denetim kaydı",
+      "filter": {
+        "status": "Durum",
+        "allStatuses": "Tüm durumlar",
+        "source": "Kaynak",
+        "allSources": "Tüm kaynaklar",
+        "sort": "Sırala",
+        "search": "Ara",
+        "searchPlaceholder": "Başlık veya kısa adla ara…"
+      },
+      "column": {
+        "title": "Başlık",
+        "status": "Durum",
+        "source": "Kaynak",
+        "updatedAt": "Güncellendi",
+        "audit": "Denetim"
+      },
+      "sort": {
+        "created_at,desc": "Önce en yeni",
+        "created_at,asc": "Önce en eski",
+        "updated_at,desc": "Son güncellenen",
+        "updated_at,asc": "En eski güncellenen",
+        "published_at,desc": "Son yayınlanan",
+        "published_at,asc": "İlk yayınlanan",
+        "title,asc": "Başlık (A-Z)",
+        "title,desc": "Başlık (Z-A)"
+      }
+    },
+    "editor": {
+      "headingNew": "Yeni yazı",
+      "headingEdit": "Yazıyı düzenle",
+      "slug": "Kısa ad",
+      "title": "Başlık",
+      "sourceUrl": "Kaynak bağlantısı",
+      "body": "Gövde",
+      "preview": "Önizleme",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor…",
+      "actionsHeading": "Eylemler",
+      "reasonLabel": "Gerekçe",
+      "reasonPlaceholder": "Nedenini açıklayın",
+      "confirmAction": "Onayla",
+      "error": {
+        "slugRequired": "Bir kısa ad girilmelidir.",
+        "slugLength": "Kısa ad 3 ile 80 karakter arasında olmalıdır.",
+        "slugPattern": "Kısa ad yalnızca küçük harf, rakam ve tire içerebilir.",
+        "titleRequired": "Bir başlık girilmelidir.",
+        "titleLength": "Başlık en fazla 200 karakter olabilir.",
+        "bodyRequired": "Bir gövde girilmelidir.",
+        "bodyLength": "Gövde en fazla 200.000 karakter olabilir.",
+        "sourceUrlLength": "Kaynak bağlantısı en fazla 2.000 karakter olabilir.",
+        "sourceUrlInsecure": "Kaynak bağlantısı mutlak bir https:// adresi olmalıdır.",
+        "reasonTooShort": "Gerekçe en az 10 karakter olmalıdır."
+      }
+    },
+    "post": {
+      "status": {
+        "DRAFT": "Taslak",
+        "PENDING_REVIEW": "İnceleme bekliyor",
+        "PUBLISHED": "Yayınlandı",
+        "REJECTED": "Reddedildi"
+      },
+      "source": {
+        "MANUAL": "Elle",
+        "AUTO": "Otomatik"
+      },
+      "action": {
+        "submit": "Gönder",
+        "approve": "Onayla",
+        "reject": "Reddet",
+        "publish": "Yayınla",
+        "unpublish": "Yayından kaldır",
+        "delete": "Sil"
+      },
+      "hint": {
+        "autoBodyReadOnly": "Bu yazı otomatik olarak oluşturuldu; kısa adını, başlığını veya gövdesini yalnızca bir yönetici düzenleyebilir.",
+        "autoSourceUrlReadOnly": "Otomatik oluşturulan bir yazının kaynak bağlantısı hiçbir rol tarafından değiştirilemez."
+      }
+    },
+    "audit": {
+      "heading": "Denetim kaydı",
+      "backToPost": "Yazıya dön",
+      "empty": "Henüz geçmiş yok.",
+      "machineStep": "Boru hattı",
+      "humanStep": "İnsan kararı",
+      "column": {
+        "step": "Adım",
+        "type": "Tür",
+        "from": "Önceki",
+        "to": "Sonraki",
+        "reason": "Gerekçe",
+        "occurredAt": "Zaman"
+      },
+      "step": {
+        "FETCH": "Alma",
+        "NORMALIZE": "Normalleştirme",
+        "VERIFY": "Doğrulama",
+        "DRAFT": "Taslak",
+        "SUBMIT": "Gönderme",
+        "APPROVE": "Onaylama",
+        "REJECT": "Reddetme",
+        "PUBLISH": "Yayınlama",
+        "UNPUBLISH": "Yayından kaldırma"
+      }
+    },
+    "review": {
+      "queueHeading": "İnceleme kuyruğu",
+      "queueIntro": "Editoryal karar bekleyen yazılar.",
+      "sourceFilter": "Kaynak",
+      "sourceAll": "Tüm kaynaklar",
+      "queueEmpty": "İnceleme bekleyen bir şey yok.",
+      "rawPanelHeading": "Alınan kaynak",
+      "draftPanelHeading": "Oluşturulan taslak",
+      "diffHeading": "Değişiklikler",
+      "diffTooLarge": "Bu güncelleme kelime kelime fark olarak gösterilemeyecek kadar büyük. Bunun yerine yukarıdaki iki paneli karşılaştırın.",
+      "diffAddedLabel": "Eklendi:",
+      "diffRemovedLabel": "Kaldırıldı:",
+      "verifyHeading": "Doğrulama",
+      "checkPassed": "Geçti",
+      "checkFailed": "Başarısız",
+      "firstFailingNote": "Güncellemenin reddedilmesine neden olan kontrol budur.",
+      "viewSourceUpdate": "Kaynak güncellemesini görüntüle",
+      "noSourceUpdate": "Bu yazı elle yazıldı — karşılaştırılacak alınmış bir kaynak yok.",
+      "decisionHeading": "Karar",
+      "reasonLabel": "Gerekçe",
+      "reasonTooShort": "Lütfen kararınızı açıklayan en az 10 karakter yazın.",
+      "approve": "Onayla",
+      "reject": "Reddet",
+      "editorReadOnlyNote": "Bir yazıyı onaylama veya reddetme izniniz yok. Bir yöneticiden isteyin.",
+      "verifyStatus": {
+        "PENDING": "Bekliyor",
+        "VERIFIED": "Doğrulandı",
+        "REJECTED": "Reddedildi"
+      },
+      "check": {
+        "SOURCE_WHITELISTED": "Kaynak beyaz listede",
+        "VERSION_CONFIRMED": "Sürüm doğrulandı",
+        "HASH_NOT_SEEN": "İçerik yeni",
+        "CONTENT_SANITY": "İçerik bütünlük kontrolü"
+      }
+    },
+    "sourceUpdate": {
+      "heading": "Kaynak güncellemesi",
+      "source": "Kaynak",
+      "feedUrl": "Besleme URL'si",
+      "versionString": "Sürüm",
+      "fetchedAt": "Alınma zamanı",
+      "contentHash": "İçerik özeti",
+      "verifyStatus": "Doğrulama durumu",
+      "checksHeading": "Doğrulama kontrolleri",
+      "rawContentHeading": "Ham içerik"
+    },
+    "sources": {
+      "heading": "Beyaz liste kaynakları",
+      "newSource": "Yeni kaynak",
+      "empty": "Henüz beyaz liste kaynağı yok.",
+      "filter": {
+        "sort": "Sırala"
+      },
+      "sort": {
+        "name,asc": "Ad (A-Z)",
+        "name,desc": "Ad (Z-A)",
+        "created_at,desc": "Önce en yeni",
+        "created_at,asc": "Önce en eski",
+        "updated_at,desc": "Son güncellenen",
+        "updated_at,asc": "En eski güncellenen",
+        "last_fetched_at,desc": "Son alınan",
+        "last_fetched_at,asc": "En eski alınan"
+      },
+      "column": {
+        "name": "Ad",
+        "feedUrl": "Besleme URL'si",
+        "enabled": "Etkin",
+        "lastFetchedAt": "Son alınma",
+        "actions": "Eylemler"
+      },
+      "enabledYes": "Evet",
+      "enabledNo": "Hayır",
+      "neverFetched": "Hiç",
+      "enable": "Etkinleştir",
+      "disable": "Devre dışı bırak",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "confirmDelete": "Bu kaynak silinsin mi?",
+      "confirmDeleteYes": "Evet, sil",
+      "parentNotEmptyHint": "Bu kaynağın hâlâ alınmış güncellemeleri var ve silinemez. Bunun yerine devre dışı bırakın.",
+      "fetch": {
+        "action": "Şimdi al",
+        "running": "Alınıyor…",
+        "hint": "Bu bir dakikaya kadar sürebilir — besleme gerçek zamanlı olarak alınıp doğrulanıyor.",
+        "resultFor": "{{name}} için alma sonucu",
+        "resultHeading": "Alma sonucu",
+        "fetched": "Alınan",
+        "created": "Oluşturulan",
+        "duplicates": "Yinelenen",
+        "rejected": "Reddedilen",
+        "duration": "{{seconds}} saniye sürdü",
+        "createdUpdatesHeading": "Oluşturulan güncellemeler",
+        "viewSourceUpdate": "Kaynak güncellemesini görüntüle",
+        "rejectionsHeading": "Reddedilenler",
+        "column": {
+          "version": "Sürüm",
+          "check": "Başarısız kontrol",
+          "detail": "Ayrıntı"
+        }
+      },
+      "editor": {
+        "headingNew": "Yeni kaynak",
+        "headingEdit": "Kaynağı düzenle",
+        "name": "Ad",
+        "feedUrl": "Besleme URL'si",
+        "verifyUrlPattern": "Doğrulama URL deseni",
+        "verifyUrlPatternHint": "Tam olarak bir {version} yer tutucusu içeren mutlak bir https:// adresi olmalıdır, örneğin https://example.com/releases/{version}.",
+        "enabled": "Etkin",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor…",
+        "error": {
+          "nameRequired": "Bir ad girilmelidir.",
+          "nameLength": "Ad en fazla 120 karakter olabilir.",
+          "feedUrlRequired": "Bir besleme URL'si girilmelidir.",
+          "feedUrlLength": "Besleme URL'si en fazla 2.000 karakter olabilir.",
+          "feedUrlInsecure": "Besleme URL'si mutlak bir https:// adresi olmalıdır.",
+          "verifyUrlPatternRequired": "Bir doğrulama URL deseni girilmelidir.",
+          "verifyUrlPatternLength": "Doğrulama URL deseni en fazla 2.000 karakter olabilir.",
+          "verifyUrlPatternInsecure": "Doğrulama URL deseni mutlak bir https:// adresi olmalıdır.",
+          "verifyUrlPatternPlaceholder": "Doğrulama URL deseni tam olarak bir {version} yer tutucusu içermelidir."
+        }
+      }
+    },
+    "forbidden": {
+      "heading": "Bu sayfaya erişiminiz yok",
+      "description": "Hesap rolünüz yönetim alanının bu bölümünü kapsamıyor.",
+      "backToTracks": "Yollara git"
+    },
+    "role": {
+      "USER": "Kullanıcı",
+      "EDITOR": "Editör",
+      "ADMIN": "Yönetici"
+    }
   }
 }

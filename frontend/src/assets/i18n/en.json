@@ -7,7 +7,9 @@
   "nav": {
     "label": "Main navigation",
     "tracks": "Tracks",
-    "downloads": "Downloads"
+    "downloads": "Downloads",
+    "admin": "Admin",
+    "signIn": "Sign in"
   },
   "theme": {
     "light": "Light",
@@ -153,6 +155,326 @@
     "CONTENT_CHANGED_DURING_RESUME": "The content changed while resuming. Please retry the download.",
     "DIGEST_MISMATCH": "The downloaded file did not pass verification. Please retry.",
     "INSUFFICIENT_STORAGE": "There is not enough storage on this device to continue.",
-    "SERVICE_UNAVAILABLE": "The service is temporarily unavailable. Please try again shortly."
+    "SERVICE_UNAVAILABLE": "The service is temporarily unavailable. Please try again shortly.",
+    "VALIDATION_FAILED": "Some of the information you entered isn't valid. Please check the highlighted fields and try again.",
+    "MALFORMED_REQUEST": "Something went wrong while sending your request. Please try again.",
+    "INVALID_PARAMETER": "One of the values in your request isn't valid. Please check it and try again.",
+    "UNSUPPORTED_LOCALE": "This language isn't supported. Please choose one of the available languages.",
+    "UNSUPPORTED_LANGUAGE": "This programming language isn't supported for code highlighting.",
+    "ENTITY_TYPE_UNSUPPORTED": "This type of content doesn't support translations.",
+    "INVALID_SORT_FIELD": "This list can't be sorted by the option you chose.",
+    "PAGE_SIZE_EXCEEDED": "You asked for too many items at once. Please request a smaller page.",
+    "DUPLICATE_ITEM_IN_BATCH": "The same item appeared twice in one submission. Please remove the duplicate and try again.",
+    "AMBIGUOUS_TOKEN_DELIVERY": "Your session could not be identified because it arrived through two channels at once. Please sign in again.",
+    "PAYLOAD_TOO_LARGE": "What you're sending is too large. Please shorten it and try again.",
+    "SYNC_BATCH_TOO_LARGE": "Too many items to sync at once. They will be sent in smaller batches automatically.",
+    "UNSUPPORTED_MEDIA_TYPE": "This type of file or content isn't supported here.",
+    "METHOD_NOT_ALLOWED": "This action isn't available here.",
+    "AUTH_REQUIRED": "You need to sign in to do this.",
+    "INVALID_CREDENTIALS": "The email or password is incorrect.",
+    "ACCESS_TOKEN_EXPIRED": "Your session needs to be renewed. Please wait a moment.",
+    "ACCESS_TOKEN_INVALID": "Your session is no longer valid. Please sign in again.",
+    "REFRESH_TOKEN_INVALID": "Your session has ended. Please sign in again.",
+    "REFRESH_TOKEN_EXPIRED": "Your session has expired. Please sign in again.",
+    "REFRESH_TOKEN_REUSED": "Your session was signed out for security reasons. Please sign in again.",
+    "FORBIDDEN_ROLE": "You don't have permission to do this.",
+    "ACCOUNT_DISABLED": "This account has been disabled. Please contact an administrator.",
+    "AUTO_POST_NOT_EDITABLE": "This post was created automatically; its body or source link can't be edited directly.",
+    "MODULE_NOT_FOUND": "This module no longer exists.",
+    "CODE_EXAMPLE_NOT_FOUND": "This code example no longer exists.",
+    "BLOG_POST_NOT_FOUND": "This post no longer exists.",
+    "TRANSLATION_NOT_FOUND": "No translation exists for this content yet.",
+    "SOURCE_UPDATE_NOT_FOUND": "This source update no longer exists.",
+    "WHITELIST_SOURCE_NOT_FOUND": "This source no longer exists.",
+    "USER_NOT_FOUND": "This user no longer exists.",
+    "EMAIL_ALREADY_REGISTERED": "An account with this email already exists.",
+    "SLUG_ALREADY_EXISTS": "This address is already in use. Please choose another one.",
+    "VERSION_CONFLICT": "Someone else changed this while you were editing it. Please reload and try again.",
+    "INVALID_STATE_TRANSITION": "This action isn't possible in the item's current status. Please refresh and try again.",
+    "AUTO_POST_APPROVAL_REQUIRED": "This automated post needs an administrator's approval before it can be published.",
+    "SOURCE_UPDATE_NOT_VERIFIED": "This update hasn't been verified yet and can't be approved.",
+    "PARENT_NOT_EMPTY": "This item still contains other items and can't be deleted. Remove them first.",
+    "PUBLISHED_DELETE_BLOCKED": "Published items can't be deleted. Unpublish it first.",
+    "ORDER_SET_INCOMPLETE": "The new order doesn't include every item exactly once. Please try again.",
+    "PIPELINE_RUN_IN_PROGRESS": "A fetch for this source is already running. Please wait for it to finish.",
+    "SANITIZED_CONTENT_EMPTY": "Nothing was left after removing unsafe formatting. Please add some content and try again.",
+    "AUTO_POST_SOURCE_LINK_REQUIRED": "An automated post needs a source link before it can leave draft.",
+    "CANONICAL_LOCALE_NOT_ALLOWED": "English is the original language for this content and can't be stored as a translation.",
+    "MIND_MAP_INVALID": "This mind map isn't valid. Check for duplicate nodes, a branch that's too deep, or a lesson link outside this track.",
+    "INSECURE_SOURCE_URL": "This link must use a secure (https) address.",
+    "INVALID_VERIFY_URL_PATTERN": "The verification link pattern isn't valid. It must contain exactly one version placeholder.",
+    "CURRENT_PASSWORD_INCORRECT": "Your current password is incorrect.",
+    "CONTENT_PACKAGE_TOO_LARGE": "This content is too large to package for download. Please split it into smaller pieces."
+  },
+  "auth": {
+    "heading": "Sign in",
+    "intro": "Sign in with your DevAtlas account to continue.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "emailRequired": "Please enter your email address.",
+    "passwordRequired": "Please enter your password.",
+    "signedInAs": "Signed in as {{email}}",
+    "signOut": "Sign out"
+  },
+  "admin": {
+    "nav": {
+      "label": "Admin navigation",
+      "posts": "Posts",
+      "review": "Review",
+      "sources": "Sources"
+    },
+    "common": {
+      "previous": "Previous",
+      "next": "Next",
+      "previousPage": "Go to the previous page",
+      "nextPage": "Go to the next page",
+      "pageOfTotal": "Page {{current}} of {{total}}",
+      "pagination": "Pagination"
+    },
+    "posts": {
+      "heading": "Blog posts",
+      "newPost": "New post",
+      "empty": "No posts match these filters.",
+      "viewAudit": "Audit log",
+      "filter": {
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "source": "Source",
+        "allSources": "All sources",
+        "sort": "Sort by",
+        "search": "Search",
+        "searchPlaceholder": "Search title or slug…"
+      },
+      "column": {
+        "title": "Title",
+        "status": "Status",
+        "source": "Source",
+        "updatedAt": "Updated",
+        "audit": "Audit"
+      },
+      "sort": {
+        "created_at,desc": "Newest first",
+        "created_at,asc": "Oldest first",
+        "updated_at,desc": "Recently updated",
+        "updated_at,asc": "Least recently updated",
+        "published_at,desc": "Recently published",
+        "published_at,asc": "First published",
+        "title,asc": "Title (A–Z)",
+        "title,desc": "Title (Z–A)"
+      }
+    },
+    "editor": {
+      "headingNew": "New post",
+      "headingEdit": "Edit post",
+      "slug": "Slug",
+      "title": "Title",
+      "sourceUrl": "Source link",
+      "body": "Body",
+      "preview": "Preview",
+      "save": "Save",
+      "saving": "Saving…",
+      "actionsHeading": "Actions",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Explain why",
+      "confirmAction": "Confirm",
+      "error": {
+        "slugRequired": "A slug is required.",
+        "slugLength": "The slug must be 3 to 80 characters.",
+        "slugPattern": "The slug may only contain lowercase letters, digits and hyphens.",
+        "titleRequired": "A title is required.",
+        "titleLength": "The title must be 200 characters or fewer.",
+        "bodyRequired": "A body is required.",
+        "bodyLength": "The body must be 200,000 characters or fewer.",
+        "sourceUrlLength": "The source link must be 2,000 characters or fewer.",
+        "sourceUrlInsecure": "The source link must be an absolute https:// address.",
+        "reasonTooShort": "The reason must be at least 10 characters."
+      }
+    },
+    "post": {
+      "status": {
+        "DRAFT": "Draft",
+        "PENDING_REVIEW": "Pending review",
+        "PUBLISHED": "Published",
+        "REJECTED": "Rejected"
+      },
+      "source": {
+        "MANUAL": "Manual",
+        "AUTO": "Automated"
+      },
+      "action": {
+        "submit": "Submit",
+        "approve": "Approve",
+        "reject": "Reject",
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "delete": "Delete"
+      },
+      "hint": {
+        "autoBodyReadOnly": "This post was created automatically; only an administrator can edit its slug, title or body.",
+        "autoSourceUrlReadOnly": "The source link of an automatically created post cannot be changed by any role."
+      }
+    },
+    "audit": {
+      "heading": "Audit log",
+      "backToPost": "Back to post",
+      "empty": "No history yet.",
+      "machineStep": "Pipeline",
+      "humanStep": "Human decision",
+      "column": {
+        "step": "Step",
+        "type": "Type",
+        "from": "From",
+        "to": "To",
+        "reason": "Reason",
+        "occurredAt": "When"
+      },
+      "step": {
+        "FETCH": "Fetch",
+        "NORMALIZE": "Normalize",
+        "VERIFY": "Verify",
+        "DRAFT": "Draft",
+        "SUBMIT": "Submit",
+        "APPROVE": "Approve",
+        "REJECT": "Reject",
+        "PUBLISH": "Publish",
+        "UNPUBLISH": "Unpublish"
+      }
+    },
+    "review": {
+      "queueHeading": "Review queue",
+      "queueIntro": "Posts waiting for an editorial decision.",
+      "sourceFilter": "Source",
+      "sourceAll": "All sources",
+      "queueEmpty": "There is nothing waiting for review.",
+      "rawPanelHeading": "Fetched source",
+      "draftPanelHeading": "Generated draft",
+      "diffHeading": "Changes",
+      "diffTooLarge": "This update is too large to show as a word-by-word diff. Compare the two panels above instead.",
+      "diffAddedLabel": "Added:",
+      "diffRemovedLabel": "Removed:",
+      "verifyHeading": "Verification",
+      "checkPassed": "Passed",
+      "checkFailed": "Failed",
+      "firstFailingNote": "This is the check that caused the update to be rejected.",
+      "viewSourceUpdate": "View source update",
+      "noSourceUpdate": "This post was written by hand — there is no fetched source to compare it against.",
+      "decisionHeading": "Decision",
+      "reasonLabel": "Reason",
+      "reasonTooShort": "Please write at least 10 characters explaining your decision.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "editorReadOnlyNote": "You don't have permission to approve or reject a post. Ask an administrator.",
+      "verifyStatus": {
+        "PENDING": "Pending",
+        "VERIFIED": "Verified",
+        "REJECTED": "Rejected"
+      },
+      "check": {
+        "SOURCE_WHITELISTED": "Source is whitelisted",
+        "VERSION_CONFIRMED": "Version confirmed",
+        "HASH_NOT_SEEN": "Content is new",
+        "CONTENT_SANITY": "Content sanity check"
+      }
+    },
+    "sourceUpdate": {
+      "heading": "Source update",
+      "source": "Source",
+      "feedUrl": "Feed URL",
+      "versionString": "Version",
+      "fetchedAt": "Fetched at",
+      "contentHash": "Content hash",
+      "verifyStatus": "Verification status",
+      "checksHeading": "Verification checks",
+      "rawContentHeading": "Raw content"
+    },
+    "sources": {
+      "heading": "Whitelist sources",
+      "newSource": "New source",
+      "empty": "No whitelist sources yet.",
+      "filter": {
+        "sort": "Sort by"
+      },
+      "sort": {
+        "name,asc": "Name (A–Z)",
+        "name,desc": "Name (Z–A)",
+        "created_at,desc": "Newest first",
+        "created_at,asc": "Oldest first",
+        "updated_at,desc": "Recently updated",
+        "updated_at,asc": "Least recently updated",
+        "last_fetched_at,desc": "Recently fetched",
+        "last_fetched_at,asc": "Fetched least recently"
+      },
+      "column": {
+        "name": "Name",
+        "feedUrl": "Feed URL",
+        "enabled": "Enabled",
+        "lastFetchedAt": "Last fetched",
+        "actions": "Actions"
+      },
+      "enabledYes": "Yes",
+      "enabledNo": "No",
+      "neverFetched": "Never",
+      "enable": "Enable",
+      "disable": "Disable",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Delete this source?",
+      "confirmDeleteYes": "Yes, delete",
+      "parentNotEmptyHint": "This source still has fetched updates and can't be deleted. Disable it instead.",
+      "fetch": {
+        "action": "Fetch now",
+        "running": "Fetching…",
+        "hint": "This can take up to a minute — the feed is fetched and verified in real time.",
+        "resultFor": "Fetch result for {{name}}",
+        "resultHeading": "Fetch result",
+        "fetched": "Fetched",
+        "created": "Created",
+        "duplicates": "Duplicates",
+        "rejected": "Rejected",
+        "duration": "Took {{seconds}}s",
+        "createdUpdatesHeading": "Created updates",
+        "viewSourceUpdate": "View source update",
+        "rejectionsHeading": "Rejections",
+        "column": {
+          "version": "Version",
+          "check": "Failed check",
+          "detail": "Detail"
+        }
+      },
+      "editor": {
+        "headingNew": "New source",
+        "headingEdit": "Edit source",
+        "name": "Name",
+        "feedUrl": "Feed URL",
+        "verifyUrlPattern": "Verify URL pattern",
+        "verifyUrlPatternHint": "Must be an absolute https:// address with exactly one {version} placeholder, e.g. https://example.com/releases/{version}.",
+        "enabled": "Enabled",
+        "save": "Save",
+        "saving": "Saving…",
+        "error": {
+          "nameRequired": "A name is required.",
+          "nameLength": "The name must be 120 characters or fewer.",
+          "feedUrlRequired": "A feed URL is required.",
+          "feedUrlLength": "The feed URL must be 2,000 characters or fewer.",
+          "feedUrlInsecure": "The feed URL must be an absolute https:// address.",
+          "verifyUrlPatternRequired": "A verify URL pattern is required.",
+          "verifyUrlPatternLength": "The verify URL pattern must be 2,000 characters or fewer.",
+          "verifyUrlPatternInsecure": "The verify URL pattern must be an absolute https:// address.",
+          "verifyUrlPatternPlaceholder": "The verify URL pattern must contain exactly one {version} placeholder."
+        }
+      }
+    },
+    "forbidden": {
+      "heading": "You don't have access to this page",
+      "description": "Your account role doesn't include this section of the admin area.",
+      "backToTracks": "Go to the tracks"
+    },
+    "role": {
+      "USER": "User",
+      "EDITOR": "Editor",
+      "ADMIN": "Admin"
+    }
   }
 }

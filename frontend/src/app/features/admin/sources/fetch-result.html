@@ -1,0 +1,74 @@
+<div class="rounded-md border border-border bg-surface p-4" data-testid="fetch-result">
+  <h3 class="font-medium">{{ 'admin.sources.fetch.resultHeading' | translate }}</h3>
+
+  <dl class="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-4">
+    <div>
+      <dt class="text-text-muted">{{ 'admin.sources.fetch.fetched' | translate }}</dt>
+      <dd class="font-medium" data-testid="fetch-result-fetched">{{ result().fetched }}</dd>
+    </div>
+    <div>
+      <dt class="text-text-muted">{{ 'admin.sources.fetch.created' | translate }}</dt>
+      <dd class="font-medium" data-testid="fetch-result-created">{{ result().created }}</dd>
+    </div>
+    <div>
+      <dt class="text-text-muted">{{ 'admin.sources.fetch.duplicates' | translate }}</dt>
+      <dd class="font-medium" data-testid="fetch-result-duplicates">{{ result().duplicates }}</dd>
+    </div>
+    <div>
+      <dt class="text-text-muted">{{ 'admin.sources.fetch.rejected' | translate }}</dt>
+      <dd class="font-medium" data-testid="fetch-result-rejected">{{ result().rejected }}</dd>
+    </div>
+  </dl>
+
+  <p class="mt-2 text-xs text-text-muted">
+    {{ 'admin.sources.fetch.duration' | translate: { seconds: durationSeconds() } }}
+  </p>
+
+  @if (result().createdSourceUpdateIds.length > 0) {
+    <div class="mt-4">
+      <h4 class="text-sm font-medium">
+        {{ 'admin.sources.fetch.createdUpdatesHeading' | translate }}
+      </h4>
+      <ul class="mt-1 flex flex-col gap-1">
+        @for (id of result().createdSourceUpdateIds; track id) {
+          <li>
+            <a
+              class="text-sm text-text no-underline hover:underline"
+              [routerLink]="['/admin/source-updates', id]"
+            >
+              {{ 'admin.sources.fetch.viewSourceUpdate' | translate }}
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (result().rejections.length > 0) {
+    <div class="mt-4 overflow-x-auto">
+      <h4 class="text-sm font-medium">{{ 'admin.sources.fetch.rejectionsHeading' | translate }}</h4>
+      <table class="mt-1 w-full text-left text-sm">
+        <thead>
+          <tr class="border-b border-border text-text-muted">
+            <th class="py-1 pr-4 font-medium">
+              {{ 'admin.sources.fetch.column.version' | translate }}
+            </th>
+            <th class="py-1 pr-4 font-medium">
+              {{ 'admin.sources.fetch.column.check' | translate }}
+            </th>
+            <th class="py-1 font-medium">{{ 'admin.sources.fetch.column.detail' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rejection of result().rejections; track rejection.versionString) {
+            <tr class="border-b border-border">
+              <td class="py-1 pr-4">{{ rejection.versionString }}</td>
+              <td class="py-1 pr-4">{{ rejection.failedCheck }}</td>
+              <td class="py-1">{{ rejection.detail }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

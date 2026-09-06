@@ -7,7 +7,9 @@
   "nav": {
     "label": "Hauptnavigation",
     "tracks": "Lernpfade",
-    "downloads": "Downloads"
+    "downloads": "Downloads",
+    "admin": "Verwaltung",
+    "signIn": "Anmelden"
   },
   "theme": {
     "light": "Hell",
@@ -153,6 +155,326 @@
     "CONTENT_CHANGED_DURING_RESUME": "Der Inhalt hat sich während der Fortsetzung geändert. Bitte versuchen Sie den Download erneut.",
     "DIGEST_MISMATCH": "Die heruntergeladene Datei hat die Prüfung nicht bestanden. Bitte versuchen Sie es erneut.",
     "INSUFFICIENT_STORAGE": "Auf diesem Gerät ist nicht genug Speicherplatz vorhanden, um fortzufahren.",
-    "SERVICE_UNAVAILABLE": "Der Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in Kürze erneut."
+    "SERVICE_UNAVAILABLE": "Der Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in Kürze erneut.",
+    "VALIDATION_FAILED": "Einige der eingegebenen Angaben sind ungültig. Bitte überprüfen Sie die markierten Felder und versuchen Sie es erneut.",
+    "MALFORMED_REQUEST": "Beim Senden Ihrer Anfrage ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "INVALID_PARAMETER": "Einer der Werte in Ihrer Anfrage ist ungültig. Bitte überprüfen Sie ihn und versuchen Sie es erneut.",
+    "UNSUPPORTED_LOCALE": "Diese Sprache wird nicht unterstützt. Bitte wählen Sie eine verfügbare Sprache.",
+    "UNSUPPORTED_LANGUAGE": "Diese Programmiersprache wird für die Code-Hervorhebung nicht unterstützt.",
+    "ENTITY_TYPE_UNSUPPORTED": "Dieser Inhaltstyp unterstützt keine Übersetzungen.",
+    "INVALID_SORT_FIELD": "Diese Liste kann nicht nach der gewählten Option sortiert werden.",
+    "PAGE_SIZE_EXCEEDED": "Sie haben zu viele Einträge auf einmal angefordert. Bitte fordern Sie eine kleinere Seite an.",
+    "DUPLICATE_ITEM_IN_BATCH": "Derselbe Eintrag ist in einer Übermittlung zweimal aufgetreten. Bitte entfernen Sie das Duplikat und versuchen Sie es erneut.",
+    "AMBIGUOUS_TOKEN_DELIVERY": "Ihre Sitzung konnte nicht zugeordnet werden, da sie über zwei Kanäle gleichzeitig einging. Bitte melden Sie sich erneut an.",
+    "PAYLOAD_TOO_LARGE": "Was Sie senden, ist zu groß. Bitte kürzen Sie es und versuchen Sie es erneut.",
+    "SYNC_BATCH_TOO_LARGE": "Zu viele Einträge für eine einzelne Synchronisierung. Sie werden automatisch in kleineren Gruppen gesendet.",
+    "UNSUPPORTED_MEDIA_TYPE": "Dieser Datei- oder Inhaltstyp wird hier nicht unterstützt.",
+    "METHOD_NOT_ALLOWED": "Diese Aktion ist hier nicht verfügbar.",
+    "AUTH_REQUIRED": "Sie müssen sich anmelden, um dies zu tun.",
+    "INVALID_CREDENTIALS": "E-Mail-Adresse oder Passwort ist falsch.",
+    "ACCESS_TOKEN_EXPIRED": "Ihre Sitzung muss erneuert werden. Bitte warten Sie einen Moment.",
+    "ACCESS_TOKEN_INVALID": "Ihre Sitzung ist nicht mehr gültig. Bitte melden Sie sich erneut an.",
+    "REFRESH_TOKEN_INVALID": "Ihre Sitzung wurde beendet. Bitte melden Sie sich erneut an.",
+    "REFRESH_TOKEN_EXPIRED": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "REFRESH_TOKEN_REUSED": "Ihre Sitzung wurde aus Sicherheitsgründen beendet. Bitte melden Sie sich erneut an.",
+    "FORBIDDEN_ROLE": "Sie sind nicht berechtigt, dies zu tun.",
+    "ACCOUNT_DISABLED": "Dieses Konto wurde deaktiviert. Bitte wenden Sie sich an eine Administratorin oder einen Administrator.",
+    "AUTO_POST_NOT_EDITABLE": "Dieser Beitrag wurde automatisch erstellt; sein Inhalt oder sein Quelllink können nicht direkt bearbeitet werden.",
+    "MODULE_NOT_FOUND": "Dieses Modul existiert nicht mehr.",
+    "CODE_EXAMPLE_NOT_FOUND": "Dieses Codebeispiel existiert nicht mehr.",
+    "BLOG_POST_NOT_FOUND": "Dieser Beitrag existiert nicht mehr.",
+    "TRANSLATION_NOT_FOUND": "Für diesen Inhalt liegt noch keine Übersetzung vor.",
+    "SOURCE_UPDATE_NOT_FOUND": "Diese Quellaktualisierung existiert nicht mehr.",
+    "WHITELIST_SOURCE_NOT_FOUND": "Diese Quelle existiert nicht mehr.",
+    "USER_NOT_FOUND": "Dieser Benutzer existiert nicht mehr.",
+    "EMAIL_ALREADY_REGISTERED": "Für diese E-Mail-Adresse besteht bereits ein Konto.",
+    "SLUG_ALREADY_EXISTS": "Diese Adresse wird bereits verwendet. Bitte wählen Sie eine andere.",
+    "VERSION_CONFLICT": "Jemand anderes hat dies geändert, während Sie es bearbeitet haben. Bitte laden Sie neu und versuchen Sie es erneut.",
+    "INVALID_STATE_TRANSITION": "Diese Aktion ist im aktuellen Status des Eintrags nicht möglich. Bitte aktualisieren Sie und versuchen Sie es erneut.",
+    "AUTO_POST_APPROVAL_REQUIRED": "Dieser automatisch erstellte Beitrag benötigt die Freigabe einer Administratorin oder eines Administrators, bevor er veröffentlicht werden kann.",
+    "SOURCE_UPDATE_NOT_VERIFIED": "Diese Aktualisierung wurde noch nicht überprüft und kann nicht freigegeben werden.",
+    "PARENT_NOT_EMPTY": "Dieser Eintrag enthält noch andere Einträge und kann nicht gelöscht werden. Entfernen Sie diese zuerst.",
+    "PUBLISHED_DELETE_BLOCKED": "Veröffentlichte Einträge können nicht gelöscht werden. Heben Sie die Veröffentlichung zuerst auf.",
+    "ORDER_SET_INCOMPLETE": "Die neue Reihenfolge enthält nicht jeden Eintrag genau einmal. Bitte versuchen Sie es erneut.",
+    "PIPELINE_RUN_IN_PROGRESS": "Für diese Quelle läuft bereits ein Abruf. Bitte warten Sie, bis er abgeschlossen ist.",
+    "SANITIZED_CONTENT_EMPTY": "Nach dem Entfernen unsicherer Formatierung blieb nichts übrig. Bitte fügen Sie Inhalt hinzu und versuchen Sie es erneut.",
+    "AUTO_POST_SOURCE_LINK_REQUIRED": "Ein automatisch erstellter Beitrag benötigt einen Quelllink, um den Entwurfsstatus zu verlassen.",
+    "CANONICAL_LOCALE_NOT_ALLOWED": "Englisch ist die Originalsprache dieses Inhalts und kann nicht als Übersetzung gespeichert werden.",
+    "MIND_MAP_INVALID": "Diese Mindmap ist ungültig. Prüfen Sie doppelte Knoten, einen zu tiefen Zweig oder einen Lektionslink außerhalb dieses Lernpfads.",
+    "INSECURE_SOURCE_URL": "Dieser Link muss eine sichere (https) Adresse verwenden.",
+    "INVALID_VERIFY_URL_PATTERN": "Das Muster des Prüflinks ist ungültig. Es muss genau einen Versions-Platzhalter enthalten.",
+    "CURRENT_PASSWORD_INCORRECT": "Ihr aktuelles Passwort ist falsch.",
+    "CONTENT_PACKAGE_TOO_LARGE": "Dieser Inhalt ist zu groß, um für den Download verpackt zu werden. Bitte teilen Sie ihn in kleinere Teile auf."
+  },
+  "auth": {
+    "heading": "Anmelden",
+    "intro": "Melden Sie sich mit Ihrem DevAtlas-Konto an, um fortzufahren.",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "submitting": "Anmeldung läuft…",
+    "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+    "passwordRequired": "Bitte geben Sie Ihr Passwort ein.",
+    "signedInAs": "Angemeldet als {{email}}",
+    "signOut": "Abmelden"
+  },
+  "admin": {
+    "nav": {
+      "label": "Verwaltungsnavigation",
+      "posts": "Beiträge",
+      "review": "Prüfung",
+      "sources": "Quellen"
+    },
+    "common": {
+      "previous": "Zurück",
+      "next": "Weiter",
+      "previousPage": "Zur vorherigen Seite gehen",
+      "nextPage": "Zur nächsten Seite gehen",
+      "pageOfTotal": "Seite {{current}} von {{total}}",
+      "pagination": "Seitennavigation"
+    },
+    "posts": {
+      "heading": "Blogbeiträge",
+      "newPost": "Neuer Beitrag",
+      "empty": "Keine Beiträge entsprechen diesen Filtern.",
+      "viewAudit": "Prüfprotokoll",
+      "filter": {
+        "status": "Status",
+        "allStatuses": "Alle Status",
+        "source": "Quelle",
+        "allSources": "Alle Quellen",
+        "sort": "Sortieren nach",
+        "search": "Suchen",
+        "searchPlaceholder": "Titel oder Slug suchen…"
+      },
+      "column": {
+        "title": "Titel",
+        "status": "Status",
+        "source": "Quelle",
+        "updatedAt": "Aktualisiert",
+        "audit": "Prüfung"
+      },
+      "sort": {
+        "created_at,desc": "Neueste zuerst",
+        "created_at,asc": "Älteste zuerst",
+        "updated_at,desc": "Zuletzt aktualisiert",
+        "updated_at,asc": "Am längsten nicht aktualisiert",
+        "published_at,desc": "Zuletzt veröffentlicht",
+        "published_at,asc": "Zuerst veröffentlicht",
+        "title,asc": "Titel (A-Z)",
+        "title,desc": "Titel (Z-A)"
+      }
+    },
+    "editor": {
+      "headingNew": "Neuer Beitrag",
+      "headingEdit": "Beitrag bearbeiten",
+      "slug": "Slug",
+      "title": "Titel",
+      "sourceUrl": "Quelllink",
+      "body": "Inhalt",
+      "preview": "Vorschau",
+      "save": "Speichern",
+      "saving": "Wird gespeichert…",
+      "actionsHeading": "Aktionen",
+      "reasonLabel": "Begründung",
+      "reasonPlaceholder": "Erklären Sie warum",
+      "confirmAction": "Bestätigen",
+      "error": {
+        "slugRequired": "Ein Slug ist erforderlich.",
+        "slugLength": "Der Slug muss 3 bis 80 Zeichen lang sein.",
+        "slugPattern": "Der Slug darf nur Kleinbuchstaben, Ziffern und Bindestriche enthalten.",
+        "titleRequired": "Ein Titel ist erforderlich.",
+        "titleLength": "Der Titel darf höchstens 200 Zeichen lang sein.",
+        "bodyRequired": "Ein Inhalt ist erforderlich.",
+        "bodyLength": "Der Inhalt darf höchstens 200.000 Zeichen lang sein.",
+        "sourceUrlLength": "Der Quelllink darf höchstens 2.000 Zeichen lang sein.",
+        "sourceUrlInsecure": "Der Quelllink muss eine absolute https://-Adresse sein.",
+        "reasonTooShort": "Die Begründung muss mindestens 10 Zeichen lang sein."
+      }
+    },
+    "post": {
+      "status": {
+        "DRAFT": "Entwurf",
+        "PENDING_REVIEW": "Warten auf Prüfung",
+        "PUBLISHED": "Veröffentlicht",
+        "REJECTED": "Abgelehnt"
+      },
+      "source": {
+        "MANUAL": "Manuell",
+        "AUTO": "Automatisch"
+      },
+      "action": {
+        "submit": "Einreichen",
+        "approve": "Freigeben",
+        "reject": "Ablehnen",
+        "publish": "Veröffentlichen",
+        "unpublish": "Veröffentlichung aufheben",
+        "delete": "Löschen"
+      },
+      "hint": {
+        "autoBodyReadOnly": "Dieser Beitrag wurde automatisch erstellt; nur ein Administrator kann seinen Slug, Titel oder Inhalt bearbeiten.",
+        "autoSourceUrlReadOnly": "Der Quelllink eines automatisch erstellten Beitrags kann von keiner Rolle geändert werden."
+      }
+    },
+    "audit": {
+      "heading": "Prüfprotokoll",
+      "backToPost": "Zurück zum Beitrag",
+      "empty": "Noch kein Verlauf vorhanden.",
+      "machineStep": "Pipeline",
+      "humanStep": "Menschliche Entscheidung",
+      "column": {
+        "step": "Schritt",
+        "type": "Typ",
+        "from": "Von",
+        "to": "Nach",
+        "reason": "Begründung",
+        "occurredAt": "Wann"
+      },
+      "step": {
+        "FETCH": "Abrufen",
+        "NORMALIZE": "Normalisieren",
+        "VERIFY": "Prüfen",
+        "DRAFT": "Entwurf",
+        "SUBMIT": "Einreichen",
+        "APPROVE": "Freigeben",
+        "REJECT": "Ablehnen",
+        "PUBLISH": "Veröffentlichen",
+        "UNPUBLISH": "Veröffentlichung aufheben"
+      }
+    },
+    "review": {
+      "queueHeading": "Prüfwarteschlange",
+      "queueIntro": "Beiträge, die auf eine redaktionelle Entscheidung warten.",
+      "sourceFilter": "Quelle",
+      "sourceAll": "Alle Quellen",
+      "queueEmpty": "Es wartet nichts auf Prüfung.",
+      "rawPanelHeading": "Abgerufene Quelle",
+      "draftPanelHeading": "Erzeugter Entwurf",
+      "diffHeading": "Änderungen",
+      "diffTooLarge": "Diese Aktualisierung ist zu groß, um als Wort-für-Wort-Vergleich angezeigt zu werden. Vergleichen Sie stattdessen die beiden Felder oben.",
+      "diffAddedLabel": "Hinzugefügt:",
+      "diffRemovedLabel": "Entfernt:",
+      "verifyHeading": "Prüfung",
+      "checkPassed": "Bestanden",
+      "checkFailed": "Fehlgeschlagen",
+      "firstFailingNote": "Dies ist die Prüfung, die zur Ablehnung der Aktualisierung geführt hat.",
+      "viewSourceUpdate": "Quellaktualisierung ansehen",
+      "noSourceUpdate": "Dieser Beitrag wurde von Hand geschrieben — es gibt keine abgerufene Quelle zum Vergleich.",
+      "decisionHeading": "Entscheidung",
+      "reasonLabel": "Begründung",
+      "reasonTooShort": "Bitte schreiben Sie mindestens 10 Zeichen zur Erklärung Ihrer Entscheidung.",
+      "approve": "Freigeben",
+      "reject": "Ablehnen",
+      "editorReadOnlyNote": "Sie haben keine Berechtigung, einen Beitrag freizugeben oder abzulehnen. Fragen Sie einen Administrator.",
+      "verifyStatus": {
+        "PENDING": "Ausstehend",
+        "VERIFIED": "Bestätigt",
+        "REJECTED": "Abgelehnt"
+      },
+      "check": {
+        "SOURCE_WHITELISTED": "Quelle ist zugelassen",
+        "VERSION_CONFIRMED": "Version bestätigt",
+        "HASH_NOT_SEEN": "Inhalt ist neu",
+        "CONTENT_SANITY": "Inhaltsprüfung"
+      }
+    },
+    "sourceUpdate": {
+      "heading": "Quellaktualisierung",
+      "source": "Quelle",
+      "feedUrl": "Feed-URL",
+      "versionString": "Version",
+      "fetchedAt": "Abgerufen am",
+      "contentHash": "Inhaltsprüfsumme",
+      "verifyStatus": "Prüfstatus",
+      "checksHeading": "Prüfungen",
+      "rawContentHeading": "Rohinhalt"
+    },
+    "sources": {
+      "heading": "Zugelassene Quellen",
+      "newSource": "Neue Quelle",
+      "empty": "Noch keine zugelassenen Quellen vorhanden.",
+      "filter": {
+        "sort": "Sortieren nach"
+      },
+      "sort": {
+        "name,asc": "Name (A-Z)",
+        "name,desc": "Name (Z-A)",
+        "created_at,desc": "Neueste zuerst",
+        "created_at,asc": "Älteste zuerst",
+        "updated_at,desc": "Zuletzt aktualisiert",
+        "updated_at,asc": "Am längsten nicht aktualisiert",
+        "last_fetched_at,desc": "Zuletzt abgerufen",
+        "last_fetched_at,asc": "Am längsten nicht abgerufen"
+      },
+      "column": {
+        "name": "Name",
+        "feedUrl": "Feed-URL",
+        "enabled": "Aktiviert",
+        "lastFetchedAt": "Zuletzt abgerufen",
+        "actions": "Aktionen"
+      },
+      "enabledYes": "Ja",
+      "enabledNo": "Nein",
+      "neverFetched": "Nie",
+      "enable": "Aktivieren",
+      "disable": "Deaktivieren",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "confirmDelete": "Diese Quelle löschen?",
+      "confirmDeleteYes": "Ja, löschen",
+      "parentNotEmptyHint": "Diese Quelle enthält noch abgerufene Aktualisierungen und kann nicht gelöscht werden. Deaktivieren Sie sie stattdessen.",
+      "fetch": {
+        "action": "Jetzt abrufen",
+        "running": "Wird abgerufen…",
+        "hint": "Dies kann bis zu einer Minute dauern — der Feed wird in Echtzeit abgerufen und geprüft.",
+        "resultFor": "Abrufergebnis für {{name}}",
+        "resultHeading": "Abrufergebnis",
+        "fetched": "Abgerufen",
+        "created": "Erstellt",
+        "duplicates": "Duplikate",
+        "rejected": "Abgelehnt",
+        "duration": "Dauerte {{seconds}} s",
+        "createdUpdatesHeading": "Erstellte Aktualisierungen",
+        "viewSourceUpdate": "Quellaktualisierung ansehen",
+        "rejectionsHeading": "Ablehnungen",
+        "column": {
+          "version": "Version",
+          "check": "Fehlgeschlagene Prüfung",
+          "detail": "Detail"
+        }
+      },
+      "editor": {
+        "headingNew": "Neue Quelle",
+        "headingEdit": "Quelle bearbeiten",
+        "name": "Name",
+        "feedUrl": "Feed-URL",
+        "verifyUrlPattern": "Prüf-URL-Muster",
+        "verifyUrlPatternHint": "Muss eine absolute https://-Adresse mit genau einem {version}-Platzhalter sein, zum Beispiel https://example.com/releases/{version}.",
+        "enabled": "Aktiviert",
+        "save": "Speichern",
+        "saving": "Wird gespeichert…",
+        "error": {
+          "nameRequired": "Ein Name ist erforderlich.",
+          "nameLength": "Der Name darf höchstens 120 Zeichen lang sein.",
+          "feedUrlRequired": "Eine Feed-URL ist erforderlich.",
+          "feedUrlLength": "Die Feed-URL darf höchstens 2.000 Zeichen lang sein.",
+          "feedUrlInsecure": "Die Feed-URL muss eine absolute https://-Adresse sein.",
+          "verifyUrlPatternRequired": "Ein Prüf-URL-Muster ist erforderlich.",
+          "verifyUrlPatternLength": "Das Prüf-URL-Muster darf höchstens 2.000 Zeichen lang sein.",
+          "verifyUrlPatternInsecure": "Das Prüf-URL-Muster muss eine absolute https://-Adresse sein.",
+          "verifyUrlPatternPlaceholder": "Das Prüf-URL-Muster muss genau einen {version}-Platzhalter enthalten."
+        }
+      }
+    },
+    "forbidden": {
+      "heading": "Sie haben keinen Zugriff auf diese Seite",
+      "description": "Ihre Kontorolle umfasst diesen Bereich der Verwaltung nicht.",
+      "backToTracks": "Zu den Lernpfaden"
+    },
+    "role": {
+      "USER": "Benutzer",
+      "EDITOR": "Redakteur",
+      "ADMIN": "Administrator"
+    }
   }
 }

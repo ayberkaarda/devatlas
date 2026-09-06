@@ -2,9 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 
+import { FakeAuthSession } from '../testing/fake-auth-session';
 import { FakePlatformService } from '../testing/fake-platform.service';
 import { environment } from '../environments/environment';
 import { App } from './app';
+import { AuthSession } from './core/auth/auth-session';
 import { LocaleService } from './core/i18n/locale.service';
 import { BundledTranslateLoader } from './core/i18n/translations';
 import { PlatformService } from './core/platform/platform.service';
@@ -12,13 +14,16 @@ import { ThemeService } from './core/theme/theme.service';
 
 describe('App', () => {
   let platform: FakePlatformService;
+  let session: FakeAuthSession;
 
   beforeEach(async () => {
     platform = new FakePlatformService();
+    session = new FakeAuthSession();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
         { provide: PlatformService, useValue: platform },
+        { provide: AuthSession, useValue: session },
         provideTranslateService({
           loader: BundledTranslateLoader,
           fallbackLang: 'en',
@@ -72,5 +77,26 @@ describe('App', () => {
     // this asserts the default rather than the replacement. It guards against
     // the platform flag being dropped or hard-coded.
     expect(environment.platform).toBe('web');
+  });
+
+  it('offers no session control while nobody is signed in', async () => {
+    const fixture = await render();
+    // Reading and downloading need no account, so an anonymous visitor is in a
+    // complete state and the header says nothing about a session.
+    expect(fixture.nativeElement.querySelector('app-session-menu button')).toBeNull();
+  });
+
+  it('shows who is signed in, and the way out', async () => {
+    session.setRole('ADMIN');
+    const fixture = await render();
+
+    const menu = fixture.nativeElement.querySelector('app-session-menu') as HTMLElement;
+    expect(menu.querySelector('span')).not.toBeNull();
+    const signOut = menu.querySelector('button') as HTMLButtonElement;
+    expect(signOut).not.toBeNull();
+
+    signOut.click();
+    await fixture.whenStable();
+    expect(session.signOuts).toBe(1);
   });
 });

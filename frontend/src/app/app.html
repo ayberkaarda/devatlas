@@ -24,9 +24,27 @@
             {{ 'nav.downloads' | translate }}
           </a>
         }
+        @if (session.canAdminister()) {
+          <a
+            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+            routerLink="/admin"
+            routerLinkActive="bg-surface-raised text-text"
+          >
+            {{ 'nav.admin' | translate }}
+          </a>
+        }
       </nav>
 
       <div class="ml-auto flex items-center gap-2">
+        @if (session.user() === null) {
+          <a
+            class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text no-underline hover:bg-surface-raised"
+            routerLink="/login"
+          >
+            {{ 'nav.signIn' | translate }}
+          </a>
+        }
+        <app-session-menu />
         <app-language-switcher />
         <app-theme-toggle />
       </div>

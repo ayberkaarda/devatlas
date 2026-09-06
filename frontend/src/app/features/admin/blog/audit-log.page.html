@@ -1,0 +1,78 @@
+<div class="flex items-center justify-between gap-4">
+  <h1 class="text-2xl font-semibold tracking-tight">{{ 'admin.audit.heading' | translate }}</h1>
+  <a
+    class="text-sm text-text-muted no-underline hover:underline"
+    [routerLink]="['/admin/blog', id()]"
+  >
+    {{ 'admin.audit.backToPost' | translate }}
+  </a>
+</div>
+
+@if (loading()) {
+  <p class="mt-8 text-text-muted" role="status">{{ 'common.loading' | translate }}</p>
+} @else if (failure(); as failureKey) {
+  <div class="mt-8 rounded-md border border-border bg-surface p-4" role="alert">
+    <h2 class="font-medium">{{ 'error.heading' | translate }}</h2>
+    <p class="mt-1 text-text-muted">{{ failureKey | translate }}</p>
+    <button
+      type="button"
+      class="mt-3 rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast"
+      (click)="retry()"
+    >
+      {{ 'common.retry' | translate }}
+    </button>
+  </div>
+} @else if (items().length === 0) {
+  <p class="mt-8 text-text-muted">{{ 'admin.audit.empty' | translate }}</p>
+} @else {
+  <div class="mt-6 overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead>
+        <tr class="border-b border-border text-text-muted">
+          <th class="py-2 pr-4 font-medium">{{ 'admin.audit.column.step' | translate }}</th>
+          <th class="py-2 pr-4 font-medium">{{ 'admin.audit.column.type' | translate }}</th>
+          <th class="py-2 pr-4 font-medium">{{ 'admin.audit.column.from' | translate }}</th>
+          <th class="py-2 pr-4 font-medium">{{ 'admin.audit.column.to' | translate }}</th>
+          <th class="py-2 pr-4 font-medium">{{ 'admin.audit.column.reason' | translate }}</th>
+          <th class="py-2 font-medium">{{ 'admin.audit.column.occurredAt' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.id) {
+          <tr class="border-b border-border">
+            <td class="py-2 pr-4">{{ 'admin.audit.step.' + item.step | translate }}</td>
+            <td class="py-2 pr-4 text-text-muted">
+              {{
+                (isPipelineStep(item) ? 'admin.audit.machineStep' : 'admin.audit.humanStep')
+                  | translate
+              }}
+            </td>
+            <td class="py-2 pr-4">
+              @if (item.fromStatus) {
+                <app-status-badge [status]="item.fromStatus" />
+              } @else {
+                <span class="text-text-muted">—</span>
+              }
+            </td>
+            <td class="py-2 pr-4">
+              @if (item.toStatus) {
+                <app-status-badge [status]="item.toStatus" />
+              } @else {
+                <span class="text-text-muted">—</span>
+              }
+            </td>
+            <td class="py-2 pr-4 text-text-muted">{{ item.reason }}</td>
+            <td class="py-2">{{ item.occurredAt | dateTime }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-pagination
+    class="mt-6 block"
+    [page]="page()"
+    [totalPages]="totalPages()"
+    (pageChange)="onPageChange($event)"
+  />
+}
