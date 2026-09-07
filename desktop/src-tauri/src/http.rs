@@ -21,9 +21,13 @@ use crate::model::EntityType;
 
 /// Where the API lives. The desktop build talks to one deployment at a time and
 /// has no UI for changing it, so it is read from the environment once at
-/// startup and defaults to the local development server.
+/// startup. The environment variable exists for the live tests and for local
+/// override; absent that, the fallback is a compile-time constant baked in by
+/// `build.rs` from `config/api-endpoints.json` -- the same file the Angular
+/// bundle reads -- so a packaged build with no environment variable set still
+/// has the interface and the engine agreeing on a host.
 pub const API_BASE_URL_ENV: &str = "BYTELORE_API_BASE_URL";
-const DEFAULT_API_BASE_URL: &str = "http://localhost:8080/api/v1";
+const DEFAULT_API_BASE_URL: &str = env!("BYTELORE_COMPILED_API_BASE_URL");
 
 pub fn configured_base_url() -> String {
     std::env::var(API_BASE_URL_ENV)
@@ -404,6 +408,35 @@ mod tests {
     use wiremock::{Mock, MockServer, ResponseTemplate};
 
     const DIGEST: &str = "9f2c4e6a8b0d1f3579ace0246813579bdf02468ace13579bdf02468ace13579b";
+
+    /// Proves the wiring end to end rather than trusting it: reads the same
+    /// `config/api-endpoints.json` `build.rs` reads, picks the same key
+    /// `cfg!(debug_assertions)` picks, and checks the compiled constant
+    /// against it. A drift here means `build.rs` and this crate disagree
+    /// about which profile they think they are building.
+    #[test]
+    fn the_compiled_default_matches_the_shared_config_for_this_profile() {
+        let config_path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../config/api-endpoints.json"
+        );
+        let raw = std::fs::read_to_string(config_path)
+            .unwrap_or_else(|error| panic!("could not read {config_path}: {error}"));
+        let parsed: serde_json::Value = serde_json::from_str(&raw)
+            .unwrap_or_else(|error| panic!("{config_path} is not valid JSON: {error}"));
+
+        let key = if cfg!(debug_assertions) {
+            "development"
+        } else {
+            "production"
+        };
+        let expected = parsed
+            .get(key)
+            .and_then(|value| value.as_str())
+            .unwrap_or_else(|| panic!("{config_path} has no string \"{key}\" key"));
+
+        assert_eq!(DEFAULT_API_BASE_URL, expected);
+    }
 
     fn temp_file(dir: &tempfile::TempDir, name: &str) -> std::path::PathBuf {
         dir.path().join(name)

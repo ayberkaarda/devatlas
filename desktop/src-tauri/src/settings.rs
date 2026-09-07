@@ -7,7 +7,9 @@
 //! synchronisation but has nowhere durable of its own to record it.
 
 use rusqlite::{params, Connection};
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Serialize};
+
+use crate::model::explicit_option;
 
 pub const KEY_LOCALE: &str = "locale";
 pub const KEY_THEME: &str = "theme";
@@ -54,14 +56,6 @@ pub struct SettingsPatch {
     pub preferences_dirty_at: Option<Option<String>>,
     #[serde(default, deserialize_with = "explicit_option")]
     pub last_sync_at: Option<Option<String>>,
-}
-
-fn explicit_option<'de, D, T>(deserializer: D) -> Result<Option<Option<T>>, D::Error>
-where
-    D: Deserializer<'de>,
-    T: Deserialize<'de>,
-{
-    Option::deserialize(deserializer).map(Some)
 }
 
 /// What the UI hands over to be kept across restarts.

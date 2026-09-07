@@ -189,6 +189,17 @@ pub enum StoreError {
     DataDir(String),
     #[error("could not create the application data directory: {0}")]
     CreateDataDir(#[from] std::io::Error),
+    /// The store's `user_version` names a schema newer than any migration this
+    /// binary knows how to apply -- an older build opening a store a newer
+    /// one already migrated, the normal shape of a rollback once updates
+    /// ship. Continuing would read and write tables whose layout has moved
+    /// underneath this binary with no error and no log line, which is worse
+    /// than refusing to open the store at all.
+    #[error(
+        "the store is at schema version {found}, but this build only knows migrations up to \
+         version {known}; open it with a version of the application at least that new"
+    )]
+    SchemaNewerThanKnown { found: i64, known: usize },
 }
 
 /// Resolves the store path from the platform's application data directory.
@@ -251,8 +262,20 @@ fn configure(connection: &Connection) -> Result<(), StoreError> {
 /// Applies every migration the store has not seen yet, in one transaction per
 /// step, and advances `user_version` alongside it.
 fn migrate(connection: &mut Connection) -> Result<(), StoreError> {
-    let current: i64 = connection.query_row("PRAGMA user_version;", [], |row| row.get(0))?;
-    let current = current.max(0) as usize;
+    let raw: i64 = connection.query_row("PRAGMA user_version;", [], |row| row.get(0))?;
+    let current = raw.max(0) as usize;
+
+    // Without this, `.skip(current)` on a `current` past the end of
+    // `MIGRATIONS` simply yields nothing and `migrate` returns `Ok(())`
+    // having done nothing at all: the store keeps a schema this binary has
+    // never seen, and every later read or write proceeds against tables
+    // whose shape it does not actually know.
+    if current > MIGRATIONS.len() {
+        return Err(StoreError::SchemaNewerThanKnown {
+            found: raw,
+            known: MIGRATIONS.len(),
+        });
+    }
 
     for (index, statement) in MIGRATIONS.iter().enumerate().skip(current) {
         let transaction = connection.transaction()?;
@@ -309,6 +332,31 @@ mod tests {
         migrate(&mut connection).expect("second migrate must be a no-op");
 
         assert_eq!(schema_version(&connection).expect("version"), after_first);
+    }
+
+    #[test]
+    fn a_schema_newer_than_any_known_migration_is_rejected_not_silently_skipped() {
+        // The shape of an older binary opening a store a newer build already
+        // migrated -- a rollback, which becomes a normal event once updates
+        // ship. Without the guard, `.skip(current)` on a `current` past the
+        // end of `MIGRATIONS` yields nothing and `migrate` would return
+        // `Ok(())` having silently done nothing.
+        let mut connection = Connection::open_in_memory().expect("open");
+        configure(&connection).expect("configure");
+        let future_version = (MIGRATIONS.len() + 1) as i64;
+        connection
+            .pragma_update(None, "user_version", future_version)
+            .expect("seed a version past the last known migration");
+
+        let error = migrate(&mut connection).expect_err("must refuse rather than proceed");
+
+        match error {
+            StoreError::SchemaNewerThanKnown { found, known } => {
+                assert_eq!(found, future_version);
+                assert_eq!(known, MIGRATIONS.len());
+            }
+            other => panic!("expected SchemaNewerThanKnown, got {other:?}"),
+        }
     }
 
     #[test]

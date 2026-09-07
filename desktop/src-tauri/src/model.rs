@@ -7,7 +7,7 @@
 use std::fmt;
 use std::str::FromStr;
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 
 /// An independently downloadable unit of content. There are exactly two.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -218,6 +218,62 @@ pub fn availability_of(
         (Some(stored), Some(manifest)) if stored < manifest => Availability::UpdateAvailable,
         (Some(stored), Some(manifest)) if stored > manifest => Availability::LocalAhead,
         _ => Availability::Downloaded,
+    }
+}
+
+/// A `deserialize_with` for a field typed `Option<Option<T>>` in a partial
+/// update, so an absent key and an explicit `null` stop meaning the same
+/// thing.
+///
+/// Serde's stock `Option<T>` deserialization collapses both "the key is
+/// missing" and "the key is present with value `null`" to `None`, because it
+/// answers one question -- is there a value -- not two. A patch payload has
+/// to answer both: whether the field was mentioned at all, which decides
+/// whether to touch the stored value, and if so, what to set it to,
+/// including clearing it. Wrapping the field in `Option<Option<T>>` and
+/// deserializing it through this function keeps those two questions separate:
+/// `#[serde(default)]` on the field leaves it `None` when the key is absent,
+/// and this function turns a present key -- `null` included -- into
+/// `Some(value)`, so the outer `Option` alone answers "was this field
+/// mentioned" and the inner one carries what it was set to.
+///
+/// More than one command payload needs this, which is why it lives here
+/// rather than beside just one of them.
+pub fn explicit_option<'de, D, T>(deserializer: D) -> Result<Option<Option<T>>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Option::deserialize(deserializer).map(Some)
+}
+
+#[cfg(test)]
+mod explicit_option_tests {
+    use super::explicit_option;
+    use serde::Deserialize;
+
+    #[derive(Debug, Deserialize)]
+    struct Patch {
+        #[serde(default, deserialize_with = "explicit_option")]
+        field: Option<Option<String>>,
+    }
+
+    #[test]
+    fn an_absent_key_leaves_the_field_untouched() {
+        let patch: Patch = serde_json::from_str("{}").expect("parses");
+        assert_eq!(patch.field, None);
+    }
+
+    #[test]
+    fn an_explicit_null_clears_the_field() {
+        let patch: Patch = serde_json::from_str(r#"{"field": null}"#).expect("parses");
+        assert_eq!(patch.field, Some(None));
+    }
+
+    #[test]
+    fn a_present_value_sets_the_field() {
+        let patch: Patch = serde_json::from_str(r#"{"field": "eng-101"}"#).expect("parses");
+        assert_eq!(patch.field, Some(Some("eng-101".to_string())));
     }
 }
 

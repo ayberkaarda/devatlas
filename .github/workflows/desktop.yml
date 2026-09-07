@@ -220,9 +220,19 @@ jobs:
         working-directory: desktop
         run: npm ci
 
+      # The updater artifacts this produces are signed, and signing needs the
+      # private half of the key pair whose public half is in tauri.conf.json.
+      # It lives only here, as a repository secret: the repository is public,
+      # and a signing key that reaches the history cannot be taken back.
+      # Without it the bundles are still built and then the run fails at the
+      # signing step, which is the correct failure -- an unsigned build would
+      # produce updates no client would accept.
       - name: Package
         working-directory: desktop
         run: npx tauri build --debug
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Upload installers
         uses: actions/upload-artifact@v7

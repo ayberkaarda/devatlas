@@ -313,6 +313,29 @@ platform contract promises progress writes work offline with an expired session;
 a signed-out state is the same condition seen from further away. Those rows are
 adopted by the next sign-in on the same installation.
 
+**How adoption resolves**, since a lesson can already have a row under the
+account being signed in to. `session_store` is the moment the installation
+learns whose it is, so adoption happens there, in the same transaction that
+stores the session — a store that recorded the session but not the adoption
+would never adopt at all, because the next sign-in would no longer be the
+first one.
+
+- No row under the account for that lesson → the anonymous row is re-keyed to
+  it, keeping `completedAt`, `clientUpdatedAt` and `syncState` untouched.
+  Nothing about the server's view changed; only local ownership did.
+- A row already exists → the same last-write-wins comparison used everywhere
+  else, on `clientUpdatedAt`, strictly greater wins and equal keeps what is
+  stored.
+- When the anonymous row wins, the surviving row is **`PENDING`**, whatever
+  the anonymous row's own `syncState` said. The server has never seen this
+  value under this account, and marking it `SYNCED` would be a claim the next
+  push could not make good on.
+
+Adoption consumes what it finds: after it, no anonymous row remains for those
+lessons, so a second, different person signing in on the same installation
+inherits nothing. The corollary is worth stating plainly — work done before
+anyone signs in belongs to whoever signs in first.
+
 ### `progress_list() -> Vec<ProgressEntry>`
 
 Every progress row for the active user, for rendering completion state in the UI.
@@ -337,6 +360,37 @@ Writes back what the server said, per row: `APPLIED`, `STALE` or `REJECTED`.
   carry the same rejected row in every future batch, forever.
 
 Nothing here deletes a progress row.
+
+### `progress_absorb(entries) -> void`
+
+Added in phase 8. Writes rows pulled from `GET /api/v1/sync/progress` into the
+replica — the landing place the pull direction did not have.
+
+Each entry is a `lessonId`, a nullable `completedAt` and the `clientUpdatedAt`
+the server holds. The rule applied per row is the mirror of the server's, which
+is what the REST contract means when it says the client applies the same
+last-write-wins rule locally:
+
+- No local row → insert it, `syncState` `SYNCED`.
+- A local row whose `clientUpdatedAt` is **strictly older** → overwrite both
+  values, `syncState` `SYNCED`.
+- Otherwise leave the local row exactly as it is. This deliberately includes a
+  `PENDING` row that is newer: a completion made offline and not yet pushed must
+  survive a pull that happens to run first, and it goes up in the next batch.
+
+Equal timestamps keep the local row, so the rule is deterministic and a repeated
+pull changes nothing. A row absorbed this way is `SYNCED` by definition — it
+came from the server — including one that was `ORPHANED`, because a strictly
+newer server row is evidence the lesson resolves again.
+
+Rows are filed under the active user, by the same rule as `progress_mark`.
+Nothing here deletes a row either.
+
+**Why this is a command and not an Angular-side write.** Angular owns the HTTP
+call, as it owns every authenticated request; Rust owns the replica. Absorbing a
+pulled batch is a write to the replica under a conflict rule, which is storage
+work, and the alternative — exposing a general "write this progress row with
+this timestamp" command — would hand the caller a way to author history.
 
 ---
 

@@ -13,6 +13,12 @@ mod queue;
 mod replica;
 mod settings;
 mod store;
+// `pub`, not private: `tests/update_check.rs` is an integration test that
+// links against this crate from the outside, and needs `run` and
+// `check_and_download` (see that module's doc comment for why the tests live
+// there rather than in a `#[cfg(test)]` block here).
+#[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+pub mod update_check;
 mod verify;
 
 use std::sync::Arc;
@@ -27,7 +33,17 @@ use crate::http::{configured_base_url, ContentClient};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    #[allow(unused_mut)]
+    let mut builder = tauri::Builder::default();
+    // Not registered on a hypothetical mobile build: the plugin does not
+    // support mobile targets at all (see the target-gated dependency in
+    // Cargo.toml), and this project packages Windows and Linux only.
+    #[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+    {
+        builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
+    }
+
+    builder
         .invoke_handler(tauri::generate_handler![
             commands::library_list_tracks,
             commands::library_get_track,
@@ -45,6 +61,7 @@ pub fn run() {
             commands::progress_pending,
             commands::progress_list,
             commands::progress_apply_results,
+            commands::progress_absorb,
             commands::settings_get,
             commands::settings_set,
             commands::session_store,
@@ -95,6 +112,14 @@ pub fn run() {
 
             app.manage(AppState { engine });
 
+            // Spawned, not awaited: the window is already created by the time
+            // `setup` runs, and this must never be on the path that decides
+            // when it is shown. Every failure this can have -- offline, no
+            // release published yet, a bad response, an unset public key --
+            // is logged inside `update_check::run` and never propagated here.
+            #[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+            update_check::check_in_background(app.handle().clone());
+
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -102,6 +127,18 @@ pub fn run() {
                 log::info!("window {} closing", window.label());
             }
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|app_handle, event| {
+            // The one point an update is installed. Windows exits the process
+            // as part of installing regardless of when that happens, so
+            // doing it here -- as the run loop is already ending, not while
+            // someone is mid-lesson -- is the point where that cost is free
+            // rather than a surprise. See `update_check` for what was
+            // downloaded and stashed while the application was running.
+            #[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+            if let tauri::RunEvent::Exit = event {
+                update_check::install_pending_update_before_exit(app_handle);
+            }
+        });
 }

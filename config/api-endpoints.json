@@ -1,0 +1,4 @@
+{
+  "production": "https://api.bytelore.invalid/api/v1",
+  "development": "http://localhost:18080/api/v1"
+}

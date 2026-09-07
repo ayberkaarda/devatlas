@@ -22,12 +22,12 @@ use crate::error::{codes, parse_uuid, CommandError};
 use crate::http::{ManifestFetch, TransferError};
 use crate::manifest::TrackManifest;
 use crate::model::{
-    availability_of, Availability, DownloadScope, EntityType, PauseReason, QueueState, ScopeKind,
-    SyncState,
+    availability_of, explicit_option, Availability, DownloadScope, EntityType, PauseReason,
+    QueueState, ScopeKind, SyncState,
 };
 use crate::queue::{self, EnqueueOutcome};
 use crate::replica;
-use crate::settings::{self, AppSettings, SettingsPatch, StoredSession};
+use crate::settings::{self, AppSettings, SettingsPatch, StoredSession, ANONYMOUS_USER};
 
 pub struct AppState {
     pub engine: Arc<Engine>,
@@ -249,9 +249,26 @@ pub struct ProgressResult {
     #[serde(default)]
     pub server_client_updated_at: Option<String>,
     /// The server's completion state, when the caller has it. Absent leaves the
-    /// local value alone.
-    #[serde(default)]
+    /// local value alone; an explicit `null` clears it -- see
+    /// [`explicit_option`], without which the two are indistinguishable and a
+    /// device told to un-complete a lesson would silently keep it complete.
+    #[serde(default, deserialize_with = "explicit_option")]
     pub completed_at: Option<Option<String>>,
+}
+
+/// One row pulled from `GET /api/v1/sync/progress`, as `progress_absorb`
+/// receives it.
+///
+/// Unlike [`ProgressResult`], this is not a patch: the server always states
+/// what it holds, so `completed_at` is a plain nullable value rather than a
+/// double option -- there is no "field omitted" case to distinguish from
+/// "explicitly not completed" here, only "completed" versus "not completed".
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AbsorbedProgress {
+    pub lesson_id: String,
+    pub completed_at: Option<String>,
+    pub client_updated_at: String,
 }
 
 // ---------------------------------------------------------------------------
@@ -1178,7 +1195,12 @@ pub fn progress_apply_results(
     state: tauri::State<'_, AppState>,
     results: Vec<ProgressResult>,
 ) -> Command<()> {
-    let db = state.db();
+    apply_progress_results(state.db(), results)
+}
+
+/// The whole of `progress_apply_results`, with the framework handle taken
+/// out -- see `delete_downloaded` for why.
+pub(crate) fn apply_progress_results(db: &Arc<Db>, results: Vec<ProgressResult>) -> Command<()> {
     db.transaction(move |tx| {
         let user_id = settings::active_user(tx)?;
         for result in &results {
@@ -1236,6 +1258,57 @@ pub fn progress_apply_results(
     })
 }
 
+/// Writes rows pulled from `GET /api/v1/sync/progress` into the replica --
+/// the landing place the pull direction did not otherwise have.
+/// `progress_apply_results` above only ever updates a row this device
+/// already sent; a row completed on another device first reaches this one
+/// through here.
+///
+/// Nothing here deletes a row, and every row lands `SYNCED`: it came from the
+/// server, so by definition there is nothing left to push for it.
+#[tauri::command]
+pub fn progress_absorb(
+    state: tauri::State<'_, AppState>,
+    entries: Vec<AbsorbedProgress>,
+) -> Command<()> {
+    absorb_progress(state.db(), entries)
+}
+
+/// The whole of `progress_absorb`, with the framework handle taken out --
+/// see `delete_downloaded` for why.
+pub(crate) fn absorb_progress(db: &Arc<Db>, entries: Vec<AbsorbedProgress>) -> Command<()> {
+    db.transaction(move |tx| {
+        let user_id = settings::active_user(tx)?;
+        for entry in &entries {
+            // One upsert carries the whole rule: insert when the row is
+            // absent (the `ON CONFLICT` arm never fires), and otherwise
+            // overwrite only when the incoming row is strictly newer than
+            // what is stored -- the `WHERE` clause on `DO UPDATE` is what
+            // makes that conditional. Equal or older incoming timestamps
+            // leave every column, `sync_state` included, untouched: a
+            // `PENDING` row that is locally newer is a completion made
+            // offline and not yet pushed, and it has to survive a pull that
+            // happens to run first rather than being clobbered by it.
+            tx.execute(
+                "INSERT INTO user_progress (user_id, lesson_id, completed_at, client_updated_at, sync_state)
+                 VALUES (?1, ?2, ?3, ?4, 'SYNCED')
+                 ON CONFLICT(user_id, lesson_id) DO UPDATE SET
+                     completed_at = excluded.completed_at,
+                     client_updated_at = excluded.client_updated_at,
+                     sync_state = 'SYNCED'
+                 WHERE excluded.client_updated_at > user_progress.client_updated_at;",
+                rusqlite::params![
+                    user_id,
+                    entry.lesson_id,
+                    entry.completed_at,
+                    entry.client_updated_at
+                ],
+            )?;
+        }
+        Ok(())
+    })
+}
+
 // ---------------------------------------------------------------------------
 // Settings and session
 // ---------------------------------------------------------------------------
@@ -1257,9 +1330,105 @@ pub fn settings_set(
 
 #[tauri::command]
 pub fn session_store(state: tauri::State<'_, AppState>, session: StoredSession) -> Command<()> {
-    state
-        .db()
-        .with(move |connection| settings::store_session(connection, &session))
+    store_session(state.db(), session)
+}
+
+/// The whole of `session_store`, with the framework handle taken out -- see
+/// `delete_downloaded` for why.
+///
+/// Storing the session and adopting the anonymous rows run in one
+/// transaction. Sign-in is the only moment adoption happens -- nothing later
+/// retries it -- so a session committed while adoption failed, or the
+/// reverse, would leave rows stranded under the nil user for good with no
+/// way to notice. Doing both atomically means a failure here undoes both
+/// halves, and the caller can simply try `session_store` again.
+pub(crate) fn store_session(db: &Arc<Db>, session: StoredSession) -> Command<()> {
+    db.transaction(move |tx| {
+        settings::store_session(tx, &session)?;
+        adopt_anonymous_progress(tx, &session.user_id)
+    })
+}
+
+/// Re-keys progress recorded while nobody was signed in onto the account a
+/// session was just stored for.
+///
+/// A lesson with no row under the real account yet simply changes owner: the
+/// anonymous row's `completed_at`, `client_updated_at` and `sync_state` are
+/// left exactly as they were, because nothing about its relationship with the
+/// server changed -- only who it belongs to locally. A lesson that already
+/// has a row under the real account is resolved with the same last-write-wins
+/// rule `progress_absorb` applies to a pulled row: strictly newer
+/// `client_updated_at` wins, an equal one keeps what is already stored.
+///
+/// A merge that overwrites the real account's row always lands `PENDING`,
+/// whatever the anonymous row's own `sync_state` was: the server has only
+/// ever seen that value, if at all, filed under the nil user, never under
+/// this account, so reporting it `SYNCED` here would be a lie the next push
+/// could not catch.
+///
+/// Either way the anonymous row for that lesson is gone once this returns, so
+/// a later sign-in -- the same person again, or a second person sharing the
+/// installation -- finds nothing left to adopt and inherits nothing from the
+/// first.
+fn adopt_anonymous_progress(tx: &rusqlite::Transaction<'_>, user_id: &str) -> rusqlite::Result<()> {
+    // A session naming the nil user is not a real sign-in; there is nothing
+    // to adopt onto it and no reason to delete rows that are already home.
+    if user_id == ANONYMOUS_USER {
+        return Ok(());
+    }
+
+    let anonymous_rows: Vec<(String, Option<String>, String)> = {
+        let mut statement = tx.prepare(
+            "SELECT lesson_id, completed_at, client_updated_at FROM user_progress
+             WHERE user_id = ?1;",
+        )?;
+        let rows = statement
+            .query_map(rusqlite::params![ANONYMOUS_USER], |row| {
+                Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+            })?
+            .collect::<rusqlite::Result<_>>()?;
+        rows
+    };
+
+    for (lesson_id, completed_at, client_updated_at) in anonymous_rows {
+        let existing_client_updated_at: Option<String> = {
+            let mut statement = tx.prepare(
+                "SELECT client_updated_at FROM user_progress
+                 WHERE user_id = ?1 AND lesson_id = ?2;",
+            )?;
+            let mut rows = statement.query(rusqlite::params![user_id, lesson_id])?;
+            match rows.next()? {
+                Some(row) => Some(row.get(0)?),
+                None => None,
+            }
+        };
+
+        match existing_client_updated_at {
+            None => {
+                tx.execute(
+                    "UPDATE user_progress SET user_id = ?1
+                     WHERE user_id = ?2 AND lesson_id = ?3;",
+                    rusqlite::params![user_id, ANONYMOUS_USER, lesson_id],
+                )?;
+            }
+            Some(existing_client_updated_at) => {
+                if client_updated_at.as_str() > existing_client_updated_at.as_str() {
+                    tx.execute(
+                        "UPDATE user_progress
+                         SET completed_at = ?1, client_updated_at = ?2, sync_state = 'PENDING'
+                         WHERE user_id = ?3 AND lesson_id = ?4;",
+                        rusqlite::params![completed_at, client_updated_at, user_id, lesson_id],
+                    )?;
+                }
+                tx.execute(
+                    "DELETE FROM user_progress WHERE user_id = ?1 AND lesson_id = ?2;",
+                    rusqlite::params![ANONYMOUS_USER, lesson_id],
+                )?;
+            }
+        }
+    }
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -1845,6 +2014,493 @@ mod tests {
             .query_row("SELECT count(*) FROM user_progress;", [], |row| row.get(0))
             .expect("count");
         assert_eq!(total, 4, "signing in as someone else discards nothing");
+    }
+
+    // -- ProgressResult.completed_at -----------------------------------------
+
+    /// Pins the three cases apart at the deserialization boundary, before any
+    /// of `apply_progress_results`'s logic runs: an absent field, an explicit
+    /// `null`, and a present value must not collapse into one another.
+    #[test]
+    fn progress_result_completed_at_distinguishes_absent_null_and_a_value() {
+        let base = r#"{"lessonId": "l1", "status": "STALE""#;
+
+        let absent: ProgressResult =
+            serde_json::from_str(&format!("{base}}}")).expect("parses without the field");
+        assert_eq!(
+            absent.completed_at, None,
+            "an absent field must not be read as an explicit null"
+        );
+
+        let explicit_null: ProgressResult =
+            serde_json::from_str(&format!("{base}, \"completedAt\": null}}"))
+                .expect("parses with an explicit null");
+        assert_eq!(
+            explicit_null.completed_at,
+            Some(None),
+            "an explicit null must be distinguishable from the field being absent"
+        );
+
+        let with_value: ProgressResult = serde_json::from_str(&format!(
+            "{base}, \"completedAt\": \"2026-09-04T10:00:00.000Z\"}}"
+        ))
+        .expect("parses with a value");
+        assert_eq!(
+            with_value.completed_at,
+            Some(Some("2026-09-04T10:00:00.000Z".to_string()))
+        );
+    }
+
+    /// The behavioural consequence of the deserialization above: a `STALE`
+    /// result that explicitly carries `null` must clear a local completion,
+    /// not leave it alone. Before `completed_at` used `explicit_option`, this
+    /// case was indistinguishable from the field being absent and the row
+    /// would keep its stale local value forever.
+    #[test]
+    fn a_stale_result_with_an_explicit_null_clears_a_local_completion() {
+        let db = Arc::new(Db::new(seeded()));
+
+        // l1 starts completed (see `seeded`).
+        apply_progress_results(
+            &db,
+            vec![ProgressResult {
+                lesson_id: "l1".to_string(),
+                status: "STALE".to_string(),
+                code: None,
+                server_client_updated_at: None,
+                completed_at: Some(None),
+            }],
+        )
+        .expect("apply");
+
+        let entries = db
+            .with(|connection| read_progress(connection, false))
+            .expect("list");
+        let l1 = entries.iter().find(|e| e.lesson_id == "l1").expect("l1");
+        assert_eq!(
+            l1.completed_at, None,
+            "an explicit null in a STALE result must clear the local completion"
+        );
+    }
+
+    /// The complementary case: a `STALE` result that omits `completed_at`
+    /// entirely must leave the local value untouched.
+    #[test]
+    fn a_stale_result_without_completed_at_leaves_the_local_value_alone() {
+        let db = Arc::new(Db::new(seeded()));
+
+        apply_progress_results(
+            &db,
+            vec![ProgressResult {
+                lesson_id: "l1".to_string(),
+                status: "STALE".to_string(),
+                code: None,
+                server_client_updated_at: None,
+                completed_at: None,
+            }],
+        )
+        .expect("apply");
+
+        let entries = db
+            .with(|connection| read_progress(connection, false))
+            .expect("list");
+        let l1 = entries.iter().find(|e| e.lesson_id == "l1").expect("l1");
+        assert!(
+            l1.completed_at.is_some(),
+            "an absent completed_at must not touch the stored completion"
+        );
+    }
+
+    // -- progress_absorb ------------------------------------------------------
+
+    fn entry(
+        lesson_id: &str,
+        completed_at: Option<&str>,
+        client_updated_at: &str,
+    ) -> AbsorbedProgress {
+        AbsorbedProgress {
+            lesson_id: lesson_id.to_string(),
+            completed_at: completed_at.map(str::to_string),
+            client_updated_at: client_updated_at.to_string(),
+        }
+    }
+
+    fn find<'a>(entries: &'a [ProgressEntry], lesson_id: &str) -> &'a ProgressEntry {
+        entries
+            .iter()
+            .find(|e| e.lesson_id == lesson_id)
+            .unwrap_or_else(|| panic!("{lesson_id} not found"))
+    }
+
+    #[test]
+    fn absorb_inserts_a_row_absent_locally() {
+        let db = Arc::new(Db::new(seeded()));
+
+        absorb_progress(
+            &db,
+            vec![entry(
+                "l9",
+                Some("2026-09-05T00:00:00.000Z"),
+                "2026-09-05T00:00:00.000Z",
+            )],
+        )
+        .expect("absorb");
+
+        let entries = db
+            .with(|connection| read_progress(connection, false))
+            .expect("list");
+        let l9 = find(&entries, "l9");
+        assert_eq!(l9.completed_at.as_deref(), Some("2026-09-05T00:00:00.000Z"));
+        assert_eq!(l9.client_updated_at, "2026-09-05T00:00:00.000Z");
+        assert_eq!(l9.sync_state, SyncState::Synced);
+    }
+
+    #[test]
+    fn absorb_overwrites_a_local_row_that_is_strictly_older() {
+        let db = Arc::new(Db::new(seeded()));
+
+        // l1 starts completed at 2026-09-04T10:00:00.000Z (see `seeded`).
+        absorb_progress(&db, vec![entry("l1", None, "2026-09-04T11:00:00.000Z")]).expect("absorb");
+
+        let entries = db
+            .with(|connection| read_progress(connection, false))
+            .expect("list");
+        let l1 = find(&entries, "l1");
+        assert_eq!(
+            l1.completed_at, None,
+            "a strictly newer pulled row must overwrite the local value, including clearing it"
+        );
+        assert_eq!(l1.client_updated_at, "2026-09-04T11:00:00.000Z");
+        assert_eq!(l1.sync_state, SyncState::Synced);
+    }
+
+    #[test]
+    fn absorb_leaves_the_local_row_alone_on_an_equal_timestamp() {
+        let db = Arc::new(Db::new(seeded()));
+
+        // Same instant as l1's stored client_updated_at, different value --
+        // if the comparison were `>=` instead of `>` this would wrongly win.
+        absorb_progress(&db, vec![entry("l1", None, "2026-09-04T10:00:00.000Z")]).expect("absorb");
+
+        let entries = db
+            .with(|connection| read_progress(connection, false))
+            .expect("list");
+        let l1 = find(&entries, "l1");
+        assert_eq!(
+            l1.completed_at.as_deref(),
+            Some("2026-09-04T10:00:00.000Z"),
+            "equal timestamps must keep the local row so a repeated pull changes nothing"
+        );
+        assert_eq!(l1.sync_state, SyncState::Synced);
+    }
+
+    #[test]
+    fn absorb_leaves_the_local_row_alone_on_an_older_incoming_timestamp() {
+        let db = Arc::new(Db::new(seeded()));
+
+        absorb_progress(&db, vec![entry("l1", None, "2026-09-04T09:00:00.000Z")]).expect("absorb");
+
+        let entries = db
+            .with(|connection| read_progress(connection, false))
+            .expect("list");
+        let l1 = find(&entries, "l1");
+        assert_eq!(l1.completed_at.as_deref(), Some("2026-09-04T10:00:00.000Z"));
+        assert_eq!(l1.client_updated_at, "2026-09-04T10:00:00.000Z");
+    }
+
+    #[test]
+    fn absorb_leaves_a_locally_newer_pending_row_untouched() {
+        let db = Arc::new(Db::new(seeded()));
+
+        // l2 is PENDING at 2026-09-04T10:00:01.000Z with no completion (see
+        // `seeded`): a completion made offline that has not been pushed yet.
+        // A pull carrying an older row for the same lesson must not clobber
+        // it, and must not flip it out of PENDING either.
+        absorb_progress(
+            &db,
+            vec![entry(
+                "l2",
+                Some("2026-09-04T09:00:00.000Z"),
+                "2026-09-04T09:00:00.000Z",
+            )],
+        )
+        .expect("absorb");
+
+        let entries = db
+            .with(|connection| read_progress(connection, false))
+            .expect("list");
+        let l2 = find(&entries, "l2");
+        assert_eq!(l2.completed_at, None);
+        assert_eq!(l2.client_updated_at, "2026-09-04T10:00:01.000Z");
+        assert_eq!(
+            l2.sync_state,
+            SyncState::Pending,
+            "a pull that loses must not touch sync_state either"
+        );
+    }
+
+    #[test]
+    fn absorb_adopts_an_orphaned_row_into_synced_when_strictly_newer() {
+        let db = Arc::new(Db::new(seeded()));
+
+        // l3 is ORPHANED at 2026-09-04T10:00:02.000Z (see `seeded`): the
+        // server once rejected it, but a strictly newer server row is
+        // evidence the lesson resolves again.
+        absorb_progress(
+            &db,
+            vec![entry(
+                "l3",
+                Some("2026-09-04T11:00:00.000Z"),
+                "2026-09-04T11:00:00.000Z",
+            )],
+        )
+        .expect("absorb");
+
+        let entries = db
+            .with(|connection| read_progress(connection, false))
+            .expect("list");
+        let l3 = find(&entries, "l3");
+        assert_eq!(l3.completed_at.as_deref(), Some("2026-09-04T11:00:00.000Z"));
+        assert_eq!(
+            l3.sync_state,
+            SyncState::Synced,
+            "a strictly newer server row must adopt an ORPHANED row back into SYNCED"
+        );
+    }
+
+    // -- session_store / adopt_anonymous_progress ----------------------------
+
+    fn adopt(db: &Arc<Db>, user_id: &str) {
+        db.transaction(|tx| adopt_anonymous_progress(tx, user_id))
+            .expect("adopt");
+    }
+
+    /// Reads one row's `(completed_at, client_updated_at, sync_state)` for a
+    /// specific `(user, lesson)` pair, bypassing `read_progress` -- the tests
+    /// below assert on rows that are not necessarily under the active user.
+    fn stored_row(
+        connection: &rusqlite::Connection,
+        user_id: &str,
+        lesson_id: &str,
+    ) -> Option<(Option<String>, String, String)> {
+        let mut statement = connection
+            .prepare(
+                "SELECT completed_at, client_updated_at, sync_state FROM user_progress
+                 WHERE user_id = ?1 AND lesson_id = ?2;",
+            )
+            .expect("prepare");
+        let mut rows = statement
+            .query(rusqlite::params![user_id, lesson_id])
+            .expect("query");
+        rows.next().expect("row").map(|row| {
+            (
+                row.get(0).expect("completed_at"),
+                row.get(1).expect("client_updated_at"),
+                row.get(2).expect("sync_state"),
+            )
+        })
+    }
+
+    fn anonymous_row_count(connection: &rusqlite::Connection) -> i64 {
+        connection
+            .query_row(
+                "SELECT count(*) FROM user_progress WHERE user_id = ?1;",
+                rusqlite::params![ANONYMOUS_USER],
+                |row| row.get(0),
+            )
+            .expect("count")
+    }
+
+    /// A store with one conflicting lesson: an anonymous row and a row
+    /// already held by `real-user`, for the same lesson, at caller-chosen
+    /// timestamps. Used to pin the last-write-wins comparison apart from the
+    /// no-conflict rekey path, which `seeded` already covers.
+    fn seeded_with_conflict(
+        anonymous_client_updated_at: &str,
+        real_client_updated_at: &str,
+    ) -> rusqlite::Connection {
+        let connection = open_in_memory().expect("store");
+        connection
+            .execute_batch(&format!(
+                "INSERT INTO user_progress (user_id, lesson_id, completed_at, client_updated_at, sync_state)
+                 VALUES ('{ANONYMOUS_USER}', 'l1', '2026-09-05T00:00:00.000Z', '{anonymous_client_updated_at}', 'PENDING');
+                 INSERT INTO user_progress (user_id, lesson_id, completed_at, client_updated_at, sync_state)
+                 VALUES ('real-user', 'l1', NULL, '{real_client_updated_at}', 'SYNCED');"
+            ))
+            .expect("seed");
+        connection
+    }
+
+    #[test]
+    fn adoption_rekeys_an_anonymous_row_with_no_conflict_into_a_fresh_account() {
+        let db = Arc::new(Db::new(seeded()));
+
+        // l1 is anonymous, SYNCED, completed at 2026-09-04T10:00:00.000Z (see
+        // `seeded`). `fresh-account` holds nothing yet, so the row simply
+        // changes owner.
+        adopt(&db, "fresh-account");
+
+        let l1 = db
+            .with(|connection| Ok(stored_row(connection, "fresh-account", "l1")))
+            .expect("query")
+            .expect("l1 was adopted");
+        assert_eq!(
+            l1,
+            (
+                Some("2026-09-04T10:00:00.000Z".to_string()),
+                "2026-09-04T10:00:00.000Z".to_string(),
+                "SYNCED".to_string()
+            ),
+            "a lesson with no row under the real account keeps its own values untouched, sync_state included"
+        );
+
+        let anon = db
+            .with(|connection| Ok(stored_row(connection, ANONYMOUS_USER, "l1")))
+            .expect("query");
+        assert_eq!(
+            anon, None,
+            "the adopted row no longer exists under the nil user"
+        );
+    }
+
+    #[test]
+    fn adoption_leaves_a_pending_anonymous_row_pending() {
+        let db = Arc::new(Db::new(seeded()));
+
+        // l2 is anonymous, PENDING, with no completion (see `seeded`): a
+        // completion made offline before anyone signed in, not yet pushed.
+        adopt(&db, "fresh-account");
+
+        let l2 = db
+            .with(|connection| Ok(stored_row(connection, "fresh-account", "l2")))
+            .expect("query")
+            .expect("l2 was adopted");
+        assert_eq!(
+            l2.2, "PENDING",
+            "a PENDING row must stay PENDING after adoption so the next sync still pushes it"
+        );
+    }
+
+    #[test]
+    fn adoption_lets_an_anonymous_row_lose_to_a_strictly_newer_real_row() {
+        let db = Arc::new(Db::new(seeded_with_conflict(
+            "2026-09-04T09:00:00.000Z",
+            "2026-09-04T10:00:00.000Z",
+        )));
+
+        adopt(&db, "real-user");
+
+        let real = db
+            .with(|connection| Ok(stored_row(connection, "real-user", "l1")))
+            .expect("query")
+            .expect("the real-user row survives");
+        assert_eq!(
+            real,
+            (
+                None,
+                "2026-09-04T10:00:00.000Z".to_string(),
+                "SYNCED".to_string()
+            ),
+            "a strictly newer real-user row is untouched by an older anonymous one"
+        );
+
+        let anon = db
+            .with(|connection| Ok(stored_row(connection, ANONYMOUS_USER, "l1")))
+            .expect("query");
+        assert_eq!(
+            anon, None,
+            "the losing anonymous row does not survive adoption either"
+        );
+    }
+
+    #[test]
+    fn adoption_lets_an_anonymous_row_win_over_an_older_real_row() {
+        let db = Arc::new(Db::new(seeded_with_conflict(
+            "2026-09-04T11:00:00.000Z",
+            "2026-09-04T10:00:00.000Z",
+        )));
+
+        adopt(&db, "real-user");
+
+        let real = db
+            .with(|connection| Ok(stored_row(connection, "real-user", "l1")))
+            .expect("query")
+            .expect("the merged row survives under the real user");
+        assert_eq!(
+            real,
+            (
+                Some("2026-09-05T00:00:00.000Z".to_string()),
+                "2026-09-04T11:00:00.000Z".to_string(),
+                "PENDING".to_string()
+            ),
+            "a strictly newer anonymous row overwrites the stored one, and is reported \
+             PENDING because the server has never seen this value under this account"
+        );
+
+        let anon = db
+            .with(|connection| Ok(stored_row(connection, ANONYMOUS_USER, "l1")))
+            .expect("query");
+        assert_eq!(
+            anon, None,
+            "the winning anonymous row is merged in, not left behind as a second copy"
+        );
+    }
+
+    #[test]
+    fn a_second_different_sign_in_finds_nothing_left_to_adopt() {
+        let db = Arc::new(Db::new(seeded()));
+
+        adopt(&db, "first-account");
+        adopt(&db, "second-account");
+
+        for lesson_id in ["l1", "l2", "l3"] {
+            let owned_by_second = db
+                .with(|connection| Ok(stored_row(connection, "second-account", lesson_id)))
+                .expect("query");
+            assert_eq!(
+                owned_by_second, None,
+                "a later sign-in by someone else must not inherit rows the first account already adopted"
+            );
+        }
+
+        let remaining_anonymous = db
+            .with(|connection| Ok(anonymous_row_count(connection)))
+            .expect("count");
+        assert_eq!(
+            remaining_anonymous, 0,
+            "adoption is a one-time event: a second sign-in finds nothing anonymous left"
+        );
+    }
+
+    #[test]
+    fn session_store_adopts_anonymous_progress_for_the_signed_in_user() {
+        let db = Arc::new(Db::new(seeded()));
+
+        store_session(
+            &db,
+            StoredSession {
+                user_id: "fresh-account".to_string(),
+                access_token: "a".to_string(),
+                refresh_token: "r".to_string(),
+                access_token_expires_at: None,
+            },
+        )
+        .expect("store session");
+
+        let l1 = db
+            .with(|connection| Ok(stored_row(connection, "fresh-account", "l1")))
+            .expect("query");
+        assert!(
+            l1.is_some(),
+            "storing a session adopts the anonymous rows in the same call, \
+             not just the active-user pointer"
+        );
+
+        let active_user = db.with(settings::active_user).expect("active user");
+        assert_eq!(
+            active_user, "fresh-account",
+            "the session itself is still stored alongside the adoption"
+        );
     }
 
     // -- QueueEntry.locales -------------------------------------------------

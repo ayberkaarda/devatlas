@@ -13,6 +13,8 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
 tauri-build = { version = "2.6.3", features = [] }
+# Parses `config/api-endpoints.json` at compile time; see build.rs.
+serde_json = "1.0"
 
 [dependencies]
 serde_json = "1.0"
@@ -36,6 +38,13 @@ sha2 = "0.10"
 uuid = { version = "1", features = ["v7", "serde"] }
 chrono = { version = "0.4", default-features = false, features = ["clock", "serde", "std"] }
 
+# The updater ships on Windows and Linux, the two platforms this project
+# packages (see the phase 8 packaging plan); the crate does not support
+# mobile targets at all, so it is scoped out of any future mobile build
+# rather than left to fail there.
+[target.'cfg(any(target_os = "macos", windows, target_os = "linux"))'.dependencies]
+tauri-plugin-updater = "2"
+
 [dev-dependencies]
 tempfile = "3"
 # A real HTTP server on a real socket. The engine's contract is written in terms
@@ -43,3 +52,7 @@ tempfile = "3"
 # rolled fake of the client would only assert that the fake matches the test.
 wiremock = "0.6"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
+# The "test" feature unlocks `tauri::test` (MockRuntime, mock_builder, ...),
+# used only by the updater startup tests; the main `tauri` dependency above
+# keeps it off so it never reaches a release binary.
+tauri = { version = "2.11.3", features = ["test"] }
