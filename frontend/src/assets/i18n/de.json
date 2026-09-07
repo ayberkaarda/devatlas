@@ -119,6 +119,7 @@
       "PAUSED": "Pausiert",
       "PAUSED_INSUFFICIENT_STORAGE": "Pausiert (Speicherplatz reicht nicht aus)",
       "DOWNLOADED": "Heruntergeladen",
+      "NOT_DOWNLOADED": "Nicht heruntergeladen",
       "UPDATE_AVAILABLE": "Update verfügbar",
       "LOCAL_AHEAD": "Neuer als der Server",
       "LOCAL_AHEAD_HINT": "Ihre lokale Kopie ist neuer als die vom Server gemeldete Version. Sie wird nicht automatisch überschrieben.",

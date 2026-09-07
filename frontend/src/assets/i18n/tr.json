@@ -119,6 +119,7 @@
       "PAUSED": "Duraklatıldı",
       "PAUSED_INSUFFICIENT_STORAGE": "Duraklatıldı (depolama alanı yetersiz)",
       "DOWNLOADED": "İndirildi",
+      "NOT_DOWNLOADED": "İndirilmedi",
       "UPDATE_AVAILABLE": "Güncelleme var",
       "LOCAL_AHEAD": "Sunucudan daha yeni",
       "LOCAL_AHEAD_HINT": "Cihazınızdaki kopya sunucunun bildirdiğinden daha yeni. Otomatik olarak üzerine yazılmayacak.",

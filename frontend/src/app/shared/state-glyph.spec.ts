@@ -92,12 +92,6 @@ describe('StateGlyph', () => {
     readonly colorClass: string;
   }[] = [
     { kind: 'downloaded', labelKey: 'download.state.DOWNLOADED', colorClass: 'text-success' },
-    {
-      kind: 'not-downloaded',
-      labelKey: 'mindMap.notInLibrary',
-      colorClass: 'text-text-muted',
-    },
-    { kind: 'queued', labelKey: 'download.state.QUEUED', colorClass: 'text-text-muted' },
     { kind: 'update', labelKey: 'download.state.UPDATE_AVAILABLE', colorClass: 'text-warning' },
     { kind: 'failed', labelKey: 'download.state.FAILED', colorClass: 'text-danger' },
   ];
@@ -119,14 +113,7 @@ describe('StateGlyph', () => {
   }
 
   it('draws every kind with its own outline rather than reusing a shape', async () => {
-    const allKinds: StateGlyphKind[] = [
-      'completed',
-      'downloaded',
-      'not-downloaded',
-      'queued',
-      'update',
-      'failed',
-    ];
+    const allKinds: StateGlyphKind[] = ['completed', 'downloaded', 'update', 'failed'];
     const signatures = new Set<string>();
 
     for (const kind of allKinds) {

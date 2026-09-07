@@ -119,6 +119,7 @@
       "PAUSED": "Paused",
       "PAUSED_INSUFFICIENT_STORAGE": "Paused (not enough storage)",
       "DOWNLOADED": "Downloaded",
+      "NOT_DOWNLOADED": "Not downloaded",
       "UPDATE_AVAILABLE": "Update available",
       "LOCAL_AHEAD": "Newer than the server",
       "LOCAL_AHEAD_HINT": "Your local copy is newer than what the server reports. It will not be overwritten automatically.",
