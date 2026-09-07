@@ -102,11 +102,18 @@
               @if (confirmDeleteId() === source.id) {
                 <div class="flex flex-wrap items-center gap-2">
                   <span class="text-sm">{{ 'admin.sources.confirmDelete' | translate }}</span>
+                  <!--
+                    Unavailable rather than disabled once the delete request
+                    is out: this button holds the focus at that moment (the
+                    confirmation moved it here), and a control that goes inert
+                    while focused hands the focus to the document body.
+                    `confirmDelete` refuses the second press itself.
+                  -->
                   <button
                     #confirmDeleteButton
                     type="button"
-                    class="rounded-md bg-danger px-2 py-1 text-xs font-medium text-danger-contrast disabled:opacity-50"
-                    [disabled]="busyId() === source.id"
+                    class="rounded-md bg-danger px-2 py-1 text-xs font-medium text-danger-contrast aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                    [attr.aria-disabled]="busyId() === source.id ? true : null"
                     (click)="confirmDelete(source)"
                   >
                     {{ 'admin.sources.confirmDeleteYes' | translate }}
@@ -120,11 +127,20 @@
                   </button>
                 </div>
               } @else {
+                <!--
+                  The three row actions are marked unavailable rather than
+                  disabled while any row on the table is busy. Whichever one
+                  was pressed is the control holding the keyboard focus, and a
+                  button that goes inert while focused drops that focus to the
+                  document body — from the middle of a long table, that means
+                  tabbing back in from the top of the page. Each handler
+                  re-checks `busyId` for itself, since these stay clickable.
+                -->
                 <div class="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
-                    class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-                    [disabled]="busyId() !== null"
+                    class="rounded-md border border-border px-2 py-1 text-xs text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                    [attr.aria-disabled]="busyId() !== null ? true : null"
                     (click)="toggleEnabled(source)"
                   >
                     {{
@@ -141,9 +157,9 @@
                   <button
                     #deleteButton
                     type="button"
-                    class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+                    class="rounded-md border border-border px-2 py-1 text-xs text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
                     [attr.data-delete-for]="source.id"
-                    [disabled]="busyId() !== null"
+                    [attr.aria-disabled]="busyId() !== null ? true : null"
                     (click)="requestDelete(source)"
                   >
                     {{ 'admin.sources.delete' | translate }}
@@ -156,8 +172,9 @@
                   -->
                   <button
                     type="button"
-                    class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover disabled:opacity-50"
-                    [disabled]="busyId() !== null"
+                    class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+                    [attr.data-fetch-for]="source.id"
+                    [attr.aria-disabled]="busyId() !== null ? true : null"
                     (click)="fetchNow(source)"
                   >
                     {{
@@ -170,9 +187,10 @@
                 </div>
                 <!--
                   The hint appears when the fetch starts, which is also when
-                  the button that was clicked goes disabled and stops being
-                  focused. Announcing it politely is the only way the person
-                  who pressed it learns that anything is happening.
+                  the button that was clicked goes unavailable. It keeps the
+                  focus, but nothing about it says out loud that a request is
+                  now running; announcing this politely is how the person who
+                  pressed it learns that anything is happening.
                 -->
                 <p
                   class="text-xs text-text-muted"

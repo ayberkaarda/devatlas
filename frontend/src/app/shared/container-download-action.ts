@@ -61,6 +61,16 @@ export class ContainerDownloadAction {
     ),
   );
 
+  /**
+   * True while one of this container's actions is in flight.
+   *
+   * The buttons reflect it as `aria-disabled` rather than as the `disabled`
+   * property, so the one that was just pressed keeps the keyboard focus
+   * instead of dropping it to the document body. That leaves them clickable,
+   * which is why every handler below re-checks this before doing any work:
+   * without those checks a second press would enqueue the whole container
+   * twice.
+   */
   protected readonly busy = signal(false);
   protected readonly actionErrorKey = signal<string | null>(null);
 
@@ -87,10 +97,16 @@ export class ContainerDownloadAction {
   }
 
   protected async onDownload(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     await this.run(() => this.store.enqueue(this.scope()));
   }
 
   protected async onPause(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     const batchId = this.activeBatchId();
     if (batchId) {
       await this.run(() => this.store.pause(batchId));
@@ -98,6 +114,9 @@ export class ContainerDownloadAction {
   }
 
   protected async onResume(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     const batchId = this.activeBatchId();
     if (batchId) {
       await this.run(() => this.store.resume(batchId));
@@ -105,6 +124,9 @@ export class ContainerDownloadAction {
   }
 
   protected async onCancel(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     const batchId = this.activeBatchId();
     if (batchId) {
       await this.run(() => this.store.cancel(batchId));
@@ -112,6 +134,9 @@ export class ContainerDownloadAction {
   }
 
   protected async onRetry(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     const activeEntityId = this.counts().activeEntityId;
     await this.run(() => this.store.retry(activeEntityId ?? undefined));
   }

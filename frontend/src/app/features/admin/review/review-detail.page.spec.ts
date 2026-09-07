@@ -187,7 +187,7 @@ describe('ReviewDetailPage', () => {
 
       // `reasonRequired('approve')` is false (`blog-lifecycle.ts`): an
       // administrator can approve with no note at all.
-      expect(approveButton.disabled).toBe(false);
+      expect(approveButton.getAttribute('aria-disabled')).toBeNull();
 
       api.transitionBlogPostCalls.mockResolvedValue(post({ status: 'PUBLISHED' }));
       approveButton.click();
@@ -198,18 +198,56 @@ describe('ReviewDetailPage', () => {
       expect('reason' in input).toBe(false);
     });
 
-    it('disables approve once a reason is started but is still too short', async () => {
+    it('marks approve unavailable once a reason is started but is still too short', async () => {
       const { fixture, textarea, approveButton } = await renderAsAdmin();
 
       type(fixture, textarea, 'short');
-      expect(approveButton.disabled).toBe(true);
+      expect(approveButton.getAttribute('aria-disabled')).toBe('true');
+    });
+
+    it('refuses an approve pressed while the reason is too short, and keeps its focus', async () => {
+      const { fixture, textarea, approveButton } = await renderAsAdmin();
+
+      type(fixture, textarea, 'short');
+      approveButton.focus();
+      approveButton.click();
+      await fixture.whenStable();
+
+      // The control is announced as unavailable, not made inert, so the click
+      // reaches the handler and the handler is what refuses it.
+      expect(api.transitionBlogPostCalls.calls.length).toBe(0);
+      // And because it is not inert it still holds the focus, instead of
+      // having dropped it to the document body.
+      expect(document.activeElement).toBe(approveButton);
+    });
+
+    it('keeps approve focused while its decision is in flight, and refuses a second press', async () => {
+      const { fixture, approveButton } = await renderAsAdmin();
+      // A transition that never settles, so the in-flight state can be
+      // inspected.
+      const transition = jest
+        .spyOn(api, 'transitionBlogPost')
+        .mockReturnValue(new Promise<never>(() => undefined));
+
+      approveButton.focus();
+      approveButton.click();
+      fixture.detectChanges();
+
+      expect(approveButton.getAttribute('aria-disabled')).toBe('true');
+      expect(document.activeElement).toBe(approveButton);
+
+      approveButton.click();
+      fixture.detectChanges();
+
+      expect(transition).toHaveBeenCalledTimes(1);
+      expect(document.activeElement).toBe(approveButton);
     });
 
     it('re-enables approve once the reason reaches the minimum length, and sends it', async () => {
       const { fixture, textarea, approveButton } = await renderAsAdmin();
 
       type(fixture, textarea, 'Version string verified against the release tag.');
-      expect(approveButton.disabled).toBe(false);
+      expect(approveButton.getAttribute('aria-disabled')).toBeNull();
 
       api.transitionBlogPostCalls.mockResolvedValue(post({ status: 'PUBLISHED' }));
       approveButton.click();
@@ -225,20 +263,20 @@ describe('ReviewDetailPage', () => {
       ]);
     });
 
-    it('keeps reject disabled with an empty reason, unlike approve', async () => {
+    it('keeps reject unavailable with an empty reason, unlike approve', async () => {
       const { approveButton, rejectButton } = await renderAsAdmin();
 
       // `reasonRequired('reject')` is true: a rejection with nothing
       // recorded in the audit log is exactly what this panel prevents.
-      expect(rejectButton.disabled).toBe(true);
-      expect(approveButton.disabled).toBe(false);
+      expect(rejectButton.getAttribute('aria-disabled')).toBe('true');
+      expect(approveButton.getAttribute('aria-disabled')).toBeNull();
     });
 
     it('enables reject once a real reason is entered, and sends it', async () => {
       const { fixture, textarea, rejectButton } = await renderAsAdmin();
 
       type(fixture, textarea, 'HTTP 404 from the verify URL, could not confirm the version.');
-      expect(rejectButton.disabled).toBe(false);
+      expect(rejectButton.getAttribute('aria-disabled')).toBeNull();
 
       api.transitionBlogPostCalls.mockResolvedValue(post({ status: 'REJECTED' }));
       rejectButton.click();

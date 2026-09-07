@@ -214,6 +214,9 @@ export class DownloadsPage {
   }
 
   protected async checkForUpdates(): Promise<void> {
+    if (this.checking()) {
+      return;
+    }
     this.checkErrorKey.set(null);
     try {
       await this.store.refreshLibrary();

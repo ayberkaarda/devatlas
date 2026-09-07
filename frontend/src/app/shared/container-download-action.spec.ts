@@ -107,6 +107,34 @@ describe('ContainerDownloadAction', () => {
     expect(fake.enqueued).toEqual([{ kind: 'TRACK', id: 'track-1' }]);
   });
 
+  it('keeps the container button focused while the enqueue is in flight, and refuses a second press', async () => {
+    // An enqueue that never settles, so the in-flight state can be inspected.
+    const enqueue = jest
+      .spyOn(fake, 'enqueueDownload')
+      .mockReturnValue(new Promise<never>(() => undefined));
+
+    const fixture = render(fourDownloaded, [mindMap('NOT_DOWNLOADED')]);
+    const button = wrapper(fixture).querySelector('button') as HTMLButtonElement;
+
+    button.focus();
+    button.click();
+    fixture.detectChanges();
+
+    expect(button.getAttribute('aria-disabled')).toBe('true');
+    // Unavailable, not inert: the button that was pressed keeps the focus
+    // instead of handing it to the document body.
+    expect(document.activeElement).toBe(button);
+
+    // The whole point of the handler's own guard — a control that is not
+    // inert still fires its click handler, and a second enqueue here would
+    // queue every lesson in the track twice.
+    button.click();
+    fixture.detectChanges();
+
+    expect(enqueue).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(button);
+  });
+
   it('reports the container complete once the mind map is stored too', () => {
     const fixture = render(fourDownloaded, [mindMap('DOWNLOADED')]);
     const element = wrapper(fixture);

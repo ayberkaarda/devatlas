@@ -75,6 +75,14 @@ export class LoginPage {
 
   protected async submit(event: Event): Promise<void> {
     event.preventDefault();
+    // The submit button is marked unavailable rather than disabled while a
+    // sign-in is in flight, so that it keeps the focus instead of dropping it
+    // to the document body. A control that is not inert still submits its form
+    // on Enter and still reacts to a click, so refusing the second attempt is
+    // this handler's job: without it the page would sign in twice.
+    if (this.submitting()) {
+      return;
+    }
     this.attempted.set(true);
     this.failure.set(null);
 

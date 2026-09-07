@@ -1,5 +1,16 @@
 @if (canDownload) {
   <!--
+    Every button below is marked unavailable with aria-disabled while an
+    action is in flight, rather than being given the disabled property. These
+    controls sit in long lesson lists, and the button that was just pressed is
+    the one holding the keyboard focus: made inert it would hand that focus to
+    the document body, leaving the reader to tab back in from the top of the
+    page to find the row they were on. Marked this way the button keeps the
+    focus, keeps its place in the tab order, and is still announced as
+    unavailable — and it stays clickable, so every handler in the component
+    opens by checking busy() for itself.
+  -->
+  <!--
     tabindex="-1" so that focus has somewhere to land when the confirmation
     closes: whichever button reappears depends on what the transfer did while
     the confirmation was open, and the row itself is the one thing that is
@@ -99,8 +110,8 @@
             -->
             <button
               type="button"
-              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.download' | translate: { title: title() }"
               (click)="onDownload()"
             >
@@ -111,8 +122,8 @@
           @case ('UPDATE_AVAILABLE') {
             <button
               type="button"
-              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.update' | translate: { title: title() }"
               (click)="onDownload()"
             >
@@ -121,8 +132,8 @@
             </button>
             <button
               type="button"
-              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.delete' | translate: { title: title() }"
               (click)="requestDelete()"
             >
@@ -134,8 +145,8 @@
             @if (!acquireOnly()) {
               <button
                 type="button"
-                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-                [disabled]="busy()"
+                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+                [attr.aria-disabled]="busy() ? true : null"
                 [title]="'download.hint.delete' | translate: { title: title() }"
                 (click)="requestDelete()"
               >
@@ -148,8 +159,8 @@
             @if (!acquireOnly()) {
               <button
                 type="button"
-                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-                [disabled]="busy()"
+                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+                [attr.aria-disabled]="busy() ? true : null"
                 [title]="'download.hint.delete' | translate: { title: title() }"
                 (click)="requestDelete()"
               >
@@ -162,8 +173,8 @@
             @if (!acquireOnly()) {
               <button
                 type="button"
-                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-                [disabled]="busy()"
+                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+                [attr.aria-disabled]="busy() ? true : null"
                 [title]="'download.hint.delete' | translate: { title: title() }"
                 (click)="requestDelete()"
               >
@@ -178,8 +189,8 @@
           @case ('PAUSED') {
             <button
               type="button"
-              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.resume' | translate: { title: title() }"
               (click)="onResume()"
             >
@@ -188,8 +199,8 @@
             </button>
             <button
               type="button"
-              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.cancel' | translate: { title: title() }"
               (click)="onCancel()"
             >
@@ -200,8 +211,8 @@
           @case ('FAILED') {
             <button
               type="button"
-              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.retry' | translate: { title: title() }"
               (click)="onRetry()"
             >
@@ -212,8 +223,8 @@
           @case ('VERIFYING') {
             <button
               type="button"
-              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.cancel' | translate: { title: title() }"
               (click)="onCancel()"
             >
@@ -224,8 +235,8 @@
           @default {
             <button
               type="button"
-              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.pause' | translate: { title: title() }"
               (click)="onPause()"
             >
@@ -234,8 +245,8 @@
             </button>
             <button
               type="button"
-              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-              [disabled]="busy()"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+              [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.cancel' | translate: { title: title() }"
               (click)="onCancel()"
             >

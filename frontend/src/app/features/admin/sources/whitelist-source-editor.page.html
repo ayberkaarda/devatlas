@@ -140,10 +140,19 @@
       }
     </p>
 
+    <!--
+      Unavailable while the save is in flight, not disabled. A `disabled`
+      button drops the focus it is holding onto the document body, and this is
+      the button that was just pressed. `aria-disabled` keeps it focusable and
+      in the tab order while announcing it as unavailable; because that does
+      not stop Enter from submitting the form either, `onSave` refuses a second
+      attempt itself.
+    -->
     <button
       type="submit"
-      class="w-fit rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast disabled:opacity-60"
-      [disabled]="saving()"
+      class="w-fit rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
+      data-testid="source-editor-save"
+      [attr.aria-disabled]="saving() ? true : null"
     >
       {{ (saving() ? 'admin.sources.editor.saving' : 'admin.sources.editor.save') | translate }}
     </button>

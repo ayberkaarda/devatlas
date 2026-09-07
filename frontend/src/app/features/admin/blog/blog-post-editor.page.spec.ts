@@ -136,18 +136,92 @@ describe('BlogPostEditorPage', () => {
     rejectButton.click();
     fixture.detectChanges();
 
-    const confirmButton = element
-      .querySelector('#editor-reason')!
-      .closest('div')!
-      .querySelector('button') as HTMLButtonElement;
-    expect(confirmButton.disabled).toBe(true);
+    const confirmButton = element.querySelector(
+      '[data-testid="editor-confirm-action"]',
+    ) as HTMLButtonElement;
+    // Unavailable is announced, not enforced by making the control inert —
+    // the control keeps the focus the reason panel just moved onto it.
+    expect(confirmButton.getAttribute('aria-disabled')).toBe('true');
 
     const textarea = element.querySelector('#editor-reason') as HTMLTextAreaElement;
     textarea.value = 'a very good reason';
     textarea.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 
-    expect(confirmButton.disabled).toBe(false);
+    expect(confirmButton.getAttribute('aria-disabled')).toBeNull();
+  });
+
+  it('refuses a confirm pressed while the reason is still too short, and keeps its focus', async () => {
+    api.getBlogPostCalls.mockResolvedValue(post({ status: 'PENDING_REVIEW' }));
+    const fixture = await render('post-1', 'ADMIN');
+    const element = fixture.nativeElement as HTMLElement;
+
+    (element.querySelector('[data-action="reject"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    const confirmButton = element.querySelector(
+      '[data-testid="editor-confirm-action"]',
+    ) as HTMLButtonElement;
+    confirmButton.focus();
+    confirmButton.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(api.transitionBlogPostCalls.calls.length).toBe(0);
+    expect(document.activeElement).toBe(confirmButton);
+  });
+
+  it('keeps the save button focused while a save is in flight, and refuses a second one', async () => {
+    api.getBlogPostCalls.mockResolvedValue(post({ slug: 'existing', title: 'Existing' }));
+    // An update that never settles, so the in-flight state can be inspected.
+    const update = jest
+      .spyOn(api, 'updateBlogPost')
+      .mockReturnValue(new Promise<never>(() => undefined));
+
+    const fixture = await render('post-1', 'ADMIN');
+    const element = fixture.nativeElement as HTMLElement;
+
+    const save = element.querySelector('[data-testid="editor-save"]') as HTMLButtonElement;
+    save.focus();
+    const form = element.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+    fixture.detectChanges();
+
+    expect(save.getAttribute('aria-disabled')).toBe('true');
+    expect(document.activeElement).toBe(save);
+
+    // `aria-disabled` leaves the form submittable by Enter, so the handler
+    // has to refuse the second attempt itself.
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+    fixture.detectChanges();
+
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(save);
+  });
+
+  it('keeps a lifecycle action button focused while its transition runs, and refuses a second press', async () => {
+    api.getBlogPostCalls.mockResolvedValue(post({ status: 'PENDING_REVIEW', source: 'MANUAL' }));
+    // A transition that never settles, so the in-flight state can be inspected.
+    const transition = jest
+      .spyOn(api, 'transitionBlogPost')
+      .mockReturnValue(new Promise<never>(() => undefined));
+
+    const fixture = await render('post-1', 'ADMIN');
+    const element = fixture.nativeElement as HTMLElement;
+
+    const approve = element.querySelector('[data-action="approve"]') as HTMLButtonElement;
+    approve.focus();
+    approve.click();
+    fixture.detectChanges();
+
+    expect(approve.getAttribute('aria-disabled')).toBe('true');
+    expect(document.activeElement).toBe(approve);
+
+    approve.click();
+    fixture.detectChanges();
+
+    expect(transition).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(approve);
   });
 
   it('preserves form values and refreshes the version on a VERSION_CONFLICT', async () => {

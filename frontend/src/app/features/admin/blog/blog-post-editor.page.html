@@ -41,6 +41,17 @@
     by this component, rather than two that differ by how the value is wrong.
   -->
   <form class="mt-6 flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); onSave()">
+    <!--
+      The four text fields below (slug, title, source URL, body) keep the
+      `disabled` property rather than switching to `aria-disabled`, unlike
+      every button on this screen. `aria-disabled` is an announcement, not a
+      behaviour: it leaves a text field fully editable, so a field marked that
+      way would still accept typing that the save then silently discards.
+      These fields also go unavailable because of what the signed-in role may
+      change about this post, which is settled before the screen renders and
+      does not flip while someone is typing in them — so the focus loss that
+      makes `disabled` wrong on an in-flight button does not arise here.
+    -->
     <div class="flex flex-col gap-1">
       <label class="text-sm font-medium" for="editor-slug">{{
         'admin.editor.slug' | translate
@@ -187,10 +198,19 @@
     </p>
 
     @if (formEditable()) {
+      <!--
+        Unavailable while the save is in flight, not disabled. A `disabled`
+        button drops the focus it is holding onto the document body, and this
+        is the button someone has just pressed. `aria-disabled` keeps it
+        focusable, in the tab order and announced as unavailable; the submit
+        handler refuses a second attempt itself, which it has to, because
+        unlike `disabled` this does not stop Enter from submitting the form.
+      -->
       <button
         type="submit"
-        class="w-fit rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast disabled:opacity-60"
-        [disabled]="saving()"
+        class="w-fit rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
+        data-testid="editor-save"
+        [attr.aria-disabled]="saving() ? true : null"
       >
         {{ (saving() ? 'admin.editor.saving' : 'admin.editor.save') | translate }}
       </button>
@@ -234,10 +254,18 @@
             step cannot also claim the page's one primary tier.
           -->
           <div class="mt-2 flex gap-2">
+            <!--
+              Unavailable rather than disabled, so that it keeps focus when the
+              reason grows long enough and again when the transition starts.
+              The hover tone is suppressed in that state, because a control
+              that lights up under the pointer while refusing the click reads
+              as available. `confirmPendingAction` re-checks both conditions.
+            -->
             <button
               type="button"
-              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover disabled:opacity-50"
-              [disabled]="transitioning() || reasonTooShort()"
+              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              data-testid="editor-confirm-action"
+              [attr.aria-disabled]="transitioning() || reasonTooShort() ? true : null"
               (click)="confirmPendingAction()"
             >
               {{ 'admin.editor.confirmAction' | translate }}
@@ -254,11 +282,17 @@
       } @else {
         <div #actionGroup class="mt-3 flex flex-wrap gap-2">
           @for (action of actions(); track action) {
+            <!--
+              Unavailable rather than disabled while a transition runs: the
+              button that was just pressed is the one that would go inert, and
+              it would take the keyboard focus to the document body with it.
+              `onAction` refuses to start a second transition itself.
+            -->
             <button
               type="button"
-              class="rounded-md border border-border px-3 py-2 text-sm text-text disabled:opacity-50"
+              class="rounded-md border border-border px-3 py-2 text-sm text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
               [attr.data-action]="action"
-              [disabled]="transitioning()"
+              [attr.aria-disabled]="transitioning() ? true : null"
               (click)="onAction(action)"
             >
               {{ 'admin.post.action.' + action | translate }}

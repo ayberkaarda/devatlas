@@ -84,10 +84,18 @@ export class ReviewDetailPage {
     return length < MIN_REASON_LENGTH;
   }
 
+  /**
+   * Whether the approve control is unavailable — reflected on the button as
+   * `aria-disabled` rather than as the `disabled` property, so that pressing
+   * it does not hand the keyboard focus to the document body. The control
+   * therefore stays clickable, and `approve()` re-checks this before doing
+   * any work.
+   */
   protected readonly approveDisabled = computed(
     () => this.submitting() || this.reasonInvalidFor('approve'),
   );
 
+  /** As `approveDisabled`, for the reject control. */
   protected readonly rejectDisabled = computed(
     () => this.submitting() || this.reasonInvalidFor('reject'),
   );
@@ -128,10 +136,16 @@ export class ReviewDetailPage {
   protected readonly outcomeKey = signal<string | null>(null);
 
   protected async approve(): Promise<void> {
+    if (this.approveDisabled()) {
+      return;
+    }
     await this.transition('approve');
   }
 
   protected async reject(): Promise<void> {
+    if (this.rejectDisabled()) {
+      return;
+    }
     await this.transition('reject');
   }
 

@@ -170,6 +170,54 @@ describe('WhitelistSourceListPage', () => {
     expect(document.activeElement).toBe(element.querySelector('[data-delete-for="source-1"]'));
   });
 
+  it('keeps the fetch button focused while its fetch runs, and refuses a second press', async () => {
+    const fixture = await render();
+    const element = fixture.nativeElement as HTMLElement;
+    // A fetch that never settles, so the in-flight state can be inspected —
+    // a real manual fetch runs the whole ingest cycle and can take a minute.
+    const fetchNow = jest
+      .spyOn(api, 'fetchSourceNow')
+      .mockReturnValue(new Promise<never>(() => undefined));
+
+    const button = element.querySelector('[data-fetch-for="source-1"]') as HTMLButtonElement;
+    button.focus();
+    button.click();
+    fixture.detectChanges();
+
+    expect(button.getAttribute('aria-disabled')).toBe('true');
+    // The row action is announced as unavailable, not made inert: it never
+    // handed the focus to the document body, which from the middle of a table
+    // would mean tabbing back in from the top of the page.
+    expect(document.activeElement).toBe(button);
+
+    button.click();
+    fixture.detectChanges();
+
+    expect(fetchNow).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(button);
+  });
+
+  it('refuses a delete pressed on another row while a fetch is running', async () => {
+    const fixture = await render();
+    const element = fixture.nativeElement as HTMLElement;
+    jest.spyOn(api, 'fetchSourceNow').mockReturnValue(new Promise<never>(() => undefined));
+
+    (element.querySelector('[data-fetch-for="source-1"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    const deleteButton = element.querySelector('[data-delete-for="source-1"]') as HTMLButtonElement;
+    expect(deleteButton.getAttribute('aria-disabled')).toBe('true');
+
+    deleteButton.focus();
+    deleteButton.click();
+    fixture.detectChanges();
+
+    // No confirmation opened: `requestDelete` refuses while another row action
+    // is out, which is what the button's unavailable state announces.
+    expect(element.querySelector('[data-delete-for="source-1"]')).toBe(deleteButton);
+    expect(document.activeElement).toBe(deleteButton);
+  });
+
   it('sends focus to the fetch result, which can arrive a minute after the click', async () => {
     const fixture = await render();
     const element = fixture.nativeElement as HTMLElement;

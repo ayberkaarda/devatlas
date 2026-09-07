@@ -263,6 +263,14 @@ export class BlogPostEditorPage {
   }
 
   protected async onAction(action: LifecycleAction): Promise<void> {
+    // The action buttons are marked unavailable rather than disabled while a
+    // transition runs, so the one that was pressed keeps the focus instead of
+    // dropping it to the document body. A control that is not inert still
+    // fires its click handler, so refusing the second press is this method's
+    // job.
+    if (this.transitioning()) {
+      return;
+    }
     this.transitionFailureKey.set(null);
     if (reasonRequired(action)) {
       this.pendingAction.set(action);
@@ -274,7 +282,11 @@ export class BlogPostEditorPage {
 
   protected async confirmPendingAction(): Promise<void> {
     const action = this.pendingAction();
-    if (action === null || this.reasonTooShort()) {
+    // Both halves of what the button's unavailable state reflects, checked
+    // here as well: the button stays clickable in that state so that it does
+    // not drop the focus, which makes this the only thing standing between a
+    // second press and a second transition request.
+    if (action === null || this.transitioning() || this.reasonTooShort()) {
       return;
     }
     await this.runAction(action, this.reasonDraft().trim());
@@ -287,6 +299,13 @@ export class BlogPostEditorPage {
   }
 
   protected async onSave(): Promise<void> {
+    // The save button is marked unavailable rather than disabled while a save
+    // is in flight, so that it keeps the focus. Unlike `disabled` that does
+    // not stop Enter from submitting the form, so this early return is what
+    // prevents a second save request going out on top of the first.
+    if (this.saving()) {
+      return;
+    }
     this.attempted.set(true);
     if (!this.formValid()) {
       return;

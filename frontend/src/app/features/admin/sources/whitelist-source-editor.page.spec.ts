@@ -106,6 +106,37 @@ describe('WhitelistSourceEditorPage', () => {
     expect(api.createSourceCalls.calls.length).toBe(0);
   });
 
+  it('keeps the save button focused while a save is in flight, and refuses a second one', async () => {
+    const fixture = await renderCreateForm();
+    const element = fixture.nativeElement as HTMLElement;
+    // A create that never settles, so the in-flight state can be inspected.
+    const create = jest
+      .spyOn(api, 'createSource')
+      .mockReturnValue(new Promise<never>(() => undefined));
+
+    setValue(element, 'source-editor-name', 'Spring Blog');
+    setValue(element, 'source-editor-feed-url', 'https://spring.io/blog.atom');
+    setValue(element, 'source-editor-verify-url-pattern', 'https://spring.io/blog/{version}');
+
+    const save = element.querySelector('[data-testid="source-editor-save"]') as HTMLButtonElement;
+    save.focus();
+    submit(element);
+    fixture.detectChanges();
+
+    expect(save.getAttribute('aria-disabled')).toBe('true');
+    // Unavailable, not inert: the focus is still on the button that was
+    // pressed rather than back on the document body.
+    expect(document.activeElement).toBe(save);
+
+    // `aria-disabled` leaves the form submittable by Enter, so the handler
+    // has to refuse the second attempt itself.
+    submit(element);
+    fixture.detectChanges();
+
+    expect(create).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(save);
+  });
+
   it('accepts a valid form and creates the source', async () => {
     const fixture = await renderCreateForm();
     const element = fixture.nativeElement as HTMLElement;

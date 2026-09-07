@@ -122,6 +122,35 @@ describe('LoginPage', () => {
     expect(navigations).toEqual(['/']);
   });
 
+  it('keeps the submit button focused while a sign-in is in flight, and refuses a second one', async () => {
+    // A sign-in that never settles, so the in-flight state can be inspected.
+    const signIn = jest
+      .spyOn(session, 'signIn')
+      .mockReturnValue(new Promise<void>(() => undefined));
+
+    const fixture = await render();
+    const element = fixture.nativeElement as HTMLElement;
+    fill(fixture, 'eda@example.com', 'kayseri-uzun-parola-2026');
+
+    const button = element.querySelector('[data-testid="login-submit"]') as HTMLButtonElement;
+    button.focus();
+    element.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true }));
+    fixture.detectChanges();
+
+    expect(button.getAttribute('aria-disabled')).toBe('true');
+    // The button is unavailable, not inert: it never handed the focus to the
+    // document body, which is where a `disabled` button leaves it.
+    expect(document.activeElement).toBe(button);
+
+    // `aria-disabled` does not stop Enter from submitting the form, so the
+    // handler has to refuse the second attempt itself.
+    element.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true }));
+    fixture.detectChanges();
+
+    expect(signIn).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(button);
+  });
+
   it('explains a refused sign-in through the error catalogue, never the server text', async () => {
     jest
       .spyOn(session, 'signIn')

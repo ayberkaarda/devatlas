@@ -76,6 +76,16 @@ export class LessonDownloadControls {
     contentAvailability(this.localOverride() ?? this.baseAvailability(), this.transfer()),
   );
 
+  /**
+   * True while one of this row's actions is in flight.
+   *
+   * The buttons reflect it as `aria-disabled` rather than as the `disabled`
+   * property, so the one that was just pressed keeps the keyboard focus
+   * instead of dropping it to the document body. That leaves them clickable,
+   * which is why every handler below re-checks this before doing any work:
+   * without those checks the state would be an announcement with nothing
+   * behind it, and a second press would start a second transfer.
+   */
   protected readonly busy = signal(false);
   protected readonly actionErrorKey = signal<string | null>(null);
   protected readonly confirmingDelete = signal(false);
@@ -122,10 +132,16 @@ export class LessonDownloadControls {
   }
 
   protected async onDownload(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     await this.run(() => this.store.enqueue({ kind: 'LESSON', id: this.lessonId() }));
   }
 
   protected async onPause(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     const batchId = this.store.batchIdFor(this.lessonId());
     if (batchId) {
       await this.run(() => this.store.pause(batchId));
@@ -133,6 +149,9 @@ export class LessonDownloadControls {
   }
 
   protected async onResume(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     const batchId = this.store.batchIdFor(this.lessonId());
     if (batchId) {
       await this.run(() => this.store.resume(batchId));
@@ -140,6 +159,9 @@ export class LessonDownloadControls {
   }
 
   protected async onCancel(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     const batchId = this.store.batchIdFor(this.lessonId());
     if (batchId) {
       await this.run(() => this.store.cancel(batchId));
@@ -147,10 +169,16 @@ export class LessonDownloadControls {
   }
 
   protected async onRetry(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
     await this.run(() => this.store.retry(this.lessonId()));
   }
 
   protected requestDelete(): void {
+    if (this.busy()) {
+      return;
+    }
     this.confirmingDelete.set(true);
   }
 

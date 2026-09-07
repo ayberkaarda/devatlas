@@ -266,6 +266,32 @@ describe('DownloadsPage', () => {
     expect(document.activeElement).toBe(element.querySelector('[data-testid="lesson-delete"]'));
   });
 
+  it('keeps "check for updates" focused while the check runs, and refuses a second press', async () => {
+    // A refresh that never settles, so the in-flight state can be inspected.
+    const refresh = jest
+      .spyOn(fake, 'refreshLibrary')
+      .mockReturnValue(new Promise<never>(() => undefined));
+
+    const fixture = await render();
+    const element = fixture.nativeElement as HTMLElement;
+
+    const button = element.querySelector('[data-testid="check-for-updates"]') as HTMLButtonElement;
+    button.focus();
+    button.click();
+    fixture.detectChanges();
+
+    expect(button.getAttribute('aria-disabled')).toBe('true');
+    // Unavailable, not inert: the button that was just pressed still holds
+    // the focus rather than having dropped it to the document body.
+    expect(document.activeElement).toBe(button);
+
+    button.click();
+    fixture.detectChanges();
+
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(button);
+  });
+
   it('names the track delete control with the words on it plus what it deletes', async () => {
     rows = [queueEntry({ trackId: 'track-1', trackTitle: 'Angular Fundamentals' })];
     const element = (await render()).nativeElement as HTMLElement;

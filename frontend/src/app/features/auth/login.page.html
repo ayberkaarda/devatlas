@@ -54,10 +54,21 @@
       </div>
     }
 
+    <!--
+      Unavailable while a sign-in is in flight, not disabled. A `disabled`
+      button drops the focus it is holding onto the document body, which is
+      exactly where the focus is when someone presses this: they would have to
+      tab in from the top of the page to reach anything again. `aria-disabled`
+      keeps the button focusable and in the tab order and still announces it as
+      unavailable, and the submit handler refuses a second attempt itself —
+      which it has to, because unlike `disabled` this does not stop Enter from
+      submitting the form.
+    -->
     <button
-      class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast disabled:opacity-60"
+      class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
       type="submit"
-      [disabled]="submitting()"
+      data-testid="login-submit"
+      [attr.aria-disabled]="submitting() ? true : null"
     >
       {{ (submitting() ? 'auth.submitting' : 'auth.submit') | translate }}
     </button>

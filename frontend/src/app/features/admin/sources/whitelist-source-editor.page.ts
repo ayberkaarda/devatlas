@@ -156,6 +156,14 @@ export class WhitelistSourceEditorPage {
   }
 
   protected async onSave(): Promise<void> {
+    // The save button is marked unavailable rather than disabled while a save
+    // is in flight, so that it keeps the focus instead of dropping it to the
+    // document body. A control that is not inert still submits its form on
+    // Enter, so this early return is what stops a second request going out on
+    // top of the first.
+    if (this.saving()) {
+      return;
+    }
     this.attempted.set(true);
     if (!this.formValid()) {
       return;

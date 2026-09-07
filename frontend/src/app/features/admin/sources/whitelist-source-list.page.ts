@@ -152,7 +152,19 @@ export class WhitelistSourceListPage {
     void this.load();
   }
 
+  /**
+   * The row actions are marked unavailable with `aria-disabled` rather than
+   * with the `disabled` property while one of them runs, so that the button
+   * just pressed keeps the keyboard focus instead of dropping it to the
+   * document body. That leaves them clickable, so each handler below opens
+   * with the same check the attribute reflects; without it, "unavailable"
+   * would be an announcement with nothing behind it and a second press would
+   * start a second request.
+   */
   protected async toggleEnabled(source: WhitelistSource): Promise<void> {
+    if (this.busyId() !== null) {
+      return;
+    }
     this.busyId.set(source.id);
     this.rowErrorKey.set(null);
     try {
@@ -169,6 +181,9 @@ export class WhitelistSourceListPage {
   }
 
   protected requestDelete(source: WhitelistSource): void {
+    if (this.busyId() !== null) {
+      return;
+    }
     this.confirmDeleteId.set(source.id);
     this.rowErrorKey.set(null);
     this.parentNotEmptyId.set(null);
@@ -180,6 +195,11 @@ export class WhitelistSourceListPage {
   }
 
   protected async confirmDelete(source: WhitelistSource): Promise<void> {
+    // The same condition the confirm button's `aria-disabled` reflects: its
+    // own row's request is already out.
+    if (this.busyId() === source.id) {
+      return;
+    }
     this.busyId.set(source.id);
     this.rowErrorKey.set(null);
     try {
@@ -198,6 +218,9 @@ export class WhitelistSourceListPage {
   }
 
   protected async fetchNow(source: WhitelistSource): Promise<void> {
+    if (this.busyId() !== null) {
+      return;
+    }
     this.busyId.set(source.id);
     this.rowErrorKey.set(null);
     this.lastFetch.set(null);

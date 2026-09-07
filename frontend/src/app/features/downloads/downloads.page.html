@@ -58,11 +58,18 @@
         or batch action that reads, cancels, retries or removes something
         already in progress or already stored, not the thing that starts a
         new piece of work.
+
+        It is marked unavailable rather than disabled while the check runs.
+        This is the button that was just pressed, and a control that goes
+        inert while focused hands the keyboard focus to the document body;
+        `checkForUpdates` refuses the second press itself, since the button
+        stays clickable.
       -->
       <button
         type="button"
-        class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast hover:opacity-90 disabled:opacity-50"
-        [disabled]="checking()"
+        class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast hover:opacity-90 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:opacity-50"
+        data-testid="check-for-updates"
+        [attr.aria-disabled]="checking() ? true : null"
         (click)="checkForUpdates()"
       >
         {{ (checking() ? 'downloads.checking' : 'downloads.checkForUpdates') | translate }}

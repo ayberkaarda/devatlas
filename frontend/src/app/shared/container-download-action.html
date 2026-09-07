@@ -1,4 +1,13 @@
 @if (canDownload) {
+  <!--
+    Every button below is marked unavailable with aria-disabled while an
+    action is in flight, rather than being given the disabled property. A
+    button made inert while it holds the keyboard focus hands that focus to
+    the document body, and the button that was just pressed is exactly the one
+    holding it. Marked this way it keeps the focus and its place in the tab
+    order and is still announced as unavailable — and it stays clickable, so
+    every handler in the component opens by checking busy() for itself.
+  -->
   <div class="flex flex-wrap items-center gap-2" data-testid="container-download-action">
     @if (counts().totalCount > 0) {
       <span class="text-xs text-text-muted">
@@ -49,8 +58,8 @@
         -->
         <button
           type="button"
-          class="rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-contrast hover:opacity-90 disabled:opacity-50"
-          [disabled]="busy()"
+          class="rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-contrast hover:opacity-90 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:opacity-50"
+          [attr.aria-disabled]="busy() ? true : null"
           [title]="
             (counts().updateAvailableCount > 0 ? 'download.hint.update' : 'download.hint.download')
               | translate: { title: title() }
@@ -79,8 +88,8 @@
         @case ('PAUSED') {
           <button
             type="button"
-            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-            [disabled]="busy()"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+            [attr.aria-disabled]="busy() ? true : null"
             [title]="'download.hint.resume' | translate: { title: title() }"
             (click)="onResume()"
           >
@@ -89,8 +98,8 @@
           </button>
           <button
             type="button"
-            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-            [disabled]="busy()"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+            [attr.aria-disabled]="busy() ? true : null"
             [title]="'download.hint.cancel' | translate: { title: title() }"
             (click)="onCancel()"
           >
@@ -101,8 +110,8 @@
         @case ('FAILED') {
           <button
             type="button"
-            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-            [disabled]="busy()"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+            [attr.aria-disabled]="busy() ? true : null"
             [title]="'download.hint.retry' | translate: { title: title() }"
             (click)="onRetry()"
           >
@@ -113,8 +122,8 @@
         @default {
           <button
             type="button"
-            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-            [disabled]="busy()"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+            [attr.aria-disabled]="busy() ? true : null"
             [title]="'download.hint.pause' | translate: { title: title() }"
             (click)="onPause()"
           >
@@ -123,8 +132,8 @@
           </button>
           <button
             type="button"
-            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
-            [disabled]="busy()"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent aria-disabled:hover:text-text-muted"
+            [attr.aria-disabled]="busy() ? true : null"
             [title]="'download.hint.cancel' | translate: { title: title() }"
             (click)="onCancel()"
           >

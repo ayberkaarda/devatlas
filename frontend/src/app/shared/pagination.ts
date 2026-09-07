@@ -21,6 +21,15 @@ import { TranslatePipe } from '@ngx-translate/core';
  * gehen" while "Previous" is a substring of "Go to the previous page". Leaving
  * the visible word as the name makes the guarantee hold in every locale
  * without asking translators to preserve a substring.
+ *
+ * At either bound the button is marked `aria-disabled` rather than given the
+ * `disabled` property. A button that goes inert while it holds the keyboard
+ * focus hands that focus to the document body, and paging to the last page is
+ * precisely the moment Next becomes unavailable under someone's finger — they
+ * would lose their place at the bottom of a list and have to tab in from the
+ * top of the page. Marked this way it stays focusable, stays in the tab order
+ * and is still announced as unavailable; refusing the press is then the
+ * handlers' own job, and they do it on their first line.
  */
 @Component({
   selector: 'app-pagination',
@@ -33,8 +42,9 @@ import { TranslatePipe } from '@ngx-translate/core';
     >
       <button
         type="button"
-        class="rounded-md border border-border px-3 py-2 text-sm text-text disabled:cursor-not-allowed disabled:opacity-50"
-        [disabled]="page() <= 0"
+        data-testid="pagination-previous"
+        class="rounded-md border border-border px-3 py-2 text-sm text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+        [attr.aria-disabled]="page() <= 0 ? true : null"
         [title]="'admin.common.previousPage' | translate"
         (click)="goToPrevious()"
       >
@@ -50,8 +60,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 
       <button
         type="button"
-        class="rounded-md border border-border px-3 py-2 text-sm text-text disabled:cursor-not-allowed disabled:opacity-50"
-        [disabled]="isOnLastPage()"
+        data-testid="pagination-next"
+        class="rounded-md border border-border px-3 py-2 text-sm text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+        [attr.aria-disabled]="isOnLastPage() ? true : null"
         [title]="'admin.common.nextPage' | translate"
         (click)="goToNext()"
       >
@@ -71,15 +82,26 @@ export class Pagination {
   protected readonly displayTotalPages = computed(() => Math.max(this.totalPages(), 1));
   protected readonly isOnLastPage = computed(() => this.page() + 1 >= this.displayTotalPages());
 
+  /**
+   * Refuses the press the button's `aria-disabled` announces as unavailable,
+   * stated as the first thing this method does rather than inferred from the
+   * arithmetic that follows. The bound is checked here and nowhere else,
+   * which matters because the button is deliberately not `disabled` — see
+   * the note on the template above — and therefore still fires this handler
+   * on the first page.
+   */
   protected goToPrevious(): void {
-    if (this.page() > 0) {
-      this.pageChange.emit(this.page() - 1);
+    if (this.page() <= 0) {
+      return;
     }
+    this.pageChange.emit(this.page() - 1);
   }
 
+  /** As `goToPrevious`, at the other bound. */
   protected goToNext(): void {
-    if (!this.isOnLastPage()) {
-      this.pageChange.emit(this.page() + 1);
+    if (this.isOnLastPage()) {
+      return;
     }
+    this.pageChange.emit(this.page() + 1);
   }
 }
