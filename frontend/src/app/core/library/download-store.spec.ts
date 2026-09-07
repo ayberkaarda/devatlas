@@ -39,6 +39,8 @@ function queueEntry(overrides: Partial<QueueEntry> = {}): QueueEntry {
     pauseReason: null,
     errorCode: null,
     locales: [],
+    trackId: 'track-1',
+    trackTitle: 'Angular fundamentals',
     ...overrides,
   };
 }

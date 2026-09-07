@@ -1,6 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { TranslateService, provideTranslateService } from '@ngx-translate/core';
+import {
+  TranslateService,
+  provideTranslateService,
+  type TranslationObject,
+} from '@ngx-translate/core';
 
 import { FakeAdminApiClient } from '../../../../testing/fake-admin-api.client';
 import { FakeAuthSession } from '../../../../testing/fake-auth-session';
@@ -59,12 +63,12 @@ function setPendingTranslations(): void {
     'admin.post.action.unpublish': 'Unpublish',
     'admin.post.action.delete': 'Delete',
   };
-  const root: Record<string, unknown> = {};
+  const root: TranslationObject = {};
   for (const [key, value] of Object.entries(pairs)) {
     const parts = key.split('.');
-    let node = root;
+    let node: TranslationObject = root;
     for (let index = 0; index < parts.length - 1; index += 1) {
-      node = (node[parts[index]] ??= {}) as Record<string, unknown>;
+      node = (node[parts[index]] ??= {}) as TranslationObject;
     }
     node[parts.at(-1) as string] = value;
   }

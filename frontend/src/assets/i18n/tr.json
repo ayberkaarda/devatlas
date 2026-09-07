@@ -384,7 +384,11 @@
         "SOURCE_WHITELISTED": "Kaynak beyaz listede",
         "VERSION_CONFIRMED": "Sürüm doğrulandı",
         "HASH_NOT_SEEN": "İçerik yeni",
-        "CONTENT_SANITY": "İçerik bütünlük kontrolü"
+        "CONTENT_SANITY": "İçerik bütünlük kontrolü",
+        "ITEM_RECENT": "Öğe güncel",
+        "ITEM_FAILED": "Öğe işlendi",
+        "STABLE_RELEASE": "Sürüm kararlı",
+        "DRAFT_VALIDATION": "Taslak doğrulandı"
       }
     },
     "sourceUpdate": {

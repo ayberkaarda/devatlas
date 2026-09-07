@@ -4,6 +4,15 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "types": ["jest"],
+    /*
+     * The test runner compiles in memory, so this project is only ever
+     * type-checked from the command line. Without this, a plain
+     * `tsc -p tsconfig.spec.json` writes a .js file next to every source
+     * file it reaches; the emitted *.spec.js copies then match the
+     * runner's default pattern and the whole suite runs twice, against
+     * stale code.
+     */
+    "noEmit": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },

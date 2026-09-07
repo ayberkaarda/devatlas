@@ -247,9 +247,7 @@ describe('WebPlatformService', () => {
   it('throws rather than returning an empty success for a library operation', async () => {
     await expect(service.queueState()).rejects.toBeInstanceOf(UnsupportedOnWebError);
     await expect(service.refreshLibrary()).rejects.toBeInstanceOf(UnsupportedOnWebError);
-    await expect(service.enqueueDownload({ kind: 'TRACK', id: 'track-1' })).rejects.toBeInstanceOf(
-      UnsupportedOnWebError,
-    );
+    await expect(service.enqueueDownload()).rejects.toBeInstanceOf(UnsupportedOnWebError);
   });
 
   it('round-trips preferences through the key the pre-paint script reads', async () => {

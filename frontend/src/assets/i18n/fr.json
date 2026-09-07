@@ -384,7 +384,11 @@
         "SOURCE_WHITELISTED": "Source autorisée",
         "VERSION_CONFIRMED": "Version confirmée",
         "HASH_NOT_SEEN": "Contenu inédit",
-        "CONTENT_SANITY": "Contrôle de cohérence du contenu"
+        "CONTENT_SANITY": "Contrôle de cohérence du contenu",
+        "ITEM_RECENT": "Élément récent",
+        "ITEM_FAILED": "Élément traité",
+        "STABLE_RELEASE": "Publication stable",
+        "DRAFT_VALIDATION": "Brouillon validé"
       }
     },
     "sourceUpdate": {

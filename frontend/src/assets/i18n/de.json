@@ -384,7 +384,11 @@
         "SOURCE_WHITELISTED": "Quelle ist zugelassen",
         "VERSION_CONFIRMED": "Version bestätigt",
         "HASH_NOT_SEEN": "Inhalt ist neu",
-        "CONTENT_SANITY": "Inhaltsprüfung"
+        "CONTENT_SANITY": "Inhaltsprüfung",
+        "ITEM_RECENT": "Element ist aktuell",
+        "ITEM_FAILED": "Element verarbeitet",
+        "STABLE_RELEASE": "Release ist stabil",
+        "DRAFT_VALIDATION": "Entwurf validiert"
       }
     },
     "sourceUpdate": {

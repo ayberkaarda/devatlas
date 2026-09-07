@@ -384,7 +384,11 @@
         "SOURCE_WHITELISTED": "Source is whitelisted",
         "VERSION_CONFIRMED": "Version confirmed",
         "HASH_NOT_SEEN": "Content is new",
-        "CONTENT_SANITY": "Content sanity check"
+        "CONTENT_SANITY": "Content sanity check",
+        "ITEM_RECENT": "Item is recent",
+        "ITEM_FAILED": "Item processed",
+        "STABLE_RELEASE": "Release is stable",
+        "DRAFT_VALIDATION": "Draft validated"
       }
     },
     "sourceUpdate": {
