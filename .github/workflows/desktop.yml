@@ -234,6 +234,59 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
+      # The Linux artifact uploaded below grew from 467 MB to 838 MB across
+      # recent runs with no known cause, while the Windows growth over the
+      # same period is explained by newly-added updater artifacts. This step
+      # inventories what is actually sitting in the bundle directory right
+      # before it is uploaded, so the next size jump can be attributed to a
+      # leftover staging directory, a duplicated file, or unstripped debug
+      # information instead of guessed at from the outside. It runs even
+      # after a failed packaging step, because a run that fails late still
+      # produced bundles worth measuring. Its own failures must never fail
+      # the build -- a broken diagnostic is not a broken package -- so every
+      # command here is best effort and the step always exits successfully.
+      - name: Measure bundle contents
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          BUNDLE_DIR="desktop/src-tauri/target/debug/bundle"
+
+          if [ ! -d "$BUNDLE_DIR" ]; then
+            echo "no bundle directory at $BUNDLE_DIR, nothing to measure"
+            exit 0
+          fi
+
+          echo "## Sizes of bundle subdirectories and their entries"
+          du -h --max-depth=2 "$BUNDLE_DIR" 2>&1 | sort -k2 || echo "du failed"
+
+          echo
+          echo "## Files larger than 5 MB, largest first"
+          find "$BUNDLE_DIR" -type f -size +5M -printf '%s\t%p\n' 2>&1 \
+            | sort -rn \
+            | awk '{ printf "%.1f MB\t%s\n", $1 / 1024 / 1024, $2 }' \
+            || echo "find/sort/awk failed"
+
+          echo
+          echo "## Debug information in the built binary (Linux only -- on Windows it lives in a separate .pdb, so Windows cannot answer this)"
+          if [ "${RUNNER_OS:-}" = "Linux" ]; then
+            if command -v file >/dev/null 2>&1; then
+              for bin in desktop/src-tauri/target/debug/*; do
+                [ -f "$bin" ] && [ -x "$bin" ] || continue
+                echo "-- $bin --"
+                file "$bin" 2>&1
+                du -h "$bin" 2>&1
+              done
+            else
+              echo "'file' command not available on this runner, skipping"
+            fi
+          else
+            echo "skipped on ${RUNNER_OS:-unknown}"
+          fi
+
+          exit 0
+
       - name: Upload installers
         uses: actions/upload-artifact@v7
         with:
