@@ -29,7 +29,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # libayatana-appindicator3-dev and the older libappindicator3-dev declare
       # a mutual Conflicts, so asking for both leaves apt with no solution.
@@ -51,7 +51,7 @@ jobs:
       # The toolchain version comes from rust-toolchain.toml, which also pins
       # rustfmt and clippy, so it is not repeated here.
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -83,7 +83,7 @@ jobs:
     needs: check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # The desktop crate links against these even to run its unit and
       # integration tests, because it is a Tauri application crate.
@@ -102,7 +102,7 @@ jobs:
             libssl-dev
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
@@ -110,7 +110,7 @@ jobs:
           cache-dependency-path: server/pom.xml
 
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -177,7 +177,7 @@ jobs:
         os: [windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
@@ -190,7 +190,7 @@ jobs:
             patchelf
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -199,7 +199,7 @@ jobs:
             desktop/package-lock.json
 
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -225,7 +225,7 @@ jobs:
         run: npx tauri build --debug
 
       - name: Upload installers
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bytelore-${{ matrix.os }}
           path: |

@@ -22,14 +22,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Reads .nvmrc so the runner uses the same Node — and therefore the same
       # npm major — that wrote package-lock.json. A lockfile written by a
       # different npm major is rejected here with "Missing: ... from lock file",
       # and the version cannot be recovered from the lockfile itself.
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -67,7 +67,7 @@ jobs:
 
       # The desktop workflow consumes this to package the application.
       - name: Upload desktop bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: frontend-dist-tauri
           path: frontend/dist/tauri
