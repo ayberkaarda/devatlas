@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A fixed-window counter kept in PostgreSQL.
@@ -52,10 +54,19 @@ public class FixedWindowRateLimiter {
    * anyway, and turning an infrastructure fault into a wall of 429s would mislead every client into
    * backing off from a server that is not actually busy.
    *
-   * @param bucketKey the caller's bucket, {@code "<scope>:<client ip>"}
+   * <p>The count is committed in a transaction of its own, suspending any transaction the caller is
+   * already inside. Without that, every limit enforced within a request's own transaction would be
+   * undone by that request failing -- and failing is exactly what the interesting requests do. A
+   * wrong password rolls back, so an attacker guessing passwords would be refunded every attempt
+   * and the budget would restrain nobody but the person typing correctly. Callers that hold no
+   * transaction, such as the filters, are unaffected beyond the cost of one short transaction.
+   *
+   * @param bucketKey the caller's bucket, {@code "<scope>:<key>"} -- a client address for the
+   *     anonymous families, a user id or a hashed email where the request has one
    * @param limit the number of requests allowed within one window
    * @param window the window length; the current window starts at the last multiple of it
    */
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Decision record(String bucketKey, int limit, Duration window) {
     Instant now = Instant.now(clock);
     Instant windowStart = floorTo(now, window);

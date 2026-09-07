@@ -77,6 +77,24 @@ bytelore:
     # a legitimate library download.
     manifest-per-minute: 60
     content-per-minute: 600
+    # Progress sync, per authenticated user and per direction. This family has a
+    # principal, so it is keyed by user id rather than by address: that neither
+    # punishes an office for sharing an exit address nor can be shed by moving to
+    # another network. The two directions hold separate budgets, so a device that
+    # polls for another device's progress cannot thereby lose its ability to
+    # upload its own.
+    sync-progress-per-hour: 120
+    # The five authentication budgets. Which layer enforces each one is decided
+    # by its key: register and logout are keyed by the client address alone and
+    # are refused in a filter before a body is parsed, while login (email plus
+    # address), refresh (user) and the password change (user) are keyed by
+    # something that only exists once the request has been parsed or the
+    # presented credential resolved.
+    login-per-15-minutes: 10
+    register-per-hour: 5
+    refresh-per-hour: 60
+    logout-per-hour: 60
+    password-change-per-hour: 5
 
   pipeline:
     # Every six hours, ShedLock'ed per whitelist source (§5.7 of the REST

@@ -1,5 +1,9 @@
 package dev.bytelore.server.config;
 
+import dev.bytelore.server.ratelimit.FixedWindowRateLimiter;
+import dev.bytelore.server.ratelimit.ProgressSyncRateLimitFilter;
+import dev.bytelore.server.ratelimit.RateLimitProperties;
+import dev.bytelore.server.security.ErrorResponseWriter;
 import dev.bytelore.server.security.JwtAuthenticationFilter;
 import dev.bytelore.server.security.RestAccessDeniedHandler;
 import dev.bytelore.server.security.RestAuthenticationEntryPoint;
@@ -50,8 +54,17 @@ public class SecurityConfig {
       HttpSecurity http,
       JwtAuthenticationFilter jwtAuthenticationFilter,
       RestAuthenticationEntryPoint authenticationEntryPoint,
-      RestAccessDeniedHandler accessDeniedHandler)
+      RestAccessDeniedHandler accessDeniedHandler,
+      FixedWindowRateLimiter rateLimiter,
+      RateLimitProperties rateLimitProperties,
+      ErrorResponseWriter errorResponseWriter)
       throws Exception {
+    // Constructed here rather than declared as a bean on purpose. A Filter bean is picked up by
+    // the servlet container's own registration as well, which would run it a second time and,
+    // worse, run that copy ahead of authentication -- where the principal it keys on does not
+    // exist yet.
+    ProgressSyncRateLimitFilter progressSyncRateLimitFilter =
+        new ProgressSyncRateLimitFilter(rateLimiter, rateLimitProperties, errorResponseWriter);
     return http
         // No CSRF token machinery. Authenticated calls carry a bearer token in a header, which a
         // cross-site form cannot set; the one cookie in play is the refresh token, and it is
@@ -118,6 +131,9 @@ public class SecurityConfig {
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .accessDeniedHandler(accessDeniedHandler))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        // After authentication, because it keys its budget on the caller's user id. An
+        // unauthenticated request passes through untouched and is answered by the entry point.
+        .addFilterAfter(progressSyncRateLimitFilter, JwtAuthenticationFilter.class)
         .build();
   }
 

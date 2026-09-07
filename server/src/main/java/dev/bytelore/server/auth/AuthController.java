@@ -61,9 +61,16 @@ public class AuthController {
     return tokenResponse(outcome, isBodyDelivery(request.tokenDelivery()), HttpStatus.CREATED);
   }
 
+  /**
+   * Signs in. The client context is passed down because sign-in is throttled per email address and
+   * client address together (§3.6), and the address half of that key is a property of the
+   * connection rather than of the request body.
+   */
   @PostMapping("/login")
-  public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-    AuthService.AuthOutcome outcome = authService.login(request, request.deviceLabel());
+  public ResponseEntity<AuthResponse> login(
+      @Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+    AuthService.AuthOutcome outcome =
+        authService.login(request, request.deviceLabel(), clientContext(httpRequest));
     return tokenResponse(outcome, isBodyDelivery(request.tokenDelivery()), HttpStatus.OK);
   }
 

@@ -52,6 +52,24 @@ bytelore:
   rate-limit:
     manifest-per-minute: 1000000
     content-per-minute: 1000000
+    # Same reasoning, one key further in: the sync budget is keyed per user, and
+    # the suite's fixture accounts are reused across the classes that share a
+    # Spring context. A production-sized budget here would make a green run
+    # depend on how many sync calls the classes ahead of this one happened to
+    # make in the same hour. The limit itself is exercised by lowering this value
+    # for the duration of one test.
+    sync-progress-per-hour: 1000000
+    # Likewise effectively unlimited. The suite signs in as the seeded
+    # administrator from one address dozens of times across the classes that
+    # share a Spring context, which is well past a production sign-in budget;
+    # leaving the real numbers here would fail whichever class happened to run
+    # last. Each limit is exercised by a test that lowers its own budget and
+    # clears its own counter rows.
+    login-per-15-minutes: 1000000
+    register-per-hour: 1000000
+    refresh-per-hour: 1000000
+    logout-per-hour: 1000000
+    password-change-per-hour: 1000000
 
   pipeline:
     # Effectively unlimited, for the same reason as the rate-limit block above: the

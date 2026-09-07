@@ -8,13 +8,19 @@ import dev.bytelore.server.auth.dto.UserResponse;
 import dev.bytelore.server.auth.dto.UserSummaryResponse;
 import dev.bytelore.server.common.ApiException;
 import dev.bytelore.server.common.ErrorCode;
+import dev.bytelore.server.common.RateLimitedException;
 import dev.bytelore.server.common.UuidV7;
+import dev.bytelore.server.content.packaging.Sha256;
 import dev.bytelore.server.domain.Role;
 import dev.bytelore.server.domain.Theme;
 import dev.bytelore.server.domain.User;
 import dev.bytelore.server.domain.UserLocale;
+import dev.bytelore.server.ratelimit.FixedWindowRateLimiter;
+import dev.bytelore.server.ratelimit.RateLimitProperties;
 import dev.bytelore.server.repository.UserRepository;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
@@ -23,9 +29,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Registration, sign-in, token exchange, sign-out and the two self-service profile operations. */
+/**
+ * Registration, sign-in, token exchange, sign-out and the two self-service profile operations.
+ *
+ * <p>Three of the five authentication rate limits of §3.6 are enforced here rather than in a
+ * filter, because their keys do not exist until this layer runs: sign-in is keyed partly by an
+ * email address that is unparsed bytes at the filter boundary, and token exchange and password
+ * change are keyed by a user who is only known once the presented credential has been resolved. The
+ * two limits keyed purely by the connection are enforced before any of this, in {@code
+ * AnonymousAuthRateLimitFilter}.
+ */
 @Service
 public class AuthService {
+
+  private static final Duration LOGIN_WINDOW = Duration.ofMinutes(15);
+  private static final Duration HOURLY_WINDOW = Duration.ofHours(1);
 
   private final UserRepository users;
   private final RefreshTokenService refreshTokens;
@@ -33,6 +51,8 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
   private final UserMapper mapper;
   private final Clock clock;
+  private final FixedWindowRateLimiter rateLimiter;
+  private final RateLimitProperties rateLimits;
 
   /**
    * A hash of a value nobody knows, verified against when the email is unknown so that a failed
@@ -47,13 +67,17 @@ public class AuthService {
       JwtService jwt,
       PasswordEncoder passwordEncoder,
       UserMapper mapper,
-      Clock clock) {
+      Clock clock,
+      FixedWindowRateLimiter rateLimiter,
+      RateLimitProperties rateLimits) {
     this.users = users;
     this.refreshTokens = refreshTokens;
     this.jwt = jwt;
     this.passwordEncoder = passwordEncoder;
     this.mapper = mapper;
     this.clock = clock;
+    this.rateLimiter = rateLimiter;
+    this.rateLimits = rateLimits;
     this.timingEqualizationHash = passwordEncoder.encode(UUID.randomUUID().toString());
   }
 
@@ -95,9 +119,32 @@ public class AuthService {
     return issueSession(user, null, deviceLabel);
   }
 
+  /**
+   * Signs in, throttled per email address and client address together (§3.6).
+   *
+   * <p>The budget is spent before the password is checked, so a wrong guess costs an attempt. That
+   * is the entire point: a limit charged only on success would count the one caller who does not
+   * need limiting.
+   *
+   * <p>The email is hashed into the bucket key rather than written into it. Two reasons, and both
+   * would be found the hard way: the counter table's key column is far shorter than the 254
+   * characters an email address may occupy, so a long address would overflow it and -- because the
+   * limiter treats a database fault as "allow" -- would silently exempt itself; and a table of
+   * operational counters is no place to accumulate a list of which addresses people tried to sign
+   * in with.
+   */
   @Transactional
-  public AuthOutcome login(LoginRequest request, String deviceLabel) {
+  public AuthOutcome login(LoginRequest request, String deviceLabel, ClientContext context) {
     String email = normalizeEmail(request.email());
+    requireBudget(
+        "auth-login:%s:%s"
+            .formatted(
+                Sha256.hex(String.valueOf(email).getBytes(StandardCharsets.UTF_8)),
+                context.clientIp()),
+        rateLimits.getLoginPer15Minutes(),
+        LOGIN_WINDOW,
+        "Too many sign-in attempts for this account from this address; retry later.");
+
     User user = users.findByEmail(email).orElse(null);
     if (user == null) {
       passwordEncoder.matches(request.password(), timingEqualizationHash);
@@ -116,6 +163,14 @@ public class AuthService {
   public AuthOutcome refresh(String presentedRefreshToken, ClientContext context) {
     RefreshTokenService.RotationResult rotation =
         refreshTokens.rotate(presentedRefreshToken, context);
+    // Charged after the token resolves, because the contract keys this budget by user and there is
+    // no user before then. A presented token that resolves to nobody is refused by the rotation
+    // itself and never reaches a bucket.
+    requireBudget(
+        "auth-refresh:" + rotation.userId(),
+        rateLimits.getRefreshPerHour(),
+        HOURLY_WINDOW,
+        "Too many token exchanges for this account; retry later.");
     User user =
         users
             .findById(rotation.userId())
@@ -185,6 +240,15 @@ public class AuthService {
   @Transactional
   public void changePassword(
       UUID userId, ChangePasswordRequest request, String callerRefreshToken) {
+    // Before the current password is verified, so a wrong guess costs an attempt. This endpoint is
+    // reachable with nothing but a stolen access token, which makes it the cheapest place to
+    // brute-force a password that the API has.
+    requireBudget(
+        "auth-password:" + userId,
+        rateLimits.getPasswordChangePerHour(),
+        HOURLY_WINDOW,
+        "Too many password changes for this account; retry later.");
+
     User user = requireUser(userId);
     if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
       throw new ApiException(
@@ -215,6 +279,17 @@ public class AuthService {
     return users
         .findById(userId)
         .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND, "No such account."));
+  }
+
+  /**
+   * Spends one request from a bucket, or refuses with the wait in seconds. The counter commits in
+   * its own transaction, so an attempt still counts when the request it belongs to rolls back.
+   */
+  private void requireBudget(String bucketKey, int limit, Duration window, String message) {
+    FixedWindowRateLimiter.Decision decision = rateLimiter.record(bucketKey, limit, window);
+    if (!decision.allowed()) {
+      throw new RateLimitedException(message, decision.retryAfterSeconds());
+    }
   }
 
   private static String normalizeEmail(String email) {

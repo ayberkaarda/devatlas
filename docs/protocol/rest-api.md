@@ -1563,6 +1563,8 @@ Pull direction: a fresh installation, or a device that has been offline while an
 
 Query: `since` (ISO-8601, optional — server-side `updated_at` lower bound, exclusive), `page`, `size`. Default sort is `updated_at,asc`, which makes `since`-based paging stable.
 
+`updated_at` alone is not a total order here, and the pull direction depends on one: a batch is written in a single transaction, so every row it touches carries the **same** `updated_at`, and a page boundary that falls inside such a group would repeat rows on one page and skip them on the next. The sort therefore always ends with `lesson_id` as a tie-breaker, whether or not the caller asked for it. Clients do not need to send it and cannot turn it off.
+
 `200 OK`:
 
 ```json
