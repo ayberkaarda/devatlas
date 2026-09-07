@@ -17,7 +17,9 @@ describe('LocaleService', () => {
     const loader = TestBed.inject(BundledTranslateLoader);
     return (tag) =>
       new Promise((resolve) =>
-        loader.getTranslation(tag).subscribe((value) => resolve(value as { nav: { tracks: string } })),
+        loader
+          .getTranslation(tag)
+          .subscribe((value) => resolve(value as { nav: { tracks: string } })),
       );
   }
 

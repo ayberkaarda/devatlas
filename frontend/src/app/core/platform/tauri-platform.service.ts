@@ -22,10 +22,14 @@ import {
   type MindMap,
   type MindMapNode,
   type Page,
+  type PendingProgress,
   type PlatformCapabilities,
   type Preferences,
   type ProgressEntry,
+  type ProgressSyncResult,
   type QueueEntry,
+  type RememberedSession,
+  type SyncBookkeeping,
   type ThemePreference,
   type TrackAvailability,
   type TrackDetail,
@@ -174,6 +178,32 @@ interface IpcProgressEntry {
   syncState?: string;
 }
 
+/**
+ * What the command actually sends back for a result, per row. It matches the
+ * shape the frontend contract defines exactly: `completedAt` is optional and
+ * nullable at once, and the key is only ever added below when the caller
+ * supplied it, so absent and explicit-null cannot be confused in transit.
+ */
+interface IpcProgressResult {
+  lessonId: string;
+  status: string;
+  code: string | null;
+  serverClientUpdatedAt: string | null;
+  completedAt?: string | null;
+}
+
+/**
+ * The desktop store's session row. Rust never parses or validates the
+ * tokens; it is a typed key-value store that also reads `userId`, the one
+ * field it uses, to know whose progress rows a write belongs to.
+ */
+interface IpcStoredSession {
+  userId: string;
+  accessToken: string | null;
+  refreshToken: string | null;
+  accessTokenExpiresAt: string | null;
+}
+
 interface IpcAppSettings {
   locale: string;
   theme: string;
@@ -308,6 +338,7 @@ export class TauriPlatformService extends PlatformService {
     const lessonId = await this.resolveLessonId(lessonSlug);
     const lesson = await this.call<IpcLesson>('library_get_lesson', { lessonId });
     const requested = this.activeLocale.value();
+    const completedAt = await this.completionOf(lessonId);
     return {
       id: lesson.lessonId,
       slug: lesson.slug,
@@ -319,6 +350,7 @@ export class TauriPlatformService extends PlatformService {
       trackSlug: null,
       trackTitle: null,
       moduleTitle: null,
+      completedAt,
       translation: translationOf(lesson, requested),
       codeExamples: lesson.codeExamples.map((example) => ({
         language: example.language,
@@ -327,6 +359,30 @@ export class TauriPlatformService extends PlatformService {
         order: example.order,
       })),
     };
+  }
+
+  /**
+   * When this device recorded the lesson as finished, from the local progress
+   * table rather than from the lesson itself.
+   *
+   * The two are separate reads because they are separate tables: content
+   * arrives in packages that are identical for everybody, and progress is the
+   * one thing in the replica that belongs to a person. Reading it locally is
+   * also what makes a completion survive the conditions this build exists
+   * for — no network, and a session whose access token expired hours ago.
+   *
+   * A progress table that cannot be read leaves the completion unknown rather
+   * than failing the lesson. The article is readable either way, and losing
+   * it over a progress row would be a worse answer than a toggle that offers
+   * to mark a lesson that is already marked.
+   */
+  private async completionOf(lessonId: string): Promise<string | null> {
+    try {
+      const rows = await this.call<IpcProgressEntry[]>('progress_list');
+      return rows.find((row) => row.lessonId === lessonId)?.completedAt ?? null;
+    } catch {
+      return null;
+    }
   }
 
   async getMindMap(trackSlug: string): Promise<MindMap> {
@@ -439,6 +495,91 @@ export class TauriPlatformService extends PlatformService {
       completedAt: row.completedAt,
       clientUpdatedAt: row.clientUpdatedAt,
     }));
+  }
+
+  /**
+   * The command's return shape is the same row `progress_list` returns, with
+   * a `syncState` field added — not the narrower `PendingProgress` shape the
+   * protocol document names. The extra field carries no information a
+   * pending row needs (every row this command returns is pending by
+   * definition), so it is read here and dropped rather than reflected onto
+   * the view model.
+   */
+  async pendingProgress(): Promise<PendingProgress[]> {
+    const rows = await this.call<IpcProgressEntry[]>('progress_pending');
+    return rows.map((row) => ({
+      lessonId: row.lessonId,
+      completedAt: row.completedAt,
+      clientUpdatedAt: row.clientUpdatedAt,
+    }));
+  }
+
+  async applyProgressResults(results: readonly ProgressSyncResult[]): Promise<void> {
+    await this.call<null>('progress_apply_results', {
+      results: results.map(toIpcProgressResult),
+    });
+  }
+
+  /**
+   * Hands a pulled batch to the store, which applies the conflict rule.
+   *
+   * The rows are restated field by field rather than forwarded as they
+   * arrived, so a caller that widened the object it passes cannot smuggle an
+   * extra field into a write the store is meant to control.
+   */
+  async absorbProgress(entries: readonly ProgressEntry[]): Promise<void> {
+    await this.call<null>('progress_absorb', {
+      entries: entries.map((entry) => ({
+        lessonId: entry.lessonId,
+        completedAt: entry.completedAt,
+        clientUpdatedAt: entry.clientUpdatedAt,
+      })),
+    });
+  }
+
+  async loadSession(): Promise<RememberedSession | null> {
+    const stored = await this.call<IpcStoredSession | null>('session_load');
+    if (!stored) {
+      return null;
+    }
+    return {
+      userId: stored.userId,
+      accessToken: stored.accessToken,
+      refreshToken: stored.refreshToken,
+      accessTokenExpiresAt: stored.accessTokenExpiresAt,
+    };
+  }
+
+  async storeSession(session: RememberedSession): Promise<void> {
+    await this.call<null>('session_store', { session });
+  }
+
+  async forgetSession(): Promise<void> {
+    await this.call<null>('session_clear');
+  }
+
+  async getSyncState(): Promise<SyncBookkeeping> {
+    const settings = await this.call<IpcAppSettings>('settings_get');
+    return {
+      preferencesDirtyAt: settings.preferencesDirtyAt,
+      lastSyncAt: settings.lastSyncAt,
+    };
+  }
+
+  async setSyncState(patch: Partial<SyncBookkeeping>): Promise<void> {
+    // The underlying command takes a partial patch across all four settings
+    // fields, so only the two bookkeeping keys the caller actually supplied
+    // are sent — never `locale` or `theme`, which would otherwise be
+    // restated at their current value and could race a concurrent
+    // preference write.
+    const payload: Record<string, unknown> = {};
+    if (patch.preferencesDirtyAt !== undefined) {
+      payload['preferencesDirtyAt'] = patch.preferencesDirtyAt;
+    }
+    if (patch.lastSyncAt !== undefined) {
+      payload['lastSyncAt'] = patch.lastSyncAt;
+    }
+    await this.call<IpcAppSettings>('settings_set', { patch: payload });
   }
 
   listBlogPosts(query: BlogListQuery): Promise<Page<BlogPostSummary>> {
@@ -563,6 +704,26 @@ function toTransfer(entry: QueueEntry): Transfer | null {
     attempts: entry.attempt,
     lastError: entry.errorCode,
   };
+}
+
+/**
+ * `completedAt` is only added to the payload when the caller actually
+ * supplied it. That is what keeps "absent" and "explicit null" apart on the
+ * wire: an omitted key and a key set to `undefined` both vanish the same way
+ * once this object crosses the command boundary, but a key that was never
+ * added in the first place cannot be mistaken for one carrying `null`.
+ */
+function toIpcProgressResult(result: ProgressSyncResult): IpcProgressResult {
+  const payload: IpcProgressResult = {
+    lessonId: result.lessonId,
+    status: result.status,
+    code: result.code,
+    serverClientUpdatedAt: result.serverClientUpdatedAt,
+  };
+  if ('completedAt' in result) {
+    payload.completedAt = result.completedAt;
+  }
+  return payload;
 }
 
 function toMindMapNode(node: IpcMindMapNode): MindMapNode {

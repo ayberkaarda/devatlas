@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  type ElementRef,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+  viewChild,
+  viewChildren,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { DownloadStore } from '../../core/library/download-store';
@@ -67,6 +78,38 @@ export class DownloadsPage {
    */
   protected readonly confirmingDeleteTrackId = signal<string | null>(null);
 
+  private readonly trackConfirmButton =
+    viewChild<ElementRef<HTMLButtonElement>>('trackConfirmButton');
+  private readonly entryConfirmButton =
+    viewChild<ElementRef<HTMLButtonElement>>('entryConfirmButton');
+  private readonly trackDeleteButtons =
+    viewChildren<ElementRef<HTMLButtonElement>>('trackDeleteButton');
+  private readonly entryDeleteButtons =
+    viewChildren<ElementRef<HTMLButtonElement>>('entryDeleteButton');
+
+  /**
+   * The row whose Delete button opened a confirmation, held so focus can go
+   * back to it. Opening the confirmation replaces that button, and a destroyed
+   * element takes the focus with it to the top of the document.
+   */
+  private readonly focusTrackDeleteFor = signal<string | null>(null);
+  private readonly focusEntryDeleteFor = signal<string | null>(null);
+
+  /**
+   * A one-line summary of what is in flight, for the page's polite live
+   * region.
+   *
+   * It exists because a batch finishing is otherwise silent: the block that
+   * described it is removed and its rows reappear further down the page. The
+   * value is a count of transfers, not a byte total — a number that changes
+   * several times a second inside a live region would interrupt a reader over
+   * and over.
+   */
+  protected readonly activityMessage = signal<{
+    readonly key: string;
+    readonly params?: Record<string, number>;
+  } | null>(null);
+
   protected readonly batches = computed<readonly BatchGroup[]>(() => {
     const map = new Map<string, QueueEntry[]>();
     for (const entry of this.store.queue()) {
@@ -115,6 +158,59 @@ export class DownloadsPage {
     if (this.canDownload) {
       void this.store.refreshQueue();
     }
+
+    effect(() => {
+      const active = this.batches().reduce((total, batch) => total + batch.entries.length, 0);
+      if (active > 0) {
+        this.activityMessage.set({ key: 'downloads.activeCount', params: { count: active } });
+        return;
+      }
+      // Only worth saying once, and only if there was something to finish.
+      if (untracked(this.activityMessage) !== null) {
+        this.activityMessage.set({ key: 'downloads.allFinished' });
+      }
+    });
+
+    // The view references are signals, so each of these runs again once the
+    // @if has actually put the element in the document rather than at the
+    // moment the state behind it changed.
+    effect(() => {
+      const button = this.trackConfirmButton();
+      if (this.confirmingDeleteTrackId() !== null && button) {
+        button.nativeElement.focus();
+      }
+    });
+
+    effect(() => {
+      const button = this.entryConfirmButton();
+      if (this.confirmingDeleteId() !== null && button) {
+        button.nativeElement.focus();
+      }
+    });
+
+    effect(() => {
+      const id = this.focusTrackDeleteFor();
+      const restored = this.trackDeleteButtons().find(
+        (button) => button.nativeElement.dataset['deleteTrack'] === id,
+      );
+      if (id === null || !restored) {
+        return;
+      }
+      this.focusTrackDeleteFor.set(null);
+      restored.nativeElement.focus();
+    });
+
+    effect(() => {
+      const id = this.focusEntryDeleteFor();
+      const restored = this.entryDeleteButtons().find(
+        (button) => button.nativeElement.dataset['deleteEntry'] === id,
+      );
+      if (id === null || !restored) {
+        return;
+      }
+      this.focusEntryDeleteFor.set(null);
+      restored.nativeElement.focus();
+    });
   }
 
   protected async checkForUpdates(): Promise<void> {
@@ -192,6 +288,7 @@ export class DownloadsPage {
   }
 
   protected cancelDeleteRequest(): void {
+    this.focusEntryDeleteFor.set(this.confirmingDeleteId());
     this.confirmingDeleteId.set(null);
   }
 
@@ -207,6 +304,7 @@ export class DownloadsPage {
   }
 
   protected cancelDeleteTrackRequest(): void {
+    this.focusTrackDeleteFor.set(this.confirmingDeleteTrackId());
     this.confirmingDeleteTrackId.set(null);
   }
 

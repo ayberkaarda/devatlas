@@ -82,8 +82,21 @@ describe('ContainerDownloadAction', () => {
 
     const button = element.querySelector('button');
     expect(button).not.toBeNull();
-    expect(button?.textContent?.trim()).toBe('Download');
+    // The visible word, plus the container's title carried in a
+    // screen-reader-only span so the accessible name says which container this
+    // button is for without replacing the words a person can read.
+    expect(button?.textContent?.trim()).toBe('Download Signals');
     expect(element.textContent).not.toContain('Downloaded (');
+  });
+
+  it('keeps the container action as the primary, accent-filled control', () => {
+    // This is the one primary action a track or module page shows; a
+    // per-lesson Download/Update nested inside it renders as secondary
+    // instead, so the accent fill never appears twice in the same view.
+    const fixture = render(fourDownloaded, [mindMap('NOT_DOWNLOADED')]);
+    const button = wrapper(fixture).querySelector('button');
+
+    expect(button?.className).toContain('bg-accent');
   });
 
   it('enqueues the whole container when that button is pressed', async () => {

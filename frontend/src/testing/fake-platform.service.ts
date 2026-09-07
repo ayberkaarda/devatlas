@@ -2,6 +2,7 @@ import { EMPTY, Observable } from 'rxjs';
 
 import type {
   BatchHandle,
+  BlogListQuery,
   BlogPost,
   BlogPostSummary,
   DeltaSummary,
@@ -10,13 +11,18 @@ import type {
   Lesson,
   MindMap,
   Page,
+  PendingProgress,
   PlatformCapabilities,
   Preferences,
   ProgressEntry,
+  ProgressSyncResult,
   QueueEntry,
+  RememberedSession,
+  SyncBookkeeping,
   TrackDetail,
   TrackSummary,
 } from '../app/core/platform/models';
+import { PlatformError } from '../app/core/platform/errors';
 import { PlatformService } from '../app/core/platform/platform.service';
 
 /**
@@ -43,6 +49,27 @@ export class FakePlatformService extends PlatformService {
   readonly enqueued: DownloadScope[] = [];
   readonly deletedScopes: DownloadScope[] = [];
   revealed = 0;
+
+  pending: PendingProgress[] = [];
+  readonly appliedResults: (readonly ProgressSyncResult[])[] = [];
+  readonly absorbed: (readonly ProgressEntry[])[] = [];
+
+  storedSession: RememberedSession | null = null;
+  readonly sessionStores: RememberedSession[] = [];
+  forgottenSessionCount = 0;
+
+  syncState: SyncBookkeeping = { preferencesDirtyAt: null, lastSyncAt: null };
+  readonly syncStateWrites: Partial<SyncBookkeeping>[] = [];
+
+  blogList: Page<BlogPostSummary> = {
+    items: [],
+    page: 0,
+    size: 10,
+    totalElements: 0,
+    totalPages: 0,
+  };
+  readonly blogListQueries: BlogListQuery[] = [];
+  readonly blogPosts = new Map<string, BlogPost>();
 
   async listTracks(): Promise<TrackSummary[]> {
     return this.tracks;
@@ -113,12 +140,57 @@ export class FakePlatformService extends PlatformService {
     return [];
   }
 
-  async listBlogPosts(): Promise<Page<BlogPostSummary>> {
-    return { items: [], page: 0, size: 20, totalElements: 0, totalPages: 0 };
+  async pendingProgress(): Promise<PendingProgress[]> {
+    return this.pending;
   }
 
-  async getBlogPost(): Promise<BlogPost> {
-    throw new Error('Not used by these tests.');
+  async applyProgressResults(results: readonly ProgressSyncResult[]): Promise<void> {
+    this.appliedResults.push(results);
+  }
+
+  async absorbProgress(entries: readonly ProgressEntry[]): Promise<void> {
+    this.absorbed.push(entries);
+  }
+
+  async loadSession(): Promise<RememberedSession | null> {
+    return this.storedSession;
+  }
+
+  async storeSession(session: RememberedSession): Promise<void> {
+    this.sessionStores.push(session);
+    this.storedSession = session;
+  }
+
+  async forgetSession(): Promise<void> {
+    this.forgottenSessionCount += 1;
+    this.storedSession = null;
+  }
+
+  async getSyncState(): Promise<SyncBookkeeping> {
+    return this.syncState;
+  }
+
+  async setSyncState(patch: Partial<SyncBookkeeping>): Promise<void> {
+    this.syncStateWrites.push(patch);
+    this.syncState = { ...this.syncState, ...patch };
+  }
+
+  async listBlogPosts(query: BlogListQuery): Promise<Page<BlogPostSummary>> {
+    this.blogListQueries.push(query);
+    return this.blogList;
+  }
+
+  /**
+   * Throws the code the public read endpoint returns for anything that is
+   * not a published post, rather than a bare `Error`, so a screen's mapping
+   * from a code to a message is exercised by the same path a real miss takes.
+   */
+  async getBlogPost(slug: string): Promise<BlogPost> {
+    const post = this.blogPosts.get(slug);
+    if (!post) {
+      throw new PlatformError('BLOG_POST_NOT_FOUND', `No fake blog post for '${slug}'.`);
+    }
+    return post;
   }
 
   async getPreferences(): Promise<Preferences> {

@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { EMPTY, Observable, firstValueFrom, timeout } from 'rxjs';
+import { EMPTY, Observable, firstValueFrom } from 'rxjs';
 
-import { API_BASE_URL, REQUEST_TIMEOUT_MS, toPlatformError } from './api';
+import { API_BASE_URL, toPlatformError } from './api';
 import { BlogApiClient } from './blog-api.client';
 import { PlatformError, UnsupportedOnWebError } from './errors';
 import {
@@ -18,15 +18,19 @@ import {
   type MindMap,
   type MindMapNode,
   type Page,
+  type PendingProgress,
   type PlatformCapabilities,
   type Preferences,
   type ProgressEntry,
   type QueueEntry,
+  type RememberedSession,
+  type SyncBookkeeping,
   type ThemePreference,
   type TrackDetail,
   type TrackSummary,
 } from './models';
 import { PlatformService } from './platform.service';
+import { isoNow } from './timestamps';
 import {
   translationOf,
   type WireLesson,
@@ -41,7 +45,23 @@ import {
 /** Where the web build keeps its preferences. Read by the pre-paint script. */
 export const PREFERENCES_STORAGE_KEY = 'bytelore.preferences';
 
+/**
+ * Where the web build remembers that a browser has signed in before.
+ *
+ * This row is never a credential. The refresh token travels on the cookie
+ * channel and is already out of a script's reach, so there is nothing to
+ * store and nothing to hand back for it; what is written here is `userId`
+ * alone, and only to answer "has anyone signed in on this browser", which is
+ * what decides whether a refresh is worth attempting at all.
+ */
+export const SESSION_STORAGE_KEY = 'bytelore.session';
+
+/** Where the web build keeps the two sync bookkeeping fields. */
+export const SYNC_STATE_STORAGE_KEY = 'bytelore.sync-state';
+
 const DEFAULT_PREFERENCES: Preferences = { locale: 'en', theme: 'SYSTEM' };
+
+const DEFAULT_SYNC_STATE: SyncBookkeeping = { preferencesDirtyAt: null, lastSyncAt: null };
 
 /**
  * A page size large enough that the screens in this build never paginate, and
@@ -139,6 +159,10 @@ export class WebPlatformService extends PlatformService {
       trackSlug: lesson.track?.slug ?? null,
       trackTitle: lesson.track?.title ?? null,
       moduleTitle: lesson.module?.title ?? null,
+      // The envelope is absent for a caller with no session and for one who
+      // has not finished the lesson, and both mean the same thing to a
+      // screen: there is no completion of this reader's to show.
+      completedAt: lesson.progress?.completed_at ?? null,
       translation: translationOf(lesson),
       codeExamples: lesson.code_examples.map((example) => ({
         language: example.language,
@@ -206,19 +230,17 @@ export class WebPlatformService extends PlatformService {
     const now = isoNow();
     try {
       await firstValueFrom(
-        this.http
-          .post(`${this.baseUrl}/sync/progress`, {
-            items: [
-              {
-                lesson_id: lessonId,
-                // Null is the un-completed state, a real user action, rather
-                // than the absence of a value.
-                completed_at: completed ? now : null,
-                client_updated_at: now,
-              },
-            ],
-          })
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.post(`${this.baseUrl}/sync/progress`, {
+          items: [
+            {
+              lesson_id: lessonId,
+              // Null is the un-completed state, a real user action, rather
+              // than the absence of a value.
+              completed_at: completed ? now : null,
+              client_updated_at: now,
+            },
+          ],
+        }),
       );
     } catch (error) {
       throw toPlatformError(error);
@@ -233,6 +255,122 @@ export class WebPlatformService extends PlatformService {
       completedAt: item.completed_at,
       clientUpdatedAt: item.client_updated_at,
     }));
+  }
+
+  /**
+   * On the web `markProgress` already is the sync — it posts a single-item
+   * batch and returns once the server has it, so there is no local queue and
+   * "what is pending" has no honest answer. Throwing here rather than
+   * returning `[]` is never actually reached: the service that drains a
+   * pending queue only runs where `capabilities.hasLocalStore`.
+   */
+  pendingProgress(): Promise<PendingProgress[]> {
+    return Promise.reject(new UnsupportedOnWebError('pendingProgress'));
+  }
+
+  applyProgressResults(): Promise<void> {
+    return Promise.reject(new UnsupportedOnWebError('applyProgressResults'));
+  }
+
+  /**
+   * There is no replica to absorb a pulled row into. Accepting the call and
+   * discarding the rows would report a success for a write that never
+   * happened, which is exactly the silent empty success the platform rules
+   * forbid.
+   */
+  absorbProgress(): Promise<void> {
+    return Promise.reject(new UnsupportedOnWebError('absorbProgress'));
+  }
+
+  /**
+   * Reads whatever this browser remembers about a prior sign-in.
+   *
+   * A row with no usable `userId` is treated the same as no row at all: it
+   * is not a session worth acting on, and returning `null` here rather than
+   * a half-formed object keeps that decision in one place instead of at
+   * every caller.
+   */
+  async loadSession(): Promise<RememberedSession | null> {
+    try {
+      const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+      if (!raw) {
+        return null;
+      }
+      const parsed = JSON.parse(raw) as { userId?: unknown };
+      if (typeof parsed.userId !== 'string' || parsed.userId.length === 0) {
+        return null;
+      }
+      return {
+        userId: parsed.userId,
+        accessToken: null,
+        refreshToken: null,
+        accessTokenExpiresAt: null,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Writes `userId` and nothing else. Storing a token here would undo the
+   * entire reason the cookie channel exists, so the two token fields on
+   * `session` are never read, whatever a caller happens to pass.
+   */
+  async storeSession(session: RememberedSession): Promise<void> {
+    try {
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ userId: session.userId }));
+    } catch {
+      // A session that could not be remembered simply is not: the next load
+      // finds nothing and behaves like an anonymous visitor, which is the
+      // safe direction to fail in.
+    }
+  }
+
+  async forgetSession(): Promise<void> {
+    try {
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+    } catch {
+      // Nothing to reconcile: storage that cannot be written also cannot be
+      // holding a stale session.
+    }
+  }
+
+  /**
+   * Guarded exactly like preferences: a browser that refuses to remember
+   * these two timestamps is not a reason to fail sync, only to repeat work
+   * it would otherwise have skipped.
+   */
+  async getSyncState(): Promise<SyncBookkeeping> {
+    try {
+      const raw = localStorage.getItem(SYNC_STATE_STORAGE_KEY);
+      if (!raw) {
+        return DEFAULT_SYNC_STATE;
+      }
+      const parsed = JSON.parse(raw) as Partial<SyncBookkeeping>;
+      return {
+        preferencesDirtyAt: narrowNullableString(parsed.preferencesDirtyAt),
+        lastSyncAt: narrowNullableString(parsed.lastSyncAt),
+      };
+    } catch {
+      return DEFAULT_SYNC_STATE;
+    }
+  }
+
+  async setSyncState(patch: Partial<SyncBookkeeping>): Promise<void> {
+    const current = await this.getSyncState();
+    const next: SyncBookkeeping = {
+      preferencesDirtyAt:
+        patch.preferencesDirtyAt !== undefined
+          ? patch.preferencesDirtyAt
+          : current.preferencesDirtyAt,
+      lastSyncAt: patch.lastSyncAt !== undefined ? patch.lastSyncAt : current.lastSyncAt,
+    };
+    try {
+      localStorage.setItem(SYNC_STATE_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      // As with preferences: a value that cannot be persisted is lost for the
+      // next load rather than failing the caller that just wanted it applied.
+    }
   }
 
   listBlogPosts(query: BlogListQuery): Promise<Page<BlogPostSummary>> {
@@ -292,9 +430,7 @@ export class WebPlatformService extends PlatformService {
 
   private async request<T>(path: string, params?: HttpParams): Promise<T> {
     try {
-      return await firstValueFrom(
-        this.http.get<T>(`${this.baseUrl}${path}`, { params }).pipe(timeout(REQUEST_TIMEOUT_MS)),
-      );
+      return await firstValueFrom(this.http.get<T>(`${this.baseUrl}${path}`, { params }));
     } catch (error) {
       throw toPlatformError(error);
     }
@@ -310,13 +446,8 @@ function toMindMapNode(node: WireMindMapNode): MindMapNode {
   };
 }
 
-/**
- * The timestamp format the API defines: UTC, always three fractional digits,
- * literal `Z`. It is normative rather than illustrative, so it is produced
- * here rather than left to whatever a default serializer emits.
- */
-function isoNow(): string {
-  return new Date().toISOString().replace(/\.(\d{3})\d*Z$/, '.$1Z');
+function narrowNullableString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
 }
 
 function narrowLocale(value: unknown): Locale | null {

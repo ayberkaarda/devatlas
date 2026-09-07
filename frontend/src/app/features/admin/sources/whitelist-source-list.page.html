@@ -1,7 +1,7 @@
 <div class="flex items-center justify-between gap-4">
   <h1 class="text-2xl font-semibold tracking-tight">{{ 'admin.sources.heading' | translate }}</h1>
   <a
-    class="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast no-underline"
+    class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast no-underline"
     routerLink="/admin/sources/new"
   >
     {{ 'admin.sources.newSource' | translate }}
@@ -34,26 +34,39 @@
     <p class="mt-1 text-text-muted">{{ failureKey | translate }}</p>
     <button
       type="button"
-      class="mt-3 rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast"
+      class="mt-3 rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast"
       (click)="retry()"
     >
       {{ 'common.retry' | translate }}
     </button>
   </div>
 } @else if (sources().length === 0) {
-  <p class="mt-8 text-text-muted">{{ 'admin.sources.empty' | translate }}</p>
+  <p class="mt-8 text-text-muted" role="status">{{ 'admin.sources.empty' | translate }}</p>
 } @else {
   <div class="mt-6 overflow-x-auto">
     <table class="w-full text-left text-sm">
+      <caption class="sr-only">
+        {{
+          'admin.sources.tableCaption' | translate
+        }}
+      </caption>
       <thead>
         <tr class="border-b border-border text-text-muted">
-          <th class="py-2 pr-4 font-medium">{{ 'admin.sources.column.name' | translate }}</th>
-          <th class="py-2 pr-4 font-medium">{{ 'admin.sources.column.feedUrl' | translate }}</th>
-          <th class="py-2 pr-4 font-medium">{{ 'admin.sources.column.enabled' | translate }}</th>
-          <th class="py-2 pr-4 font-medium">
+          <th class="py-2 pl-1 pr-4 font-medium" scope="col">
+            {{ 'admin.sources.column.name' | translate }}
+          </th>
+          <th class="py-2 pr-4 font-medium" scope="col">
+            {{ 'admin.sources.column.feedUrl' | translate }}
+          </th>
+          <th class="py-2 pr-4 font-medium" scope="col">
+            {{ 'admin.sources.column.enabled' | translate }}
+          </th>
+          <th class="py-2 pr-4 font-medium" scope="col">
             {{ 'admin.sources.column.lastFetchedAt' | translate }}
           </th>
-          <th class="py-2 font-medium">{{ 'admin.sources.column.actions' | translate }}</th>
+          <th class="py-2 pr-1 font-medium" scope="col">
+            {{ 'admin.sources.column.actions' | translate }}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -62,7 +75,7 @@
             class="border-b border-border align-top"
             [attr.data-testid]="'source-row-' + source.id"
           >
-            <td class="py-2 pr-4">
+            <td class="py-2 pl-1 pr-4">
               <a
                 class="text-text no-underline hover:underline"
                 [routerLink]="['/admin/sources', source.id]"
@@ -85,13 +98,14 @@
                 <span class="text-text-muted">{{ 'admin.sources.neverFetched' | translate }}</span>
               }
             </td>
-            <td class="py-2">
+            <td class="py-2 pr-1">
               @if (confirmDeleteId() === source.id) {
                 <div class="flex flex-wrap items-center gap-2">
                   <span class="text-sm">{{ 'admin.sources.confirmDelete' | translate }}</span>
                   <button
+                    #confirmDeleteButton
                     type="button"
-                    class="rounded-md bg-danger px-2 py-1 text-xs font-medium text-accent-contrast disabled:opacity-50"
+                    class="rounded-md bg-danger px-2 py-1 text-xs font-medium text-danger-contrast disabled:opacity-50"
                     [disabled]="busyId() === source.id"
                     (click)="confirmDelete(source)"
                   >
@@ -125,16 +139,24 @@
                     {{ 'admin.sources.edit' | translate }}
                   </a>
                   <button
+                    #deleteButton
                     type="button"
                     class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+                    [attr.data-delete-for]="source.id"
                     [disabled]="busyId() !== null"
                     (click)="requestDelete(source)"
                   >
                     {{ 'admin.sources.delete' | translate }}
                   </button>
+                  <!--
+                    Secondary, not the accent fill: the page-level "New
+                    source" action above is this screen's one primary, and it
+                    stays on screen at the same time a row's fetch action
+                    does, so the two cannot both claim the accent tier.
+                  -->
                   <button
                     type="button"
-                    class="rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-contrast disabled:opacity-50"
+                    class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover disabled:opacity-50"
                     [disabled]="busyId() !== null"
                     (click)="fetchNow(source)"
                   >
@@ -146,11 +168,21 @@
                     }}
                   </button>
                 </div>
-                @if (busyId() === source.id) {
-                  <p class="mt-1 text-xs text-text-muted">
+                <!--
+                  The hint appears when the fetch starts, which is also when
+                  the button that was clicked goes disabled and stops being
+                  focused. Announcing it politely is the only way the person
+                  who pressed it learns that anything is happening.
+                -->
+                <p
+                  class="text-xs text-text-muted"
+                  role="status"
+                  [class.mt-1]="busyId() === source.id"
+                >
+                  @if (busyId() === source.id) {
                     {{ 'admin.sources.fetch.hint' | translate }}
-                  </p>
-                }
+                  }
+                </p>
               }
 
               @if (parentNotEmptyId() === source.id) {
@@ -178,9 +210,15 @@
     (pageChange)="onPageChange($event)"
   />
 
+  <!--
+    A manual fetch runs the whole ingest cycle server-side and can answer a
+    minute after the click, long after the person has looked away. The heading
+    is announced politely rather than assertively, and it can take focus so
+    that the result is one keystroke away instead of a scroll away.
+  -->
   @if (lastFetch(); as fetch) {
-    <div class="mt-6">
-      <h2 class="text-lg font-semibold">
+    <div class="mt-6" role="status">
+      <h2 #fetchResultHeading class="text-lg font-semibold" tabindex="-1">
         {{ 'admin.sources.fetch.resultFor' | translate: { name: fetch.sourceName } }}
       </h2>
       <app-fetch-result class="mt-2 block" [result]="fetch.result" />

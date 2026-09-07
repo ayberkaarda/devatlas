@@ -169,7 +169,10 @@ describe('MindMapPage', () => {
 
     const button = action?.querySelector('button');
     expect(button).not.toBeNull();
-    expect(button?.textContent?.trim()).toBe('Download');
+    // The visible word, plus the container's title in a screen-reader-only
+    // span: the accessible name says what this button downloads without
+    // replacing the word a person can read and can speak to voice control.
+    expect(button?.textContent?.trim()).toBe('Download Signals');
 
     button?.click();
     await fixture.whenStable();

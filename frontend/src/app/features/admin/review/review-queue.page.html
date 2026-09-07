@@ -5,10 +5,15 @@
   <label class="text-sm font-medium" for="review-source-filter">
     {{ 'admin.review.sourceFilter' | translate }}
   </label>
+  <!--
+    No aria-label: the label beside it already names this control, and an
+    aria-label would override it, so the two would drift apart the first time
+    either string is edited and a voice command spoken from the visible label
+    would stop matching.
+  -->
   <select
     id="review-source-filter"
     class="rounded-md border border-border bg-surface px-2 py-1 text-sm text-text"
-    [attr.aria-label]="'admin.review.sourceFilter' | translate"
     (change)="onSourceChange($any($event.target).value)"
   >
     <option value="">{{ 'admin.review.sourceAll' | translate }}</option>
@@ -25,14 +30,14 @@
     <p class="mt-1 text-text-muted">{{ failureKey | translate }}</p>
     <button
       type="button"
-      class="mt-3 rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast"
+      class="mt-3 rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast"
       (click)="retry()"
     >
       {{ 'common.retry' | translate }}
     </button>
   </div>
 } @else if (items().length === 0) {
-  <p class="mt-8 text-text-muted">{{ 'admin.review.queueEmpty' | translate }}</p>
+  <p class="mt-8 text-text-muted" role="status">{{ 'admin.review.queueEmpty' | translate }}</p>
 } @else {
   <ul class="mt-6 flex flex-col gap-3">
     @for (post of items(); track post.id) {

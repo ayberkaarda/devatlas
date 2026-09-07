@@ -1,0 +1,105 @@
+<h1 class="text-3xl font-semibold leading-tight tracking-tight">
+  {{ 'blog.heading' | translate }}
+</h1>
+<p class="mt-2 max-w-prose text-text-muted">{{ 'blog.intro' | translate }}</p>
+
+@if (loading()) {
+  <p class="mt-8 text-text-muted" role="status">{{ 'common.loading' | translate }}</p>
+} @else if (failure(); as failureKey) {
+  <div
+    class="mt-8 rounded-md border-l-4 border-danger bg-danger-soft p-4"
+    role="alert"
+    data-testid="blog-error"
+  >
+    <h2 class="font-medium text-danger-strong">{{ 'error.heading' | translate }}</h2>
+    <p class="mt-1 text-text">{{ failureKey | translate }}</p>
+    <button
+      type="button"
+      class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+      (click)="retry()"
+    >
+      {{ 'common.retry' | translate }}
+    </button>
+  </div>
+} @else {
+  @if (staleSince(); as at) {
+    <!--
+      The band sits above every one of the three things that can follow it,
+      rather than inside the branch that renders a list. What it dates is not
+      the rows but the reading: a page that was read successfully and came
+      back empty needs it most of all, because without it "there are no posts
+      to show yet" is indistinguishable from a server that is not answering.
+      The control beside it is the only way to re-check without leaving the
+      screen -- selecting an entry for the page already on screen is not a
+      navigation, so it loads nothing.
+    -->
+    <div
+      class="mt-8 flex flex-wrap items-center gap-3 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-muted"
+      role="status"
+      data-testid="blog-stale-band"
+    >
+      <span>{{ 'blog.offline.lastLoaded' | translate: { date: (at | dateTime) } }}</span>
+      <button
+        type="button"
+        class="ml-auto rounded-md border border-border-strong bg-surface-raised px-3 py-1 text-sm font-medium text-text hover:bg-surface-hover"
+        data-testid="blog-stale-retry"
+        (click)="retry()"
+      >
+        {{ 'common.retry' | translate }}
+      </button>
+    </div>
+  }
+
+  @if (offline() && rows().length === 0) {
+    <app-blog-offline (retry)="retry()" />
+  } @else if (rows().length === 0) {
+    <p class="mt-10 text-center text-text-muted" data-testid="blog-empty">
+      {{ 'blog.empty' | translate }}
+    </p>
+  } @else {
+    <ul class="mt-8 divide-y divide-border" data-testid="blog-list">
+      @for (row of rows(); track row.post.id) {
+        <li class="py-5">
+          <div class="flex items-start justify-between gap-3">
+            <h2 class="text-lg font-semibold tracking-tight">
+              <!--
+              No aria-label: the link text is already the post's title and it
+              already sits in a heading, so the extra verb only made every
+              entry in a heading-by-heading scan start with the same word.
+            -->
+              <a
+                class="text-text no-underline hover:underline"
+                [routerLink]="['/blog', row.post.slug]"
+              >
+                {{ row.post.title }}
+              </a>
+            </h2>
+            <app-fallback-badge [state]="row.post.translation" />
+          </div>
+
+          <p class="mt-2 text-sm text-text-muted">{{ row.post.excerpt }}</p>
+
+          <p class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-muted">
+            <time class="tabular-nums" [attr.datetime]="row.post.publishedAt">
+              {{ 'blog.published' | translate: { date: (row.post.publishedAt | dateTime) } }}
+            </time>
+            @if (row.host; as host) {
+              <span data-testid="blog-row-source">
+                {{ 'blog.viaSource' | translate: { host: host } }}
+              </span>
+            }
+          </p>
+        </li>
+      }
+    </ul>
+
+    @if (totalPages() > 1) {
+      <app-pagination
+        class="mt-8 block"
+        [page]="page()"
+        [totalPages]="totalPages()"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  }
+}

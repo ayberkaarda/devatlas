@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  type ElementRef,
   computed,
   effect,
   inject,
   input,
   signal,
+  viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -75,6 +77,26 @@ export class BlogPostEditorPage {
 
   protected readonly saving = signal(false);
   protected readonly saveFailureKey = signal<string | null>(null);
+
+  /**
+   * What just went right, for the polite live region in the template.
+   *
+   * A save in edit mode changes nothing a reader can perceive: the record is
+   * replaced by an identical-looking one and the button label flips back. A
+   * transition changes a status badge somewhere else on the screen. Both are
+   * outcomes of an action the person took, and neither of them said so.
+   */
+  protected readonly outcomeKey = signal<string | null>(null);
+
+  private readonly reasonField = viewChild<ElementRef<HTMLTextAreaElement>>('reasonField');
+  private readonly actionGroup = viewChild<ElementRef<HTMLElement>>('actionGroup');
+
+  /**
+   * The action whose button opened the reason panel, held so focus can be put
+   * back on it. Opening the panel destroys that button, and a destroyed
+   * element takes the focus with it to the top of the document.
+   */
+  private readonly focusActionAfterCancel = signal<LifecycleAction | null>(null);
 
   protected readonly role = computed(() => this.session.role());
 
@@ -180,6 +202,26 @@ export class BlogPostEditorPage {
   );
 
   constructor() {
+    // Focus follows the panel, in both directions. The reference is a signal,
+    // so the effect runs again once the @if has actually put the textarea in
+    // the document rather than at the moment the flag was set.
+    effect(() => {
+      const field = this.reasonField();
+      if (this.pendingAction() !== null && field) {
+        field.nativeElement.focus();
+      }
+    });
+
+    effect(() => {
+      const action = this.focusActionAfterCancel();
+      const group = this.actionGroup();
+      if (action === null || !group) {
+        return;
+      }
+      this.focusActionAfterCancel.set(null);
+      group.nativeElement.querySelector<HTMLButtonElement>(`[data-action="${action}"]`)?.focus();
+    });
+
     effect(() => {
       const id = this.id();
       if (id === undefined) {
@@ -239,6 +281,7 @@ export class BlogPostEditorPage {
   }
 
   protected cancelPendingAction(): void {
+    this.focusActionAfterCancel.set(this.pendingAction());
     this.pendingAction.set(null);
     this.reasonDraft.set('');
   }
@@ -250,6 +293,7 @@ export class BlogPostEditorPage {
     }
     this.saving.set(true);
     this.saveFailureKey.set(null);
+    this.outcomeKey.set(null);
     try {
       if (this.isCreateMode()) {
         const created = await this.api.createBlogPost({
@@ -267,6 +311,7 @@ export class BlogPostEditorPage {
         }
         const updated = await this.api.updateBlogPost(current.id, this.buildUpdatePayload(current));
         this.applyPost(updated);
+        this.outcomeKey.set('admin.editor.saved');
       }
     } catch (error) {
       if (error instanceof PlatformError && error.code === 'VERSION_CONFLICT') {
@@ -320,6 +365,7 @@ export class BlogPostEditorPage {
     }
     this.transitioning.set(true);
     this.transitionFailureKey.set(null);
+    this.outcomeKey.set(null);
     try {
       if (action === 'delete') {
         await this.api.deleteBlogPost(current.id);
@@ -333,6 +379,7 @@ export class BlogPostEditorPage {
       this.applyPost(updated);
       this.pendingAction.set(null);
       this.reasonDraft.set('');
+      this.outcomeKey.set('admin.editor.transitionApplied');
     } catch (error) {
       if (error instanceof PlatformError && error.code === 'VERSION_CONFLICT') {
         await this.refreshServerFieldsAfterConflict();

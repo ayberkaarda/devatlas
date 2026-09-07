@@ -1,15 +1,17 @@
 {
   "app": {
     "title": "ByteLore",
-    "tagline": "Lernpfade für Entwickler, online und offline.",
     "skipToContent": "Zum Inhalt springen"
   },
   "nav": {
     "label": "Hauptnavigation",
     "tracks": "Lernpfade",
+    "blog": "Blog",
     "downloads": "Downloads",
     "admin": "Verwaltung",
-    "signIn": "Anmelden"
+    "signIn": "Anmelden",
+    "settings": "Einstellungen",
+    "downloadsActive": "{{count}} Downloads noch in der Warteschlange"
   },
   "theme": {
     "light": "Hell",
@@ -22,6 +24,13 @@
     "tr": "Türkçe",
     "fr": "Français",
     "de": "Deutsch"
+  },
+  "settings": {
+    "heading": "Einstellungen",
+    "intro": "Sprache, Design und Ihr Konto an einem Ort.",
+    "language": "Sprache",
+    "theme": "Design",
+    "account": "Konto"
   },
   "common": {
     "loading": "Wird geladen…",
@@ -47,10 +56,15 @@
     "empty": "Dieser Lernpfad enthält noch keine Lektionen.",
     "openLesson": "Lektion {{title}} öffnen",
     "mindMap": "Mindmap",
-    "mindMapHint": "Mindmap für {{title}} öffnen"
+    "mindMapHint": "Mindmap für {{title}} öffnen",
+    "completedCount": "{{completed}} von {{total}} abgeschlossen"
   },
   "lesson": {
     "backToTrack": "Zurück zum Lernpfad",
+    "breadcrumb": "Navigationspfad",
+    "previous": "Vorherige Lektion",
+    "next": "Nächste Lektion",
+    "position": "Lektion {{index}} von {{total}}",
     "codeExamples": "Codebeispiele",
     "markComplete": "Als abgeschlossen markieren",
     "markIncomplete": "Als nicht abgeschlossen markieren",
@@ -62,6 +76,9 @@
       "ADVANCED": "Experte"
     },
     "notDownloaded": "Diese Lektion wurde noch nicht auf dieses Gerät heruntergeladen."
+  },
+  "progress": {
+    "completed": "Abgeschlossen"
   },
   "download": {
     "action": {
@@ -114,6 +131,8 @@
     "checkForUpdates": "Nach Updates suchen",
     "checking": "Wird geprüft…",
     "empty": "Sie haben noch nichts heruntergeladen.",
+    "activeCount": "{{count}} Downloads laufen",
+    "allFinished": "Downloads abgeschlossen.",
     "entityLesson": "Lektion",
     "entityMindMap": "Mindmap",
     "heading": "Downloads",
@@ -139,6 +158,37 @@
     "nodeQueuedHint": "{{title}} wird heruntergeladen",
     "treeLabel": "Mindmap für {{title}}",
     "unavailable": "Dieser Lernpfad hat keine Mindmap."
+  },
+  "blog": {
+    "heading": "Blog",
+    "intro": "Versionshinweise und Beiträge, live vom Server geladen.",
+    "empty": "Es gibt noch keine Beiträge.",
+    "open": "Beitrag {{title}} öffnen",
+    "published": "Veröffentlicht am {{date}}",
+    "viaSource": "via {{host}}",
+    "backToList": "Zurück zum Blog",
+    "source": {
+      "heading": "Ursprüngliche Quelle",
+      "hint": "Dieser Beitrag beruht auf einer anderswo veröffentlichten Ankündigung. Öffnen Sie das Original, um es selbst zu prüfen.",
+      "open": "Original auf {{host}} in einem neuen Tab öffnen"
+    },
+    "offline": {
+      "heading": "Für den Blog wird eine Verbindung benötigt",
+      "body": "Blogbeiträge werden live vom Server geladen; dies ist der einzige Bildschirm, der ohne Netzwerk nicht funktioniert.",
+      "localHint": "Alles, was Sie bereits heruntergeladen haben, bleibt verfügbar.",
+      "library": "Zu den Lernpfaden",
+      "lastLoaded": "Die Liste wird so angezeigt, wie sie am {{date}} geladen wurde.",
+      "indicator": "Offline",
+      "indicatorHint": "Der Server ist derzeit nicht erreichbar, und Blogbeiträge werden live geladen."
+    }
+  },
+  "sync": {
+    "statusLabel": "Verbindungs- und Synchronisierungsstatus",
+    "offline": "Offline",
+    "offlineHint": "Der Rest der Anwendung funktioniert offline. Blogbeiträge und die Synchronisierung benötigen eine Verbindung.",
+    "signInToSync": "Zum Synchronisieren anmelden",
+    "signInToSyncHint": "Ihr Fortschritt wird auf diesem Gerät gespeichert. Melden Sie sich erneut an, um ihn mit Ihrem Konto zu synchronisieren.",
+    "lastSynchronised": "Zuletzt synchronisiert: {{when}}"
   },
   "notFound": {
     "heading": "Diese Seite gibt es nicht",
@@ -246,6 +296,7 @@
       "heading": "Blogbeiträge",
       "newPost": "Neuer Beitrag",
       "empty": "Keine Beiträge entsprechen diesen Filtern.",
+      "tableCaption": "Blogbeiträge mit Status, Herkunft, letzter Änderung und Prüfprotokoll",
       "viewAudit": "Prüfprotokoll",
       "filter": {
         "status": "Status",
@@ -284,6 +335,8 @@
       "preview": "Vorschau",
       "save": "Speichern",
       "saving": "Wird gespeichert…",
+      "saved": "Gespeichert.",
+      "transitionApplied": "Status aktualisiert.",
       "actionsHeading": "Aktionen",
       "reasonLabel": "Begründung",
       "reasonPlaceholder": "Erklären Sie warum",
@@ -329,6 +382,7 @@
       "heading": "Prüfprotokoll",
       "backToPost": "Zurück zum Beitrag",
       "empty": "Noch kein Verlauf vorhanden.",
+      "tableCaption": "Prüfprotokoll der Pipeline, eine Zeile je erfasstem Schritt",
       "machineStep": "Pipeline",
       "humanStep": "Menschliche Entscheidung",
       "column": {
@@ -372,6 +426,8 @@
       "decisionHeading": "Entscheidung",
       "reasonLabel": "Begründung",
       "reasonTooShort": "Bitte schreiben Sie mindestens 10 Zeichen zur Erklärung Ihrer Entscheidung.",
+      "approved": "Genehmigt.",
+      "rejected": "Abgelehnt.",
       "approve": "Freigeben",
       "reject": "Ablehnen",
       "editorReadOnlyNote": "Sie haben keine Berechtigung, einen Beitrag freizugeben oder abzulehnen. Fragen Sie einen Administrator.",
@@ -429,6 +485,7 @@
       "enabledYes": "Ja",
       "enabledNo": "Nein",
       "neverFetched": "Nie",
+      "tableCaption": "Freigegebene Quellen mit Feed-Adresse, Status und letztem Abruf",
       "enable": "Aktivieren",
       "disable": "Deaktivieren",
       "edit": "Bearbeiten",
@@ -466,6 +523,7 @@
         "enabled": "Aktiviert",
         "save": "Speichern",
         "saving": "Wird gespeichert…",
+        "saved": "Gespeichert.",
         "error": {
           "nameRequired": "Ein Name ist erforderlich.",
           "nameLength": "Der Name darf höchstens 120 Zeichen lang sein.",

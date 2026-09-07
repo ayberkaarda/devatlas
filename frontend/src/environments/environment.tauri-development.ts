@@ -12,10 +12,11 @@
  * The platform stays `tauri`: this is still the desktop shell, just pointed
  * at a local API instead of the deployed one.
  */
+import endpoints from '../../../config/api-endpoints.json';
 import type { AppEnvironment } from './environment.model';
 
 export const environment: AppEnvironment = {
   platform: 'tauri',
   production: false,
-  apiBaseUrl: 'http://localhost:18080/api/v1',
+  apiBaseUrl: endpoints.development,
 };

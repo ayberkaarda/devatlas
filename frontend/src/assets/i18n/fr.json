@@ -1,15 +1,17 @@
 {
   "app": {
     "title": "ByteLore",
-    "tagline": "Des parcours d'apprentissage pour développeurs, en ligne et hors ligne.",
     "skipToContent": "Aller au contenu"
   },
   "nav": {
     "label": "Navigation principale",
     "tracks": "Parcours",
+    "blog": "Blog",
     "downloads": "Téléchargements",
     "admin": "Administration",
-    "signIn": "Se connecter"
+    "signIn": "Se connecter",
+    "settings": "Paramètres",
+    "downloadsActive": "{{count}} téléchargements encore dans la file d'attente"
   },
   "theme": {
     "light": "Clair",
@@ -22,6 +24,13 @@
     "tr": "Türkçe",
     "fr": "Français",
     "de": "Deutsch"
+  },
+  "settings": {
+    "heading": "Paramètres",
+    "intro": "La langue, le thème et votre compte, au même endroit.",
+    "language": "Langue",
+    "theme": "Thème",
+    "account": "Compte"
   },
   "common": {
     "loading": "Chargement…",
@@ -47,10 +56,15 @@
     "empty": "Ce parcours ne contient pas encore de leçons.",
     "openLesson": "Ouvrir la leçon {{title}}",
     "mindMap": "Carte mentale",
-    "mindMapHint": "Ouvrir la carte mentale de {{title}}"
+    "mindMapHint": "Ouvrir la carte mentale de {{title}}",
+    "completedCount": "{{completed}} sur {{total}} terminées"
   },
   "lesson": {
     "backToTrack": "Retour au parcours",
+    "breadcrumb": "Fil d'Ariane",
+    "previous": "Leçon précédente",
+    "next": "Leçon suivante",
+    "position": "Leçon {{index}} sur {{total}}",
     "codeExamples": "Exemples de code",
     "markComplete": "Marquer comme terminée",
     "markIncomplete": "Marquer comme non terminée",
@@ -62,6 +76,9 @@
       "ADVANCED": "Avancé"
     },
     "notDownloaded": "Cette leçon n'a pas encore été téléchargée sur cet appareil."
+  },
+  "progress": {
+    "completed": "Terminée"
   },
   "download": {
     "action": {
@@ -114,6 +131,8 @@
     "checkForUpdates": "Vérifier les mises à jour",
     "checking": "Vérification…",
     "empty": "Vous n'avez encore rien téléchargé.",
+    "activeCount": "{{count}} téléchargements en cours",
+    "allFinished": "Téléchargements terminés.",
     "entityLesson": "Leçon",
     "entityMindMap": "Carte mentale",
     "heading": "Téléchargements",
@@ -139,6 +158,37 @@
     "nodeQueuedHint": "{{title}} est en cours de téléchargement",
     "treeLabel": "Carte mentale de {{title}}",
     "unavailable": "Ce parcours n'a pas de carte mentale."
+  },
+  "blog": {
+    "heading": "Blog",
+    "intro": "Notes de version et articles, chargés en direct depuis le serveur.",
+    "empty": "Aucun article à afficher pour le moment.",
+    "open": "Ouvrir l'article {{title}}",
+    "published": "Publié le {{date}}",
+    "viaSource": "via {{host}}",
+    "backToList": "Retour au blog",
+    "source": {
+      "heading": "Source d'origine",
+      "hint": "Cet article s'appuie sur une annonce publiée ailleurs. Ouvrez l'original pour le vérifier par vous-même.",
+      "open": "Ouvrir l'original sur {{host}} dans un nouvel onglet"
+    },
+    "offline": {
+      "heading": "Le blog a besoin d’une connexion",
+      "body": "Les articles du blog sont chargés en direct depuis le serveur : c’est le seul écran qui ne peut pas fonctionner sans réseau.",
+      "localHint": "Tout ce que vous avez déjà téléchargé reste disponible.",
+      "library": "Aller aux parcours",
+      "lastLoaded": "Liste affichée telle qu’elle a été chargée le {{date}}.",
+      "indicator": "Hors ligne",
+      "indicatorHint": "Le serveur est injoignable pour le moment, et les articles du blog sont chargés en direct."
+    }
+  },
+  "sync": {
+    "statusLabel": "État de la connexion et de la synchronisation",
+    "offline": "Hors ligne",
+    "offlineHint": "Le reste de l'application fonctionne hors ligne. Les articles de blog et la synchronisation nécessitent une connexion.",
+    "signInToSync": "Connectez-vous pour synchroniser",
+    "signInToSyncHint": "Votre progression est enregistrée sur cet appareil. Reconnectez-vous pour la synchroniser avec votre compte.",
+    "lastSynchronised": "Dernière synchronisation : {{when}}"
   },
   "notFound": {
     "heading": "Cette page n'existe pas",
@@ -246,6 +296,7 @@
       "heading": "Articles de blog",
       "newPost": "Nouvel article",
       "empty": "Aucun article ne correspond à ces filtres.",
+      "tableCaption": "Articles du blog, avec leur statut, leur origine, leur dernière modification et leur journal",
       "viewAudit": "Journal d'audit",
       "filter": {
         "status": "Statut",
@@ -284,6 +335,8 @@
       "preview": "Aperçu",
       "save": "Enregistrer",
       "saving": "Enregistrement…",
+      "saved": "Enregistré.",
+      "transitionApplied": "Statut mis à jour.",
       "actionsHeading": "Actions",
       "reasonLabel": "Motif",
       "reasonPlaceholder": "Expliquez pourquoi",
@@ -329,6 +382,7 @@
       "heading": "Journal d'audit",
       "backToPost": "Retour à l'article",
       "empty": "Aucun historique pour le moment.",
+      "tableCaption": "Journal d'audit du pipeline, une ligne par étape enregistrée",
       "machineStep": "Pipeline",
       "humanStep": "Décision humaine",
       "column": {
@@ -372,6 +426,8 @@
       "decisionHeading": "Décision",
       "reasonLabel": "Motif",
       "reasonTooShort": "Veuillez écrire au moins 10 caractères pour expliquer votre décision.",
+      "approved": "Approuvé.",
+      "rejected": "Rejeté.",
       "approve": "Approuver",
       "reject": "Rejeter",
       "editorReadOnlyNote": "Vous n'avez pas la permission d'approuver ou de rejeter un article. Demandez à un administrateur.",
@@ -429,6 +485,7 @@
       "enabledYes": "Oui",
       "enabledNo": "Non",
       "neverFetched": "Jamais",
+      "tableCaption": "Sources autorisées, avec leur adresse de flux, leur statut et leur dernière récupération",
       "enable": "Activer",
       "disable": "Désactiver",
       "edit": "Modifier",
@@ -466,6 +523,7 @@
         "enabled": "Activée",
         "save": "Enregistrer",
         "saving": "Enregistrement…",
+        "saved": "Enregistré.",
         "error": {
           "nameRequired": "Un nom est requis.",
           "nameLength": "Le nom ne doit pas dépasser 120 caractères.",

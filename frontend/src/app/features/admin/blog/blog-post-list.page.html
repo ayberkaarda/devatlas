@@ -1,7 +1,7 @@
 <div class="flex items-center justify-between gap-4">
   <h1 class="text-2xl font-semibold tracking-tight">{{ 'admin.posts.heading' | translate }}</h1>
   <a
-    class="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast"
+    class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast"
     routerLink="/admin/blog/new"
   >
     {{ 'admin.posts.newPost' | translate }}
@@ -63,12 +63,17 @@
     <label class="text-sm font-medium" for="posts-filter-search">
       {{ 'admin.posts.filter.search' | translate }}
     </label>
+    <!--
+      No aria-label: the label above already names this field, and an
+      aria-label would override it, so the two would drift apart the first time
+      either string is edited and a voice command spoken from the visible label
+      would stop matching.
+    -->
     <input
       id="posts-filter-search"
       class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
       type="search"
       [attr.placeholder]="'admin.posts.filter.searchPlaceholder' | translate"
-      [attr.aria-label]="'admin.posts.filter.search' | translate"
       [value]="qDraft()"
       (input)="onSearchInput($event)"
     />
@@ -83,30 +88,45 @@
     <p class="mt-1 text-text-muted">{{ failureKey | translate }}</p>
     <button
       type="button"
-      class="mt-3 rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast"
+      class="mt-3 rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast"
       (click)="retry()"
     >
       {{ 'common.retry' | translate }}
     </button>
   </div>
 } @else if (posts().length === 0) {
-  <p class="mt-8 text-text-muted">{{ 'admin.posts.empty' | translate }}</p>
+  <p class="mt-8 text-text-muted" role="status">{{ 'admin.posts.empty' | translate }}</p>
 } @else {
   <div class="mt-6 overflow-x-auto">
     <table class="w-full text-left text-sm">
+      <caption class="sr-only">
+        {{
+          'admin.posts.tableCaption' | translate
+        }}
+      </caption>
       <thead>
         <tr class="border-b border-border text-text-muted">
-          <th class="py-2 pr-4 font-medium">{{ 'admin.posts.column.title' | translate }}</th>
-          <th class="py-2 pr-4 font-medium">{{ 'admin.posts.column.status' | translate }}</th>
-          <th class="py-2 pr-4 font-medium">{{ 'admin.posts.column.source' | translate }}</th>
-          <th class="py-2 pr-4 font-medium">{{ 'admin.posts.column.updatedAt' | translate }}</th>
-          <th class="py-2 font-medium">{{ 'admin.posts.column.audit' | translate }}</th>
+          <th class="py-2 pl-1 pr-4 font-medium" scope="col">
+            {{ 'admin.posts.column.title' | translate }}
+          </th>
+          <th class="py-2 pr-4 font-medium" scope="col">
+            {{ 'admin.posts.column.status' | translate }}
+          </th>
+          <th class="py-2 pr-4 font-medium" scope="col">
+            {{ 'admin.posts.column.source' | translate }}
+          </th>
+          <th class="py-2 pr-4 font-medium" scope="col">
+            {{ 'admin.posts.column.updatedAt' | translate }}
+          </th>
+          <th class="py-2 pr-1 font-medium" scope="col">
+            {{ 'admin.posts.column.audit' | translate }}
+          </th>
         </tr>
       </thead>
       <tbody>
         @for (post of posts(); track post.id) {
           <tr class="border-b border-border">
-            <td class="py-2 pr-4">
+            <td class="py-2 pl-1 pr-4">
               <a
                 class="text-text no-underline hover:underline"
                 [routerLink]="['/admin/blog', post.id]"

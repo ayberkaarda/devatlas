@@ -56,6 +56,17 @@ export class MindMapTree {
   protected readonly focusedId = signal<string>('');
   protected readonly enqueueErrorKey = signal<string | null>(null);
 
+  /**
+   * Whether the next focused-node change was asked for by the person using the
+   * tree, as opposed to falling out of the layout arriving.
+   *
+   * Without the distinction, the tree took focus away from wherever the reader
+   * was the moment the deferred block resolved and put it on the root node.
+   * Moving somebody's focus for them is only acceptable when they did
+   * something to ask for it.
+   */
+  private readonly focusRequested = signal(false);
+
   constructor() {
     // Keeps the focused node valid whenever the tree itself changes (a
     // different track was opened), without fighting a focus change the user
@@ -72,9 +83,10 @@ export class MindMapTree {
 
     effect(() => {
       const id = this.focusedId();
-      if (!id) {
+      if (!id || !this.focusRequested()) {
         return;
       }
+      this.focusRequested.set(false);
       queueMicrotask(() => {
         this.host.nativeElement
           .querySelector<HTMLElement>(`[data-node-id="${cssEscapeId(id)}"]`)
@@ -92,7 +104,26 @@ export class MindMapTree {
   }
 
   protected setFocus(id: string): void {
+    this.focusRequested.set(true);
     this.focusedId.set(id);
+  }
+
+  /** How many nodes share this one's parent, for `aria-setsize`. */
+  protected siblingCount(node: LayoutNode): number {
+    return this.siblingsOf(node).length;
+  }
+
+  /** This node's one-based position among its siblings, for `aria-posinset`. */
+  protected positionInSiblings(node: LayoutNode): number {
+    return this.siblingsOf(node).indexOf(node.id) + 1;
+  }
+
+  private siblingsOf(node: LayoutNode): readonly string[] {
+    const { parentOf, childrenOf, order } = this.layout();
+    const parent = parentOf.get(node.id) ?? null;
+    // A root has no parent to enumerate, and this tree has exactly one, so the
+    // set it belongs to is the set of roots.
+    return parent === null ? order.slice(0, 1) : (childrenOf.get(parent) ?? []);
   }
 
   protected onKeydown(event: KeyboardEvent, node: LayoutNode): void {
@@ -101,7 +132,7 @@ export class MindMapTree {
       case 'ArrowRight': {
         const [first] = childrenOf.get(node.id) ?? [];
         if (first) {
-          this.focusedId.set(first);
+          this.setFocus(first);
           event.preventDefault();
         }
         break;
@@ -109,7 +140,7 @@ export class MindMapTree {
       case 'ArrowLeft': {
         const parent = parentOf.get(node.id);
         if (parent) {
-          this.focusedId.set(parent);
+          this.setFocus(parent);
           event.preventDefault();
         }
         break;
@@ -117,7 +148,7 @@ export class MindMapTree {
       case 'ArrowDown': {
         const index = order.indexOf(node.id);
         if (index >= 0 && index < order.length - 1) {
-          this.focusedId.set(order[index + 1]);
+          this.setFocus(order[index + 1]);
           event.preventDefault();
         }
         break;
@@ -125,17 +156,17 @@ export class MindMapTree {
       case 'ArrowUp': {
         const index = order.indexOf(node.id);
         if (index > 0) {
-          this.focusedId.set(order[index - 1]);
+          this.setFocus(order[index - 1]);
           event.preventDefault();
         }
         break;
       }
       case 'Home':
-        this.focusedId.set(order[0]);
+        this.setFocus(order[0]);
         event.preventDefault();
         break;
       case 'End':
-        this.focusedId.set(order[order.length - 1]);
+        this.setFocus(order[order.length - 1]);
         event.preventDefault();
         break;
       case 'Enter':

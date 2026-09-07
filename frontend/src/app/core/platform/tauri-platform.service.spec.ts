@@ -11,11 +11,31 @@ import {
   respondWith,
 } from '../../../testing/desktop-ipc-double';
 import { API_BASE_URL } from './api';
+import type { ProgressEntry } from './models';
 import { TauriPlatformService } from './tauri-platform.service';
 
 const TRACK_ID = '018f3a01-2b7c-7a41-8f10-5c9d3e77aa10';
 const LESSON_ID = '018f3b21-6c4a-7b0e-9d31-4a2f8c5e1b70';
 const MIND_MAP_ID = '018f3d90-1a55-7c88-b0e2-6f31c4a9d502';
+
+/** The store's answer for the lesson these tests read. */
+function lessonRow() {
+  return {
+    lessonId: LESSON_ID,
+    trackId: TRACK_ID,
+    moduleId: 'module-1',
+    slug: 'signals-and-reactivity',
+    title: 'Introduction to signals',
+    bodyMarkdown: '## Signals',
+    difficulty: 'BEGINNER',
+    estimatedMinutes: 25,
+    order: 1,
+    contentVersion: 4,
+    locale: 'en',
+    isFallback: false,
+    codeExamples: [],
+  };
+}
 
 function trackSummaryRow() {
   return {
@@ -311,6 +331,7 @@ describe('TauriPlatformService', () => {
       if (command === 'library_list_tracks') return [trackSummaryRow()];
       if (command === 'library_get_track') return trackDetailRow('DOWNLOADED');
       if (command === 'download_queue_state') return [];
+      if (command === 'progress_list') return [];
       if (command === 'library_get_lesson') {
         return {
           lessonId: LESSON_ID,
@@ -337,6 +358,79 @@ describe('TauriPlatformService', () => {
     expect(lesson.id).toBe(LESSON_ID);
     expect(lesson.translation.isFallback).toBe(true);
     expect(lesson.codeExamples).toHaveLength(1);
+  });
+
+  it('reads the completion of a finished lesson out of the local progress table', async () => {
+    // Locally, and with no session in play: this is what has to keep working
+    // when there is no network and the access token expired hours ago.
+    respondWith(async (command) => {
+      if (command === 'library_list_tracks') return [trackSummaryRow()];
+      if (command === 'library_get_track') return trackDetailRow('DOWNLOADED');
+      if (command === 'download_queue_state') return [];
+      if (command === 'library_get_lesson') return lessonRow();
+      if (command === 'progress_list') {
+        return [
+          {
+            lessonId: LESSON_ID,
+            completedAt: '2026-09-06T20:14:00.000Z',
+            clientUpdatedAt: '2026-09-06T20:14:00.000Z',
+            syncState: 'SYNCED',
+          },
+        ];
+      }
+      throw new Error(`unexpected ${command}`);
+    });
+
+    const lesson = await service.getLesson('signals-and-reactivity');
+
+    expect(lesson.completedAt).toBe('2026-09-06T20:14:00.000Z');
+    expect(calls.map((call) => call.command)).toContain('progress_list');
+  });
+
+  it('reports no completion for a lesson with a row that records none', async () => {
+    respondWith(async (command) => {
+      if (command === 'library_list_tracks') return [trackSummaryRow()];
+      if (command === 'library_get_track') return trackDetailRow('DOWNLOADED');
+      if (command === 'download_queue_state') return [];
+      if (command === 'library_get_lesson') return lessonRow();
+      if (command === 'progress_list') {
+        return [
+          {
+            lessonId: LESSON_ID,
+            completedAt: null,
+            clientUpdatedAt: '2026-09-06T20:14:00.000Z',
+            syncState: 'SYNCED',
+          },
+          // Another lesson's completion must not be read as this one's.
+          {
+            lessonId: 'lesson-elsewhere',
+            completedAt: '2026-09-06T21:00:00.000Z',
+            clientUpdatedAt: '2026-09-06T21:00:00.000Z',
+            syncState: 'SYNCED',
+          },
+        ];
+      }
+      throw new Error(`unexpected ${command}`);
+    });
+
+    expect((await service.getLesson('signals-and-reactivity')).completedAt).toBeNull();
+  });
+
+  it('still returns the lesson when the progress table cannot be read', async () => {
+    // The article is readable either way, and losing it over a progress row
+    // would be a worse answer than a toggle offering to mark it again.
+    respondWith(async (command) => {
+      if (command === 'library_list_tracks') return [trackSummaryRow()];
+      if (command === 'library_get_track') return trackDetailRow('DOWNLOADED');
+      if (command === 'download_queue_state') return [];
+      if (command === 'library_get_lesson') return lessonRow();
+      throw { code: 'STORE_UNAVAILABLE', message: 'locked' };
+    });
+
+    const lesson = await service.getLesson('signals-and-reactivity');
+
+    expect(lesson.id).toBe(LESSON_ID);
+    expect(lesson.completedAt).toBeNull();
   });
 
   it('sends a partial preference patch rather than restating the other field', async () => {
@@ -412,5 +506,176 @@ describe('TauriPlatformService', () => {
 
     await service.revealApplication();
     expect(calls.map((call) => call.command)).toEqual(['window_show']);
+  });
+
+  it('maps pending progress rows, dropping the sync state the command adds', async () => {
+    respondWith(async (command) => {
+      expect(command).toBe('progress_pending');
+      return [
+        {
+          lessonId: LESSON_ID,
+          completedAt: null,
+          clientUpdatedAt: '2026-09-04T08:00:00.000Z',
+          syncState: 'PENDING',
+        },
+      ];
+    });
+
+    const pending = await service.pendingProgress();
+    // The command returns the same row `progress_list` does, plus a
+    // `syncState` field the protocol's narrower `PendingProgress` type has no
+    // place for; every row this command returns is pending by definition, so
+    // dropping the field loses nothing.
+    expect(pending).toEqual([
+      { lessonId: LESSON_ID, completedAt: null, clientUpdatedAt: '2026-09-04T08:00:00.000Z' },
+    ]);
+  });
+
+  it('sends a sync result with an explicit null completion apart from one with none at all', async () => {
+    respondWith(async (command) => {
+      expect(command).toBe('progress_apply_results');
+      return null;
+    });
+
+    await service.applyProgressResults([
+      {
+        lessonId: 'a',
+        status: 'STALE',
+        code: null,
+        serverClientUpdatedAt: null,
+        completedAt: null,
+      },
+      {
+        lessonId: 'b',
+        status: 'APPLIED',
+        code: null,
+        serverClientUpdatedAt: '2026-09-04T08:00:00.000Z',
+      },
+    ]);
+
+    const sent = calls[0].args?.['results'] as Record<string, unknown>[];
+    // Row 'a' carries an explicit null; row 'b' never mentions the field at
+    // all. Collapsing the two would silently un-complete a lesson on every
+    // STALE row with no opinion on completion.
+    expect(sent[0]).toHaveProperty('completedAt', null);
+    expect(sent[1]).not.toHaveProperty('completedAt');
+  });
+
+  it('hands a pulled batch to the store, restated field by field', async () => {
+    respondWith(async () => null);
+
+    // The extra field stands in for whatever a caller's object happens to
+    // carry: absorbing is a write to the replica under a conflict rule, and
+    // nothing a caller adds may travel into it.
+    const widened = {
+      lessonId: LESSON_ID,
+      completedAt: '2026-09-02T20:11:07.400Z',
+      clientUpdatedAt: '2026-09-02T20:11:07.412Z',
+      syncState: 'SYNCED',
+    } as ProgressEntry;
+
+    await service.absorbProgress([widened]);
+
+    expect(calls).toEqual([
+      {
+        command: 'progress_absorb',
+        args: {
+          entries: [
+            {
+              lessonId: LESSON_ID,
+              completedAt: '2026-09-02T20:11:07.400Z',
+              clientUpdatedAt: '2026-09-02T20:11:07.412Z',
+            },
+          ],
+        },
+      },
+    ]);
+  });
+
+  it('loads a remembered session with every field populated', async () => {
+    respondWith(async (command) => {
+      expect(command).toBe('session_load');
+      return {
+        userId: 'user-1',
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+        accessTokenExpiresAt: '2026-09-04T09:27:33.000Z',
+      };
+    });
+
+    expect(await service.loadSession()).toEqual({
+      userId: 'user-1',
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      accessTokenExpiresAt: '2026-09-04T09:27:33.000Z',
+    });
+  });
+
+  it('reports no remembered session as null rather than an empty object', async () => {
+    respondWith(async () => null);
+    expect(await service.loadSession()).toBeNull();
+  });
+
+  it('stores a full session and forgets it through the paired commands', async () => {
+    respondWith(async () => null);
+
+    const session = {
+      userId: 'user-1',
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      accessTokenExpiresAt: '2026-09-04T09:27:33.000Z',
+    };
+    await service.storeSession(session);
+    await service.forgetSession();
+
+    expect(calls).toEqual([
+      { command: 'session_store', args: { session } },
+      { command: 'session_clear', args: undefined },
+    ]);
+  });
+
+  it('reads sync bookkeeping from the settings record, apart from the preference fields', async () => {
+    respondWith(async (command) => {
+      expect(command).toBe('settings_get');
+      return {
+        locale: 'tr',
+        theme: 'DARK',
+        preferencesDirtyAt: '2026-09-04T08:41:02.310Z',
+        lastSyncAt: '2026-09-03T21:14:55.002Z',
+      };
+    });
+
+    expect(await service.getSyncState()).toEqual({
+      preferencesDirtyAt: '2026-09-04T08:41:02.310Z',
+      lastSyncAt: '2026-09-03T21:14:55.002Z',
+    });
+  });
+
+  it('writes sync bookkeeping without restating locale or theme', async () => {
+    respondWith(async () => ({
+      locale: 'en',
+      theme: 'SYSTEM',
+      preferencesDirtyAt: null,
+      lastSyncAt: '2026-09-03T21:14:55.002Z',
+    }));
+
+    await service.setSyncState({ lastSyncAt: '2026-09-03T21:14:55.002Z' });
+
+    // A patch that restated locale or theme could race a concurrent
+    // preference write; only the field the caller supplied is sent.
+    expect(calls[0].args).toEqual({ patch: { lastSyncAt: '2026-09-03T21:14:55.002Z' } });
+  });
+
+  it('clears a sync bookkeeping field with an explicit null rather than omitting it', async () => {
+    respondWith(async () => ({
+      locale: 'en',
+      theme: 'SYSTEM',
+      preferencesDirtyAt: null,
+      lastSyncAt: null,
+    }));
+
+    await service.setSyncState({ preferencesDirtyAt: null });
+
+    expect(calls[0].args).toEqual({ patch: { preferencesDirtyAt: null } });
   });
 });

@@ -48,15 +48,22 @@
     <div class="mt-4 overflow-x-auto">
       <h4 class="text-sm font-medium">{{ 'admin.sources.fetch.rejectionsHeading' | translate }}</h4>
       <table class="mt-1 w-full text-left text-sm">
+        <caption class="sr-only">
+          {{
+            'admin.sources.fetch.rejectionsHeading' | translate
+          }}
+        </caption>
         <thead>
           <tr class="border-b border-border text-text-muted">
-            <th class="py-1 pr-4 font-medium">
+            <th class="py-1 pr-4 font-medium" scope="col">
               {{ 'admin.sources.fetch.column.version' | translate }}
             </th>
-            <th class="py-1 pr-4 font-medium">
+            <th class="py-1 pr-4 font-medium" scope="col">
               {{ 'admin.sources.fetch.column.check' | translate }}
             </th>
-            <th class="py-1 font-medium">{{ 'admin.sources.fetch.column.detail' | translate }}</th>
+            <th class="py-1 font-medium" scope="col">
+              {{ 'admin.sources.fetch.column.detail' | translate }}
+            </th>
           </tr>
         </thead>
         <tbody>

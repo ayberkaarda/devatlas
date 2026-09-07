@@ -22,6 +22,8 @@ import type { VerifyCheck } from '../../../core/admin/admin-models';
       @for (check of checks(); track check.check) {
         <li
           class="rounded-md border p-2 text-sm"
+          data-testid="verify-check"
+          [attr.data-check]="check.check"
           [class.border-danger]="check === firstFailing()"
           [class.border-border]="check !== firstFailing()"
         >
@@ -37,7 +39,12 @@ import type { VerifyCheck } from '../../../core/admin/admin-models';
             <p class="mt-1 text-text-muted">{{ check.detail }}</p>
           }
           @if (check === firstFailing()) {
-            <p class="mt-1 text-xs font-medium text-danger" role="alert">
+            <!--
+              No role="alert": this note is rendered from the inputs on first
+              paint, and an assertive region announces its content on every
+              visit, interrupting whatever the reader was on.
+            -->
+            <p class="mt-1 text-xs font-medium text-danger" data-testid="first-failing-note">
               {{ 'admin.review.firstFailingNote' | translate }}
             </p>
           }

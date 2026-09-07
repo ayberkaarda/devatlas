@@ -30,10 +30,7 @@ const STATUS_TEXT_CLASS: Record<BlogStatus, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslatePipe],
   template: `
-    <span
-      class="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide"
-      [class]="textClass()"
-    >
+    <span class="inline-flex items-center gap-1.5 text-xs font-medium" [class]="textClass()">
       <span class="inline-block h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true"></span>
       {{ 'admin.post.status.' + status() | translate }}
     </span>

@@ -46,6 +46,9 @@
           [attr.data-node-id]="node.id"
           [attr.aria-selected]="focusedId() === node.id"
           [attr.aria-expanded]="node.hasChildren ? true : null"
+          [attr.aria-level]="node.depth + 1"
+          [attr.aria-setsize]="siblingCount(node)"
+          [attr.aria-posinset]="positionInSiblings(node)"
           [attr.tabindex]="focusedId() === node.id ? 0 : -1"
           [attr.aria-label]="
             !node.lessonId
@@ -57,7 +60,7 @@
                     : 'mindMap.nodeDownloadHint'
                 ) | translate: { title: node.label })
           "
-          class="cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          class="cursor-pointer"
           (click)="setFocus(node.id); activate(node)"
           (focus)="setFocus(node.id)"
           (keydown)="onKeydown($event, node)"

@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  type ElementRef,
   computed,
   effect,
   inject,
   input,
   signal,
+  viewChild,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -46,6 +48,16 @@ export class LessonDownloadControls {
   readonly title = input.required<string>();
   readonly baseAvailability = input.required<Availability>();
 
+  /**
+   * Renders the at-rest states (downloaded, withdrawn, locally ahead) as a
+   * status word only, with no delete button and therefore no confirmation
+   * flow. Acquiring a lesson and removing one are different intentions, and
+   * a screen built around reading rather than managing a library should not
+   * offer the second one next to the title. Defaults to false so every
+   * existing call site keeps the full control.
+   */
+  readonly acquireOnly = input(false);
+
   protected readonly canDownload = this.platform.capabilities.canDownload;
 
   /**
@@ -68,11 +80,40 @@ export class LessonDownloadControls {
   protected readonly actionErrorKey = signal<string | null>(null);
   protected readonly confirmingDelete = signal(false);
 
+  private readonly confirmDeleteButton =
+    viewChild<ElementRef<HTMLButtonElement>>('confirmDeleteButton');
+  private readonly controlsHost = viewChild<ElementRef<HTMLElement>>('controlsHost');
+
+  /** Set when a confirmation closes, so focus can be put back on this row. */
+  private readonly restoreFocus = signal(false);
+
   constructor() {
     effect(() => {
       if (this.rawState() === 'DONE') {
         this.localOverride.set('DOWNLOADED');
       }
+    });
+
+    // The view references are signals, so these run again once the @if has
+    // actually put the element in the document rather than at the moment the
+    // state behind it changed.
+    effect(() => {
+      const button = this.confirmDeleteButton();
+      if (this.confirmingDelete() && button) {
+        button.nativeElement.focus();
+      }
+    });
+
+    effect(() => {
+      const host = this.controlsHost();
+      if (!this.restoreFocus() || !host) {
+        return;
+      }
+      this.restoreFocus.set(false);
+      // The row rather than a particular button: which button comes back
+      // depends on what the transfer did while the confirmation was open, so
+      // there is no single element that is guaranteed to be there.
+      host.nativeElement.focus();
     });
   }
 
@@ -114,6 +155,7 @@ export class LessonDownloadControls {
   }
 
   protected cancelDeleteRequest(): void {
+    this.restoreFocus.set(true);
     this.confirmingDelete.set(false);
   }
 

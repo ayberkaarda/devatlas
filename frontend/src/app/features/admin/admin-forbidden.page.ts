@@ -20,7 +20,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     </h1>
     <p class="mt-2 text-text-muted">{{ 'admin.forbidden.description' | translate }}</p>
     <a
-      class="mt-6 inline-block rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast no-underline"
+      class="mt-6 inline-block rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast no-underline"
       routerLink="/tracks"
     >
       {{ 'admin.forbidden.backToTracks' | translate }}

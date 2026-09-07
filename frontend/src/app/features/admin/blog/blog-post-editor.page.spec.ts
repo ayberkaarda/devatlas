@@ -1,10 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import {
-  TranslateService,
-  provideTranslateService,
-  type TranslationObject,
-} from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 
 import { FakeAdminApiClient } from '../../../../testing/fake-admin-api.client';
 import { FakeAuthSession } from '../../../../testing/fake-auth-session';
@@ -17,63 +13,6 @@ import { BundledTranslateLoader } from '../../../core/i18n/translations';
 import { PlatformError } from '../../../core/platform/errors';
 import { PlatformService } from '../../../core/platform/platform.service';
 import { BlogPostEditorPage } from './blog-post-editor.page';
-
-/**
- * These keys are not yet in the locale catalogue — this file's own screen
- * owns defining them, but only the shared four locale JSON files (owned by
- * another agent this wave) can actually carry them. Merging them into the
- * translate service here lets these tests assert on the real English text
- * the finished screen will show, without waiting on that other file to land.
- */
-function setPendingTranslations(): void {
-  const translate = TestBed.inject(TranslateService);
-  const pairs: Record<string, string> = {
-    'admin.editor.headingNew': 'New post',
-    'admin.editor.headingEdit': 'Edit post',
-    'admin.editor.slug': 'Slug',
-    'admin.editor.title': 'Title',
-    'admin.editor.sourceUrl': 'Source link',
-    'admin.editor.body': 'Body',
-    'admin.editor.preview': 'Preview',
-    'admin.editor.save': 'Save',
-    'admin.editor.saving': 'Saving…',
-    'admin.editor.actionsHeading': 'Actions',
-    'admin.editor.reasonLabel': 'Reason',
-    'admin.editor.reasonPlaceholder': 'Explain why',
-    'admin.editor.confirmAction': 'Confirm',
-    'admin.editor.error.slugRequired': 'A slug is required.',
-    'admin.editor.error.slugLength': 'The slug must be 3 to 80 characters.',
-    'admin.editor.error.slugPattern':
-      'The slug may only contain lowercase letters, digits and hyphens.',
-    'admin.editor.error.titleRequired': 'A title is required.',
-    'admin.editor.error.titleLength': 'The title must be 200 characters or fewer.',
-    'admin.editor.error.bodyRequired': 'A body is required.',
-    'admin.editor.error.bodyLength': 'The body must be 200,000 characters or fewer.',
-    'admin.editor.error.sourceUrlLength': 'The source link must be 2,000 characters or fewer.',
-    'admin.editor.error.sourceUrlInsecure': 'The source link must be an absolute https:// address.',
-    'admin.editor.error.reasonTooShort': 'The reason must be at least 10 characters.',
-    'admin.post.hint.autoBodyReadOnly':
-      'This post was created automatically; only an administrator can edit its body.',
-    'admin.post.hint.autoSourceUrlReadOnly':
-      'The source link of an automatically created post cannot be changed.',
-    'admin.post.action.submit': 'Submit',
-    'admin.post.action.approve': 'Approve',
-    'admin.post.action.reject': 'Reject',
-    'admin.post.action.publish': 'Publish',
-    'admin.post.action.unpublish': 'Unpublish',
-    'admin.post.action.delete': 'Delete',
-  };
-  const root: TranslationObject = {};
-  for (const [key, value] of Object.entries(pairs)) {
-    const parts = key.split('.');
-    let node: TranslationObject = root;
-    for (let index = 0; index < parts.length - 1; index += 1) {
-      node = (node[parts[index]] ??= {}) as TranslationObject;
-    }
-    node[parts.at(-1) as string] = value;
-  }
-  translate.setTranslation('en', root, true);
-}
 
 function post(overrides: Partial<AdminBlogPost>): AdminBlogPost {
   return {
@@ -116,7 +55,6 @@ describe('BlogPostEditorPage', () => {
       ],
     });
     await TestBed.inject(LocaleService).initialize('en');
-    setPendingTranslations();
     jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     jest.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
   });
@@ -250,5 +188,78 @@ describe('BlogPostEditorPage', () => {
       '.markdown-body',
     ) as HTMLElement;
     expect(preview.querySelector('script')).toBeNull();
+  });
+  it('keeps the screen heading above the error card when the load fails', async () => {
+    api.getBlogPostCalls.mockRejectedValue(new PlatformError('INTERNAL_ERROR', 'Boom.'));
+    const fixture = await render('post-1');
+    const element = fixture.nativeElement as HTMLElement;
+
+    // The wording of the heading never depended on the fetch, so a failed
+    // fetch should not leave the document starting at its second level.
+    expect(element.querySelectorAll('h1')).toHaveLength(1);
+    expect(element.querySelector('[role="alert"]')).not.toBeNull();
+  });
+
+  it('ties each field error to the field it is about', async () => {
+    const fixture = await render(undefined);
+    const element = fixture.nativeElement as HTMLElement;
+
+    (element.querySelector('form') as HTMLFormElement).dispatchEvent(
+      new Event('submit', { cancelable: true }),
+    );
+    fixture.detectChanges();
+
+    const slug = element.querySelector('#editor-slug') as HTMLInputElement;
+    expect(slug.getAttribute('aria-invalid')).toBe('true');
+    // An error announced but not associated is read as "invalid" with no
+    // reason when focus lands on the field.
+    const describedBy = slug.getAttribute('aria-describedby');
+    expect(describedBy).not.toBeNull();
+    expect(element.querySelector('#' + describedBy)).not.toBeNull();
+  });
+
+  it('says so in a live region when a save succeeds', async () => {
+    api.getBlogPostCalls.mockResolvedValue(post({ slug: 'existing', title: 'Existing' }));
+    api.updateBlogPostCalls.mockResolvedValue(post({ slug: 'existing', title: 'Existing' }));
+    const fixture = await render('post-1');
+    const element = fixture.nativeElement as HTMLElement;
+
+    const region = element.querySelector('[data-testid="editor-outcome"]') as HTMLElement;
+    // Present before the change, which is what makes it a live region rather
+    // than a paragraph that appears.
+    expect(region.getAttribute('role')).toBe('status');
+    expect(region.textContent?.trim()).toBe('');
+
+    (element.querySelector('form') as HTMLFormElement).dispatchEvent(
+      new Event('submit', { cancelable: true }),
+    );
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(region.textContent?.trim()).not.toBe('');
+  });
+
+  it('moves focus into the reason panel and back to the button that opened it', async () => {
+    api.getBlogPostCalls.mockResolvedValue(post({ status: 'PENDING_REVIEW', source: 'MANUAL' }));
+    const fixture = await render('post-1', 'ADMIN');
+    const element = fixture.nativeElement as HTMLElement;
+
+    const reject = element.querySelector('[data-action="reject"]') as HTMLButtonElement;
+    expect(reject).not.toBeNull();
+    reject.focus();
+    reject.click();
+    fixture.detectChanges();
+
+    // Opening the panel destroys the button that was focused, and a destroyed
+    // element takes the focus with it to the top of the document.
+    expect(document.activeElement).toBe(element.querySelector('#editor-reason'));
+
+    const cancel = Array.from(element.querySelectorAll('button')).find(
+      (button) => button.textContent?.trim() === 'Cancel',
+    ) as HTMLButtonElement;
+    cancel.click();
+    fixture.detectChanges();
+
+    expect(document.activeElement).toBe(element.querySelector('[data-action="reject"]'));
   });
 });

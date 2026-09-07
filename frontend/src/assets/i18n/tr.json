@@ -1,15 +1,17 @@
 {
   "app": {
     "title": "ByteLore",
-    "tagline": "Geliştiriciler için öğrenme yolları, çevrimiçi ve çevrimdışı.",
     "skipToContent": "İçeriğe geç"
   },
   "nav": {
     "label": "Ana gezinme",
     "tracks": "Öğrenme yolları",
+    "blog": "Blog",
     "downloads": "İndirilenler",
     "admin": "Yönetim",
-    "signIn": "Giriş yap"
+    "signIn": "Giriş yap",
+    "settings": "Ayarlar",
+    "downloadsActive": "Kuyrukta bekleyen {{count}} indirme"
   },
   "theme": {
     "light": "Açık",
@@ -22,6 +24,13 @@
     "tr": "Türkçe",
     "fr": "Français",
     "de": "Deutsch"
+  },
+  "settings": {
+    "heading": "Ayarlar",
+    "intro": "Dil, tema ve hesabınız; hepsi tek yerde.",
+    "language": "Dil",
+    "theme": "Tema",
+    "account": "Hesap"
   },
   "common": {
     "loading": "Yükleniyor…",
@@ -47,10 +56,15 @@
     "empty": "Bu öğrenme yolunda henüz ders yok.",
     "openLesson": "{{title}} dersini aç",
     "mindMap": "Zihin haritası",
-    "mindMapHint": "{{title}} için zihin haritasını aç"
+    "mindMapHint": "{{title}} için zihin haritasını aç",
+    "completedCount": "{{total}} dersin {{completed}} tanesi tamamlandı"
   },
   "lesson": {
     "backToTrack": "Öğrenme yoluna dön",
+    "breadcrumb": "Sayfa yolu",
+    "previous": "Önceki ders",
+    "next": "Sonraki ders",
+    "position": "{{total}} dersten {{index}}. ders",
     "codeExamples": "Kod örnekleri",
     "markComplete": "Tamamlandı olarak işaretle",
     "markIncomplete": "Tamamlanmadı olarak işaretle",
@@ -62,6 +76,9 @@
       "ADVANCED": "İleri"
     },
     "notDownloaded": "Bu ders henüz bu cihaza indirilmedi."
+  },
+  "progress": {
+    "completed": "Tamamlandı"
   },
   "download": {
     "action": {
@@ -114,6 +131,8 @@
     "checkForUpdates": "Güncellemeleri kontrol et",
     "checking": "Kontrol ediliyor…",
     "empty": "Henüz hiçbir şey indirmediniz.",
+    "activeCount": "{{count}} indirme sürüyor",
+    "allFinished": "İndirmeler tamamlandı.",
     "entityLesson": "Ders",
     "entityMindMap": "Zihin haritası",
     "heading": "İndirilenler",
@@ -139,6 +158,37 @@
     "nodeQueuedHint": "{{title}} indiriliyor",
     "treeLabel": "{{title}} için zihin haritası",
     "unavailable": "Bu öğrenme yolunun zihin haritası yok."
+  },
+  "blog": {
+    "heading": "Blog",
+    "intro": "Sürüm notları ve yazılar; sunucudan anlık olarak yüklenir.",
+    "empty": "Gösterilecek yazı henüz yok.",
+    "open": "{{title}} yazısını aç",
+    "published": "{{date}} tarihinde yayımlandı",
+    "viaSource": "kaynak: {{host}}",
+    "backToList": "Bloga dön",
+    "source": {
+      "heading": "Özgün kaynak",
+      "hint": "Bu yazı başka bir yerde yayımlanmış bir duyuruya dayanıyor. Özgün metni açıp kendiniz doğrulayabilirsiniz.",
+      "open": "Özgün metni {{host}} adresinde yeni sekmede aç"
+    },
+    "offline": {
+      "heading": "Blog için bağlantı gerekiyor",
+      "body": "Blog yazıları sunucudan anlık olarak yüklenir; bu yüzden bağlantı olmadan çalışamayan tek ekran budur.",
+      "localHint": "Daha önce indirdiğiniz her şey kullanılabilir durumda.",
+      "library": "Öğrenme yollarına git",
+      "lastLoaded": "Liste, {{date}} tarihinde yüklendiği hâliyle gösteriliyor.",
+      "indicator": "Çevrimdışı",
+      "indicatorHint": "Sunucuya şu anda ulaşılamıyor; blog yazıları ise anlık olarak yükleniyor."
+    }
+  },
+  "sync": {
+    "statusLabel": "Bağlantı ve eşitleme durumu",
+    "offline": "Çevrimdışı",
+    "offlineHint": "Uygulamanın geri kalanı çevrimdışı çalışır. Blog yazıları ve eşitleme bağlantı gerektirir.",
+    "signInToSync": "Eşitlemek için giriş yapın",
+    "signInToSyncHint": "İlerlemeniz bu cihazda kaydediliyor. Hesabınızla eşitlemek için yeniden giriş yapın.",
+    "lastSynchronised": "Son eşitleme: {{when}}"
   },
   "notFound": {
     "heading": "Bu sayfa yok",
@@ -246,6 +296,7 @@
       "heading": "Blog yazıları",
       "newPost": "Yeni yazı",
       "empty": "Bu filtrelere uyan yazı yok.",
+      "tableCaption": "Blog yazıları; durumu, kaynağı, son değişikliği ve denetim kaydıyla",
       "viewAudit": "Denetim kaydı",
       "filter": {
         "status": "Durum",
@@ -284,6 +335,8 @@
       "preview": "Önizleme",
       "save": "Kaydet",
       "saving": "Kaydediliyor…",
+      "saved": "Kaydedildi.",
+      "transitionApplied": "Durum güncellendi.",
       "actionsHeading": "Eylemler",
       "reasonLabel": "Gerekçe",
       "reasonPlaceholder": "Nedenini açıklayın",
@@ -329,6 +382,7 @@
       "heading": "Denetim kaydı",
       "backToPost": "Yazıya dön",
       "empty": "Henüz geçmiş yok.",
+      "tableCaption": "İşlem hattı denetim kaydı; kaydedilen her adım için bir satır",
       "machineStep": "Boru hattı",
       "humanStep": "İnsan kararı",
       "column": {
@@ -372,6 +426,8 @@
       "decisionHeading": "Karar",
       "reasonLabel": "Gerekçe",
       "reasonTooShort": "Lütfen kararınızı açıklayan en az 10 karakter yazın.",
+      "approved": "Onaylandı.",
+      "rejected": "Reddedildi.",
       "approve": "Onayla",
       "reject": "Reddet",
       "editorReadOnlyNote": "Bir yazıyı onaylama veya reddetme izniniz yok. Bir yöneticiden isteyin.",
@@ -429,6 +485,7 @@
       "enabledYes": "Evet",
       "enabledNo": "Hayır",
       "neverFetched": "Hiç",
+      "tableCaption": "İzin listesindeki kaynaklar; besleme adresi, durum ve son çekim bilgisiyle",
       "enable": "Etkinleştir",
       "disable": "Devre dışı bırak",
       "edit": "Düzenle",
@@ -466,6 +523,7 @@
         "enabled": "Etkin",
         "save": "Kaydet",
         "saving": "Kaydediliyor…",
+        "saved": "Kaydedildi.",
         "error": {
           "nameRequired": "Bir ad girilmelidir.",
           "nameLength": "Ad en fazla 120 karakter olabilir.",

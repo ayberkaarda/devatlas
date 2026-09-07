@@ -12,12 +12,26 @@
     @if (counts().transfer; as active) {
       @let activeDone = active.bytesDone | bytesFormat;
       @let activeTotal = active.bytesTotal | bytesFormat;
-      <span class="text-xs text-text-muted">
+      <!--
+        The state word is a transition and is announced; the byte counter next
+        to it changes several times a second and is deliberately outside the
+        region, because a live region around it would interrupt a reader
+        mid-sentence over and over.
+      -->
+      <span
+        class="text-xs"
+        [class.text-danger]="active.state === 'FAILED'"
+        [class.text-text-muted]="active.state !== 'FAILED'"
+        role="status"
+        data-testid="transfer-state"
+      >
         {{ 'download.state.' + active.state | translate }}
-        @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
-          ({{ 'download.progress' | translate: { done: activeDone, total: activeTotal } }})
-        }
       </span>
+      @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
+        <span class="text-xs text-text-muted" data-testid="transfer-progress">
+          ({{ 'download.progress' | translate: { done: activeDone, total: activeTotal } }})
+        </span>
+      }
       @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
         <div class="w-24">
           <app-progress-bar [done]="active.bytesDone" [total]="active.bytesTotal" />
@@ -27,14 +41,16 @@
 
     @if (!counts().transfer) {
       @if (!counts().complete) {
+        <!--
+          The container-level action is the one primary in whatever view
+          embeds this component — a track or module page shows this button
+          once and any per-lesson Download/Update inside it is secondary, so
+          the accent fill belongs here rather than on a row.
+        -->
         <button
           type="button"
-          class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+          class="rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-contrast hover:opacity-90 disabled:opacity-50"
           [disabled]="busy()"
-          [attr.aria-label]="
-            (counts().updateAvailableCount > 0 ? 'download.hint.update' : 'download.hint.download')
-              | translate: { title: title() }
-          "
           [title]="
             (counts().updateAvailableCount > 0 ? 'download.hint.update' : 'download.hint.download')
               | translate: { title: title() }
@@ -47,66 +63,73 @@
               : 'download.action.download'
             ) | translate
           }}
+          <span class="sr-only">{{ title() }}</span>
         </button>
       } @else {
-        <span class="text-xs text-text-muted">{{ 'download.state.DOWNLOADED' | translate }}</span>
+        <!--
+          Reached when the last unit finishes, with no click behind it, so it
+          is announced politely rather than left to be noticed.
+        -->
+        <span class="text-xs text-success" role="status">{{
+          'download.state.DOWNLOADED' | translate
+        }}</span>
       }
     } @else {
       @switch (counts().transfer!.state) {
         @case ('PAUSED') {
           <button
             type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
             [disabled]="busy()"
-            [attr.aria-label]="'download.hint.resume' | translate: { title: title() }"
             [title]="'download.hint.resume' | translate: { title: title() }"
             (click)="onResume()"
           >
             {{ 'download.action.resume' | translate }}
+            <span class="sr-only">{{ title() }}</span>
           </button>
           <button
             type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
             [disabled]="busy()"
-            [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
             [title]="'download.hint.cancel' | translate: { title: title() }"
             (click)="onCancel()"
           >
             {{ 'download.action.cancel' | translate }}
+            <span class="sr-only">{{ title() }}</span>
           </button>
         }
         @case ('FAILED') {
           <button
             type="button"
-            class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
             [disabled]="busy()"
-            [attr.aria-label]="'download.hint.retry' | translate: { title: title() }"
             [title]="'download.hint.retry' | translate: { title: title() }"
             (click)="onRetry()"
           >
             {{ 'download.action.retry' | translate }}
+            <span class="sr-only">{{ title() }}</span>
           </button>
         }
         @default {
           <button
             type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
             [disabled]="busy()"
-            [attr.aria-label]="'download.hint.pause' | translate: { title: title() }"
             [title]="'download.hint.pause' | translate: { title: title() }"
             (click)="onPause()"
           >
             {{ 'download.action.pause' | translate }}
+            <span class="sr-only">{{ title() }}</span>
           </button>
           <button
             type="button"
-            class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+            class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
             [disabled]="busy()"
-            [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
             [title]="'download.hint.cancel' | translate: { title: title() }"
             (click)="onCancel()"
           >
             {{ 'download.action.cancel' | translate }}
+            <span class="sr-only">{{ title() }}</span>
           </button>
         }
       }

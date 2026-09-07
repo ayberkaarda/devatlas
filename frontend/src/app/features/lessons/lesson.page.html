@@ -1,26 +1,77 @@
-<a
-  class="text-sm text-text-muted no-underline hover:underline"
-  [routerLink]="['/tracks', trackSlug()]"
-  >{{ 'lesson.backToTrack' | translate }}</a
+<!--
+  The trail rather than a single "back" link: a lesson sits two levels down and
+  a reader arriving from a search result or a bookmark has no history to go
+  back through. It stays outside the branches below so that a lesson which
+  failed to load still offers a way out of the dead end.
+
+  A crumb whose value is unknown is dropped, never filled in. The track and
+  module titles come from the track read, which is best-effort; inventing a
+  name for a level would send a reader somewhere other than where the label
+  said.
+-->
+<nav
+  class="text-sm text-text-muted"
+  data-testid="lesson-breadcrumb"
+  [attr.aria-label]="'lesson.breadcrumb' | translate"
 >
+  <ol class="flex flex-wrap items-center gap-x-2">
+    <li>
+      <!--
+        inline-block with vertical padding because these links stand on their
+        own rather than inside a sentence, so the exception that lets inline
+        links be small does not cover them and a 20px target is under the
+        minimum.
+      -->
+      <a class="inline-block py-1 no-underline hover:underline" routerLink="/tracks">{{
+        'track.backToTracks' | translate
+      }}</a>
+    </li>
+    @if (breadcrumbTrackTitle(); as title) {
+      <li class="flex items-center gap-x-2">
+        <span aria-hidden="true">›</span>
+        <a
+          class="inline-block py-1 no-underline hover:underline"
+          [routerLink]="['/tracks', trackSlug()]"
+          >{{ title }}</a
+        >
+      </li>
+    }
+    @if (breadcrumbModuleTitle(); as title) {
+      <!--
+        The last crumb is text, not a link: it is where the reader already is,
+        and a module has no screen of its own to go to anyway.
+      -->
+      <li class="flex items-center gap-x-2" aria-current="page">
+        <span aria-hidden="true">›</span>
+        <span class="py-1">{{ title }}</span>
+      </li>
+    }
+  </ol>
+</nav>
 
 @if (loading()) {
   <p class="mt-8 text-text-muted" role="status">{{ 'common.loading' | translate }}</p>
 } @else if (failure(); as failureKey) {
-  <div class="mt-8 rounded-md border border-border bg-surface p-4" role="alert">
-    <h2 class="font-medium">{{ 'error.heading' | translate }}</h2>
-    <p class="mt-1 text-text-muted">{{ failureKey | translate }}</p>
+  <!--
+    An <h1> rather than an <h2>: in this branch it is the only heading on the
+    screen, because the real one is the lesson title and that is exactly what
+    failed to load. A second-level heading with no first level above it
+    describes a document that begins halfway down.
+  -->
+  <div class="mt-8 rounded-md border-l-4 border-danger bg-danger-soft p-4" role="alert">
+    <h1 class="font-medium text-danger-strong">{{ 'error.heading' | translate }}</h1>
+    <p class="mt-1 text-text">{{ failureKey | translate }}</p>
     <button
       type="button"
-      class="mt-3 rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast"
+      class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
       (click)="reload()"
     >
       {{ 'common.retry' | translate }}
     </button>
   </div>
 } @else if (notDownloaded() && lessonSummary(); as summary) {
-  <div class="mt-8 rounded-md border border-border bg-surface p-4">
-    <h2 class="font-medium">{{ summary.title }}</h2>
+  <div class="mt-8 rounded-md bg-accent-soft p-4 text-text">
+    <h1 class="font-medium">{{ summary.title }}</h1>
     <p class="mt-1 text-text-muted">{{ 'lesson.notDownloaded' | translate }}</p>
     <div class="mt-3">
       <app-lesson-download-controls
@@ -37,7 +88,7 @@
       <app-fallback-badge [state]="current.translation" />
     </header>
 
-    <p class="mt-2 flex flex-wrap gap-3 text-xs text-text-muted">
+    <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-text-muted">
       @if (current.difficulty; as difficulty) {
         <span>
           {{ 'lesson.difficultyLabel' | translate }}:
@@ -52,42 +103,153 @@
           [lessonId]="summary.id"
           [title]="summary.title"
           [baseAvailability]="summary.availability.availability"
+          [acquireOnly]="true"
         />
       }
-    </p>
+    </div>
 
     <!--
-      The markup was sanitized before it reached this binding: the markdown
-      goes through DOMPurify and only then is marked trusted, because the
-      framework's own sanitizer would strip the highlighter's inline colours.
-      Nothing else in the application binds to innerHTML.
+      The 70ch cap lives here, on this page's own wrapper, rather than on the
+      shared .lesson-body/.markdown-body selector in the global stylesheet:
+      that class also styles the admin review panels, and capping it there
+      would narrow the diff views that need the full width. The code examples
+      share this wrapper so the article reads as one column instead of a
+      narrow paragraph beside full-width code.
+
+      The tail below — the completion toggle and the way onward — is inside the
+      same wrapper for the same reason. A two-ended row of links pinned to the
+      full page width under a 70ch column reads as belonging to the page rather
+      than to the article.
     -->
-    <div class="lesson-body mt-6" [innerHTML]="body()"></div>
+    <div class="mt-6 max-w-[70ch]">
+      <!--
+        The markup was sanitized before it reached this binding: the markdown
+        goes through DOMPurify and only then is marked trusted, because the
+        framework's own sanitizer would strip the highlighter's inline colours.
+        Nothing else in the application binds to innerHTML.
+      -->
+      <div class="lesson-body" [innerHTML]="body()"></div>
 
-    @if (examples().length > 0) {
-      <h2 class="mt-10 text-sm font-semibold uppercase tracking-wide text-text-muted">
-        {{ 'lesson.codeExamples' | translate }}
-      </h2>
-      <div class="mt-3 space-y-4">
-        @for (example of examples(); track example.html) {
-          <figure class="rounded-md border border-border bg-code-bg p-3">
-            <!-- Sanitized by the same path as the lesson body. -->
-            <div [innerHTML]="example.html"></div>
-            @if (example.caption) {
-              <figcaption class="mt-2 text-xs text-text-muted">{{ example.caption }}</figcaption>
-            }
-          </figure>
+      @if (examples().length > 0) {
+        <h2 class="mt-10 text-lg font-semibold tracking-tight">
+          {{ 'lesson.codeExamples' | translate }}
+        </h2>
+        <div class="mt-3 space-y-4">
+          @for (example of examples(); track example.html) {
+            <figure class="rounded-md border border-border bg-code-bg p-3">
+              <!--
+                Sanitized by the same path as the lesson body. The horizontal
+                scroll is on this container because these examples are outside
+                .lesson-body, so the stylesheet's overflow rule for rendered code
+                does not reach them, and one long line would otherwise widen the
+                page itself at a narrow window.
+              -->
+              <div class="overflow-x-auto" [innerHTML]="example.html"></div>
+              @if (example.caption) {
+                <figcaption class="mt-2 text-xs text-text-muted">{{ example.caption }}</figcaption>
+              }
+            </figure>
+          }
+        </div>
+      }
+
+      <!--
+        No aria-pressed. The label already says which way the control goes, and
+        the two together were read as "Mark as not completed, pressed" - the
+        state announced twice, in opposite directions. The label is the clearer
+        of the two because it also tells the reader what pressing will do.
+      -->
+      <button
+        type="button"
+        class="mt-10 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+        data-testid="lesson-complete-toggle"
+        (click)="toggleCompleted()"
+      >
+        {{ (completed() ? 'lesson.markIncomplete' : 'lesson.markComplete') | translate }}
+      </button>
+
+      <!--
+        Always in the DOM, empty until there is something to say. A failure to
+        record the completion used to be reported through the same signal as a
+        failed load, which unmounted the whole article: the reader lost the
+        lesson they were reading because a progress write did not land.
+      -->
+      <p class="text-sm text-danger" role="alert" data-testid="lesson-toggle-error">
+        @if (toggleFailureKey(); as key) {
+          {{ key | translate }}
         }
-      </div>
-    }
+      </p>
 
-    <button
-      type="button"
-      class="mt-10 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text"
-      [attr.aria-pressed]="completed()"
-      (click)="toggleCompleted()"
-    >
-      {{ (completed() ? 'lesson.markIncomplete' : 'lesson.markComplete') | translate }}
-    </button>
+      @if (positionLabel(); as place) {
+        <p class="mt-8 text-xs tabular-nums text-text-muted" data-testid="lesson-position">
+          {{ 'lesson.position' | translate: { index: place.index, total: place.total } }}
+        </p>
+      }
+
+      @if (previousLesson() || nextLesson() || atPathEnd()) {
+        <!--
+          Not a <nav>: the breadcrumb above is this screen's navigation
+          landmark, and a second unnamed one in the same document gives a
+          screen reader two identical entries to choose between.
+
+          It wraps rather than scrolls. "Vorherige Lektion" over a lesson title
+          is wide enough that two of them do not fit side by side at 320px, so
+          the two ends stack there and only separate once there is room; each
+          one is allowed to shrink and break its title so a long one cannot
+          push the page wider than the window.
+        -->
+        <div
+          class="mt-6 flex flex-wrap items-start justify-between gap-x-8 gap-y-4 border-t border-border pt-6"
+          data-testid="lesson-pager"
+        >
+          @if (previousLesson(); as previous) {
+            <!--
+              The lesson's own name is the link text, and there is no
+              aria-label repeating something else: an accessible name that does
+              not contain the visible label leaves anyone speaking the
+              interface unable to ask for what they can see.
+            -->
+            <a
+              class="group block min-w-0 max-w-full py-1 no-underline"
+              data-testid="lesson-previous"
+              [routerLink]="['/tracks', trackSlug(), 'lessons', previous.slug]"
+            >
+              <span class="block text-xs text-text-muted">{{ 'lesson.previous' | translate }}</span>
+              <span class="block break-words text-sm font-medium text-text group-hover:underline">{{
+                previous.title
+              }}</span>
+            </a>
+          }
+
+          @if (nextLesson(); as next) {
+            <!-- ml-auto only once the row is side by side; while it is stacked
+                 the two ends are left-aligned like everything above them. -->
+            <a
+              class="group block min-w-0 max-w-full py-1 no-underline sm:ml-auto sm:text-right"
+              data-testid="lesson-next"
+              [routerLink]="['/tracks', trackSlug(), 'lessons', next.slug]"
+            >
+              <span class="block text-xs text-text-muted">{{ 'lesson.next' | translate }}</span>
+              <span class="block break-words text-sm font-medium text-text group-hover:underline">{{
+                next.title
+              }}</span>
+            </a>
+          } @else if (atPathEnd()) {
+            <!-- The end of the path: there is nowhere forward to go, so the
+                 forward end offers the way back up instead of disappearing and
+                 leaving the reader at a full stop. -->
+            <a
+              class="group block min-w-0 max-w-full py-1 no-underline sm:ml-auto sm:text-right"
+              data-testid="lesson-path-end"
+              [routerLink]="['/tracks', trackSlug()]"
+            >
+              <span class="block break-words text-sm font-medium text-text group-hover:underline">{{
+                'lesson.backToTrack' | translate
+              }}</span>
+            </a>
+          }
+        </div>
+      }
+    </div>
   </article>
 }

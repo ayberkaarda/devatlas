@@ -1,5 +1,6 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { InjectionToken, inject } from '@angular/core';
+import { TimeoutError } from 'rxjs';
 
 import { ActiveLocale } from '../i18n/active-locale';
 import { PlatformError } from './errors';
@@ -11,14 +12,6 @@ import type { WireError } from './rest-wire';
  * code at a fake host without a build.
  */
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
-
-/**
- * How long a request may hang before it is treated as a transport failure.
- *
- * A timeout is mandatory rather than nice to have: an indeterminate spinner is
- * exactly how an unreachable server looks like a frozen application.
- */
-export const REQUEST_TIMEOUT_MS = 8000;
 
 /**
  * Adds the active interface locale to every outgoing request.
@@ -49,10 +42,19 @@ export const localeHeaderInterceptor: HttpInterceptorFn = (request, next) => {
  * body at all, and it is reported as its own code rather than as a server
  * error, because telling someone they are offline while the server is failing
  * is its own bug and teaches them to distrust the message.
+ *
+ * A request that hung until the timeout expired is the same condition seen
+ * from the other end: no response arrived, so nothing is known about the
+ * server beyond the fact that it could not be reached in time. It maps to the
+ * same code as a connection that never opened, rather than to the generic
+ * failure it would otherwise fall through to.
  */
 export function toPlatformError(error: unknown): PlatformError {
   if (error instanceof PlatformError) {
     return error;
+  }
+  if (error instanceof TimeoutError) {
+    return new PlatformError('NETWORK_UNAVAILABLE', 'The server did not answer in time.');
   }
   if (error instanceof HttpErrorResponse) {
     if (error.status === 0) {

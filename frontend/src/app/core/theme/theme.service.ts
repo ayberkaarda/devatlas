@@ -1,7 +1,7 @@
 import { DOCUMENT, Injectable, computed, inject, signal } from '@angular/core';
 
 import type { ResolvedTheme, ThemePreference } from '../platform/models';
-import { PlatformService } from '../platform/platform.service';
+import { PreferenceWriter } from '../sync/preference-writer';
 
 /**
  * Owns the theme: the preference, what it resolves to, and the attribute the
@@ -15,7 +15,7 @@ import { PlatformService } from '../platform/platform.service';
  */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private readonly platform = inject(PlatformService);
+  private readonly preferences = inject(PreferenceWriter);
   private readonly document = inject(DOCUMENT);
 
   private readonly systemPrefersDark = signal(false);
@@ -52,11 +52,15 @@ export class ThemeService {
    * second, and nothing ever reads a value back over it. A theme that flips
    * under the user's eyes because a remote copy disagreed is worse than a
    * preference that failed to travel.
+   *
+   * The write goes through the preference writer rather than straight to the
+   * platform, so the change is recorded as outstanding and travels to the
+   * account on its own once there is a session and a route.
    */
   async set(preference: ThemePreference): Promise<void> {
     this.preferenceState.set(preference);
     this.apply();
-    await this.platform.setPreferences({ theme: preference });
+    await this.preferences.write({ theme: preference });
   }
 
   /**

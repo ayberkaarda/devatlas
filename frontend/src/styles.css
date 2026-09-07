@@ -114,14 +114,34 @@ body {
 /*
  * Rendered markdown. The markup comes from a renderer rather than from a
  * template, so it cannot carry utility classes and is styled by element here.
+ *
+ * Two class names carry the same rules because two things render markdown:
+ * the lesson page, which renders a body it fetched itself, and the shared
+ * markdown view component, which every other screen uses. They must look
+ * identical -- a heading that is a heading on one screen and plain text on
+ * another is the same content rendered two ways -- so the selector list
+ * names both rather than each place growing its own copy of the rules.
  */
-.lesson-body h2 {
+/*
+ * Reading measure typography. Both classes render long-form prose the reader
+ * spends minutes in, so both get the size/line-height pair tuned for that
+ * rather than the base UI text size used everywhere else on the page.
+ */
+.lesson-body,
+.markdown-body {
+  font-size: var(--text-reading);
+  line-height: var(--leading-reading);
+}
+
+.lesson-body h2,
+.markdown-body h2 {
   margin-top: var(--spacing-8);
   font-size: var(--text-xl);
   font-weight: 600;
 }
 
-.lesson-body h3 {
+.lesson-body h3,
+.markdown-body h3 {
   margin-top: var(--spacing-6);
   font-size: var(--text-lg);
   font-weight: 600;
@@ -129,42 +149,85 @@ body {
 
 .lesson-body p,
 .lesson-body ul,
-.lesson-body ol {
+.lesson-body ol,
+.markdown-body p,
+.markdown-body ul,
+.markdown-body ol {
   margin-top: var(--spacing-4);
 }
 
 .lesson-body ul,
-.lesson-body ol {
+.lesson-body ol,
+.markdown-body ul,
+.markdown-body ol {
   padding-left: var(--spacing-6);
   list-style: revert;
 }
 
-.lesson-body a {
+.lesson-body a,
+.markdown-body a {
   color: var(--color-accent);
 }
 
-.lesson-body code {
+.lesson-body code,
+.markdown-body code {
   background: var(--color-code-bg);
   border-radius: var(--radius-sm);
   padding: 0 var(--spacing-1);
   font-size: var(--text-sm);
 }
 
+/*
+ * Rendered content comes from a markdown renderer, so its width is decided by
+ * whoever wrote the content rather than by this application. Anything that can
+ * exceed the measure has to scroll inside its own box: a page body that
+ * scrolls sideways is unusable at a narrow window, and it is the one reflow
+ * failure a reader cannot work around.
+ */
+.lesson-body img,
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+}
+
+.lesson-body table,
+.markdown-body table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.lesson-body th,
+.lesson-body td,
+.markdown-body th,
+.markdown-body td {
+  padding: var(--spacing-1) var(--spacing-3);
+  border: 1px solid var(--color-border);
+  text-align: left;
+}
+
 .lesson-body pre,
-.lesson-body .shiki {
+.lesson-body .shiki,
+.markdown-body pre,
+.markdown-body .shiki {
   margin-top: var(--spacing-4);
   padding: var(--spacing-3);
   border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
   background: var(--color-code-bg);
   overflow-x: auto;
 }
 
-.lesson-body pre code {
+.lesson-body pre code,
+.markdown-body pre code {
   background: transparent;
   padding: 0;
 }
 
-.lesson-body blockquote {
+.lesson-body blockquote,
+.markdown-body blockquote {
   margin-top: var(--spacing-4);
   padding-left: var(--spacing-4);
   border-left: 3px solid var(--color-border);

@@ -174,6 +174,19 @@ export interface Lesson {
   readonly trackSlug: string | null;
   readonly trackTitle: string | null;
   readonly moduleTitle: string | null;
+  /**
+   * When this reader finished the lesson, or `null` when no completion is
+   * recorded for them — which is also what a reader with no session gets,
+   * because nobody's progress is theirs to show.
+   *
+   * It travels with the lesson rather than being fetched by the screen so
+   * that both clients answer the question the same way while getting the
+   * answer from different places: the web build reads it from the same
+   * response as the lesson, and the desktop build reads it from the local
+   * progress table, which is what lets a completed lesson still look
+   * completed with no network and an expired session.
+   */
+  readonly completedAt: string | null;
   readonly translation: TranslationState;
 }
 
@@ -287,6 +300,65 @@ export interface ProgressEntry {
    */
   readonly completedAt: string | null;
   readonly clientUpdatedAt: string;
+}
+
+/** A progress row the server has not yet acknowledged. */
+export interface PendingProgress {
+  readonly lessonId: string;
+  readonly completedAt: string | null;
+  readonly clientUpdatedAt: string;
+}
+
+export type ProgressSyncStatus = 'APPLIED' | 'STALE' | 'REJECTED';
+
+/**
+ * What the server said about one row after a sync batch.
+ *
+ * `completedAt` is optional *and* nullable, and the two mean different
+ * things: absent leaves the local completion state alone, `null` sets it to
+ * "explicitly marked incomplete". A result that used `undefined` and `null`
+ * interchangeably would silently un-complete a lesson on every `STALE` row,
+ * so the field is written as `completedAt?: string | null` and a caller that
+ * has no opinion on completion must omit the key rather than set it to
+ * `undefined`.
+ */
+export interface ProgressSyncResult {
+  readonly lessonId: string;
+  readonly status: ProgressSyncStatus;
+  readonly code: string | null;
+  readonly serverClientUpdatedAt: string | null;
+  readonly completedAt?: string | null;
+}
+
+/**
+ * What a device remembers about a session across a restart.
+ *
+ * The three nullable fields are the difference between the platforms,
+ * expressed as data rather than as a branch. The desktop signs in on a
+ * channel where the refresh token arrives as a value the application holds,
+ * so all four fields are populated there. The web signs in on a channel
+ * where the refresh token is attached by the browser and never readable by a
+ * script, so both token fields are `null` there, and `userId` is stored on
+ * its own only to answer "has anyone signed in on this browser before" —
+ * which is what decides whether attempting a refresh is worth it at all.
+ */
+export interface RememberedSession {
+  readonly userId: string;
+  readonly accessToken: string | null;
+  readonly refreshToken: string | null;
+  readonly accessTokenExpiresAt: string | null;
+}
+
+/**
+ * Durable state the sync layer owns and has nowhere else to keep. Neither
+ * field is a preference a person chose, which is why they live apart from
+ * `Preferences` even though both are small and both survive a restart.
+ */
+export interface SyncBookkeeping {
+  /** Stamped when a preference changes with no connectivity, cleared once the push succeeds. */
+  readonly preferencesDirtyAt: string | null;
+  /** The last time a sync batch was accepted, not the last time one was attempted. */
+  readonly lastSyncAt: string | null;
 }
 
 export type BlogSource = 'MANUAL' | 'AUTO';

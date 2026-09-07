@@ -118,6 +118,15 @@ export class ReviewDetailPage {
     this.reason.set((event.target as HTMLTextAreaElement).value);
   }
 
+  /**
+   * What just went right, for the polite live region in the template.
+   *
+   * A decision replaces the record with one that looks the same on screen; up
+   * to now the only evidence that anything happened was the absence of an
+   * error, which is not evidence at all for a reader who cannot see the form.
+   */
+  protected readonly outcomeKey = signal<string | null>(null);
+
   protected async approve(): Promise<void> {
     await this.transition('approve');
   }
@@ -146,6 +155,7 @@ export class ReviewDetailPage {
     const trimmedReason = this.reason().trim();
     this.submitting.set(true);
     this.actionFailure.set(null);
+    this.outcomeKey.set(null);
     try {
       const updated = await this.api.transitionBlogPost(current.post.id, action, {
         expectedStatus: current.post.status,
@@ -159,6 +169,7 @@ export class ReviewDetailPage {
       });
       this.detail.set({ ...current, post: updated });
       this.reason.set('');
+      this.outcomeKey.set(action === 'approve' ? 'admin.review.approved' : 'admin.review.rejected');
     } catch (error) {
       this.actionFailure.set(errorKey(error));
     } finally {

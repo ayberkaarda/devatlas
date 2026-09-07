@@ -2,8 +2,8 @@ import { DOCUMENT, Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 
-import { PlatformService } from '../platform/platform.service';
 import { LOCALES, type Locale } from '../platform/models';
+import { PreferenceWriter } from '../sync/preference-writer';
 import { ActiveLocale } from './active-locale';
 
 /**
@@ -19,7 +19,7 @@ import { ActiveLocale } from './active-locale';
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
   private readonly translate = inject(TranslateService);
-  private readonly platform = inject(PlatformService);
+  private readonly preferences = inject(PreferenceWriter);
   private readonly activeLocale = inject(ActiveLocale);
   private readonly document = inject(DOCUMENT);
 
@@ -40,7 +40,7 @@ export class LocaleService {
     this.activeLocale.set(locale);
     this.document.documentElement.setAttribute('lang', locale);
     if (persist) {
-      await this.platform.setPreferences({ locale });
+      await this.preferences.write({ locale });
     }
   }
 

@@ -12,8 +12,24 @@ describe('MarkdownService', () => {
 
   it('renders ordinary markdown', async () => {
     const html = await markdown.render('## Signals\n\nA **signal** wraps a value.\n', 'light');
-    expect(html).toContain('<h2');
+    expect(html).toContain('<h3');
     expect(html).toContain('<strong>signal</strong>');
+  });
+
+  it('nests body headings under the heading of the page they are rendered into', async () => {
+    const html = await markdown.render('# Title\n\n## Section\n', 'light');
+
+    // A body that starts with `# Title` would otherwise put a second
+    // first-level heading on a screen that already has one, and a document
+    // with two of them has no single answer to what it is about.
+    expect(html).not.toContain('<h1');
+    expect(html).toContain('<h2>Title</h2>');
+    expect(html).toContain('<h3>Section</h3>');
+  });
+
+  it('stops shifting at the deepest heading level rather than inventing an h7', async () => {
+    const html = await markdown.render('###### Deep\n', 'light');
+    expect(html).toContain('<h6>Deep</h6>');
   });
 
   it('removes a script tag from the rendered markup', async () => {

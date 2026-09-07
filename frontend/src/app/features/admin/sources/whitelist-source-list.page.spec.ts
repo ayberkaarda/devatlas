@@ -149,4 +149,38 @@ describe('WhitelistSourceListPage', () => {
     // The source is still in the list — the delete was refused, not applied.
     expect(element.textContent).toContain('Spring Blog');
   });
+  it('moves focus onto the delete confirmation and back when it is dismissed', async () => {
+    const fixture = await render();
+    const element = fixture.nativeElement as HTMLElement;
+
+    const trigger = element.querySelector('[data-delete-for="source-1"]') as HTMLButtonElement;
+    trigger.focus();
+    trigger.click();
+    fixture.detectChanges();
+
+    // Opening the confirmation replaces the button that was focused, and a
+    // destroyed element takes the focus with it to the top of the document.
+    const confirm = document.activeElement as HTMLButtonElement;
+    expect(confirm.tagName).toBe('BUTTON');
+    expect(confirm).not.toBe(trigger);
+
+    findButton(element, 'Cancel').click();
+    fixture.detectChanges();
+
+    expect(document.activeElement).toBe(element.querySelector('[data-delete-for="source-1"]'));
+  });
+
+  it('sends focus to the fetch result, which can arrive a minute after the click', async () => {
+    const fixture = await render();
+    const element = fixture.nativeElement as HTMLElement;
+
+    api.fetchSourceNowCalls.mockResolvedValueOnce(fetchResult());
+    findButton(element, 'Fetch now').click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const heading = element.querySelector('h2') as HTMLElement;
+    expect(heading.getAttribute('tabindex')).toBe('-1');
+    expect(document.activeElement).toBe(heading);
+  });
 });

@@ -36,6 +36,8 @@ export function fakeSessionUser(role: Role): SessionUser {
  */
 export class FakeAuthSession implements PublicAuthSession {
   readonly user = signal<SessionUser | null>(null);
+  readonly userId = computed(() => this.user()?.id ?? this.rememberedUserId());
+  readonly localOnly = signal(false);
   readonly role = computed(() => this.user()?.role ?? null);
   readonly isAdmin = computed(() => this.role() === 'ADMIN');
   readonly isEditor = computed(() => this.role() === 'EDITOR');
@@ -44,6 +46,14 @@ export class FakeAuthSession implements PublicAuthSession {
   token: string | null = null;
   /** What the next refresh should hand back; null means "nothing to exchange". */
   nextAccessToken: string | null = null;
+
+  /**
+   * Who the device remembers when nobody is signed in, which is the state a
+   * local-only session is in: the credential is gone, the identity behind the
+   * pending progress rows is not.
+   */
+  readonly rememberedUserId = signal<string | null>(null);
+  localOnlyCount = 0;
 
   readonly signIns: { email: string; password: string }[] = [];
   signOuts = 0;
@@ -54,6 +64,7 @@ export class FakeAuthSession implements PublicAuthSession {
   /** Signs in as the given role, or signs out when given null. */
   setRole(role: Role | null): void {
     this.user.set(role === null ? null : fakeSessionUser(role));
+    this.localOnly.set(false);
   }
 
   async signIn(email: string, password: string): Promise<void> {
@@ -63,6 +74,8 @@ export class FakeAuthSession implements PublicAuthSession {
   async signOut(): Promise<void> {
     this.signOuts += 1;
     this.clearSession();
+    this.rememberedUserId.set(null);
+    this.localOnly.set(false);
   }
 
   async restore(): Promise<void> {
@@ -86,5 +99,17 @@ export class FakeAuthSession implements PublicAuthSession {
     this.clearCount += 1;
     this.token = null;
     this.user.set(null);
+  }
+
+  /**
+   * Ends the credential the way a refused refresh token does: the identity
+   * the device remembers survives it, which is what a test asserting that
+   * local content is untouched needs to see.
+   */
+  enterLocalOnly(): void {
+    this.localOnlyCount += 1;
+    this.rememberedUserId.set(this.user()?.id ?? this.rememberedUserId());
+    this.clearSession();
+    this.localOnly.set(true);
   }
 }

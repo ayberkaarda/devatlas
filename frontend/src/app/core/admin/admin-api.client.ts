@@ -1,8 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { firstValueFrom, timeout } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
-import { API_BASE_URL, REQUEST_TIMEOUT_MS, toPlatformError } from '../platform/api';
+import { requestTimeout } from '../net/request-timeout.interceptor';
+import { API_BASE_URL, toPlatformError } from '../platform/api';
 import type { Page } from '../platform/models';
 import type { WirePage } from '../platform/rest-wire';
 import type {
@@ -44,9 +45,10 @@ import type {
  * A manual fetch runs the ingest cycle for one source synchronously — it
  * calls the same code the scheduler calls and returns when the cycle
  * completes, which depends on real feed and verify-request latency, not on
- * this application. The general request timeout would drop that call as
+ * this application. The general request deadline would drop that call as
  * failed while the server is still doing legitimate work, so this endpoint
- * gets its own, longer allowance instead of sharing `REQUEST_TIMEOUT_MS`.
+ * asks the HTTP layer for a longer allowance through the request context
+ * instead of taking the one every other call gets.
  */
 export const MANUAL_FETCH_TIMEOUT_MS = 60_000;
 
@@ -63,9 +65,10 @@ export const MANUAL_FETCH_TIMEOUT_MS = 60_000;
  * need to ask.
  *
  * Follows the same shape as `BlogApiClient`: `HttpClient` + `HttpParams`,
- * `firstValueFrom`, a timeout on every call, wire types kept apart from view
- * models, and `snake_case → camelCase` mapping done here rather than left to
- * each caller.
+ * `firstValueFrom`, wire types kept apart from view models, and
+ * `snake_case → camelCase` mapping done here rather than left to each caller.
+ * The request deadline is not among its responsibilities — that belongs to
+ * the HTTP layer, and only the one call that needs a longer one says so.
  */
 @Injectable({ providedIn: 'root' })
 export class AdminApiClient {
@@ -85,9 +88,7 @@ export class AdminApiClient {
     });
     try {
       const page = await firstValueFrom(
-        this.http
-          .get<WirePage<WireAdminBlogPost>>(`${this.baseUrl}/admin/blog/posts`, { params })
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WirePage<WireAdminBlogPost>>(`${this.baseUrl}/admin/blog/posts`, { params }),
       );
       return toPage(page, toAdminBlogPost);
     } catch (error) {
@@ -98,9 +99,9 @@ export class AdminApiClient {
   async getBlogPost(id: string): Promise<AdminBlogPost> {
     try {
       const post = await firstValueFrom(
-        this.http
-          .get<WireAdminBlogPost>(`${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}`)
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WireAdminBlogPost>(
+          `${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}`,
+        ),
       );
       return toAdminBlogPost(post);
     } catch (error) {
@@ -117,9 +118,7 @@ export class AdminApiClient {
     };
     try {
       const post = await firstValueFrom(
-        this.http
-          .post<WireAdminBlogPost>(`${this.baseUrl}/admin/blog/posts`, body)
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.post<WireAdminBlogPost>(`${this.baseUrl}/admin/blog/posts`, body),
       );
       return toAdminBlogPost(post);
     } catch (error) {
@@ -137,12 +136,10 @@ export class AdminApiClient {
     };
     try {
       const post = await firstValueFrom(
-        this.http
-          .patch<WireAdminBlogPost>(
-            `${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}`,
-            body,
-          )
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.patch<WireAdminBlogPost>(
+          `${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}`,
+          body,
+        ),
       );
       return toAdminBlogPost(post);
     } catch (error) {
@@ -153,9 +150,7 @@ export class AdminApiClient {
   async deleteBlogPost(id: string): Promise<void> {
     try {
       await firstValueFrom(
-        this.http
-          .delete<void>(`${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}`)
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.delete<void>(`${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}`),
       );
     } catch (error) {
       throw toPlatformError(error);
@@ -180,12 +175,10 @@ export class AdminApiClient {
     };
     try {
       const post = await firstValueFrom(
-        this.http
-          .post<WireAdminBlogPost>(
-            `${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}/${action}`,
-            body,
-          )
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.post<WireAdminBlogPost>(
+          `${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}/${action}`,
+          body,
+        ),
       );
       return toAdminBlogPost(post);
     } catch (error) {
@@ -197,12 +190,10 @@ export class AdminApiClient {
     const params = buildParams({ page: query.page, size: query.size });
     try {
       const page = await firstValueFrom(
-        this.http
-          .get<WirePage<WireAuditLogItem>>(
-            `${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}/audit-log`,
-            { params },
-          )
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WirePage<WireAuditLogItem>>(
+          `${this.baseUrl}/admin/blog/posts/${encodeURIComponent(id)}/audit-log`,
+          { params },
+        ),
       );
       return toPage(page, toAuditLogItem);
     } catch (error) {
@@ -223,9 +214,9 @@ export class AdminApiClient {
     const params = buildParams({ source: query.source, page: query.page, size: query.size });
     try {
       const page = await firstValueFrom(
-        this.http
-          .get<WirePage<WireAdminBlogPost>>(`${this.baseUrl}/admin/review-queue`, { params })
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WirePage<WireAdminBlogPost>>(`${this.baseUrl}/admin/review-queue`, {
+          params,
+        }),
       );
       return toPage(page, toAdminBlogPost);
     } catch (error) {
@@ -236,11 +227,9 @@ export class AdminApiClient {
   async getReviewDetail(postId: string): Promise<ReviewDetail> {
     try {
       const detail = await firstValueFrom(
-        this.http
-          .get<WireReviewQueueDetail>(
-            `${this.baseUrl}/admin/review-queue/${encodeURIComponent(postId)}`,
-          )
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WireReviewQueueDetail>(
+          `${this.baseUrl}/admin/review-queue/${encodeURIComponent(postId)}`,
+        ),
       );
       return toReviewDetail(detail);
     } catch (error) {
@@ -251,11 +240,9 @@ export class AdminApiClient {
   async getSourceUpdate(id: string): Promise<SourceUpdateDetail> {
     try {
       const detail = await firstValueFrom(
-        this.http
-          .get<WireSourceUpdateDetail>(
-            `${this.baseUrl}/admin/source-updates/${encodeURIComponent(id)}`,
-          )
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WireSourceUpdateDetail>(
+          `${this.baseUrl}/admin/source-updates/${encodeURIComponent(id)}`,
+        ),
       );
       return toSourceUpdateDetail(detail);
     } catch (error) {
@@ -269,9 +256,9 @@ export class AdminApiClient {
     const params = buildParams({ page: query.page, size: query.size, sort: query.sort });
     try {
       const page = await firstValueFrom(
-        this.http
-          .get<WirePage<WireWhitelistSource>>(`${this.baseUrl}/admin/whitelist-sources`, { params })
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WirePage<WireWhitelistSource>>(`${this.baseUrl}/admin/whitelist-sources`, {
+          params,
+        }),
       );
       return toPage(page, toWhitelistSource);
     } catch (error) {
@@ -282,11 +269,9 @@ export class AdminApiClient {
   async getSource(id: string): Promise<WhitelistSource> {
     try {
       const source = await firstValueFrom(
-        this.http
-          .get<WireWhitelistSource>(
-            `${this.baseUrl}/admin/whitelist-sources/${encodeURIComponent(id)}`,
-          )
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WireWhitelistSource>(
+          `${this.baseUrl}/admin/whitelist-sources/${encodeURIComponent(id)}`,
+        ),
       );
       return toWhitelistSource(source);
     } catch (error) {
@@ -303,9 +288,7 @@ export class AdminApiClient {
     };
     try {
       const source = await firstValueFrom(
-        this.http
-          .post<WireWhitelistSource>(`${this.baseUrl}/admin/whitelist-sources`, body)
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.post<WireWhitelistSource>(`${this.baseUrl}/admin/whitelist-sources`, body),
       );
       return toWhitelistSource(source);
     } catch (error) {
@@ -323,12 +306,10 @@ export class AdminApiClient {
     };
     try {
       const source = await firstValueFrom(
-        this.http
-          .patch<WireWhitelistSource>(
-            `${this.baseUrl}/admin/whitelist-sources/${encodeURIComponent(id)}`,
-            body,
-          )
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.patch<WireWhitelistSource>(
+          `${this.baseUrl}/admin/whitelist-sources/${encodeURIComponent(id)}`,
+          body,
+        ),
       );
       return toWhitelistSource(source);
     } catch (error) {
@@ -339,9 +320,7 @@ export class AdminApiClient {
   async deleteSource(id: string): Promise<void> {
     try {
       await firstValueFrom(
-        this.http
-          .delete<void>(`${this.baseUrl}/admin/whitelist-sources/${encodeURIComponent(id)}`)
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.delete<void>(`${this.baseUrl}/admin/whitelist-sources/${encodeURIComponent(id)}`),
       );
     } catch (error) {
       throw toPlatformError(error);
@@ -351,12 +330,11 @@ export class AdminApiClient {
   async fetchSourceNow(id: string): Promise<SourceFetchResult> {
     try {
       const result = await firstValueFrom(
-        this.http
-          .post<WireSourceFetchResult>(
-            `${this.baseUrl}/admin/whitelist-sources/${encodeURIComponent(id)}/fetch`,
-            {},
-          )
-          .pipe(timeout(MANUAL_FETCH_TIMEOUT_MS)),
+        this.http.post<WireSourceFetchResult>(
+          `${this.baseUrl}/admin/whitelist-sources/${encodeURIComponent(id)}/fetch`,
+          {},
+          { context: requestTimeout(MANUAL_FETCH_TIMEOUT_MS) },
+        ),
       );
       return toSourceFetchResult(result);
     } catch (error) {

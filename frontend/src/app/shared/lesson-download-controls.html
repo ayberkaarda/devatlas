@@ -1,41 +1,84 @@
 @if (canDownload) {
-  <div class="flex flex-wrap items-center gap-2" data-testid="lesson-download-controls">
-    @switch (availability().availability) {
-      @case ('DOWNLOADED') {
-        <span class="text-xs text-text-muted">{{ 'download.state.DOWNLOADED' | translate }}</span>
+  <!--
+    tabindex="-1" so that focus has somewhere to land when the confirmation
+    closes: whichever button reappears depends on what the transfer did while
+    the confirmation was open, and the row itself is the one thing that is
+    always there. It is -1 rather than 0, so this is reachable by script and
+    not by tabbing.
+  -->
+  <div
+    #controlsHost
+    class="flex flex-wrap items-center gap-2"
+    data-testid="lesson-download-controls"
+    tabindex="-1"
+  >
+    <!--
+      Always in the DOM, so that a word which changes when a transfer finishes
+      is heard rather than silently swapped. Nothing in here ticks.
+    -->
+    <span role="status" data-testid="availability-state">
+      @switch (availability().availability) {
+        @case ('DOWNLOADED') {
+          <span class="text-xs text-success">{{ 'download.state.DOWNLOADED' | translate }}</span>
+        }
+        @case ('UPDATE_AVAILABLE') {
+          <span class="text-xs text-warning">{{
+            'download.state.UPDATE_AVAILABLE' | translate
+          }}</span>
+        }
+        @case ('WITHDRAWN') {
+          <!--
+            The explanation is repeated for a screen reader because a title
+            attribute is unreachable by keyboard and is read by almost none of
+            them: on its own it is an explanation only some readers are
+            offered.
+          -->
+          <span
+            class="text-xs text-text-muted"
+            [title]="'download.state.WITHDRAWN_HINT' | translate"
+          >
+            {{ 'download.state.WITHDRAWN' | translate }}
+            <span class="sr-only">{{ 'download.state.WITHDRAWN_HINT' | translate }}</span>
+          </span>
+        }
+        @case ('LOCAL_AHEAD') {
+          <span
+            class="text-xs text-text-muted"
+            [title]="'download.state.LOCAL_AHEAD_HINT' | translate"
+          >
+            {{ 'download.state.LOCAL_AHEAD' | translate }}
+            <span class="sr-only">{{ 'download.state.LOCAL_AHEAD_HINT' | translate }}</span>
+          </span>
+        }
       }
-      @case ('UPDATE_AVAILABLE') {
-        <span class="text-xs text-warning">{{
-          'download.state.UPDATE_AVAILABLE' | translate
-        }}</span>
-      }
-      @case ('WITHDRAWN') {
-        <span class="text-xs text-text-muted" [title]="'download.state.WITHDRAWN_HINT' | translate">
-          {{ 'download.state.WITHDRAWN' | translate }}
-        </span>
-      }
-      @case ('LOCAL_AHEAD') {
-        <span
-          class="text-xs text-text-muted"
-          [title]="'download.state.LOCAL_AHEAD_HINT' | translate"
-        >
-          {{ 'download.state.LOCAL_AHEAD' | translate }}
-        </span>
-      }
-    }
+    </span>
 
     @if (transfer(); as active) {
       @let activeDone = active.bytesDone | bytesFormat;
       @let activeTotal = active.bytesTotal | bytesFormat;
-      <span class="text-xs text-text-muted">
+      <!--
+        The state word and the reason a transfer failed are transitions and are
+        announced; the byte counter next to them changes several times a second
+        and is deliberately outside the region, because a live region around it
+        would interrupt a reader mid-sentence over and over.
+      -->
+      <span
+        class="text-xs"
+        [class.text-danger]="active.state === 'FAILED'"
+        [class.text-text-muted]="active.state !== 'FAILED'"
+        role="status"
+        data-testid="transfer-state"
+      >
         {{ 'download.state.' + active.state | translate }}
-        @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
-          ({{ 'download.progress' | translate: { done: activeDone, total: activeTotal } }})
-        }
         @if (active.state === 'FAILED' && transferLastErrorKey(); as reasonKey) {
           — {{ reasonKey | translate }}
         }
       </span>
+      @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
+        <span class="text-xs text-text-muted" data-testid="transfer-progress">
+          ({{ 'download.progress' | translate: { done: activeDone, total: activeTotal } }})
+        </span>
+      }
       @if (active.state === 'DOWNLOADING' || active.state === 'QUEUED') {
         <div class="w-24">
           <app-progress-bar [done]="active.bytesDone" [total]="active.bytesTotal" />
@@ -47,74 +90,87 @@
       @if (!transfer()) {
         @switch (availability().availability) {
           @case ('NOT_DOWNLOADED') {
+            <!--
+              The single per-row action in this state, but not the primary
+              action of the view it sits in: on a lesson list or a track
+              page the container-level Download/Update is the one primary,
+              so this drops to the secondary tier rather than the accent
+              fill.
+            -->
             <button
               type="button"
-              class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.download' | translate: { title: title() }"
               [title]="'download.hint.download' | translate: { title: title() }"
               (click)="onDownload()"
             >
               {{ 'download.action.download' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
           }
           @case ('UPDATE_AVAILABLE') {
             <button
               type="button"
-              class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.update' | translate: { title: title() }"
               [title]="'download.hint.update' | translate: { title: title() }"
               (click)="onDownload()"
             >
               {{ 'download.action.update' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
             <button
               type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
               [title]="'download.hint.delete' | translate: { title: title() }"
               (click)="requestDelete()"
             >
               {{ 'download.action.delete' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
           }
           @case ('DOWNLOADED') {
-            <button
-              type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-              [disabled]="busy()"
-              [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
-              [title]="'download.hint.delete' | translate: { title: title() }"
-              (click)="requestDelete()"
-            >
-              {{ 'download.action.delete' | translate }}
-            </button>
+            @if (!acquireOnly()) {
+              <button
+                type="button"
+                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
+                [disabled]="busy()"
+                [title]="'download.hint.delete' | translate: { title: title() }"
+                (click)="requestDelete()"
+              >
+                {{ 'download.action.delete' | translate }}
+                <span class="sr-only">{{ title() }}</span>
+              </button>
+            }
           }
           @case ('WITHDRAWN') {
-            <button
-              type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-              [disabled]="busy()"
-              [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
-              [title]="'download.hint.delete' | translate: { title: title() }"
-              (click)="requestDelete()"
-            >
-              {{ 'download.action.delete' | translate }}
-            </button>
+            @if (!acquireOnly()) {
+              <button
+                type="button"
+                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
+                [disabled]="busy()"
+                [title]="'download.hint.delete' | translate: { title: title() }"
+                (click)="requestDelete()"
+              >
+                {{ 'download.action.delete' | translate }}
+                <span class="sr-only">{{ title() }}</span>
+              </button>
+            }
           }
           @case ('LOCAL_AHEAD') {
-            <button
-              type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
-              [disabled]="busy()"
-              [attr.aria-label]="'download.hint.delete' | translate: { title: title() }"
-              [title]="'download.hint.delete' | translate: { title: title() }"
-              (click)="requestDelete()"
-            >
-              {{ 'download.action.delete' | translate }}
-            </button>
+            @if (!acquireOnly()) {
+              <button
+                type="button"
+                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
+                [disabled]="busy()"
+                [title]="'download.hint.delete' | translate: { title: title() }"
+                (click)="requestDelete()"
+              >
+                {{ 'download.action.delete' | translate }}
+                <span class="sr-only">{{ title() }}</span>
+              </button>
+            }
           }
         }
       } @else {
@@ -122,81 +178,88 @@
           @case ('PAUSED') {
             <button
               type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.resume' | translate: { title: title() }"
               [title]="'download.hint.resume' | translate: { title: title() }"
               (click)="onResume()"
             >
               {{ 'download.action.resume' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
             <button
               type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
               [title]="'download.hint.cancel' | translate: { title: title() }"
               (click)="onCancel()"
             >
               {{ 'download.action.cancel' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
           }
           @case ('FAILED') {
             <button
               type="button"
-              class="rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast disabled:opacity-50"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.retry' | translate: { title: title() }"
               [title]="'download.hint.retry' | translate: { title: title() }"
               (click)="onRetry()"
             >
               {{ 'download.action.retry' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
           }
           @case ('VERIFYING') {
             <button
               type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
               [title]="'download.hint.cancel' | translate: { title: title() }"
               (click)="onCancel()"
             >
               {{ 'download.action.cancel' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
           }
           @default {
             <button
               type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.pause' | translate: { title: title() }"
               [title]="'download.hint.pause' | translate: { title: title() }"
               (click)="onPause()"
             >
               {{ 'download.action.pause' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
             <button
               type="button"
-              class="rounded-md border border-border px-2 py-1 text-xs text-text disabled:opacity-50"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
               [disabled]="busy()"
-              [attr.aria-label]="'download.hint.cancel' | translate: { title: title() }"
               [title]="'download.hint.cancel' | translate: { title: title() }"
               (click)="onCancel()"
             >
               {{ 'download.action.cancel' | translate }}
+              <span class="sr-only">{{ title() }}</span>
             </button>
           }
         }
       }
     } @else {
+      <!--
+        The delete confirmation itself is left exactly as it was: the hint,
+        the confirm and cancel pair, and the focus it moves onto and back
+        from are a deliberately built flow, not a row action to re-tier.
+      -->
       <span class="text-xs text-text-muted">{{ 'download.deleteHint' | translate }}</span>
       <button
+        #confirmDeleteButton
         type="button"
-        class="rounded-md bg-danger px-2 py-1 text-xs text-accent-contrast"
+        class="rounded-md bg-danger px-2 py-1 text-xs text-danger-contrast"
         (click)="onConfirmDelete()"
       >
         {{ 'download.action.confirmDelete' | translate }}
+        <span class="sr-only">{{ title() }}</span>
       </button>
       <button
         type="button"

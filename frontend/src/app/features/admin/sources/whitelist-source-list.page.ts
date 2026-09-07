@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  effect,
+  inject,
+  signal,
+  viewChild,
+  viewChildren,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -51,6 +60,18 @@ interface LastFetch {
 export class WhitelistSourceListPage {
   private readonly api = inject(AdminApiClient);
 
+  private readonly deleteButtons = viewChildren<ElementRef<HTMLButtonElement>>('deleteButton');
+  private readonly confirmDeleteButton =
+    viewChild<ElementRef<HTMLButtonElement>>('confirmDeleteButton');
+  private readonly fetchResultHeading = viewChild<ElementRef<HTMLElement>>('fetchResultHeading');
+
+  /**
+   * The row whose Delete button opened the confirmation, held so focus can go
+   * back to it. Opening the confirmation replaces that button, and a destroyed
+   * element takes the focus with it to the top of the document.
+   */
+  private readonly focusDeleteButtonFor = signal<string | null>(null);
+
   protected readonly sortOptions = SORT_OPTIONS;
 
   protected readonly sort = signal('name,asc');
@@ -74,6 +95,45 @@ export class WhitelistSourceListPage {
   protected readonly lastFetch = signal<LastFetch | null>(null);
 
   constructor() {
+    // The view references are signals, so each effect runs again once the @if
+    // has actually put the element in the document, rather than at the moment
+    // the state behind it changed.
+    effect(() => {
+      const button = this.confirmDeleteButton();
+      if (this.confirmDeleteId() !== null && button) {
+        button.nativeElement.focus();
+      }
+    });
+
+    // Reading the query result is what makes this correct rather than merely
+    // hopeful: it is a signal that updates once the row's own button is back
+    // in the document, so the effect runs again at the moment there is
+    // something to focus, instead of firing while the confirmation is still up.
+    effect(() => {
+      const id = this.focusDeleteButtonFor();
+      const buttons = this.deleteButtons();
+      if (id === null) {
+        return;
+      }
+      const restored = buttons.find((button) => button.nativeElement.dataset['deleteFor'] === id);
+      if (!restored) {
+        return;
+      }
+      this.focusDeleteButtonFor.set(null);
+      restored.nativeElement.focus();
+    });
+
+    // A manual fetch runs the whole ingest cycle on the server and can answer
+    // a minute after the click, by which time the result has appeared below a
+    // table the reader has probably scrolled past. Focus is the only thing
+    // that reliably takes them to it.
+    effect(() => {
+      const heading = this.fetchResultHeading();
+      if (this.lastFetch() !== null && heading) {
+        heading.nativeElement.focus();
+      }
+    });
+
     void this.load();
   }
 
@@ -115,6 +175,7 @@ export class WhitelistSourceListPage {
   }
 
   protected cancelDelete(): void {
+    this.focusDeleteButtonFor.set(this.confirmDeleteId());
     this.confirmDeleteId.set(null);
   }
 

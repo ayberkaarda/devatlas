@@ -7,7 +7,13 @@ import { LocaleService } from '../../core/i18n/locale.service';
 import { BundledTranslateLoader } from '../../core/i18n/translations';
 import { PlatformError } from '../../core/platform/errors';
 import { contentAvailability } from '../../core/platform/models';
-import type { DeltaSummary, ModuleDetail, TrackDetail } from '../../core/platform/models';
+import type {
+  DeltaSummary,
+  LessonSummary,
+  ModuleDetail,
+  ProgressEntry,
+  TrackDetail,
+} from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { TrackDetailPage } from './track-detail.page';
 
@@ -26,6 +32,19 @@ function trackDetail(overrides: Partial<TrackDetail> = {}): TrackDetail {
   };
 }
 
+function lessonSummary(id: string, slug: string, title: string, order: number): LessonSummary {
+  return {
+    id,
+    slug,
+    title,
+    difficulty: null,
+    estimatedMinutes: null,
+    order,
+    availability: contentAvailability('NOT_DOWNLOADED'),
+    translation: { locale: 'en', requestedLocale: 'en', isFallback: false },
+  };
+}
+
 function moduleWithLesson(): ModuleDetail {
   return {
     id: 'module-1',
@@ -33,19 +52,40 @@ function moduleWithLesson(): ModuleDetail {
     order: 0,
     estimatedMinutes: null,
     translation: { locale: 'en', requestedLocale: 'en', isFallback: false },
-    lessons: [
-      {
-        id: 'lesson-1',
-        slug: 'intro',
-        title: 'Introduction',
-        difficulty: null,
-        estimatedMinutes: null,
-        order: 0,
-        availability: contentAvailability('NOT_DOWNLOADED'),
-        translation: { locale: 'en', requestedLocale: 'en', isFallback: false },
-      },
-    ],
+    lessons: [lessonSummary('lesson-1', 'intro', 'Introduction', 0)],
   };
+}
+
+/** Two modules of two lessons each, so a per-module count can differ from the total. */
+function twoModules(): readonly ModuleDetail[] {
+  return [
+    {
+      id: 'module-1',
+      title: 'Basics',
+      order: 0,
+      estimatedMinutes: null,
+      translation: { locale: 'en', requestedLocale: 'en', isFallback: false },
+      lessons: [
+        lessonSummary('lesson-1', 'intro', 'Introduction', 0),
+        lessonSummary('lesson-2', 'signals', 'Signals', 1),
+      ],
+    },
+    {
+      id: 'module-2',
+      title: 'Beyond',
+      order: 1,
+      estimatedMinutes: null,
+      translation: { locale: 'en', requestedLocale: 'en', isFallback: false },
+      lessons: [
+        lessonSummary('lesson-3', 'testing', 'Testing', 0),
+        lessonSummary('lesson-4', 'forms', 'Forms', 1),
+      ],
+    },
+  ];
+}
+
+function progressEntry(lessonId: string, completedAt: string | null): ProgressEntry {
+  return { lessonId, completedAt, clientUpdatedAt: '2026-09-06T20:14:00.000Z' };
 }
 
 function summary(): DeltaSummary {
@@ -152,5 +192,78 @@ describe('TrackDetailPage', () => {
     await render('signals');
 
     expect(called).toBe(false);
+  });
+
+  it('marks the lessons this reader has finished, in words as well as in colour', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    fake.listProgress = async () => [
+      progressEntry('lesson-1', '2026-09-06T20:14:00.000Z'),
+      // Explicitly marked incomplete, which is a recorded action and not a
+      // completion: a row that exists is not the same as a lesson that is done.
+      progressEntry('lesson-2', null),
+    ];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    const marks = element.querySelectorAll('[data-testid="lesson-completed"]');
+    expect(marks).toHaveLength(1);
+    expect(marks[0].querySelector('.sr-only')?.textContent?.trim()).toBe('Completed');
+    // The mark sits on the row it describes, ahead of that row's link.
+    const rows = element.querySelectorAll('li');
+    expect(rows[0].querySelector('[data-testid="lesson-completed"]')).not.toBeNull();
+    expect(rows[1].querySelector('[data-testid="lesson-completed"]')).toBeNull();
+  });
+
+  it('counts the finished lessons per module and across the whole path', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    fake.listProgress = async () => [
+      progressEntry('lesson-1', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-3', '2026-09-06T20:14:00.000Z'),
+    ];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    expect(element.querySelector('[data-testid="track-completed-count"]')?.textContent).toContain(
+      '2 of 4',
+    );
+    const perModule = element.querySelectorAll('[data-testid="module-completed-count"]');
+    expect(perModule).toHaveLength(2);
+    expect(perModule[0].textContent).toContain('1 of 2');
+    expect(perModule[1].textContent).toContain('1 of 2');
+  });
+
+  it('ignores completions recorded against lessons this path does not hold', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    // One read answers for every row on the screen, so it returns this
+    // reader's whole history rather than this path's slice of it.
+    fake.listProgress = async () => [
+      progressEntry('lesson-1', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-from-another-path', '2026-09-06T20:14:00.000Z'),
+    ];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    expect(element.querySelector('[data-testid="track-completed-count"]')?.textContent).toContain(
+      '1 of 4',
+    );
+  });
+
+  it('renders the path with nothing marked when progress cannot be read', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    fake.listProgress = async () => {
+      // What an anonymous reader gets on the web, every time. It is an
+      // ordinary condition rather than a fault, so it is neither shown nor
+      // announced.
+      throw new PlatformError('AUTH_REQUIRED', 'no session');
+    };
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    expect(element.querySelector('[role="alert"]')).toBeNull();
+    expect(element.querySelector('[data-testid="discovery-note"]')).toBeNull();
+    expect(element.querySelectorAll('[data-testid="lesson-completed"]')).toHaveLength(0);
+    expect(element.querySelector('[data-testid="track-completed-count"]')?.textContent).toContain(
+      '0 of 4',
+    );
   });
 });

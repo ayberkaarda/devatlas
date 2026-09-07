@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { firstValueFrom, timeout } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
-import { API_BASE_URL, REQUEST_TIMEOUT_MS, toPlatformError } from '../platform/api';
+import { API_BASE_URL, toPlatformError } from '../platform/api';
 import { AUTH_TOKEN_DELIVERY, type Role, type SessionUser } from './auth-models';
 
 /** The account as the sign-in response carries it. */
@@ -17,6 +17,7 @@ interface WireUserSummary {
 /** A successful sign-in or rotation. */
 interface WireAuthResponse {
   readonly access_token: string;
+  readonly access_token_expires_at?: string;
   readonly refresh_token: string | null;
   readonly user: WireUserSummary;
 }
@@ -30,6 +31,15 @@ interface WireAuthResponse {
  */
 export interface AuthTokens {
   readonly accessToken: string;
+  /**
+   * When the access token stops being accepted, as the server dated it.
+   *
+   * Null when the response omitted it. It is carried rather than derived
+   * because the value belongs to the issuer's clock, and it is remembered
+   * across a restart so a device that comes back offline knows whether the
+   * credential it holds is worth presenting at all.
+   */
+  readonly accessTokenExpiresAt: string | null;
   readonly refreshToken: string | null;
   readonly user: SessionUser;
 }
@@ -45,6 +55,15 @@ export interface AuthTokens {
 function displayNameOf(email: string): string {
   const localPart = email.split('@')[0];
   return localPart === '' ? email : localPart;
+}
+
+function toAuthTokens(response: WireAuthResponse): AuthTokens {
+  return {
+    accessToken: response.access_token,
+    accessTokenExpiresAt: response.access_token_expires_at ?? null,
+    refreshToken: response.refresh_token,
+    user: toSessionUser(response.user),
+  };
 }
 
 function toSessionUser(user: WireUserSummary): SessionUser {
@@ -87,19 +106,13 @@ export class AuthApiClient {
   async login(email: string, password: string): Promise<AuthTokens> {
     try {
       const response = await firstValueFrom(
-        this.http
-          .post<WireAuthResponse>(
-            `${this.baseUrl}/auth/login`,
-            { email, password, token_delivery: this.delivery },
-            { withCredentials: this.withCredentials },
-          )
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.post<WireAuthResponse>(
+          `${this.baseUrl}/auth/login`,
+          { email, password, token_delivery: this.delivery },
+          { withCredentials: this.withCredentials },
+        ),
       );
-      return {
-        accessToken: response.access_token,
-        refreshToken: response.refresh_token,
-        user: toSessionUser(response.user),
-      };
+      return toAuthTokens(response);
     } catch (error) {
       throw toPlatformError(error);
     }
@@ -117,17 +130,11 @@ export class AuthApiClient {
     const body = refreshToken === null ? {} : { refresh_token: refreshToken };
     try {
       const response = await firstValueFrom(
-        this.http
-          .post<WireAuthResponse>(`${this.baseUrl}/auth/refresh`, body, {
-            withCredentials: this.withCredentials,
-          })
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.post<WireAuthResponse>(`${this.baseUrl}/auth/refresh`, body, {
+          withCredentials: this.withCredentials,
+        }),
       );
-      return {
-        accessToken: response.access_token,
-        refreshToken: response.refresh_token,
-        user: toSessionUser(response.user),
-      };
+      return toAuthTokens(response);
     } catch (error) {
       throw toPlatformError(error);
     }
@@ -143,11 +150,9 @@ export class AuthApiClient {
     const body = refreshToken === null ? {} : { refresh_token: refreshToken };
     try {
       await firstValueFrom(
-        this.http
-          .post<void>(`${this.baseUrl}/auth/logout`, body, {
-            withCredentials: this.withCredentials,
-          })
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.post<void>(`${this.baseUrl}/auth/logout`, body, {
+          withCredentials: this.withCredentials,
+        }),
       );
     } catch (error) {
       throw toPlatformError(error);

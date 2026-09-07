@@ -2,7 +2,9 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { FakePlatformService } from '../../../testing/fake-platform.service';
 import { API_BASE_URL } from '../platform/api';
+import { PlatformService } from '../platform/platform.service';
 import { AUTH_TOKEN_DELIVERY } from './auth-models';
 import { AuthSession } from './auth-session';
 import { authInterceptor } from './auth.interceptor';
@@ -44,14 +46,17 @@ describe('authInterceptor', () => {
   let http: HttpClient;
   let controller: HttpTestingController;
   let session: AuthSession;
+  let platform: FakePlatformService;
 
   beforeEach(async () => {
+    platform = new FakePlatformService();
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
         { provide: API_BASE_URL, useValue: BASE },
         { provide: AUTH_TOKEN_DELIVERY, useValue: 'COOKIE' },
+        { provide: PlatformService, useValue: platform },
       ],
     });
     http = TestBed.inject(HttpClient);
@@ -143,7 +148,7 @@ describe('authInterceptor', () => {
     expect(session.user()).not.toBeNull();
   });
 
-  it('ends the session when the refresh token itself is refused', async () => {
+  it('enters local-only mode when the refresh token itself is refused', async () => {
     let failure: unknown = null;
     http.get(PROTECTED).subscribe({ error: (error: unknown) => (failure = error) });
 
@@ -155,6 +160,12 @@ describe('authInterceptor', () => {
 
     expect(session.user()).toBeNull();
     expect(session.accessToken()).toBeNull();
+    // The credential is gone; what the device remembers is not. Local content
+    // and local progress belong to that user, a re-login is still possible
+    // from the remembered row, and the interface says so rather than wiping.
+    expect(session.localOnly()).toBe(true);
+    expect(session.userId()).toBe('user-1');
+    expect(platform.forgottenSessionCount).toBe(0);
     // The failure is delivered rather than swallowed: the call the caller made
     // did not happen, and it has to learn that.
     expect((failure as { code: string }).code).toBe('REFRESH_TOKEN_REUSED');

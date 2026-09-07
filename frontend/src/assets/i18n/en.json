@@ -1,15 +1,17 @@
 {
   "app": {
     "title": "ByteLore",
-    "tagline": "Learning paths for developers, online and offline.",
     "skipToContent": "Skip to content"
   },
   "nav": {
     "label": "Main navigation",
     "tracks": "Learning paths",
+    "blog": "Blog",
     "downloads": "Downloads",
     "admin": "Admin",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "settings": "Settings",
+    "downloadsActive": "{{count}} downloads still in the queue"
   },
   "theme": {
     "light": "Light",
@@ -22,6 +24,13 @@
     "tr": "Türkçe",
     "fr": "Français",
     "de": "Deutsch"
+  },
+  "settings": {
+    "heading": "Settings",
+    "intro": "Language, theme and your account, all in one place.",
+    "language": "Language",
+    "theme": "Theme",
+    "account": "Account"
   },
   "common": {
     "loading": "Loading…",
@@ -47,10 +56,15 @@
     "empty": "This learning path has no lessons yet.",
     "openLesson": "Open the lesson {{title}}",
     "mindMap": "Mind map",
-    "mindMapHint": "Open the mind map for {{title}}"
+    "mindMapHint": "Open the mind map for {{title}}",
+    "completedCount": "{{completed}} of {{total}} completed"
   },
   "lesson": {
     "backToTrack": "Back to the learning path",
+    "breadcrumb": "Breadcrumb",
+    "previous": "Previous lesson",
+    "next": "Next lesson",
+    "position": "Lesson {{index}} of {{total}}",
     "codeExamples": "Code examples",
     "markComplete": "Mark as completed",
     "markIncomplete": "Mark as not completed",
@@ -62,6 +76,9 @@
       "ADVANCED": "Advanced"
     },
     "notDownloaded": "This lesson has not been downloaded to this device yet."
+  },
+  "progress": {
+    "completed": "Completed"
   },
   "download": {
     "action": {
@@ -114,6 +131,8 @@
     "checkForUpdates": "Check for updates",
     "checking": "Checking…",
     "empty": "You have not downloaded anything yet.",
+    "activeCount": "{{count}} downloads in progress",
+    "allFinished": "Downloads finished.",
     "entityLesson": "Lesson",
     "entityMindMap": "Mind map",
     "heading": "Downloads",
@@ -139,6 +158,37 @@
     "nodeQueuedHint": "{{title}} is downloading",
     "treeLabel": "Mind map for {{title}}",
     "unavailable": "This learning path has no mind map."
+  },
+  "blog": {
+    "heading": "Blog",
+    "intro": "Release notes and write-ups, loaded live from the server.",
+    "empty": "There are no posts to show yet.",
+    "open": "Open the post {{title}}",
+    "published": "Published {{date}}",
+    "viaSource": "via {{host}}",
+    "backToList": "Back to the blog",
+    "source": {
+      "heading": "Original source",
+      "hint": "This post is based on an announcement published elsewhere. Open the original to check it for yourself.",
+      "open": "Open the original on {{host}} in a new tab"
+    },
+    "offline": {
+      "heading": "The blog needs a connection",
+      "body": "Blog posts are loaded live from the server, so this is the one screen that cannot work without a network.",
+      "localHint": "Everything you have already downloaded is still available.",
+      "library": "Go to your learning paths",
+      "lastLoaded": "Showing the list as it was loaded on {{date}}.",
+      "indicator": "Offline",
+      "indicatorHint": "The server cannot be reached right now, and blog posts are loaded live."
+    }
+  },
+  "sync": {
+    "statusLabel": "Connection and synchronisation status",
+    "offline": "Offline",
+    "offlineHint": "The rest of the application works offline. Blog posts and synchronising need a connection.",
+    "signInToSync": "Sign in to sync",
+    "signInToSyncHint": "Your progress is being saved on this device. Sign in again to synchronise it with your account.",
+    "lastSynchronised": "Last synchronised {{when}}"
   },
   "notFound": {
     "heading": "This page does not exist",
@@ -246,6 +296,7 @@
       "heading": "Blog posts",
       "newPost": "New post",
       "empty": "No posts match these filters.",
+      "tableCaption": "Blog posts, with their status, origin, last change and audit trail",
       "viewAudit": "Audit log",
       "filter": {
         "status": "Status",
@@ -284,6 +335,8 @@
       "preview": "Preview",
       "save": "Save",
       "saving": "Saving…",
+      "saved": "Saved.",
+      "transitionApplied": "Status updated.",
       "actionsHeading": "Actions",
       "reasonLabel": "Reason",
       "reasonPlaceholder": "Explain why",
@@ -329,6 +382,7 @@
       "heading": "Audit log",
       "backToPost": "Back to post",
       "empty": "No history yet.",
+      "tableCaption": "Pipeline audit trail, one row per recorded step",
       "machineStep": "Pipeline",
       "humanStep": "Human decision",
       "column": {
@@ -372,6 +426,8 @@
       "decisionHeading": "Decision",
       "reasonLabel": "Reason",
       "reasonTooShort": "Please write at least 10 characters explaining your decision.",
+      "approved": "Approved.",
+      "rejected": "Rejected.",
       "approve": "Approve",
       "reject": "Reject",
       "editorReadOnlyNote": "You don't have permission to approve or reject a post. Ask an administrator.",
@@ -429,6 +485,7 @@
       "enabledYes": "Yes",
       "enabledNo": "No",
       "neverFetched": "Never",
+      "tableCaption": "Whitelisted sources, with their feed address, status and last fetch",
       "enable": "Enable",
       "disable": "Disable",
       "edit": "Edit",
@@ -466,6 +523,7 @@
         "enabled": "Enabled",
         "save": "Save",
         "saving": "Saving…",
+        "saved": "Saved.",
         "error": {
           "nameRequired": "A name is required.",
           "nameLength": "The name must be 120 characters or fewer.",

@@ -5,16 +5,21 @@
 .skip-link {
   position: absolute;
   left: var(--spacing-2);
-  top: calc(var(--spacing-2) * -8);
+  top: var(--spacing-2);
   z-index: 10;
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   background: var(--color-accent);
   color: var(--color-accent-contrast);
   text-decoration: none;
-  transition: top var(--motion-fast) var(--ease-standard);
+  opacity: 0;
+  transform: translateY(calc(var(--spacing-2) * -8));
+  transition:
+    transform var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-fast) var(--ease-standard);
 }
 
 .skip-link:focus {
-  top: var(--spacing-2);
+  opacity: 1;
+  transform: translateY(0);
 }

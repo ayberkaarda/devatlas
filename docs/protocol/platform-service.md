@@ -55,6 +55,20 @@ export abstract class PlatformService {
   abstract markProgress(lessonId: string, completed: boolean): Promise<void>;
   abstract listProgress(): Promise<ProgressEntry[]>;   // desktop: progress_list
 
+  // Progress sync — meaningful only where capabilities.hasLocalStore, see section 10
+  abstract pendingProgress(): Promise<PendingProgress[]>;
+  abstract applyProgressResults(results: readonly ProgressSyncResult[]): Promise<void>;
+  abstract absorbProgress(entries: readonly ProgressEntry[]): Promise<void>;
+
+  // Session persistence — what this device remembers across a restart, see section 10
+  abstract loadSession(): Promise<RememberedSession | null>;
+  abstract storeSession(session: RememberedSession): Promise<void>;
+  abstract forgetSession(): Promise<void>;
+
+  // Sync bookkeeping — durable, and not a preference, see section 10
+  abstract getSyncState(): Promise<SyncBookkeeping>;
+  abstract setSyncState(patch: Partial<SyncBookkeeping>): Promise<void>;
+
   // Blog — read over HTTP on both platforms, see section 6
   abstract listBlogPosts(query: BlogListQuery): Promise<Page<BlogPostSummary>>;
   abstract getBlogPost(slug: string): Promise<BlogPost>;
@@ -239,6 +253,10 @@ an error state has made it look like a fault.
 | Content reads | `invoke('library_*')` — local store only, never falls back to HTTP | `HttpClient` against the read API |
 | Library management | `invoke('download_*')`, events from `download://progress` | Throws `UnsupportedOnWebError`; never reached, the UI does not render the controls |
 | Progress | `invoke('progress_mark')`, local write, always succeeds offline | `HttpClient`, requires a session |
+| A lesson's own completion | read from the local progress table alongside the lesson | already inline in the lesson response |
+| Progress sync | `invoke('progress_pending' / 'progress_apply_results' / 'progress_absorb')` | Throws `UnsupportedOnWebError`; there is no local queue and no replica to absorb into, the write already went to the server |
+| Session persistence | `invoke('session_store' / 'session_load' / 'session_clear')` | `localStorage`, and it holds no token — see section 10 |
+| Sync bookkeeping | `invoke('settings_get' / 'settings_set')`, the two non-preference fields | `localStorage` |
 | Blog | shared `BlogApiClient` over `HttpClient` | the same shared `BlogApiClient` |
 | Preferences | `invoke('settings_get' / 'settings_set')` | `localStorage` |
 
@@ -364,3 +382,169 @@ rule in section 1 as "everything goes through the abstraction":
   `PlatformService` for the same reason.
 - Role, on this reading, is not a platform fact. What a person may do comes from
   their session, and the answer is the same whichever build they are running.
+
+---
+
+## 10. Session persistence and sync bookkeeping
+
+Added for phase 8. Everything above this section is unchanged; these are the
+three method groups the sync layer needs and the abstraction did not yet have.
+
+### 10.1 What a device remembers about a session
+
+```typescript
+export interface RememberedSession {
+  readonly userId: string;
+  readonly accessToken: string | null;
+  readonly refreshToken: string | null;
+  readonly accessTokenExpiresAt: string | null;
+}
+```
+
+The three nullable fields are the difference between the platforms, expressed as
+data rather than as a branch:
+
+- **Desktop** signs in on the `BODY` channel, so the refresh token arrives as a
+  value the application holds. It has to survive a restart, and `localStorage` in
+  a WebView is not an appropriate home for it, so it goes to the local store
+  through `session_store`. All four fields are populated.
+- **Web** signs in on the `COOKIE` channel. The refresh token is already durable
+  and already out of reach: the browser attaches it and no script can read it.
+  There is nothing to store and nothing to hand back, so both token fields are
+  `null` and `accessTokenExpiresAt` is `null` with them.
+
+What the web implementation does store is `userId`, and only `userId`. That row
+is not a credential — it is the answer to "has anyone ever signed in on this
+browser", which is what decides whether a refresh is worth attempting at all.
+Without it every first page load by an anonymous visitor spends a `POST
+/auth/refresh` learning that there was never a session; with it, the request is
+made only where it can succeed.
+
+**The web implementation must never write a token into `localStorage`.** Storing
+one there would undo the entire reason the cookie channel exists. A stored
+session whose `accessToken` is non-null on the web is a defect, not a variation.
+
+`forgetSession()` is deliberately not called `clearSession()`: `AuthSession`
+already has a method by that name for its in-memory state, and the two are not
+the same act — signing out clears both, but a rejected refresh clears memory
+while a re-login is still possible from what the device remembers.
+
+### 10.2 Progress sync
+
+```typescript
+export interface PendingProgress {
+  readonly lessonId: string;
+  readonly completedAt: string | null;
+  readonly clientUpdatedAt: string;
+}
+
+export type ProgressSyncStatus = 'APPLIED' | 'STALE' | 'REJECTED';
+
+export interface ProgressSyncResult {
+  readonly lessonId: string;
+  readonly status: ProgressSyncStatus;
+  readonly code: string | null;
+  readonly serverClientUpdatedAt: string | null;
+  readonly completedAt?: string | null;
+}
+```
+
+`pendingProgress()` returns the rows the server has not acknowledged;
+`applyProgressResults()` writes back what it said, per row. Both map onto
+`progress_pending` and `progress_apply_results`, whose per-status behaviour is
+defined in the Rust command contract and is not restated here.
+
+`absorbProgress()` is the pull direction's landing place, and it was added in
+phase 8 because there was not one. The REST contract requires the client to
+apply the same last-write-wins rule locally to what `GET /sync/progress`
+returns, but every local write path available before this either stamped the
+current time (`progress_mark`, which is what a person clicking "complete"
+means) or only updated a row that already existed (`progress_apply_results`).
+A pulled row for a lesson this installation has never completed had nowhere to
+go, so a completion made on one device was invisible on another until that
+device happened to complete the lesson itself. It takes `ProgressEntry` values
+rather than a type of its own: a row pulled from the server is a progress
+entry, and inventing a second identical shape for it would only invite the two
+to drift.
+
+The conflict rule it applies is stated once, in the Rust command contract, and
+not restated here — the point of a single statement is that the two sides
+cannot disagree.
+
+`completedAt` is optional on a result and nullable inside it, and the two mean
+different things: absent leaves the local completion state alone, `null` sets it
+to "explicitly marked incomplete". A result that carried `undefined` and `null`
+interchangeably would silently un-complete lessons on every `STALE` row, which is
+why the field is written as `completedAt?: string | null` and never as
+`completedAt: string | null | undefined`.
+
+**Both methods throw `UnsupportedOnWebError` on the web**, following rule 3 of
+section 8 and the precedent the library methods set. This is not an oversight to
+be patched later with an empty array: on the web `markProgress` *is* the sync —
+it posts a single-item batch and returns when the server has it. There is no
+local queue, so "what is pending" has no honest answer, and returning `[]` would
+be the silent empty success rule 3 exists to forbid. The service that drains the
+queue therefore runs only where `capabilities.hasLocalStore`, branching on data
+exactly as the download controls already do.
+
+### 10.2.1 A lesson carries its own completion
+
+`Lesson` has a `completedAt: string | null` — the moment this reader completed
+it, or `null` for no recorded completion. A timestamp rather than a boolean,
+because the value already exists as one everywhere else and reducing it here
+would mean two shapes for one fact.
+
+The two implementations source it differently, and that difference is the
+abstraction earning its keep rather than a wart:
+
+- **Web** already receives it. The read API returns `progress` inline with the
+  lesson, and the field was being parsed and then dropped.
+- **Desktop** reads it from the local progress table beside the lesson, because
+  a lesson package is the same bytes for everybody while a completion belongs
+  to one person — separate tables, separate commands. Reading it locally is
+  also what makes the promise hold: completion has to be visible with no
+  network and with an expired access token, which is exactly the condition the
+  replica exists for.
+
+`null` is returned for a signed-out reader too. The server draws the same blank
+— it answers `null` both for an anonymous caller and for a signed-in one who
+has not completed the lesson — so no client can distinguish the two, and a
+screen that needs to must ask the session, not the lesson.
+
+**A lesson whose progress could not be read still renders.** Failing to read
+one row is not a reason to withhold the article; the completion falls back to
+`null` and the reader keeps the thing they came for.
+
+### 10.3 Sync bookkeeping
+
+```typescript
+export interface SyncBookkeeping {
+  readonly preferencesDirtyAt: string | null;
+  readonly lastSyncAt: string | null;
+}
+```
+
+These are the two fields the Rust settings record carries that are not
+preferences — the command contract says so in as many words — and they are kept
+off `Preferences` for that reason. A preference is something a person chose;
+these are things the sync layer knows and has nowhere else durable to write.
+
+- `preferencesDirtyAt` is stamped when a preference changes with no connectivity
+  and cleared once `PATCH /auth/me` succeeds. Several offline changes collapse
+  into one push of the final state, which is the seeding model of section 7 seen
+  from the write side.
+- `lastSyncAt` is what the interface shows as "last synchronised". It is the last
+  time a batch was accepted, not the last time one was attempted; a failed sync
+  must not make the interface claim otherwise.
+
+Both are honoured on both platforms. The web has offline preference changes too —
+a laptop that loses its network does not stop having a theme — and two timestamps
+are exactly the kind of small, replaceable state `localStorage` is right for.
+
+### 10.4 What is still not on the abstraction
+
+`POST /sync/progress` and `GET /sync/progress` are not platform methods. They are
+one HTTP call each, identical in both builds, issued by the Angular layer that
+owns the session — the same reasoning section 9 applies to the administration
+endpoints. The platform supplies the rows and absorbs the answer; it does not
+carry them over the wire.

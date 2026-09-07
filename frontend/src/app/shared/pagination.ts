@@ -13,6 +13,14 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Text comes from `admin.common.*` translation keys rather than being built
  * here: this component owns layout and paging behaviour, not the strings
  * that describe them.
+ *
+ * The longer wording is a description rather than the buttons' accessible
+ * name. A name that replaces the visible word breaks voice control, which
+ * matches what a person can read on screen — and it breaks it unevenly across
+ * languages, because "Zurück" is not a substring of "Zur vorherigen Seite
+ * gehen" while "Previous" is a substring of "Go to the previous page". Leaving
+ * the visible word as the name makes the guarantee hold in every locale
+ * without asking translators to preserve a substring.
  */
 @Component({
   selector: 'app-pagination',
@@ -25,9 +33,9 @@ import { TranslatePipe } from '@ngx-translate/core';
     >
       <button
         type="button"
-        class="rounded-md border border-border px-3 py-1.5 text-sm text-text disabled:cursor-not-allowed disabled:opacity-50"
+        class="rounded-md border border-border px-3 py-2 text-sm text-text disabled:cursor-not-allowed disabled:opacity-50"
         [disabled]="page() <= 0"
-        [attr.aria-label]="'admin.common.previousPage' | translate"
+        [title]="'admin.common.previousPage' | translate"
         (click)="goToPrevious()"
       >
         {{ 'admin.common.previous' | translate }}
@@ -42,9 +50,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 
       <button
         type="button"
-        class="rounded-md border border-border px-3 py-1.5 text-sm text-text disabled:cursor-not-allowed disabled:opacity-50"
+        class="rounded-md border border-border px-3 py-2 text-sm text-text disabled:cursor-not-allowed disabled:opacity-50"
         [disabled]="isOnLastPage()"
-        [attr.aria-label]="'admin.common.nextPage' | translate"
+        [title]="'admin.common.nextPage' | translate"
         (click)="goToNext()"
       >
         {{ 'admin.common.next' | translate }}

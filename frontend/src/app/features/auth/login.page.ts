@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -22,6 +30,7 @@ import { errorKey } from '../../core/platform/error-key';
 })
 export class LoginPage {
   private readonly session = inject(AuthSession);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly router = inject(Router);
 
   /**
@@ -70,6 +79,10 @@ export class LoginPage {
     this.failure.set(null);
 
     if (this.emailMissing() || this.passwordMissing()) {
+      // Focus goes to the first field that needs attention. Leaving it on the
+      // submit button makes a reader who cannot see the form hunt backwards
+      // through it for which of the two the message was about.
+      this.focusFirstInvalidField();
       return;
     }
 
@@ -83,6 +96,11 @@ export class LoginPage {
     } finally {
       this.submitting.set(false);
     }
+  }
+
+  private focusFirstInvalidField(): void {
+    const id = this.emailMissing() ? 'login-email' : 'login-password';
+    this.host.nativeElement.querySelector<HTMLInputElement>(`#${id}`)?.focus();
   }
 
   /**

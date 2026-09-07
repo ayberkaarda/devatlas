@@ -11,10 +11,14 @@ import type {
   Lesson,
   MindMap,
   Page,
+  PendingProgress,
   PlatformCapabilities,
   Preferences,
   ProgressEntry,
+  ProgressSyncResult,
   QueueEntry,
+  RememberedSession,
+  SyncBookkeeping,
   TrackDetail,
   TrackSummary,
 } from './models';
@@ -67,6 +71,55 @@ export abstract class PlatformService {
   // Progress
   abstract markProgress(lessonId: string, completed: boolean): Promise<void>;
   abstract listProgress(): Promise<ProgressEntry[]>;
+
+  // Progress sync — meaningful only where capabilities.hasLocalStore.
+  //
+  // On the web `markProgress` already *is* the sync: it posts a single-item
+  // batch and returns once the server has it, so there is no local queue and
+  // "what is pending" has no honest answer. Both methods throw
+  // `UnsupportedOnWebError` there, following the same rule the library
+  // methods do — a silent empty array would be indistinguishable from
+  // "there is genuinely nothing pending", and that would let a bug ship
+  // looking like a legitimate empty state. The service that drains the queue
+  // therefore runs only where `capabilities.hasLocalStore`.
+  abstract pendingProgress(): Promise<PendingProgress[]>;
+  abstract applyProgressResults(results: readonly ProgressSyncResult[]): Promise<void>;
+
+  /**
+   * Writes rows pulled from the server into the local replica.
+   *
+   * This is the pull direction's landing place. Every other local write path
+   * either stamps the current time — which is what a person clicking
+   * "complete" means — or only updates a row that already exists, so a pulled
+   * row for a lesson this installation has never completed had nowhere to go,
+   * and a completion made on one device stayed invisible on another until
+   * that device happened to complete the lesson itself.
+   *
+   * It takes progress entries rather than a type of its own: a row pulled
+   * from the server is a progress entry, and a second identical shape would
+   * only invite the two to drift. The conflict rule applied per row is stated
+   * once, on the desktop command that performs the write, so the two sides
+   * cannot disagree about it.
+   */
+  abstract absorbProgress(entries: readonly ProgressEntry[]): Promise<void>;
+
+  // Session persistence — what this device remembers across a restart.
+  //
+  // `forgetSession` is deliberately not named `clearSession`: the in-memory
+  // session state already has a method by that name, and the two are not the
+  // same act. Signing out clears both; a rejected token refresh clears only
+  // the in-memory state while a re-login from what the device remembers is
+  // still possible.
+  abstract loadSession(): Promise<RememberedSession | null>;
+  abstract storeSession(session: RememberedSession): Promise<void>;
+  abstract forgetSession(): Promise<void>;
+
+  // Sync bookkeeping — durable state the sync layer owns and has nowhere
+  // else to keep, honoured on both platforms. It is not a preference: a
+  // preference is something a person chose, and these two fields are things
+  // the sync layer knows.
+  abstract getSyncState(): Promise<SyncBookkeeping>;
+  abstract setSyncState(patch: Partial<SyncBookkeeping>): Promise<void>;
 
   // Blog — read over HTTP on both platforms
   abstract listBlogPosts(query: BlogListQuery): Promise<Page<BlogPostSummary>>;

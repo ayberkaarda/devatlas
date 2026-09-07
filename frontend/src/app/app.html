@@ -1,27 +1,79 @@
 <a class="skip-link" href="#main-content">{{ 'app.skipToContent' | translate }}</a>
 
 <div class="flex min-h-dvh flex-col bg-bg text-text">
+  <!--
+    The header carries what a person reaches for while working: where to go,
+    and the one preference that changes with the time of day. Everything
+    someone sets once — their language, their account — lives on the settings
+    screen instead, because a control that is used once a month still costs
+    attention on every screen it sits on.
+  -->
   <header class="border-b border-border bg-surface">
-    <div class="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-4 px-4 py-3">
+    <div class="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
       <a class="text-lg font-semibold tracking-tight text-text no-underline" routerLink="/tracks">
         {{ 'app.title' | translate }}
       </a>
 
-      <nav class="flex items-center gap-1" [attr.aria-label]="'nav.label' | translate">
+      <nav class="flex flex-wrap items-center gap-1" [attr.aria-label]="'nav.label' | translate">
         <a
           class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
           routerLink="/tracks"
           routerLinkActive="bg-surface-raised text-text"
+          ariaCurrentWhenActive="page"
         >
           {{ 'nav.tracks' | translate }}
+        </a>
+        <!--
+          The blog entry is here whatever the network is doing. A menu item
+          that disappears while the server is unreachable is a question; the
+          screen behind it explains itself, which is an answer. What the
+          entry gains offline is a mark, not an absence.
+        -->
+        <a
+          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+          routerLink="/blog"
+          routerLinkActive="bg-surface-raised text-text"
+          ariaCurrentWhenActive="page"
+        >
+          {{ 'nav.blog' | translate }}
+          @if (offline()) {
+            <span
+              class="ml-1.5 inline-flex items-center align-middle"
+              data-testid="nav-offline"
+              [attr.title]="'blog.offline.indicatorHint' | translate"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true"></span>
+              <span class="sr-only">{{ 'blog.offline.indicator' | translate }}</span>
+            </span>
+          }
         </a>
         @if (canDownload) {
           <a
             class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
             routerLink="/downloads"
             routerLinkActive="bg-surface-raised text-text"
+            ariaCurrentWhenActive="page"
           >
             {{ 'nav.downloads' | translate }}
+            <!--
+              A glance target, not an announcement. The count is deliberately
+              outside any live region: it can change several times a second
+              while a batch runs, and a screen reader reading every step of
+              that would talk over whatever the reader is actually doing. The
+              downloads screen announces its own progress politely; this is
+              only here so a number is visible without going to look for it.
+              It disappears at zero rather than showing a nought, because an
+              empty queue is the resting state and needs no badge.
+            -->
+            @if (activeDownloads(); as count) {
+              <span
+                class="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-accent-soft px-1.5 align-middle text-xs font-medium text-text tabular-nums"
+                data-testid="nav-downloads-count"
+              >
+                <span aria-hidden="true">{{ count }}</span>
+                <span class="sr-only">{{ 'nav.downloadsActive' | translate: { count } }}</span>
+              </span>
+            }
           </a>
         }
         @if (session.canAdminister()) {
@@ -29,13 +81,24 @@
             class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
             routerLink="/admin"
             routerLinkActive="bg-surface-raised text-text"
+            ariaCurrentWhenActive="page"
           >
             {{ 'nav.admin' | translate }}
           </a>
         }
       </nav>
 
-      <div class="ml-auto flex items-center gap-2">
+      <div class="ml-auto flex flex-wrap items-center gap-2">
+        <app-theme-toggle />
+        <a
+          class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text no-underline hover:bg-surface-raised"
+          routerLink="/settings"
+          routerLinkActive="bg-surface-raised"
+          ariaCurrentWhenActive="page"
+          data-testid="nav-settings"
+        >
+          {{ 'nav.settings' | translate }}
+        </a>
         @if (session.user() === null) {
           <a
             class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text no-underline hover:bg-surface-raised"
@@ -44,18 +107,30 @@
             {{ 'nav.signIn' | translate }}
           </a>
         }
-        <app-session-menu />
-        <app-language-switcher />
-        <app-theme-toggle />
       </div>
     </div>
   </header>
 
-  <main id="main-content" class="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+  <!--
+    tabindex="-1" is what makes the skip link actually skip. Several browsers
+    scroll to a fragment target without moving focus to it unless the target
+    can hold focus, which leaves the next Tab back at the top of the header —
+    the exact journey the link exists to avoid. It is -1 rather than 0 so the
+    region is reachable by the link and not by tabbing.
+  -->
+  <main id="main-content" tabindex="-1" class="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
     <router-outlet />
   </main>
 
-  <footer class="border-t border-border px-4 py-4 text-center text-xs text-text-muted">
-    {{ 'app.tagline' | translate }}
+  <!--
+    The status bar. Connection and synchronisation state belong at the bottom
+    edge of an application someone works inside for an hour, not in a second
+    band under the header where they push the content down on every screen.
+    The strip renders nothing where there is nothing to report — which is the
+    whole of the web build — and the footer is then genuinely empty rather
+    than padded out with something to fill it.
+  -->
+  <footer>
+    <app-sync-status />
   </footer>
 </div>

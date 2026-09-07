@@ -65,7 +65,9 @@ describe('DownloadsPage', () => {
     // The set, not one language: a package delivers a lesson and all of its
     // translations together, and a user deciding whether to keep a download
     // is deciding about all of it.
-    expect(element.querySelector('[data-testid="entry-locales"]')?.textContent?.trim()).toBe(
+    // The visible codes, asserted apart from the screen-reader-only wording
+    // that introduces them — that wording is translated and moves on its own.
+    expect(element.querySelector('[data-testid="entry-locale-codes"]')?.textContent?.trim()).toBe(
       'EN · FR · TR',
     );
   });
@@ -223,5 +225,55 @@ describe('DownloadsPage', () => {
     fixture.detectChanges();
 
     expect(fake.deletedScopes).toEqual([{ kind: 'LESSON', id: 'lesson-1' }]);
+  });
+
+  it('announces what a row is doing, and keeps the byte counter out of the region', async () => {
+    rows = [queueEntry({ state: 'DOWNLOADING', receivedBytes: 25, totalBytes: 100 })];
+    const element = (await render()).nativeElement as HTMLElement;
+
+    const state = element.querySelector('[data-testid="entry-state"]') as HTMLElement;
+    expect(state.getAttribute('role')).toBe('status');
+
+    // The counter changes several times a second; inside a live region it
+    // would interrupt a reader over and over, so it lives outside one.
+    const progress = element.querySelector('[data-testid="entry-progress"]') as HTMLElement;
+    expect(progress).not.toBeNull();
+    expect(progress.closest('[role="status"]')).toBeNull();
+  });
+
+  it('moves focus onto a delete confirmation and back when it is dismissed', async () => {
+    rows = [queueEntry({ trackId: 'track-1', trackTitle: 'Angular Fundamentals' })];
+    const fixture = await render();
+    const element = fixture.nativeElement as HTMLElement;
+
+    const trigger = element.querySelector<HTMLButtonElement>('[data-testid="lesson-delete"]')!;
+    trigger.focus();
+    trigger.click();
+    fixture.detectChanges();
+
+    // Opening the confirmation destroys the button that was focused, and a
+    // destroyed element takes the focus with it to the top of the document.
+    expect(document.activeElement).toBe(
+      element.querySelector('[data-testid="lesson-confirm-delete"]'),
+    );
+
+    element
+      .querySelector<HTMLButtonElement>('[data-testid="lesson-confirm-delete"]')!
+      .parentElement!.querySelectorAll('button')[1]
+      .click();
+    fixture.detectChanges();
+
+    expect(document.activeElement).toBe(element.querySelector('[data-testid="lesson-delete"]'));
+  });
+
+  it('names the track delete control with the words on it plus what it deletes', async () => {
+    rows = [queueEntry({ trackId: 'track-1', trackTitle: 'Angular Fundamentals' })];
+    const element = (await render()).nativeElement as HTMLElement;
+
+    const button = element.querySelector('[data-testid="track-delete"]') as HTMLButtonElement;
+    // Voice control matches what a person can see, so the visible words have
+    // to be part of the accessible name rather than replaced by it.
+    expect(button.getAttribute('aria-label')).toBeNull();
+    expect(button.textContent).toContain('Angular Fundamentals');
   });
 });

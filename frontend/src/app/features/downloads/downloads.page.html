@@ -1,12 +1,19 @@
-<h1 class="text-2xl font-semibold tracking-tight">{{ 'downloads.heading' | translate }}</h1>
+<h1 class="text-3xl font-semibold leading-tight tracking-tight">
+  {{ 'downloads.heading' | translate }}
+</h1>
 <p class="mt-1 text-text-muted">{{ 'downloads.intro' | translate }}</p>
 
 @if (!canDownload) {
   <p class="mt-8 text-text-muted" role="status">{{ 'downloads.onlyOnDesktop' | translate }}</p>
 } @else {
-  <section class="mt-6 rounded-lg border border-border bg-surface p-4">
+  <div class="mt-6 rounded-lg border border-border bg-surface p-4">
     <div class="flex flex-wrap items-center justify-between gap-3">
-      <div>
+      <!--
+        A polite live region: the summary underneath the storage line is
+        written when an update check finishes, long after the click that
+        started it, and nothing here changes continuously.
+      -->
+      <div role="status" data-testid="downloads-summary">
         @let size = downloaded().bytes | bytesFormat;
         <p class="text-sm text-text">
           {{ 'downloads.storageUsed' | translate: { size } }}
@@ -46,9 +53,15 @@
         }
       </div>
 
+      <!--
+        The one primary action on this screen: everything else here is a row
+        or batch action that reads, cancels, retries or removes something
+        already in progress or already stored, not the thing that starts a
+        new piece of work.
+      -->
       <button
         type="button"
-        class="rounded-md bg-accent px-3 py-1.5 text-sm text-accent-contrast disabled:opacity-50"
+        class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast hover:opacity-90 disabled:opacity-50"
         [disabled]="checking()"
         (click)="checkForUpdates()"
       >
@@ -59,20 +72,33 @@
     @if (checkErrorKey(); as key) {
       <p class="mt-2 text-xs text-danger" role="alert">{{ key | translate }}</p>
     }
-  </section>
+  </div>
 
   @if (actionErrorKey(); as key) {
     <p class="mt-4 text-sm text-danger" role="alert">{{ key | translate }}</p>
   }
 
+  <!--
+    Always in the DOM, and the only thing that reports a batch finishing: when
+    the last transfer completes its whole block is removed from the page and
+    the rows reappear further down, which is invisible to a reader who is not
+    watching. It carries a count of transfers rather than any number that
+    changes continuously.
+  -->
+  <p class="sr-only" role="status" data-testid="downloads-activity">
+    @if (activityMessage(); as message) {
+      {{ message.key | translate: message.params }}
+    }
+  </p>
+
   @if (batches().length === 0 && done().length === 0) {
-    <p class="mt-8 text-text-muted">{{ 'downloads.empty' | translate }}</p>
+    <p class="mt-8 text-text-muted" role="status">{{ 'downloads.empty' | translate }}</p>
   }
 
   @if (batches().length > 0) {
     <div class="mt-8 space-y-4">
       @for (batch of batches(); track batch.batchId) {
-        <section class="rounded-lg border border-border bg-surface p-4">
+        <div class="rounded-lg border border-border bg-surface p-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             @let batchReceived = batch.receivedBytes | bytesFormat;
             @let batchTotal = batch.totalBytes | bytesFormat;
@@ -85,11 +111,15 @@
                 </span>
               }
             </span>
+            <!--
+              Batch controls: quiet row actions, not the screen's primary —
+              that is "Check for updates" above.
+            -->
             <div class="flex gap-2">
               @if (batch.anyPaused) {
                 <button
                   type="button"
-                  class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                  class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
                   (click)="resumeBatch(batch.batchId)"
                 >
                   {{ 'download.action.resume' | translate }}
@@ -97,7 +127,7 @@
               } @else {
                 <button
                   type="button"
-                  class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                  class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
                   (click)="pauseBatch(batch.batchId)"
                 >
                   {{ 'download.action.pause' | translate }}
@@ -105,7 +135,7 @@
               }
               <button
                 type="button"
-                class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
                 (click)="cancelBatch(batch.batchId)"
               >
                 {{ 'download.action.cancel' | translate }}
@@ -124,32 +154,105 @@
           <ul class="mt-3 divide-y divide-border">
             @for (entry of batch.entries; track entry.entityId) {
               <li class="flex flex-wrap items-center gap-2 py-2 text-sm">
-                <span class="text-xs uppercase tracking-wide text-text-muted">
-                  {{ entityLabelKey(entry) | translate }}
+                <!--
+                  The entity type as a small mark rather than a shouted
+                  uppercase label: the shape says lesson or mind map at a
+                  glance, and the word that used to carry that alone moves to
+                  screen-reader text so nothing is lost for a reader who
+                  cannot see the shape.
+                -->
+                <span class="inline-flex items-center text-text-muted" aria-hidden="true">
+                  @if (entry.entityType === 'MIND_MAP') {
+                    <svg
+                      class="h-3.5 w-3.5"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="4" cy="4.5" r="1.3" />
+                      <circle cx="12" cy="4.5" r="1.3" />
+                      <circle cx="8" cy="12" r="1.3" />
+                      <path d="M4.9 5.5 7.3 11" />
+                      <path d="M11.1 5.5 8.7 11" />
+                      <path d="M5.3 4.5h5.4" />
+                    </svg>
+                  } @else {
+                    <svg
+                      class="h-3.5 w-3.5"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M4.5 2.5h4.5l2 2v8.5a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z"
+                      />
+                      <path d="M9 2.5v2h2" />
+                      <path d="M6 8.7h4" />
+                      <path d="M6 10.7h4" />
+                    </svg>
+                  }
                 </span>
+                <span class="sr-only">{{ entityLabelKey(entry) | translate }}</span>
                 <span>{{ entry.title ?? entry.entityId }}</span>
+
+                <!--
+                  What this row is doing, in a region that is present from the
+                  moment the row is, so that moving from queued to downloading
+                  to verifying is heard. The byte counter deliberately stays
+                  outside it: it changes several times a second, and a live
+                  region around it would interrupt a reader mid-sentence over
+                  and over.
+                -->
+                <span
+                  class="ml-auto text-xs"
+                  role="status"
+                  data-testid="entry-state"
+                  [class.text-danger]="entry.state === 'FAILED'"
+                  [class.text-text-muted]="entry.state !== 'FAILED'"
+                >
+                  @switch (entry.state) {
+                    @case ('FAILED') {
+                      {{ failureKey(entry) | translate }}
+                    }
+                    @case ('PAUSED') {
+                      {{ pauseReasonKey(entry) | translate }}
+                    }
+                    @default {
+                      {{ 'download.state.' + entry.state | translate }}
+                    }
+                  }
+                </span>
 
                 @switch (entry.state) {
                   @case ('FAILED') {
-                    <span class="text-xs text-danger">{{ failureKey(entry) | translate }}</span>
+                    <!--
+                      The one place a failed entry's recovery action outranks
+                      a plain row action: "Check for updates" is still the
+                      screen's only primary, so this sits at the secondary
+                      tier rather than either the accent fill or the ghost
+                      tier the rest of this row's actions use.
+                    -->
                     <button
                       type="button"
-                      class="ml-auto rounded-md bg-accent px-2 py-1 text-xs text-accent-contrast"
+                      class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
                       (click)="retryEntity(entry.entityId)"
                     >
                       {{ 'download.action.retry' | translate }}
                     </button>
                   }
                   @case ('PAUSED') {
-                    <span class="ml-auto text-xs text-text-muted">{{
-                      pauseReasonKey(entry) | translate
-                    }}</span>
+                    <!-- The reason is already in the region above. -->
                   }
                   @default {
                     @let entryReceived = entry.receivedBytes | bytesFormat;
                     @let entryTotal = entry.totalBytes | bytesFormat;
-                    <span class="ml-auto text-xs text-text-muted">
-                      {{ 'download.state.' + entry.state | translate }}
+                    <span class="text-xs text-text-muted" data-testid="entry-progress">
                       ({{
                         'download.progress' | translate: { done: entryReceived, total: entryTotal }
                       }})
@@ -162,23 +265,32 @@
               </li>
             }
           </ul>
-        </section>
+        </div>
       }
     </div>
   }
 
   @if (doneGroups().length > 0) {
     <div class="mt-8">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-text-muted">
+      <h2 class="text-lg font-semibold">
         {{ 'downloads.sectionDone' | translate }}
       </h2>
 
       <div class="mt-3 space-y-6">
         @for (group of doneGroups(); track group.trackId ?? 'untracked') {
           @let groupTitle = group.trackTitle ?? ('downloads.unknownTrack' | translate);
-          <section class="rounded-lg border border-border bg-surface p-4" data-testid="track-group">
+          @let groupId = 'track-group-' + (group.trackId ?? 'untracked');
+          <section
+            class="rounded-lg border border-border bg-surface p-4"
+            data-testid="track-group"
+            [attr.aria-labelledby]="groupId"
+          >
             <div class="flex flex-wrap items-center justify-between gap-3">
-              <h3 class="text-sm font-medium text-text" data-testid="track-group-title">
+              <h3
+                [id]="groupId"
+                class="text-sm font-medium text-text"
+                data-testid="track-group-title"
+              >
                 {{ groupTitle }}
               </h3>
 
@@ -189,8 +301,9 @@
                       'download.deleteTrackHint' | translate
                     }}</span>
                     <button
+                      #trackConfirmButton
                       type="button"
-                      class="rounded-md bg-danger px-2 py-1 text-xs text-accent-contrast"
+                      class="rounded-md bg-danger px-2 py-1 text-xs text-danger-contrast"
                       data-testid="track-confirm-delete"
                       (click)="confirmDeleteTrack(trackId)"
                     >
@@ -205,17 +318,26 @@
                     </button>
                   </div>
                 } @else {
+                  <!--
+                    The name is the visible words plus the title, in that
+                    order, rather than a sentence supplied by aria-label. A
+                    name that replaces the visible label leaves voice control
+                    with nothing to match when someone says what they can read,
+                    and no wording rule survives four independent translations
+                    - Turkish suffixes alone break any promise that the label
+                    stays a substring of the sentence.
+                  -->
                   <button
+                    #trackDeleteButton
                     type="button"
-                    class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                    class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
                     data-testid="track-delete"
-                    [attr.aria-label]="
-                      'download.hint.deleteTrack' | translate: { title: groupTitle }
-                    "
+                    [attr.data-delete-track]="trackId"
                     [title]="'download.hint.deleteTrack' | translate: { title: groupTitle }"
                     (click)="requestDeleteTrack(trackId)"
                   >
                     {{ 'download.action.deleteTrack' | translate }}
+                    <span class="sr-only">{{ groupTitle }}</span>
                   </button>
                 }
               }
@@ -224,19 +346,66 @@
             <ul class="mt-3 divide-y divide-border">
               @for (entry of group.entries; track entry.entityId) {
                 <li class="flex flex-wrap items-center gap-2 py-2 text-sm">
-                  <span class="text-xs uppercase tracking-wide text-text-muted">
-                    {{ entityLabelKey(entry) | translate }}
+                  <!--
+                    Same reasoning as the entity mark above the batch list: a
+                    shape carries the type at a glance, the word moves to
+                    screen-reader text rather than disappearing.
+                  -->
+                  <span class="inline-flex items-center text-text-muted" aria-hidden="true">
+                    @if (entry.entityType === 'MIND_MAP') {
+                      <svg
+                        class="h-3.5 w-3.5"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="4" cy="4.5" r="1.3" />
+                        <circle cx="12" cy="4.5" r="1.3" />
+                        <circle cx="8" cy="12" r="1.3" />
+                        <path d="M4.9 5.5 7.3 11" />
+                        <path d="M11.1 5.5 8.7 11" />
+                        <path d="M5.3 4.5h5.4" />
+                      </svg>
+                    } @else {
+                      <svg
+                        class="h-3.5 w-3.5"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M4.5 2.5h4.5l2 2v8.5a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z"
+                        />
+                        <path d="M9 2.5v2h2" />
+                        <path d="M6 8.7h4" />
+                        <path d="M6 10.7h4" />
+                      </svg>
+                    }
                   </span>
+                  <span class="sr-only">{{ entityLabelKey(entry) | translate }}</span>
                   <span>{{ entry.title ?? entry.entityId }}</span>
                   @let size = entry.totalBytes | bytesFormat;
                   <span class="text-xs text-text-muted">{{ size }}</span>
                   @if (entry.locales.length > 0) {
                     <span
-                      class="text-xs uppercase tracking-wide text-text-muted"
+                      class="text-xs tabular-nums text-text-muted"
                       data-testid="entry-locales"
                       [title]="'downloads.localesHint' | translate"
                     >
-                      {{ localeCodes(entry) }}
+                      <!--
+                        The same words the pointer gets from the title. A title
+                        attribute is unreachable by keyboard and is read by
+                        almost no screen reader, so on its own it is an
+                        explanation only some readers are offered.
+                      -->
+                      <span class="sr-only">{{ 'downloads.localesHint' | translate }}: </span>
+                      <span data-testid="entry-locale-codes">{{ localeCodes(entry) }}</span>
                     </span>
                   }
 
@@ -246,8 +415,9 @@
                         'download.deleteHint' | translate
                       }}</span>
                       <button
+                        #entryConfirmButton
                         type="button"
-                        class="rounded-md bg-danger px-2 py-1 text-xs text-accent-contrast"
+                        class="rounded-md bg-danger px-2 py-1 text-xs text-danger-contrast"
                         data-testid="lesson-confirm-delete"
                         (click)="confirmDelete(entry.entityId)"
                       >
@@ -261,14 +431,13 @@
                         {{ 'common.cancel' | translate }}
                       </button>
                     } @else {
+                      <!-- Same reasoning as the track button above. -->
                       <button
+                        #entryDeleteButton
                         type="button"
-                        class="ml-auto rounded-md border border-border px-2 py-1 text-xs text-text"
+                        class="ml-auto rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
                         data-testid="lesson-delete"
-                        [attr.aria-label]="
-                          'download.hint.delete'
-                            | translate: { title: entry.title ?? entry.entityId }
-                        "
+                        [attr.data-delete-entry]="entry.entityId"
                         [title]="
                           'download.hint.delete'
                             | translate: { title: entry.title ?? entry.entityId }
@@ -276,6 +445,7 @@
                         (click)="requestDelete(entry.entityId)"
                       >
                         {{ 'download.action.delete' | translate }}
+                        <span class="sr-only">{{ entry.title ?? entry.entityId }}</span>
                       </button>
                     }
                   }

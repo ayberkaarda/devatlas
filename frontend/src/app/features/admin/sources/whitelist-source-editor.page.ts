@@ -60,6 +60,15 @@ export class WhitelistSourceEditorPage {
   protected readonly saving = signal(false);
   protected readonly saveFailureKey = signal<string | null>(null);
 
+  /**
+   * What just went right, for the polite live region in the template.
+   *
+   * In edit mode a successful save replaces the record with one that looks
+   * identical and flips the button label back. Nothing else on the screen
+   * moves, so without this the only confirmation is the absence of an error.
+   */
+  protected readonly outcomeKey = signal<string | null>(null);
+
   protected readonly nameErrorKey = computed<string | null>(() => {
     const value = this.name().trim();
     if (value.length === 0) {
@@ -153,6 +162,7 @@ export class WhitelistSourceEditorPage {
     }
     this.saving.set(true);
     this.saveFailureKey.set(null);
+    this.outcomeKey.set(null);
     try {
       if (this.isCreateMode()) {
         const created = await this.api.createSource({
@@ -176,6 +186,7 @@ export class WhitelistSourceEditorPage {
           version: current.version,
         });
         this.applySource(updated);
+        this.outcomeKey.set('admin.sources.editor.saved');
       }
     } catch (error) {
       if (error instanceof PlatformError && error.code === 'VERSION_CONFLICT') {

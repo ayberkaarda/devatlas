@@ -30,8 +30,20 @@ export const routes: Routes = [
     loadComponent: () => import('./features/lessons/lesson.page').then((m) => m.LessonPage),
   },
   {
+    path: 'blog',
+    loadComponent: () => import('./features/blog/blog-list.page').then((m) => m.BlogListPage),
+  },
+  {
+    path: 'blog/:slug',
+    loadComponent: () => import('./features/blog/blog-post.page').then((m) => m.BlogPostPage),
+  },
+  {
     path: 'downloads',
     loadComponent: () => import('./features/downloads/downloads.page').then((m) => m.DownloadsPage),
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./features/settings/settings.page').then((m) => m.SettingsPage),
   },
   {
     path: 'login',

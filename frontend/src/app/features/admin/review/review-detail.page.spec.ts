@@ -126,15 +126,15 @@ describe('ReviewDetailPage', () => {
 
     // VERSION_CONFIRMED is the first failure in execution order; HASH_NOT_SEEN
     // also fails but is not the reason the update was rejected — only the
-    // first failing row gets the callout.
-    const versionRow = Array.from(element.querySelectorAll('li')).find((li) =>
-      li.textContent?.includes('Version confirmed'),
-    );
-    const hashRow = Array.from(element.querySelectorAll('li')).find((li) =>
-      li.textContent?.includes('Content is new'),
-    );
-    expect(versionRow?.querySelector('[role="alert"]')).not.toBeNull();
-    expect(hashRow?.querySelector('[role="alert"]')).toBeNull();
+    // first failing row gets the callout. Rows are found by the check they
+    // report rather than by their rendered wording, which is translated and
+    // moves independently of this behaviour.
+    const rowFor = (check: string) =>
+      element.querySelector(`[data-testid="verify-check"][data-check="${check}"]`);
+    expect(
+      rowFor('VERSION_CONFIRMED')?.querySelector('[data-testid="first-failing-note"]'),
+    ).not.toBeNull();
+    expect(rowFor('HASH_NOT_SEEN')?.querySelector('[data-testid="first-failing-note"]')).toBeNull();
   });
 
   it('shows an editor a read-only note instead of the approve/reject controls', async () => {

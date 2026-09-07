@@ -51,7 +51,23 @@ describe('LessonDownloadControls', () => {
     const buttons = wrapper(fixture).querySelectorAll('button');
 
     expect(buttons.length).toBe(1);
-    expect(buttons[0].className).toContain('border-border');
+    // A row action, quiet rather than outlined: the ghost tier carries no
+    // border of its own, distinguishing it from the confirm/cancel pair a
+    // click on it opens.
+    expect(buttons[0].className).toContain('text-text-muted');
+    expect(buttons[0].className).not.toContain('border-border');
+  });
+
+  it('renders only the status word for a downloaded lesson when acquireOnly is set', () => {
+    const fixture = render();
+    fixture.componentRef.setInput('acquireOnly', true);
+    fixture.detectChanges();
+
+    const host = wrapper(fixture);
+    expect(host.querySelectorAll('button').length).toBe(0);
+    expect(host.querySelector('[data-testid="availability-state"]')?.textContent?.trim()).not.toBe(
+      '',
+    );
   });
 
   it('replaces the delete button with a confirm/cancel pair once delete is requested', () => {

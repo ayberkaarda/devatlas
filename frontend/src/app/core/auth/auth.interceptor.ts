@@ -55,7 +55,9 @@ function codeOf(error: unknown): string | null {
  *   again — a retry loop against a request that will never succeed burns the
  *   refresh rate limit and ends in a sign-out that looks arbitrary.
  * - Only the refresh-token failures end a session. They are the server saying
- *   the credential itself is gone.
+ *   the credential itself is gone, and what follows is local-only mode rather
+ *   than a wipe: local content and local progress stay, reading and recording
+ *   keep working, and the interface offers a way back in.
  * - A transport failure ends nothing. Being unreachable is the normal state of
  *   a desktop client, and treating it as a sign-out would delete a working
  *   session because a laptop lid closed.
@@ -77,7 +79,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       const code = codeOf(error);
 
       if (code !== null && REFRESH_TOKEN_FAILURES.includes(code)) {
-        session.clearSession();
+        session.enterLocalOnly();
         return throwError(() => error);
       }
       if (code === null || !ACCESS_TOKEN_FAILURES.includes(code)) {

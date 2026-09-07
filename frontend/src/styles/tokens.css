@@ -44,6 +44,11 @@
   /* Accent */
   --color-accent: var(--bl-accent);
   --color-accent-contrast: var(--bl-accent-contrast);
+  /* A soft accent fill for a selected/active surface or an in-progress
+     status pill. It is a background only: text placed on it must stay the
+     default text colour, because the accent colour itself falls short of
+     4.5:1 there in both palettes. */
+  --color-accent-soft: var(--bl-accent-soft);
 
   /*
    * State colours come in three roles. The bare token is text on the page or
@@ -60,6 +65,11 @@
   --color-danger: var(--bl-danger);
   --color-danger-soft: var(--bl-danger-soft);
   --color-danger-strong: var(--bl-danger-strong);
+  /* Text on a danger-filled control. It exists so a destructive button does
+     not borrow the accent's text colour: the two happen to be the same value
+     in both palettes today, and a button that reads correctly only by that
+     coincidence breaks silently the first time one of them is retuned. */
+  --color-danger-contrast: var(--bl-danger-contrast);
 
   /* Code blocks */
   --color-code-bg: var(--bl-code-bg);
@@ -131,8 +141,15 @@
   --bl-text: #1a1d21;
   --bl-text-muted: #5b6270;
 
-  --bl-accent: #2f6fed;
+  /* Dark enough that accent-coloured text clears 4.5:1 at normal size on the
+     card surface (4.70) as well as on the page (5.13), not only on the page.
+     A link inside a card is the commonest place the accent is read as text,
+     and it was the one place it fell short of AA. The value is also bounded
+     from the other side: the focus ring has to keep 3:1 against an
+     accent-filled button, which it does at 3.22. */
+  --bl-accent: #2f63ea;
   --bl-accent-contrast: #ffffff;
+  --bl-accent-soft: #e8effd;
 
   --bl-success: #15803d;
   --bl-success-soft: #e3f6e9;
@@ -141,6 +158,7 @@
   --bl-warning-soft: #fdf3dd;
   --bl-warning-strong: #7a5209;
   --bl-danger: #d1373f;
+  --bl-danger-contrast: #ffffff;
   --bl-danger-soft: #fbe7e8;
   --bl-danger-strong: #a12a31;
 
@@ -166,6 +184,22 @@
   --motion-base: 200ms;
   --motion-slow: 320ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /*
+   * Long-form reading measure: a size and line-height pair for prose the
+   * reader spends minutes in, distinct from the --text-* scale above.
+   *
+   * Deliberately plain custom properties rather than @theme keys. Tailwind 4
+   * treats a --text-* theme key as a paired font-size/line-height utility (a
+   * --text-reading--line-height companion would set the line height for you),
+   * and this pair's line height is chosen independently as --leading-reading.
+   * Consuming code writes font-size: var(--text-reading); line-height:
+   * var(--leading-reading) directly rather than reaching for a generated
+   * text-reading utility class, so the two never fight over which one wins.
+   * Same value in both palettes: reading comfort does not change with theme.
+   */
+  --text-reading: 1.0625rem;
+  --leading-reading: 1.7;
 }
 
 [data-theme='dark'] {
@@ -188,6 +222,7 @@
 
   --bl-accent: #5b8def;
   --bl-accent-contrast: #0d1117;
+  --bl-accent-soft: #1a2a4a;
 
   --bl-success: #3fb873;
   --bl-success-soft: #103524;
@@ -196,6 +231,7 @@
   --bl-warning-soft: #3a2f14;
   --bl-warning-strong: #f0cf88;
   --bl-danger: #e2626b;
+  --bl-danger-contrast: #0d1117;
   --bl-danger-soft: #3a1a1e;
   --bl-danger-strong: #f08a92;
 
@@ -241,6 +277,7 @@
     --bl-warning-soft: #3a2f14;
     --bl-warning-strong: #f0cf88;
     --bl-danger: #e2626b;
+    --bl-danger-contrast: #0d1117;
     --bl-danger-soft: #3a1a1e;
     --bl-danger-strong: #f08a92;
 

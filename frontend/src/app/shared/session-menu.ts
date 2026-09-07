@@ -6,11 +6,12 @@ import { AuthSession } from '../core/auth/auth-session';
 /**
  * Who is signed in, and the way out.
  *
- * It shows the shortened address rather than the whole one: a header is where
- * a person checks *which* account they are on, not where they read their own
- * email address back. Nothing is rendered while nobody is signed in — reading
+ * It shows the shortened address rather than the whole one: what a person
+ * checks here is *which* account they are on, not their own email address
+ * read back to them. Nothing is rendered while nobody is signed in — reading
  * and downloading need no account, so an anonymous visitor is in a complete
- * state, not an incomplete one.
+ * state, not an incomplete one, and the screen showing this control offers a
+ * way in rather than a report of something missing.
  */
 @Component({
   selector: 'app-session-menu',
@@ -24,7 +25,7 @@ import { AuthSession } from '../core/auth/auth-session';
         </span>
         <button
           type="button"
-          class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text hover:bg-surface-raised"
+          class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text hover:bg-surface-raised"
           (click)="signOut()"
         >
           {{ 'auth.signOut' | translate }}

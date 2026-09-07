@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { firstValueFrom, timeout } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
-import { API_BASE_URL, REQUEST_TIMEOUT_MS, toPlatformError } from './api';
+import { API_BASE_URL, toPlatformError } from './api';
 import type { BlogListQuery, BlogPost, BlogPostSummary, Page } from './models';
 import {
   translationOf,
@@ -43,9 +43,7 @@ export class BlogApiClient {
 
     try {
       const page = await firstValueFrom(
-        this.http
-          .get<WirePage<WireBlogPostSummary>>(`${this.baseUrl}/blog/posts`, { params })
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WirePage<WireBlogPostSummary>>(`${this.baseUrl}/blog/posts`, { params }),
       );
       return {
         items: page.items.map((item) => ({
@@ -71,9 +69,7 @@ export class BlogApiClient {
   async get(slug: string): Promise<BlogPost> {
     try {
       const post = await firstValueFrom(
-        this.http
-          .get<WireBlogPost>(`${this.baseUrl}/blog/posts/${encodeURIComponent(slug)}`)
-          .pipe(timeout(REQUEST_TIMEOUT_MS)),
+        this.http.get<WireBlogPost>(`${this.baseUrl}/blog/posts/${encodeURIComponent(slug)}`),
       );
       return {
         id: post.id,

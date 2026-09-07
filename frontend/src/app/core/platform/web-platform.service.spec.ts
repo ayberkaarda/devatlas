@@ -4,9 +4,37 @@ import { TestBed } from '@angular/core/testing';
 
 import { API_BASE_URL } from './api';
 import { UnsupportedOnWebError } from './errors';
-import { PREFERENCES_STORAGE_KEY, WebPlatformService } from './web-platform.service';
+import {
+  PREFERENCES_STORAGE_KEY,
+  SESSION_STORAGE_KEY,
+  SYNC_STATE_STORAGE_KEY,
+  WebPlatformService,
+} from './web-platform.service';
 
 const BASE = 'https://api.example.test/api/v1';
+
+const FINISHED_AT = '2026-09-05T18:41:02.000Z';
+
+/** A lesson response, varying only the part these tests are about. */
+function lessonBody(progress: { completed_at: string | null } | null) {
+  return {
+    id: 'lesson-1',
+    slug: 'signals',
+    title: 'Signals',
+    body_markdown: '## Signals\n',
+    difficulty: 'BEGINNER',
+    estimated_minutes: 25,
+    order: 1,
+    content_version: 4,
+    locale: 'en',
+    requested_locale: 'en',
+    is_fallback: false,
+    module: { id: 'module-1', title: 'Basics', order: 1 },
+    track: { id: 'track-1', slug: 'angular-path', title: 'Angular' },
+    code_examples: [],
+    progress,
+  };
+}
 
 describe('WebPlatformService', () => {
   let service: WebPlatformService;
@@ -223,6 +251,30 @@ describe('WebPlatformService', () => {
     await promise;
   });
 
+  it('carries the completion the lesson response already contains', async () => {
+    const promise = service.getLesson('signals');
+    http.expectOne(`${BASE}/lessons/signals`).flush(lessonBody({ completed_at: FINISHED_AT }));
+
+    expect((await promise).completedAt).toBe(FINISHED_AT);
+  });
+
+  it('reports no completion when the response carries none', async () => {
+    // The envelope is absent both for a reader with no session and for one
+    // who has not finished the lesson. Neither is a completion of theirs to
+    // show, and the client has no business guessing which of the two it is.
+    const promise = service.getLesson('signals');
+    http.expectOne(`${BASE}/lessons/signals`).flush(lessonBody(null));
+
+    expect((await promise).completedAt).toBeNull();
+  });
+
+  it('reports no completion for a lesson the reader has opened but not finished', async () => {
+    const promise = service.getLesson('signals');
+    http.expectOne(`${BASE}/lessons/signals`).flush(lessonBody({ completed_at: null }));
+
+    expect((await promise).completedAt).toBeNull();
+  });
+
   it('translates a server error body into a code, never a displayable message', async () => {
     const promise = service.getLesson('missing');
     http
@@ -268,5 +320,103 @@ describe('WebPlatformService', () => {
 
   it('treats revealing the application as already satisfied', async () => {
     await expect(service.revealApplication()).resolves.toBeUndefined();
+  });
+
+  it('throws rather than returning an empty success for progress sync', async () => {
+    await expect(service.pendingProgress()).rejects.toBeInstanceOf(UnsupportedOnWebError);
+    await expect(service.applyProgressResults()).rejects.toBeInstanceOf(UnsupportedOnWebError);
+    // There is no replica to absorb a pulled row into, and accepting the call
+    // silently would report a success for a write that never happened.
+    await expect(service.absorbProgress()).rejects.toBeInstanceOf(UnsupportedOnWebError);
+  });
+
+  it('never writes a token into storage, whatever a caller passes it', async () => {
+    await service.storeSession({
+      userId: 'user-1',
+      accessToken: 'super-secret-access-token',
+      refreshToken: 'super-secret-refresh-token',
+      accessTokenExpiresAt: '2026-09-04T09:27:33.000Z',
+    });
+
+    // The one defect this design exists to prevent: a raw scan of everything
+    // written to storage for anything that looks like a token value.
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY) ?? '';
+    expect(raw).not.toContain('super-secret-access-token');
+    expect(raw).not.toContain('super-secret-refresh-token');
+    expect(JSON.parse(raw)).toEqual({ userId: 'user-1' });
+
+    const loaded = await service.loadSession();
+    expect(loaded).toEqual({
+      userId: 'user-1',
+      accessToken: null,
+      refreshToken: null,
+      accessTokenExpiresAt: null,
+    });
+  });
+
+  it('reports no remembered session when nothing was ever stored', async () => {
+    expect(await service.loadSession()).toBeNull();
+  });
+
+  it('treats a row with no usable userId as no session at all', async () => {
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ userId: '' }));
+    expect(await service.loadSession()).toBeNull();
+
+    localStorage.setItem(SESSION_STORAGE_KEY, 'not json');
+    expect(await service.loadSession()).toBeNull();
+  });
+
+  it('forgets a session by removing the stored row', async () => {
+    await service.storeSession({
+      userId: 'user-1',
+      accessToken: 'a',
+      refreshToken: 'b',
+      accessTokenExpiresAt: null,
+    });
+    await service.forgetSession();
+    expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+    expect(await service.loadSession()).toBeNull();
+  });
+
+  it('reports no sync bookkeeping outstanding until something is written', async () => {
+    expect(await service.getSyncState()).toEqual({ preferencesDirtyAt: null, lastSyncAt: null });
+  });
+
+  it('round-trips sync bookkeeping, writing only the field that was patched', async () => {
+    await service.setSyncState({ lastSyncAt: '2026-09-03T21:14:55.002Z' });
+    expect(await service.getSyncState()).toEqual({
+      preferencesDirtyAt: null,
+      lastSyncAt: '2026-09-03T21:14:55.002Z',
+    });
+
+    await service.setSyncState({ preferencesDirtyAt: '2026-09-04T08:41:02.310Z' });
+    expect(await service.getSyncState()).toEqual({
+      preferencesDirtyAt: '2026-09-04T08:41:02.310Z',
+      lastSyncAt: '2026-09-03T21:14:55.002Z',
+    });
+  });
+
+  it('clears a sync bookkeeping field with an explicit null rather than leaving it alone', async () => {
+    await service.setSyncState({ lastSyncAt: '2026-09-03T21:14:55.002Z' });
+    await service.setSyncState({ lastSyncAt: null });
+    expect(await service.getSyncState()).toEqual({ preferencesDirtyAt: null, lastSyncAt: null });
+  });
+
+  it('falls back to defaults rather than throwing on unreadable stored sync bookkeeping', async () => {
+    localStorage.setItem(SYNC_STATE_STORAGE_KEY, 'not json');
+    expect(await service.getSyncState()).toEqual({ preferencesDirtyAt: null, lastSyncAt: null });
+  });
+
+  it('applies a sync bookkeeping change for the session even when storage cannot remember it', async () => {
+    const spy = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('storage disabled');
+    });
+    try {
+      await expect(
+        service.setSyncState({ lastSyncAt: '2026-09-03T21:14:55.002Z' }),
+      ).resolves.toBeUndefined();
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
