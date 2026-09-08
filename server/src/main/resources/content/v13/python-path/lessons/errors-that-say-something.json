@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060302",
+  "title": "Errors that say something",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.python.org/3.13/library/exceptions.html",
+    "https://docs.python.org/3.13/reference/compound_stmts.html#the-try-statement",
+    "https://docs.python.org/3.13/tutorial/errors.html"
+  ],
+  "concepts": ["exception hierarchies", "exception chaining"],
+  "code_examples": [
+    { "language": "python", "caption": "One root per subsystem", "file": "errors-that-say-something-1.py" },
+    { "language": "python", "caption": "What a bare except hides", "file": "errors-that-say-something-2.py" },
+    { "language": "python", "caption": "Keeping the cause", "file": "errors-that-say-something-3.py" }
+  ]
+}

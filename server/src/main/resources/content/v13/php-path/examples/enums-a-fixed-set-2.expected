@@ -1,0 +1,15 @@
+string(3) "EUR"
+string(4) "Euro"
+bool(true)
+string(3) "Yen"
+NULL
+bool(true)
+ValueError: "CHF" is not a valid backing value for enum Currency
+fell back to Euro
+{"currency":"JPY","minor":0}
+string(6) "string"
+string(3) "Yen"
+bool(false)
+bool(true)
+NULL
+string(6) "string"

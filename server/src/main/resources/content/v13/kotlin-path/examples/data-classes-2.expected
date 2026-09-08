@@ -1,0 +1,7 @@
+equal despite different status: true
+shipped.status=SHIPPED fresh.status=NEW
+copy status: NEW
+copy carried the status over: false
+set of the two orders has size: 1
+arrays with equal contents make equal data classes: false
+their contents are equal: true

@@ -1,0 +1,6 @@
+re-pointed to second, reading 2
+both spellings agree: true
+wrote through a const pointer, first is now 41
+bothAreConst reads 41
+bothAreConst names first: true
+the const reference sees the write: 42

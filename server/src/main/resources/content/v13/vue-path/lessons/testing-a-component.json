@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110303",
+  "title": "Testing a component",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://vuejs.org/guide/scaling-up/testing.html",
+    "https://vuejs.org/guide/reusability/composables.html"
+  ],
+  "concepts": [
+    "public interface",
+    "behavioural assertions"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "A component test suite against props, rendered output and emitted events",
+      "file": "testing-a-component-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The same refactor under two suites: one survives, one does not",
+      "file": "testing-a-component-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Composables tested directly, and the one that needed a component around it",
+      "file": "testing-a-component-3.js"
+    }
+  ]
+}

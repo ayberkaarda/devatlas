@@ -1,0 +1,4 @@
+generator object size does not depend on how much it will yield: True
+both computed the same sum: True
+the list needed more than one megabyte: True
+the generator needed under one percent of that: True

@@ -46,6 +46,7 @@ public class AdminCodeExampleService {
           "kotlin",
           "python",
           "csharp",
+          "cpp",
           "go",
           "php",
           "ruby",

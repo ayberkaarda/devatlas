@@ -1,0 +1,7 @@
+the typo was stored: ['host', 'port', 'prot']
+the real port is still: 5432
+the same typo raises: AttributeError
+declared slots: ('host', 'port')
+a slotted instance has no __dict__: False
+its attributes still read normally: db.internal 5432
+and still write normally: 6543

@@ -1,0 +1,29 @@
+ pages_in_table | rows_in_table 
+----------------+---------------
+              4 |           500
+(1 row)
+
+                          QUERY PLAN                          
+--------------------------------------------------------------
+ Sort  (cost=15.12..15.54 rows=166 width=17)
+   Sort Key: display_order
+   ->  Seq Scan on track  (cost=0.00..9.00 rows=166 width=17)
+         Filter: published
+(4 rows)
+
+                                          QUERY PLAN                                           
+-----------------------------------------------------------------------------------------------
+ Sort  (cost=21.34..21.76 rows=166 width=17)
+   Sort Key: display_order
+   ->  Bitmap Heap Scan on track  (cost=9.56..15.22 rows=166 width=17)
+         Recheck Cond: published
+         ->  Bitmap Index Scan on ix_track_published_order  (cost=0.00..9.52 rows=166 width=0)
+               Index Cond: (published = true)
+(6 rows)
+
+             QUERY PLAN             
+------------------------------------
+ Index Scan using pk_track on track
+   Index Cond: (id = 250)
+(2 rows)
+

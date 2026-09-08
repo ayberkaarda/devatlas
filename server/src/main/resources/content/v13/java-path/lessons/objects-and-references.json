@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040101",
+  "title": "Objects, references, and the thing people call a pointer",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 6,
+  "sources": [
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-3.html",
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html",
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-5.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/specs/man/javac.html"
+  ],
+  "concepts": ["reference semantics", "object identity"],
+  "code_examples": [
+    { "language": "java", "caption": "What a parameter holds", "file": "objects-and-references-1.java" },
+    { "language": "java", "caption": "Identity against equality", "file": "objects-and-references-2.java" },
+    { "language": "java", "caption": "A copy that copied the references", "file": "objects-and-references-3.java" }
+  ]
+}

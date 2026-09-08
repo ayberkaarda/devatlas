@@ -1,0 +1,6 @@
+after rename : Box[renamed]
+after replace: Box[renamed]
+a == b       : true
+a reads      : Box[changed through b]
+caller's list: [first, added by callee]
+NPE message  : Cannot read field "label" because "<local4>" is null

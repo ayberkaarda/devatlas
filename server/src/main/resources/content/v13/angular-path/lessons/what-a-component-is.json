@@ -1,0 +1,20 @@
+{
+  "id": "019205a0-3000-7000-8000-000000000005",
+  "title": "What a component actually is",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 12,
+  "sources": ["https://angular.dev/guide/components", "https://angular.dev/guide/templates"],
+  "concepts": ["component boundary", "standalone imports"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "A leaf component and a component that uses it",
+      "file": "what-a-component-is-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A misspelled metadata key, beside the correct one",
+      "file": "what-a-component-is-2.ts"
+    }
+  ]
+}

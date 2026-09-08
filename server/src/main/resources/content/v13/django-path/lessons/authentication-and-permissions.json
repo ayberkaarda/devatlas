@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070302",
+  "title": "Authentication and permissions",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/auth/default/",
+    "https://docs.djangoproject.com/en/6.1/ref/contrib/auth/",
+    "https://docs.djangoproject.com/en/6.1/topics/auth/passwords/"
+  ],
+  "concepts": [
+    "authentication against authorisation",
+    "the permission cache"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "Credentials, hashing and the anonymous case",
+      "file": "authentication-and-permissions-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "Permissions, groups, and the cache that hides a change",
+      "file": "authentication-and-permissions-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "A view that refuses and a template that only hides",
+      "file": "authentication-and-permissions-3.py"
+    }
+  ]
+}

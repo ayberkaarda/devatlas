@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130301",
+  "title": "Collections, and the interface to accept",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 12,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/standard/collections/",
+    "https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlylist-1?view=net-10.0",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/covariance-contravariance/"
+  ],
+  "concepts": ["accept wide, return narrow", "variance"],
+  "code_examples": [
+    { "language": "csharp", "caption": "What the parameter type costs each side", "file": "collections-and-the-interface-to-accept-1.cs" },
+    { "language": "csharp", "caption": "Lazy versus materialised, copy versus wrapper", "file": "collections-and-the-interface-to-accept-2.cs" },
+    { "language": "csharp", "caption": "Choosing the type, and variance", "file": "collections-and-the-interface-to-accept-3.cs" }
+  ]
+}

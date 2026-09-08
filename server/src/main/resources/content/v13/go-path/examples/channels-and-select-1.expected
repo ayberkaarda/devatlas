@@ -1,0 +1,12 @@
+received 1
+received 4
+received 9
+received 16
+received 25
+channel closed, range ended
+after close: value=0 ok=false
+both runners released: true
+sent 1, got back 10
+sent 2, got back 20
+sent 3, got back 30
+pong closed too: true

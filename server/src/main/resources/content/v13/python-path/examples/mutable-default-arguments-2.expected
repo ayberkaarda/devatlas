@@ -1,0 +1,9 @@
+a.entries: ['from a', 'from b']
+b.entries: ['from a', 'from b']
+a.entries is b.entries: True
+the class holds them too: ['from a', 'from b']
+c.entries: ['from c']
+d.entries: ['from d']
+c.entries is d.entries: False
+after assigning to a.entries, the class list is: ['from a', 'from b']
+and a now has its own: False

@@ -1,0 +1,27 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030201",
+  "title": "Narrowing",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+  ],
+  "concepts": ["control flow analysis", "type predicates"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "typeof narrowing and the null that survives it",
+      "file": "narrowing-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Discriminated unions, in, and instanceof",
+      "file": "narrowing-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A predicate that promises too much, and a narrowing that outlives its assignment",
+      "file": "narrowing-3.ts"
+    }
+  ]
+}

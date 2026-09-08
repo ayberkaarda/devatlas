@@ -1,0 +1,14 @@
+response: 200 ok
+header keys are lower-cased: true
+lookup with the casing the client sent: undefined
+lookup in lower case: abc-123
+repeated header, joined: one, two
+repeated header, kept apart: ["one","two"]
+searchParams.get('tag'): red
+searchParams.getAll('tag'): ["red","blue"]
+a missing parameter is: null
+typeof the 'limit' parameter: string
+percent-encoding is decoded: ada lovelace
+headersSent after end(): true
+second writeHead threw: ERR_HTTP_HEADERS_SENT
+late setHeader threw: ERR_HTTP_HEADERS_SENT

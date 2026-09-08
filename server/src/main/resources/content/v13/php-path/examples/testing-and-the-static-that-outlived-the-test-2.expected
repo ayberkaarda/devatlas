@@ -1,0 +1,19 @@
+currency test alone
+  currency                   ok
+locale test alone
+  locale                     ok
+currency then locale
+  currency                   ok
+  locale                     FAIL got EUR
+locale then currency
+  locale                     ok
+  currency                   FAIL got GBP
+cart, in order
+  one item                   ok
+  two items                  FAIL total is 450
+superglobal
+  admin sees the flag        ok
+  anonymous does not         FAIL admin leaked in from another test
+ini setting
+  sets precision             ok
+  expects the default        FAIL the previous test changed a process-wide setting

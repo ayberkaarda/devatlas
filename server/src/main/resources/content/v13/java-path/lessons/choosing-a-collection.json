@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040301",
+  "title": "Collections, and choosing the right one",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/HashMap.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedHashMap.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html"
+  ],
+  "concepts": ["sequenced collections"],
+  "code_examples": [
+    { "language": "java", "caption": "Three maps, three orders", "file": "choosing-a-collection-1.java" },
+    { "language": "java", "caption": "Sequenced collections in Java 21", "file": "choosing-a-collection-2.java" },
+    { "language": "java", "caption": "A key that moved after filing", "file": "choosing-a-collection-3.java" }
+  ]
+}

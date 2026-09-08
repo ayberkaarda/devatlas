@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140302",
+  "title": "Coroutines and structured concurrency",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 12,
+  "sources": [
+    "https://kotlinlang.org/docs/coroutines-basics.html",
+    "https://kotlinlang.org/docs/cancellation-and-timeouts.html",
+    "https://kotlinlang.org/docs/composing-suspending-functions.html",
+    "https://kotlinlang.org/docs/coroutine-context-and-dispatchers.html"
+  ],
+  "concepts": ["structured concurrency", "cooperative cancellation"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "What awaiting all of them actually guarantees", "file": "coroutines-and-structured-concurrency-1.kt" },
+    { "language": "kotlin", "caption": "Timeouts, cancellation down the tree, cleanup", "file": "coroutines-and-structured-concurrency-2.kt" },
+    { "language": "kotlin", "caption": "Cancellation is cooperative, shown with a gate", "file": "coroutines-and-structured-concurrency-3.kt" }
+  ]
+}

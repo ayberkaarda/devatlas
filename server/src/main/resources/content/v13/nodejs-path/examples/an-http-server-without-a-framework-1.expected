@@ -1,0 +1,8 @@
+GET /records -> 200
+content-type: application/json; charset=utf-8
+body: [{"id":"1","name":"alice"},{"id":"2","name":"bob"}]
+GET /records/2 -> 200 {"id":"2","name":"bob"}
+GET /records/99 -> 404 {"code":"not_found","message":"no such record"}
+DELETE /records -> 405 {"code":"method_not_allowed","message":"use GET"}
+allow header: GET
+GET /nothing/here -> 404 {"code":"not_found","message":"no such route"}

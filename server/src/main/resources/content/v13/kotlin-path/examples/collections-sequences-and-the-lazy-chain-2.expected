@@ -1,0 +1,8 @@
+after building the chain, map calls: 0
+first: 1
+after first(), map calls: 1
+toList: [1, 4, 9, 16, 25]
+after toList(), map calls: 6
+first eight powers of two: [1, 2, 4, 8, 16, 32, 64, 128]
+first power above 1000: 1024
+fibonacci below 50: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]

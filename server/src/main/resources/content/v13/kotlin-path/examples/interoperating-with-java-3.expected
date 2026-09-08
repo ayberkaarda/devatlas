@@ -1,0 +1,6 @@
+load declares: [IOException]
+loadWithoutAnnotation declares: []
+both still run: loaded / loaded
+listOf refused the write: true
+an ArrayList behind the same type accepted it: true
+the read-only reference now sees 4 elements

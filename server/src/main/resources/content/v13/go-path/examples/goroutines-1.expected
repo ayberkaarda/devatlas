@@ -1,0 +1,8 @@
+alpha    518
+bravo    538
+charlie  728
+delta    522
+echo     415
+all 5 results present, total 2721
+lengths [5 5 7 5 4]
+ten thousand goroutines finished: counted=10000

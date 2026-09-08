@@ -1,0 +1,6 @@
+duplicated: after opening Etymology, open panels: About, Etymology
+duplicated: at most one panel open: false
+lifted    : after opening Etymology, open panels: Etymology
+lifted    : at most one panel open: true
+two copies of one fact agree: false
+one owner, two readers agree: true

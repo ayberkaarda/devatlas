@@ -1,0 +1,14 @@
+bool(false)
+bool(false)
+bool(true)
+bool(false)
+int(0)
+bool(false)
+int(0)
+truthy test says: not found
+identity test says: found
+switch: took the int 1 branch
+match(true): took the string branch
+UnhandledMatchError: Unhandled match case '1'
+["a","b","c"]
+["a"]

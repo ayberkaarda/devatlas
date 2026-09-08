@@ -1,0 +1,35 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160301",
+  "title": "Enumerable, and the each contract",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/Enumerable.html",
+    "https://ruby-doc.org/3.4.1/Enumerator.html",
+    "https://ruby-doc.org/3.4.1/Enumerator/Lazy.html",
+    "https://ruby-doc.org/3.4.1/Array.html",
+    "https://ruby-doc.org/3.4.1/Hash.html",
+    "https://ruby-doc.org/3.4.1/Struct.html"
+  ],
+  "concepts": [
+    "Enumerable",
+    "lazy evaluation"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "One each, and the vocabulary that arrives with it",
+      "file": "enumerable-and-the-each-contract-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "reduce, each_with_object, group_by and filter_map",
+      "file": "enumerable-and-the-each-contract-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "Enumerator, external iteration, and lazy chains counted",
+      "file": "enumerable-and-the-each-contract-3.rb"
+    }
+  ]
+}

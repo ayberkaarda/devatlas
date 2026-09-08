@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040102",
+  "title": "Records",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 7,
+  "sources": [
+    "https://docs.oracle.com/en/java/javase/21/language/records.html",
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html"
+  ],
+  "concepts": ["record classes"],
+  "code_examples": [
+    { "language": "java", "caption": "What the compiler writes for you", "file": "records-1.java" },
+    { "language": "java", "caption": "A compact constructor that validates", "file": "records-2.java" },
+    { "language": "java", "caption": "Records as map and set keys", "file": "records-3.java" }
+  ]
+}

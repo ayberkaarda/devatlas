@@ -1,0 +1,11 @@
+single resolve returns:        push
+registrations resolved:        3
+in registration order:         email,sms,push
+TryAdd added nothing:          True
+GetService for an unregistered type:         True
+GetRequiredService for an unregistered type: InvalidOperationException
+injected notifier count:       3
+before disposing the provider: container resource disposed: 0
+before disposing the provider: owned resource disposed:     0
+after disposing the provider:  container resource disposed: 1
+after disposing the provider:  owned resource disposed:     0

@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320202",
+  "title": "Looping over collections",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 6,
+  "sources": ["https://docs.python.org/3/library/stdtypes.html"],
+  "concepts": ["iterator protocol", "generators"],
+  "code_examples": [
+    { "language": "python", "caption": "The iterator protocol by hand", "file": "looping-over-collections-1.py" },
+    { "language": "python", "caption": "A generator producing values lazily", "file": "looping-over-collections-2.py" }
+  ]
+}

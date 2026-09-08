@@ -1,0 +1,8 @@
+null coalescing avoided the diagnostic entirely: (absent)
+reading a key that is not there:
+handler saw Warning: Undefined array key "name"
+the expression still produced NULL
+still a ValueError: str_split(): Argument #2 ($length) must be greater than 0
+promoted to ErrorException: A non-numeric value encountered
+about to raise something no catch block can see
+shutdown: fatal=true message=the queue driver is gone

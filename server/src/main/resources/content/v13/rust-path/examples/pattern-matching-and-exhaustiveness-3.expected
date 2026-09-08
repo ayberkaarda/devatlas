@@ -1,0 +1,5 @@
+conditional request possible for version 13
+etag is 5 characters
+the chain stopped at the first pattern that did not match
+filled in the else branch
+the slot now holds a value: true

@@ -1,0 +1,9 @@
+concatenated: 3 rows for a table of 3
+prepared: 0 rows
+prepared with a real name: 1 rows
+sorted by name: ana,bo,cy
+in list: ana,cy
+PDOException SQLSTATE HY000
+PDOException SQLSTATE HY000
+rolled back, SQLSTATE 23000
+rows after rollback: 3

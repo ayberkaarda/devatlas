@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000011",
+  "slug": "vue-path",
+  "title": "The Vue Path",
+  "description": "How a template becomes a contract, how reactivity decides what to re-run, and what that costs you. Teaches Vue 3.5.",
+  "icon": null,
+  "order": 11,
+  "teaches_version": "Vue 3.5",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000001101",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 26,
+      "lessons": [
+        "the-template-is-a-contract",
+        "ref-and-reactive",
+        "computed-properties"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001102",
+      "title": "The reactivity model",
+      "order": 1,
+      "estimated_minutes": 29,
+      "lessons": [
+        "how-reactivity-actually-tracks",
+        "watchers-and-when-a-computed-would-have-done",
+        "component-communication"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001103",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 30,
+      "lessons": [
+        "the-composition-api-in-practice",
+        "routing-and-lazily-loaded-views",
+        "testing-a-component"
+      ]
+    }
+  ]
+}

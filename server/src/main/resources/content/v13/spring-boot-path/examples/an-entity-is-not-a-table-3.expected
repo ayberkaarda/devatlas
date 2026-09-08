@@ -1,0 +1,12 @@
+row written with the first enum: ordinal=2 name=ADVANCED
+same number read back through the second enum: INTERMEDIATE
+same name read back through the second enum:   ADVANCED
+--- ordinals before and after the edit ---
+  BEGINNER was 0
+  INTERMEDIATE was 1
+  ADVANCED was 2
+  INTRODUCTORY is now 0
+  BEGINNER is now 1
+  INTERMEDIATE is now 2
+  ADVANCED is now 3
+a removed name is refused: IllegalArgumentException

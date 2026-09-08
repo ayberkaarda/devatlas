@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130101",
+  "title": "Value types and reference types",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/value-types",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/reference-types",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/types/boxing-and-unboxing"
+  ],
+  "concepts": ["value semantics", "boxing"],
+  "code_examples": [
+    { "language": "csharp", "caption": "Assignment, arguments and ref", "file": "value-types-and-reference-types-1.cs" },
+    { "language": "csharp", "caption": "Structs inside a List, an array and a readonly struct", "file": "value-types-and-reference-types-2.cs" },
+    { "language": "csharp", "caption": "Boxing and default equality", "file": "value-types-and-reference-types-3.cs" }
+  ]
+}

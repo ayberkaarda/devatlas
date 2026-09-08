@@ -1,0 +1,7 @@
+tracked after run 1: ui.showAge, user.firstName
+runs: 1
+after user.lastName changed, runs: 1
+after user.firstName changed, runs: 2
+after user.age changed, runs: 2
+a property the effect never read is invisible to it: true
+tracked after the last run: ui.showAge, user.firstName

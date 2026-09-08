@@ -1,0 +1,8 @@
+without a flush, updates still queued: 1
+without a flush, the screen says: clicked 0 times
+after a flush, updates still queued: 0
+after a flush, the screen says: clicked 1 times
+assertion before the click passes: true
+same assertion still passes after the click: true
+and fails once the queue is applied: true
+the screen finally says: clicked 1 times

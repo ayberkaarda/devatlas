@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050303",
+  "title": "Migrations",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 12,
+  "sources": [
+    "https://www.postgresql.org/docs/16/sql-altertable.html",
+    "https://www.postgresql.org/docs/16/sql-createindex.html",
+    "https://www.postgresql.org/docs/16/ddl-constraints.html",
+    "https://www.postgresql.org/docs/16/errcodes-appendix.html"
+  ],
+  "concepts": ["schema evolution"],
+  "code_examples": [
+    { "language": "sql", "caption": "Which ALTER TABLE rewrites, proved on disk", "file": "migrations-1.sql" },
+    { "language": "sql", "caption": "NOT VALID and VALIDATE, for a check and a foreign key", "file": "migrations-2.sql" },
+    { "language": "sql", "caption": "The rename that broke a release, and SQLSTATE 25001", "file": "migrations-3.sql" }
+  ]
+}

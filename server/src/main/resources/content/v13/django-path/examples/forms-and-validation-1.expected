@@ -1,0 +1,12 @@
+is_valid: True
+raw value and type: '2' str
+cleaned value and type: 2 int
+clean_email normalised: ada@example.com
+optional field became: ''
+is_valid: False
+clean_email error: ['that domain is not accepted']
+is_valid: False
+non-field error: bookings over two seats need a note
+error keys: ['__all__']
+cleaned_data exists before is_valid(): False
+cleaned_data exists after is_valid(): True

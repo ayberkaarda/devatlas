@@ -1,0 +1,4 @@
+the main loop kept turning while the worker computed: true
+the worker's answer matches this thread's: true
+key: c7a3f997edce3610c0ce81589927c9bd
+the worker's mutation reached this thread: false

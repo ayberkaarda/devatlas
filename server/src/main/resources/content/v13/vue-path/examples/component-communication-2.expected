@@ -1,0 +1,8 @@
+rendered: <h1>Renamed by request for Ada</h1>
+warnings raised: 1
+first warning: Set operation on key "title" failed: target is readonly.
+the prop binding resisted assignment: true
+the nested object did not: true
+the parent recorded the nested change: false
+the parent recorded the emitted change: true
+title after the parent applied the event: Renamed by request

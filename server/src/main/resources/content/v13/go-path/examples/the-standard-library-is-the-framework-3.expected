@@ -1,0 +1,8 @@
+no token      401
+wrong shape   401
+valid token   200 hello ada
+audit log: [GET /whoami GET /whoami GET /whoami]
+cancelled run: total=0 canceled=true
+complete run:  total=5050 err=<nil>
+value out of the context: ada
+another package's key would miss: <nil>

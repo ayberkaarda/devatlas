@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000015",
+  "slug": "php-path",
+  "title": "The PHP Path",
+  "description": "PHP as it is in 8.2 rather than as it is remembered: declared types, one collection playing two roles, comparison after 8.0, enums, and the state a test leaves behind.",
+  "icon": null,
+  "order": 15,
+  "teaches_version": "PHP 8.2",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000001501",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 26,
+      "lessons": [
+        "types-declarations-and-strict-types",
+        "arrays-are-list-and-map",
+        "comparison-loose-and-strict"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001502",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 27,
+      "lessons": [
+        "classes-interfaces-and-traits",
+        "enums-a-fixed-set",
+        "exceptions-errors-and-what-is-catchable"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001503",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 29,
+      "lessons": [
+        "autoloading-and-where-a-class-comes-from",
+        "handling-a-request-safely",
+        "testing-and-the-static-that-outlived-the-test"
+      ]
+    }
+  ]
+}

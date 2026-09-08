@@ -1,0 +1,9 @@
+toValue(3): 3
+toValue(ref(3)): 3
+toValue(() => 3): 3
+ref argument, titles seen: Page 1 | Page 2 | Page 3
+getter argument, titles seen: Page 1 | Page 2 | Page 3
+raw argument, titles seen: Page 1
+normalising kept the composable live: true
+a getter argument works the same way: true
+a raw number was read once: true

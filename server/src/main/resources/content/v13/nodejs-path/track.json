@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000009",
+  "slug": "nodejs-path",
+  "title": "The Node.js Path",
+  "description": "One thread, three notations for deferred work, two module systems, and the runtime behaviour a server depends on.",
+  "icon": null,
+  "order": 9,
+  "teaches_version": "Node.js 22 LTS",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000901",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 28,
+      "lessons": [
+        "one-thread-and-the-event-loop",
+        "callbacks-promises-async-await",
+        "modules-esm-and-commonjs"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000902",
+      "title": "The runtime's own model",
+      "order": 1,
+      "estimated_minutes": 30,
+      "lessons": [
+        "streams-and-partial-data",
+        "the-file-system-and-paths",
+        "blocking-the-loop"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000903",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 32,
+      "lessons": [
+        "an-http-server-without-a-framework",
+        "environment-configuration-and-secrets",
+        "testing-and-the-async-assertion"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+sorted: [Version(major=1, minor=2, patch=0), Version(major=1, minor=2, patch=3), Version(major=1, minor=10, patch=0), Version(major=2, minor=0, patch=0)]
+equal by value: True
+usable as a set member: 2
+looked up by an equal but distinct object: first stable
+mutation raises: FrozenInstanceError
+message: cannot assign to field 'minor'
+replace builds a new one: Version(major=1, minor=3, patch=0) | original untouched: Version(major=1, minor=2, patch=0)
+slots declared: ('major', 'minor', 'patch')
+no per-instance dictionary: False

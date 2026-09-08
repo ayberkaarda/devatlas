@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140202",
+  "title": "Scope functions, chosen rather than guessed",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://kotlinlang.org/docs/scope-functions.html",
+    "https://kotlinlang.org/docs/lambdas.html",
+    "https://kotlinlang.org/docs/null-safety.html"
+  ],
+  "concepts": ["receiver versus argument", "expression value"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "All five side by side with what each returns", "file": "scope-functions-1.kt" },
+    { "language": "kotlin", "caption": "The null guard, and the return-value trap", "file": "scope-functions-2.kt" },
+    { "language": "kotlin", "caption": "Nesting, shadowing and a chain that reads in order", "file": "scope-functions-3.kt" }
+  ]
+}

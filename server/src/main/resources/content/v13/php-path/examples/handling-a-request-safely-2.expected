@@ -1,0 +1,14 @@
+Tom &amp; &quot;Jerry&quot;
+it&#039;s here
+it's here
+<a title="&quot; onmouseover=&quot;steal()">x</a>
+<a title=&quot; onmouseover=&quot;steal()>x</a>
+reports%2FQ3%202024%2Fsummary.pdf
+reports/Q3 2024/summary.pdf
+/files/reports/Q3%202024/summary.pdf
+Tom &amp;amp; &amp;quot;Jerry&amp;quot;
+bool(true)
+input:13 dropped:0 substituted:15 valid-utf8:false
+{"name":"Tom & \"Jerry\"","note":"<\/script><script>x<\/script>"}
+{"name":"Tom \u0026 \u0022Jerry\u0022","note":"\u003C\/script\u003E\u003Cscript\u003Ex\u003C\/script\u003E"}
+JsonException code 5 equals JSON_ERROR_UTF8: true

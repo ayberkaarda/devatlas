@@ -1,0 +1,28 @@
+         QUERY PLAN         
+----------------------------
+ Seq Scan on event
+   Filter: (user_id = 4242)
+(2 rows)
+
+                QUERY PLAN                
+------------------------------------------
+ Bitmap Heap Scan on event
+   Recheck Cond: (user_id = 4242)
+   ->  Bitmap Index Scan on ix_event_user
+         Index Cond: (user_id = 4242)
+(4 rows)
+
+              QUERY PLAN               
+---------------------------------------
+ Aggregate
+   ->  Seq Scan on event
+         Filter: (kind = 'view'::text)
+(3 rows)
+
+                     QUERY PLAN                     
+----------------------------------------------------
+ Aggregate
+   ->  Index Only Scan using ix_event_kind on event
+         Index Cond: (kind = 'error'::text)
+(3 rows)
+

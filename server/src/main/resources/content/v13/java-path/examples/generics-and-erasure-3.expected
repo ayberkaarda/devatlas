@@ -1,0 +1,6 @@
+compareTo(Version) bridge=false synthetic=false
+compareTo(Object) bridge=true synthetic=true
+sorted             : [v1, v2, v3]
+erased parameter   : java.lang.Comparable
+declared parameter : T
+largest of v1, v2  : v2

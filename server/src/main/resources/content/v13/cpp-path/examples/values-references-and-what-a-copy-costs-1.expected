@@ -1,0 +1,4 @@
+by value        size=32 copies=1 moves=0
+by const&       size=32 copies=0 moves=0
+by &            size=33 copies=0 moves=0
+by value (move) size=33 copies=0 moves=1

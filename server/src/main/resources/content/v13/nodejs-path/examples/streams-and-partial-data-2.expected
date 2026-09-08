@@ -1,0 +1,5 @@
+records: [{"id":1,"name":"alice"},{"id":2,"name":"bob"},{"id":3,"name":"carol"}]
+error: null
+records before the failure: [{"id":1,"name":"alice"}]
+pipeline rejected with: row 2 has no name
+the upstream splitter was destroyed too: true

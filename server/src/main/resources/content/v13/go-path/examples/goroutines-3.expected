@@ -1,0 +1,5 @@
+leaked producer is still blocked on its send
+producer released by cancellation
+value received: 1
+second producer reported: producer sent its value
+worker produced four squares summing to 30, then exited

@@ -1,0 +1,8 @@
+render 1: computed getter calls 1, method calls 1, same answer true
+render 2 (nothing changed): computed getter calls 1, method calls 2, same answer true
+render 3 (nothing changed): computed getter calls 1, method calls 3, same answer true
+render 4 (filter changed): computed getter calls 2, method calls 4, same answer true
+renders: 4, computed getter calls: 2
+renders: 4, method calls: 4
+the method ran once per render: true
+the computed ran once per change: true

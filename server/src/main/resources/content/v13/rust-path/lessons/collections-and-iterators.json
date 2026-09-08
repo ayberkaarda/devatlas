@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000080301",
+  "title": "Collections and iterators",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://doc.rust-lang.org/1.98.0/book/ch13-02-iterators.html",
+    "https://doc.rust-lang.org/1.98.0/std/iter/index.html",
+    "https://doc.rust-lang.org/1.98.0/std/collections/index.html",
+    "https://doc.rust-lang.org/1.98.0/std/collections/struct.HashMap.html"
+  ],
+  "concepts": ["iterator laziness", "ordered and unordered maps"],
+  "code_examples": [
+    { "language": "rust", "caption": "A loop and a chain producing the same answer", "file": "collections-and-iterators-1.rs" },
+    { "language": "rust", "caption": "iter, iter_mut and into_iter", "file": "collections-and-iterators-2.rs" },
+    { "language": "rust", "caption": "The entry API, and the ordering guarantee", "file": "collections-and-iterators-3.rs" }
+  ]
+}

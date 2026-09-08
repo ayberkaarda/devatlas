@@ -1,0 +1,3 @@
+unchecked exception          : [begin, ROLLBACK]
+checked exception            : [begin, COMMIT]
+checked exception, rollbackFor: [begin, ROLLBACK]

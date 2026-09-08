@@ -1,0 +1,4 @@
+id keys   : the draft is now attached to "Grace Hopper"
+id keys   : draft stayed with Grace Hopper: true
+index keys: the draft is now attached to "Ada Lovelace"
+index keys: draft stayed with Grace Hopper: false

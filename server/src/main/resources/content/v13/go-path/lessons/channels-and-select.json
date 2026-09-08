@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120203",
+  "title": "Channels and select",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://go.dev/ref/spec#Channel_types",
+    "https://go.dev/ref/spec#Select_statements",
+    "https://go.dev/ref/mem",
+    "https://go.dev/ref/spec#Close"
+  ],
+  "concepts": ["channel as a synchronisation point", "select"],
+  "code_examples": [
+    { "language": "go", "caption": "The unbuffered handshake", "file": "channels-and-select-1.go" },
+    { "language": "go", "caption": "Buffering and directional types", "file": "channels-and-select-2.go" },
+    { "language": "go", "caption": "select, merging and cancellation", "file": "channels-and-select-3.go" }
+  ]
+}

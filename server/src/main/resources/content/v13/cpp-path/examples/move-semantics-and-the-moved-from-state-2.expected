@@ -1,0 +1,7 @@
+moving an lvalue:      copies=0 moves=1
+moving a const lvalue: copies=1 moves=0
+  the const object is intact: len=15
+std::move on its own:  copies=0 moves=0
+  the object is untouched: len=15
+sink from an rvalue:   copies=0 moves=1 size=18
+sink from an lvalue:   copies=1 moves=1 size=22

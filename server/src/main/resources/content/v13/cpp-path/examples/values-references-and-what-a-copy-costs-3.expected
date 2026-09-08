@@ -1,0 +1,8 @@
+alias names the same object: true
+value after writing through the alias: 20
+value after assigning `other` through the alias: 99
+alias still names the first object: true
+other is unchanged: 99
+the temporary is still readable: len=26
+chosen name: first
+chosen is the caller's object: true

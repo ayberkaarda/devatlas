@@ -1,0 +1,5 @@
+sum: 17
+the owner survived the borrow: true
+first word: verify
+three shared references agree on the length: true
+still owned by main: 17 bytes

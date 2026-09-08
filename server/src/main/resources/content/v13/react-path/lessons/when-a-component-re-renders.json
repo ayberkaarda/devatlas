@@ -1,0 +1,30 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100201",
+  "title": "When a component re-renders",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://react.dev/learn/render-and-commit",
+    "https://react.dev/reference/react/memo",
+    "https://react.dev/reference/react/useContext",
+    "https://react.dev/blog/2024/12/05/react-19"
+  ],
+  "concepts": ["render propagation", "memoisation"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "The subtree a state change renders, and the smaller set the commit touches",
+      "file": "when-a-component-re-renders-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The shallow prop comparison memo performs, and what defeats it",
+      "file": "when-a-component-re-renders-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "A context value rebuilt inline against one kept stable",
+      "file": "when-a-component-re-renders-3.js"
+    }
+  ]
+}

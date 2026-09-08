@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120303",
+  "title": "Testing, table-driven, and the race detector",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://pkg.go.dev/testing@go1.27.0",
+    "https://go.dev/doc/articles/race_detector",
+    "https://pkg.go.dev/sync/atomic@go1.27.0",
+    "https://go.dev/ref/mem"
+  ],
+  "concepts": ["table-driven test", "data race"],
+  "code_examples": [
+    { "language": "go", "caption": "The table, run as a program", "file": "testing-table-driven-and-the-race-detector-1.go" },
+    { "language": "go", "caption": "The fixture that lies", "file": "testing-table-driven-and-the-race-detector-2.go" },
+    { "language": "go", "caption": "Three ways to give the detector nothing", "file": "testing-table-driven-and-the-race-detector-3.go" }
+  ]
+}

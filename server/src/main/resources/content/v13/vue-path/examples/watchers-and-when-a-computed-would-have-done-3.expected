@@ -1,0 +1,9 @@
+initial computed: Ada Lovelace
+initial mirror:   Ada Lovelace
+straight after two writes, computed: Grace Hopper
+straight after two writes, mirror:   Ada Lovelace
+the computed was already right: true
+the mirror was still stale: true
+after the queue drained, mirror: Grace Hopper
+watcher callback runs for two writes: 1
+computed getter runs: 2

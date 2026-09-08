@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000090202",
+  "title": "The file system and paths that survive Windows",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://nodejs.org/docs/v22.23.2/api/path.html",
+    "https://nodejs.org/docs/v22.23.2/api/fs.html",
+    "https://nodejs.org/docs/v22.23.2/api/process.html"
+  ],
+  "concepts": [
+    "path arithmetic",
+    "dropped promises"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "join, resolve and containment",
+      "file": "the-file-system-and-paths-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "A round trip through a temporary directory",
+      "file": "the-file-system-and-paths-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The await you forgot, in four shapes",
+      "file": "the-file-system-and-paths-3.js"
+    }
+  ]
+}

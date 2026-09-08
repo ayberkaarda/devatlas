@@ -1,0 +1,13 @@
+a            -> 2.50
+a.inspect    -> #<Money 2.50>
+a < b        -> true
+a.between?   -> true
+sorted       -> ["2.50", "9.99"]
+min          -> 2.50
+
+Money.ancestors -> [Money, Comparable, Object, Kernel, BasicObject]
+a.is_a?(Object) -> true
+a.class.class   -> Class
+
+a.frozen?       -> true
+mutation        -> FrozenError: can't modify frozen Money: #<Money 2.50>

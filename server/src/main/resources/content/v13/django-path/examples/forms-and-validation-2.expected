@@ -1,0 +1,18 @@
+  inside clean(), cleaned_data holds: ['note']
+is_valid: False
+fields with errors: ['email', 'seats']
+cleaned_data after failure: ['note']
+the failing fields were dropped: True
+the passing field survived: fine
+  inside clean(), cleaned_data holds: ['email', 'note']
+is_valid: False
+error code on seats: invalid
+clean_seats never saw a value: True
+  inside clean(), cleaned_data holds: ['email', 'note']
+is_valid: False
+error from clean_seats: ['three is not bookable']
+unbound is_bound: False is_valid: False
+unbound errors: []
+  inside clean(), cleaned_data holds: ['note']
+bound to nothing is_bound: True is_valid: False
+bound to nothing errors: ['email', 'seats']

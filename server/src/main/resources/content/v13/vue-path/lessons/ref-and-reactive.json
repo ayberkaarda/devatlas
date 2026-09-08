@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110102",
+  "title": "ref and reactive",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://vuejs.org/guide/essentials/reactivity-fundamentals.html",
+    "https://vuejs.org/guide/extras/reactivity-in-depth.html",
+    "https://vuejs.org/api/reactivity-core.html"
+  ],
+  "concepts": [
+    "reactive state",
+    "proxy-based tracking"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "The documented pseudo-code for both containers, made runnable",
+      "file": "ref-and-reactive-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Destructuring: what the copy keeps and what it drops",
+      "file": "ref-and-reactive-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Replacement, and the identity that is not the raw object",
+      "file": "ref-and-reactive-3.js"
+    }
+  ]
+}

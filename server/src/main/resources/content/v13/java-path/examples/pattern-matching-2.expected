@@ -1,0 +1,9 @@
+no null label : NullPointerException
+with null label: nothing
+with null label: string x
+negative
+zero
+positive 7
+empty string
+string of 4
+unhandled Double

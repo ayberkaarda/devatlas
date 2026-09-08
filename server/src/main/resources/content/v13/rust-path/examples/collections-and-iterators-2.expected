@@ -1,0 +1,8 @@
+total length: 3
+still owned after iter: 3
+after iter_mut: ["a-v13", "b-v13", "c-v13"]
+counted through a shared loop: 3
+kept: ["a-v13", "c-v13"]
+joined: a-v13, c-v13
+lengths: [5, 5]
+longest: Some(5)

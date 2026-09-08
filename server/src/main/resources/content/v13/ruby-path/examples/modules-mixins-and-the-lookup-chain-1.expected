@@ -1,0 +1,16 @@
+Included.ancestors  -> [Included, Auditable, Base, Object, Kernel, BasicObject]
+Included#describe   -> Included
+
+Prepended.ancestors -> [Auditable, Prepended, Base, Object, Kernel, BasicObject]
+Prepended#describe  -> Auditable
+
+Shouty.ancestors    -> [Loud, Shouty, Base, Object, Kernel, BasicObject]
+Shouty#describe     -> BASE!
+
+extended object     -> Auditable
+singleton has it    -> true
+Object does not     -> false
+Registry.describe   -> Auditable
+instance has it     -> false
+
+Auditable.new       -> NoMethodError: undefined method 'new' for module Auditable

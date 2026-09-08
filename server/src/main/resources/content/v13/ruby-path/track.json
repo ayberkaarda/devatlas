@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000016",
+  "slug": "ruby-path",
+  "title": "The Ruby Path",
+  "description": "What Ruby actually does under syntax that reads like English: objects all the way down, blocks, mixins, Enumerable, cleanup and honest tests.",
+  "icon": null,
+  "order": 16,
+  "teaches_version": "Ruby 3.4.10",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000001601",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 25,
+      "lessons": [
+        "everything-is-an-object-including-nil",
+        "blocks-the-argument-that-is-code",
+        "truthiness-nil-and-false"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001602",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 30,
+      "lessons": [
+        "modules-mixins-and-the-lookup-chain",
+        "method-missing-and-the-price-of-magic",
+        "symbols-and-strings-two-ways-to-name-a-thing"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001603",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 33,
+      "lessons": [
+        "enumerable-and-the-each-contract",
+        "exceptions-ensure-and-cleanup-you-can-rely-on",
+        "testing-and-the-mock-that-tested-itself"
+      ]
+    }
+  ]
+}

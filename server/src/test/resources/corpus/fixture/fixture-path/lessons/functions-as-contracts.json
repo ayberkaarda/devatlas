@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320301",
+  "title": "Functions as contracts",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 7,
+  "sources": ["https://docs.python.org/3/reference/compound_stmts.html"],
+  "concepts": ["keyword arguments", "default arguments"],
+  "code_examples": [
+    { "language": "python", "caption": "The mutable default, demonstrated", "file": "functions-as-contracts-1.py" },
+    { "language": "python", "caption": "Accepting anything the caller sends", "file": "functions-as-contracts-2.py" }
+  ]
+}

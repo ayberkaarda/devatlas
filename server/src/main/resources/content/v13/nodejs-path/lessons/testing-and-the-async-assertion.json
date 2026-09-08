@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000090303",
+  "title": "Testing, and the async assertion that passed because nobody waited",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://nodejs.org/docs/v22.23.2/api/test.html",
+    "https://nodejs.org/docs/v22.23.2/api/assert.html"
+  ],
+  "concepts": [
+    "awaiting a test",
+    "assertion planning"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Two runners, one await apart",
+      "file": "testing-and-the-async-assertion-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "assert.throws against assert.rejects",
+      "file": "testing-and-the-async-assertion-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The built-in runner, judged by exit status",
+      "file": "testing-and-the-async-assertion-3.js"
+    }
+  ]
+}

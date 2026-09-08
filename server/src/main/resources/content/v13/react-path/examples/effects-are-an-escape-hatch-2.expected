@@ -1,0 +1,5 @@
+no cleanup, connections open after the double mount: 2
+no cleanup, connections open after unmount: 2
+with cleanup, connections open after the double mount: 1
+with cleanup, connections open after unmount: 0
+no cleanup, connections open after three real visits: 3

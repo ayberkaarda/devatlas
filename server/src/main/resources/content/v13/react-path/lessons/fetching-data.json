@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100302",
+  "title": "Fetching data",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://react.dev/learn/you-might-not-need-an-effect",
+    "https://react.dev/learn/synchronizing-with-effects",
+    "https://react.dev/reference/react/use"
+  ],
+  "concepts": ["request cancellation", "modelling loading states"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "The race, settled by hand, with and without the cleanup flag",
+      "file": "fetching-data-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Three booleans against one status value, counted over the same sequence",
+      "file": "fetching-data-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The React 19 versions: an effect that aborts, and use with Suspense",
+      "file": "fetching-data-3.js"
+    }
+  ]
+}

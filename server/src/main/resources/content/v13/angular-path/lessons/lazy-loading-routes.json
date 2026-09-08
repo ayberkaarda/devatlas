@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000000004",
+  "title": "Routing, lazily",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 18,
+  "sources": [
+    "https://angular.dev/guide/routing/loading-strategies",
+    "https://angular.dev/guide/routing/define-routes"
+  ],
+  "concepts": ["lazy routes", "first-match routing"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "A route table of lazy screens, a lazy section and a lazy wildcard",
+      "file": "lazy-loading-routes-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "The loaded components, the child routes and a guard factory",
+      "file": "lazy-loading-routes-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A dynamic import fetches nothing until it is called",
+      "file": "lazy-loading-routes-3.ts"
+    }
+  ]
+}

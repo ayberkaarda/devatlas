@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020302",
+  "title": "Security that says no by default",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html",
+    "https://docs.spring.io/spring-security/reference/servlet/architecture.html",
+    "https://docs.spring.io/spring-boot/reference/web/servlet.html"
+  ],
+  "concepts": ["filter chain", "default deny"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "Three paths, three callers, one default-deny chain",
+      "file": "security-that-says-no-by-default-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "The shadowed rule, and the build that is refused",
+      "file": "security-that-says-no-by-default-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "The chain printed in order",
+      "file": "security-that-says-no-by-default-3.java"
+    }
+  ]
+}

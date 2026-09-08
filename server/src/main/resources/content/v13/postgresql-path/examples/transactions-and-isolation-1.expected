@@ -1,0 +1,50 @@
+ second_session 
+----------------
+ OK
+(1 row)
+
+ backends_on_this_database 
+---------------------------
+                         2
+(1 row)
+
+     level      | first_read 
+----------------+------------
+ read committed | f
+(1 row)
+
+ other_session_did 
+-------------------
+ UPDATE 1
+(1 row)
+
+ second_read 
+-------------
+ t
+(1 row)
+
+      level      | first_read 
+-----------------+------------
+ repeatable read | f
+(1 row)
+
+ other_session_did 
+-------------------
+ UPDATE 1
+(1 row)
+
+ second_read 
+-------------
+ f
+(1 row)
+
+ after_commit 
+--------------
+ t
+(1 row)
+
+ dblink_disconnect 
+-------------------
+ OK
+(1 row)
+

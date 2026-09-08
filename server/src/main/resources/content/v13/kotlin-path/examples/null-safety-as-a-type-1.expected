@@ -1,0 +1,8 @@
+length of present: 6
+length of absent:  null
+absent or default: -1
+upper: KOTLIN
+city: unknown
+missing account: unknown
+lengths: [6, null]
+known lengths: [6]

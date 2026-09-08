@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000007",
+  "slug": "django-path",
+  "title": "The Django Path",
+  "description": "How a Django request is served, what the ORM actually does when you loop over it, and which rules the database enforces rather than your code.",
+  "icon": null,
+  "order": 7,
+  "teaches_version": "Django 6.1",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000701",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 26,
+      "lessons": [
+        "a-model-is-the-schema",
+        "the-request-the-view-the-response",
+        "templates-render-they-do-not-decide"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000702",
+      "title": "The ORM's own model",
+      "order": 1,
+      "estimated_minutes": 33,
+      "lessons": [
+        "querysets-are-lazy",
+        "the-n-plus-one-problem",
+        "migrations-that-are-safe-to-run-twice"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000703",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 31,
+      "lessons": [
+        "forms-and-validation",
+        "authentication-and-permissions",
+        "testing-a-django-application"
+      ]
+    }
+  ]
+}

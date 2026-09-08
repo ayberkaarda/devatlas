@@ -1,0 +1,12 @@
+call returned without throwing: True
+task is faulted:                True
+stored exception type:          InvalidOperationException
+await threw:                    InvalidOperationException 'boom'
+Wait() threw:                   AggregateException
+with inner:                     InvalidOperationException
+GetAwaiter().GetResult() threw: InvalidOperationException
+await rethrew one exception, task recorded: 2
+all messages (sorted):          first,second
+cancelled task IsCanceled:      True
+cancelled task IsFaulted:       False
+await on a cancelled task threw an OperationCanceledException: True

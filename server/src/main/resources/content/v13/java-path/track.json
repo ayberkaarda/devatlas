@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000004",
+  "slug": "java-path",
+  "title": "The Java Path",
+  "description": "What a Java program is doing with your data: references, records, sealed types, erasure, collections and exceptions a caller can act on.",
+  "icon": null,
+  "order": 4,
+  "teaches_version": "Java 21 LTS",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000401",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 20,
+      "lessons": [
+        "objects-and-references",
+        "records",
+        "immutability-by-default"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000402",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 26,
+      "lessons": [
+        "sealed-hierarchies",
+        "pattern-matching",
+        "generics-and-erasure"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000403",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 28,
+      "lessons": [
+        "choosing-a-collection",
+        "streams-without-cleverness",
+        "exceptions-as-a-contract"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+int(2)
+bool(true)
+0 autoloader calls so far
+monthly
+first saw Reports\Monthly
+second saw Reports\Monthly
+2 autoloader calls in total
+bool(false)
+bool(false)
+asking with autoloading added 2 calls
+Error: Class "Reports\Quarterly" not found
+bool(false)
+interface_exists asked 2 autoloaders

@@ -1,0 +1,36 @@
+ region | seller | amount | rank | dense_rank | row_number 
+--------+--------+--------+------+------------+------------
+ north  | ada    | 100.00 |    1 |          1 |          1
+ north  | bo     | 100.00 |    1 |          1 |          2
+ north  | cyd    |  40.00 |    3 |          2 |          3
+ south  | dee    | 200.00 |    1 |          1 |          1
+ south  | eve    |  75.00 |    2 |          2 |          2
+(5 rows)
+
+psql:<stdin>:29: ERROR:  window functions are not allowed in WHERE
+LINE 2: WHERE row_number() OVER (PARTITION BY region ORDER BY amount...
+              ^
+ region | seller | amount 
+--------+--------+--------
+ north  | ada    | 100.00
+ south  | dee    | 200.00
+(2 rows)
+
+ region | seller | amount | previous_amount | difference 
+--------+--------+--------+-----------------+------------
+ north  | ada    | 100.00 |          [null] |     [null]
+ north  | bo     | 100.00 |          100.00 |       0.00
+ north  | cyd    |  40.00 |          100.00 |     -60.00
+ south  | dee    | 200.00 |          [null] |     [null]
+ south  | eve    |  75.00 |          200.00 |    -125.00
+(5 rows)
+
+ region | seller | percent_of_region 
+--------+--------+-------------------
+ north  | ada    |              41.7
+ north  | bo     |              41.7
+ north  | cyd    |              16.7
+ south  | dee    |              72.7
+ south  | eve    |              27.3
+(5 rows)
+

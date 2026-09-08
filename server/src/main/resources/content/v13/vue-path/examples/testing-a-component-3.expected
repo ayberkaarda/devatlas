@@ -1,0 +1,8 @@
+PASS  useCounter can be called directly
+PASS  useCounter honours its starting value
+FAIL  useLoadedFlag called directly never runs its hook: loaded was still false
+PASS  useLoadedFlag inside a host component does
+tests run: 4, failures: 1
+warnings raised while running: 1
+first warning: onMounted is called when there is no active component instance.
+a lifecycle hook needs an instance to attach to: true

@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320302",
+  "title": "Grouping with modules",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 6,
+  "sources": ["https://docs.python.org/3/reference/import.html"],
+  "concepts": ["import machinery"],
+  "code_examples": [
+    { "language": "python", "caption": "A module that is also a script", "file": "grouping-with-modules-1.py" },
+    { "language": "bash", "caption": "Running the module as a script", "file": "grouping-with-modules-2.sh" }
+  ]
+}

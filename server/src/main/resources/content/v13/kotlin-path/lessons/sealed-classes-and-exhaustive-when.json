@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140203",
+  "title": "Sealed classes and exhaustive when",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://kotlinlang.org/docs/sealed-classes.html",
+    "https://kotlinlang.org/docs/control-flow.html",
+    "https://kotlinlang.org/docs/enum-classes.html"
+  ],
+  "concepts": ["closed hierarchy", "exhaustiveness"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "A sealed interface and a complete when", "file": "sealed-classes-and-exhaustive-when-1.kt" },
+    { "language": "kotlin", "caption": "The same logic with and without a fallback branch", "file": "sealed-classes-and-exhaustive-when-2.kt" },
+    { "language": "kotlin", "caption": "A result type, smart casts and the bottom type", "file": "sealed-classes-and-exhaustive-when-3.kt" }
+  ]
+}

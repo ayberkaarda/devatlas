@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020301",
+  "title": "An error contract",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-exceptionhandler.html",
+    "https://docs.spring.io/spring-boot/reference/web/servlet.html",
+    "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html"
+  ],
+  "concepts": ["error contract", "exception handling"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "One advice, four outcomes, one body shape",
+      "file": "an-error-contract-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "Per-controller handling, and the shapes that drift apart",
+      "file": "an-error-contract-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "Field errors as closed codes and snake_case paths",
+      "file": "an-error-contract-3.java"
+    }
+  ]
+}

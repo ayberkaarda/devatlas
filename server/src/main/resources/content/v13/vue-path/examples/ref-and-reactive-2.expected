@@ -1,0 +1,6 @@
+copied primitive: effect runs stayed at 1
+property access: effect runs reached 2
+copied object: effect runs reached 2
+the copy still reads the old value: true
+the source moved on: true
+mutating a copied object is still seen: true

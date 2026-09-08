@@ -1,0 +1,10 @@
+average (two passes): 2.5
+enumerations so far:  2
+average (one pass):   2.5
+enumerations so far:  1
+count without enumerating: 4
+count via ToList:     4
+enumerations for that: 1
+array:      2.5
+hash set:   2.5
+query:      2.5

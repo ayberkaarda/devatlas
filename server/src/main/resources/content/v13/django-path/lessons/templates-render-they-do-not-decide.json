@@ -1,0 +1,33 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070103",
+  "title": "Templates render, they do not decide",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/templates/",
+    "https://docs.djangoproject.com/en/6.1/ref/templates/language/",
+    "https://docs.djangoproject.com/en/6.1/ref/templates/builtins/",
+    "https://docs.djangoproject.com/en/6.1/ref/templates/api/"
+  ],
+  "concepts": [
+    "template variable lookup",
+    "autoescaping"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "Variable lookup, and four ways to fail silently",
+      "file": "templates-render-they-do-not-decide-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "What the tag language allows and refuses",
+      "file": "templates-render-they-do-not-decide-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "Autoescaping, and a view that decided first",
+      "file": "templates-render-they-do-not-decide-3.py"
+    }
+  ]
+}

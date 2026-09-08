@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050301",
+  "title": "Joins that mean what you meant",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://www.postgresql.org/docs/16/queries-table-expressions.html",
+    "https://www.postgresql.org/docs/16/sql-select.html",
+    "https://www.postgresql.org/docs/16/functions-comparison.html"
+  ],
+  "concepts": ["join types"],
+  "code_examples": [
+    { "language": "sql", "caption": "Inner, left, right and full over one data set", "file": "joins-that-mean-what-you-meant-1.sql" },
+    { "language": "sql", "caption": "The total that doubled, and two repairs", "file": "joins-that-mean-what-you-meant-2.sql" },
+    { "language": "sql", "caption": "ON against WHERE, and the anti-join", "file": "joins-that-mean-what-you-meant-3.sql" }
+  ]
+}

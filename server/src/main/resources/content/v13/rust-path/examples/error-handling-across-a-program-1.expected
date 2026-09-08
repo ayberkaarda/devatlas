@@ -1,0 +1,5 @@
+"lesson-a=13" -> lesson-a at version 13
+"=4" -> missing field: id
+"lesson-b" -> malformed row: lesson-b
+"lesson-c=x" -> a numeric field did not hold a number
+the conversion kept an underlying cause: true

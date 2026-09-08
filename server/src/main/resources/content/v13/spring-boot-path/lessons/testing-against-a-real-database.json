@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020303",
+  "title": "Testing against a real database",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://docs.spring.io/spring-boot/reference/testing/testcontainers.html",
+    "https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html",
+    "https://www.postgresql.org/docs/16/ddl-constraints.html"
+  ],
+  "concepts": ["Testcontainers", "test fixtures"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "A throwaway PostgreSQL, and two constraints biting",
+      "file": "testing-against-a-real-database-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "The fixture that lies, beside the assertion that does not",
+      "file": "testing-against-a-real-database-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "The container as a bean, and the shared test base",
+      "file": "testing-against-a-real-database-3.java"
+    }
+  ]
+}

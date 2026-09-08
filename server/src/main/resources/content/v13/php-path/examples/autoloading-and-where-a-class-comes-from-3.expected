@@ -1,0 +1,14 @@
+Shop\Catalogue
+Shop\Catalogue\Product
+ArrayObject
+InvalidArgumentException
+bool(true)
+string(11) "ArrayObject"
+int(3)
+string(28) "FALLBACK WORKS FOR FUNCTIONS"
+bool(true)
+Error: Class "Shop\Catalogue\ArrayObject" not found
+Shop\Catalogue\ArrayObject
+Error: Class "Product" not found
+SKU-2
+Shop\Catalogue\ArrayObject | Product

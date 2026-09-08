@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000080303",
+  "title": "Testing, and what cargo test actually runs",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://doc.rust-lang.org/1.98.0/book/ch11-01-writing-tests.html",
+    "https://doc.rust-lang.org/1.98.0/book/ch11-03-test-organization.html",
+    "https://doc.rust-lang.org/1.98.0/cargo/commands/cargo-test.html",
+    "https://doc.rust-lang.org/1.98.0/reference/attributes/testing.html"
+  ],
+  "concepts": ["unit and integration tests", "test attributes"],
+  "code_examples": [
+    { "language": "rust", "caption": "What an assertion failure actually reports", "file": "testing-and-what-cargo-test-runs-1.rs" },
+    { "language": "rust", "caption": "A table of cases, and a body that returns Result", "file": "testing-and-what-cargo-test-runs-2.rs" },
+    { "language": "rust", "caption": "What a test build contains that a normal build does not", "file": "testing-and-what-cargo-test-runs-3.rs" }
+  ]
+}

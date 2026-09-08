@@ -1,0 +1,6 @@
+hierarchy: ['InvalidQuantity', 'OrderError', 'Exception', 'BaseException', 'object']
+known order: 3
+set A-1 to 4
+rejected: quantity must be between 1 and 10, got 99 | field: quantity | limit: 10
+missing: no order with id 'Z-9' | id: Z-9
+one catch covers the subsystem: OrderNotFound | no order with id 'Q-0'

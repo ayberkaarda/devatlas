@@ -1,0 +1,9 @@
+tags after Add through the property: 0
+two reads, same instance:            False
+tags after Add through storage:      1
+two reads, same instance:            True
+struct property after write-back:    42
+loop total:                          9
+getter calls for that loop:          7
+loop total, hoisted:                 9
+getter calls when hoisted:           1

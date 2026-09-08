@@ -1,0 +1,9 @@
+declared parameter type: str
+declared return type:    str
+with a string: AB | runtime type: str
+with an int:   42 | runtime type: int
+the annotation still says: str
+the failure lands here, not at the call: AttributeError
+message: 'int' object has no attribute 'lower'
+annotated for ints, handed strings: xy
+annotated for ints, handed lists:  [1, 2]

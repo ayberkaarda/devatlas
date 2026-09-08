@@ -1,0 +1,14 @@
+view chosen: article_detail
+captured: {'article_id': 42}
+converter produced a int
+route: articles/<int:article_id>/
+url name: article-detail
+view chosen: article_slug
+captured: {'slug': 'how-django-routes'}
+converter produced a str
+reverse by name: /articles/42/
+reverse the other: /articles/how-django-routes/
+nothing matched: Resolver404
+argument does not fit the converter: NoReverseMatch
+42 matches slug pattern too: True
+but resolve() picked: article_detail

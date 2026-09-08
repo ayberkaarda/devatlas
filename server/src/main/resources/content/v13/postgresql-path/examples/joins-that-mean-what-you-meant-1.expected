@@ -1,0 +1,37 @@
+ name |  title  
+------+---------
+ ada  | indexes
+ ada  | joins
+ bo   | null
+(3 rows)
+
+ name |  title  
+------+---------
+ ada  | indexes
+ ada  | joins
+ bo   | null
+ cyd  | [null]
+(4 rows)
+
+  name  |     title      
+--------+----------------
+ ada    | indexes
+ ada    | joins
+ bo     | null
+ [null] | orphaned draft
+(4 rows)
+
+  name  |     title      
+--------+----------------
+ ada    | indexes
+ ada    | joins
+ bo     | null
+ cyd    | [null]
+ [null] | orphaned draft
+(5 rows)
+
+ inner_rows | left_rows | right_rows | full_rows 
+------------+-----------+------------+-----------
+          3 |         4 |          4 |         5
+(1 row)
+

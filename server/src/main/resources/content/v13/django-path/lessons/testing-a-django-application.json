@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070303",
+  "title": "Testing a Django application",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/testing/overview/",
+    "https://docs.djangoproject.com/en/6.1/topics/testing/tools/",
+    "https://docs.djangoproject.com/en/6.1/topics/testing/advanced/"
+  ],
+  "concepts": [
+    "test isolation",
+    "asserting query counts"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "The runner, the client, and isolation",
+      "file": "testing-a-django-application-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "The database a test gets, and the one it is refused",
+      "file": "testing-a-django-application-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "A query count that catches a regression",
+      "file": "testing-a-django-application-3.py"
+    }
+  ]
+}

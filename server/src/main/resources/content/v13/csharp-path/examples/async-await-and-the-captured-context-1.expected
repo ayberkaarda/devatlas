@@ -1,0 +1,9 @@
+order so far: before the call | method body started, synchronously | after the call, before the gate opens
+task finished already: False
+final order:  before the call | method body started, synchronously | after the call, before the gate opens | method body resumed | after the await
+completed before await: True
+await yields the value: 42
+WhenAll results in argument order: a,b,c
+WhenAny returned one of the tasks: True
+first await:  shared
+second await: shared

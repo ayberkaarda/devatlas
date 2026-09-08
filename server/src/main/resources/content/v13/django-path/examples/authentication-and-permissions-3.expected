@@ -1,0 +1,8 @@
+anonymous on a login_required view: 302
+it redirects to LOGIN_URL: True
+signed in on the login_required view: 200
+signed in without the permission: 403
+the menu the template drew: ''
+signed in with the permission: 200
+the menu the template drew: "<a href='/approve/'>approve</a>"
+after the permission was taken away: 403

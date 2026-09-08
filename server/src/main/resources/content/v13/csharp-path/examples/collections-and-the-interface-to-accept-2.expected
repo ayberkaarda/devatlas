@@ -1,0 +1,17 @@
+work done after the call:      0
+count:                         3
+first:                         ada
+work done after two uses:      4
+work done after the call:      3
+count:                         3
+first:                         ada
+work done after two uses:      3
+the view has no Add:           True
+after casting back and adding:  4
+the repository saw it:          4
+copy is castable to List:       True
+copy grew:                      5
+repository unchanged:           True
+wrapper is castable to List:    False
+wrapper count before:           4
+wrapper count after:            5

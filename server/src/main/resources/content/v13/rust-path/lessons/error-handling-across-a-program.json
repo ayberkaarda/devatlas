@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000080302",
+  "title": "Error handling across a program",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://doc.rust-lang.org/1.98.0/book/ch09-00-error-handling.html",
+    "https://doc.rust-lang.org/1.98.0/std/error/trait.Error.html",
+    "https://doc.rust-lang.org/1.98.0/std/convert/trait.From.html"
+  ],
+  "concepts": ["error conversion", "the error source chain"],
+  "code_examples": [
+    { "language": "rust", "caption": "One error type per layer, and its conversions", "file": "error-handling-across-a-program-1.rs" },
+    { "language": "rust", "caption": "A chain of causes, and a boxed error at the edge", "file": "error-handling-across-a-program-2.rs" },
+    { "language": "rust", "caption": "A stable code and a human message", "file": "error-handling-across-a-program-3.rs" }
+  ]
+}

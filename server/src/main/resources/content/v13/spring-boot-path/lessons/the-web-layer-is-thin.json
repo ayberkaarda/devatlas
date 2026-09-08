@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020103",
+  "title": "The web layer is thin",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html",
+    "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/responseentity.html",
+    "https://docs.spring.io/spring-boot/reference/data/sql.html"
+  ],
+  "concepts": ["layering", "request validation"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "A thin controller over a service that owns the rule",
+      "file": "the-web-layer-is-thin-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "The rule in the controller, and the caller that misses it",
+      "file": "the-web-layer-is-thin-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "What the boundary refuses before the service runs",
+      "file": "the-web-layer-is-thin-3.java"
+    }
+  ]
+}

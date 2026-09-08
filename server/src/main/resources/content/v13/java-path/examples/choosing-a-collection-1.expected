@@ -1,0 +1,7 @@
+insertion order : [delta, alpha, charlie, bravo, echo]
+HashMap         : [bravo, alpha, delta, echo, charlie]
+LinkedHashMap   : [delta, alpha, charlie, bravo, echo]
+TreeMap         : [alpha, bravo, charlie, delta, echo]
+HashMap == same : true
+TreeMap first   : alpha
+Map.of is fixed : UnsupportedOperationException

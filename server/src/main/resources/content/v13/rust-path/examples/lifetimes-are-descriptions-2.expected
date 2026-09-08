@@ -1,0 +1,3 @@
+first line: lesson-a=12
+ids: ["lesson-a", "lesson-b", "mind-map"]
+ids outlived the manifest: true

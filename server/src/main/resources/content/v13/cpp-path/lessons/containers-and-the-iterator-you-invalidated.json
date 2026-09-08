@@ -1,0 +1,19 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170301",
+  "title": "The standard containers, and the iterator you invalidated",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 13,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/container/vector",
+    "https://en.cppreference.com/w/cpp/container/vector/push_back",
+    "https://en.cppreference.com/w/cpp/container/map",
+    "https://en.cppreference.com/w/cpp/container/unordered_map",
+    "https://en.cppreference.com/w/cpp/algorithm/stable_sort"
+  ],
+  "concepts": ["iterator invalidation", "specified iteration order"],
+  "code_examples": [
+    { "language": "cpp", "caption": "Which containers move their elements", "file": "containers-and-the-iterator-you-invalidated-1.cpp" },
+    { "language": "cpp", "caption": "Removing elements from a container you are walking", "file": "containers-and-the-iterator-you-invalidated-2.cpp" },
+    { "language": "cpp", "caption": "Order the standard promises, and order it does not", "file": "containers-and-the-iterator-you-invalidated-3.cpp" }
+  ]
+}

@@ -1,0 +1,6 @@
+write() return values: [true,false,false,false,false]
+first write accepted more: true
+every later write said stop: true
+all writes were still queued in memory: true
+the producer had to wait for drain: true
+same data arrived: [1,2,3,4,5]

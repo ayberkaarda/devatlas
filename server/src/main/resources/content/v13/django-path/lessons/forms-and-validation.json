@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070301",
+  "title": "Forms and validation",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/forms/",
+    "https://docs.djangoproject.com/en/6.1/ref/forms/validation/",
+    "https://docs.djangoproject.com/en/6.1/topics/forms/modelforms/"
+  ],
+  "concepts": [
+    "the cleaning pipeline",
+    "validation boundaries"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "Three cleaning layers, and raw against cleaned",
+      "file": "forms-and-validation-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "What a failed form contains and what it dropped",
+      "file": "forms-and-validation-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "A ModelForm, and the door beside it",
+      "file": "forms-and-validation-3.py"
+    }
+  ]
+}

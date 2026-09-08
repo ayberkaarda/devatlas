@@ -1,0 +1,10 @@
+row.title            -> "Blocks"
+row.words            -> 640
+row.author           -> NoMethodError: undefined method 'author' for an instance of Row
+
+respond_to?(:title)  -> false
+methods include?     -> false
+public_send works    -> "Blocks"
+method(:title)       -> NameError: undefined method 'title' for class 'Row'
+
+render(row)          -> no title available

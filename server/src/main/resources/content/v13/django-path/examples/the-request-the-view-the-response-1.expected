@@ -1,0 +1,9 @@
+status: 200
+content type: application/json
+body: {"id": 7, "method": "GET"}
+status: 200
+body: GET q=hello
+header the view set: echo
+view raised Http404: 404
+no pattern matched: 404
+method the view saw: POST q=-

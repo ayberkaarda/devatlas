@@ -1,0 +1,14 @@
+no block given
+  saw blocks
+  saw are
+  saw arguments
+yielded 3 times
+collected -> [10, 20]
+
+explicit  -> [2, 4, 6]
+numbered  -> [2, 4, 6]
+it        -> [2, 4, 6]
+to_proc   -> ["A", "B", "C"]
+
+no block  -> LocalJumpError: no block given (yield)
+each alone -> Enumerator

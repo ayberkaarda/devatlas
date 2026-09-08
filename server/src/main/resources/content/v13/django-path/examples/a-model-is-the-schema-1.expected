@@ -1,0 +1,12 @@
+table: speaker
+  id: type=BigAutoField column=id null=False blank=True
+  name: type=CharField column=name null=False blank=False
+  bio: type=TextField column=bio null=False blank=True
+  website: type=URLField column=website null=True blank=False
+  talks: type=IntegerField column=talks null=False blank=False
+columns the database reports: ['id', 'name', 'bio', 'website', 'talks']
+database agrees with the model: True
+default applied without mentioning it: 0
+primary key was assigned: True
+primary key field: BigAutoField named id
+website may hold NULL: True

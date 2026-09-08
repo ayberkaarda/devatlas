@@ -1,0 +1,7 @@
+agent 0.4
+tool 1.9
+agent 2.1
+tool 2.1
+rejected: unsupported: agent 0.4
+lines=3 err=<nil>
+sorted according to Less: true

@@ -1,0 +1,18 @@
+correct name    -> "Blocks"
+typo            -> nil
+total nonsense  -> nil
+even with args  -> nil
+
+stored class     -> true
+sh.class         -> Shadowed
+stored frozen?   -> true
+sh.frozen?       -> false
+inherited names  -> [:class, :frozen?]
+reachable how    -> "premium"
+
+sorted          -> [1, 2, 3]
+sum             -> 6
+first           -> 3
+calls recorded  -> [:sort, :sum, :first]
+respond_to?     -> true
+unknown name    -> NoMethodError: undefined method 'explode' for an instance of Audited

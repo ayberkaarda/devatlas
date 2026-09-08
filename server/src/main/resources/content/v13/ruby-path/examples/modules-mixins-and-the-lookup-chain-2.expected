@@ -1,0 +1,16 @@
+a <=> b      -> 1
+a > b        -> true
+a < c        -> true
+a == a2      -> true
+between?     -> true
+clamp        -> 3.4.10
+sorted       -> ["3.4.9", "3.4.10", "3.5.0"]
+max          -> 3.5.0
+
+from Comparable -> [:<, :<=, :==, :>, :>=, :between?, :clamp]
+Version has <=>  -> [:<=>, :inspect, :major, :minor, :patch, :to_s]
+
+as strings      -> ["3.4.10", "3.4.9"]
+as versions     -> ["3.4.9", "3.4.10"]
+
+no <=> defined  -> ArgumentError: comparison of Broken with Broken failed

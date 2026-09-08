@@ -1,0 +1,12 @@
+assign Article.objects.all(): 0
+filter, exclude and order_by, chained: 0
+slice it [:3]: 0
+ask for its .query attribute: 0
+iterate it: 1
+call list() on a fresh queryset: 1
+call len() on a fresh queryset: 1
+call bool() on a fresh queryset: 1
+take a slice with a step [::2]: 1
+index into it [0]: 1
+call repr() on it: 1
+ordering came from Meta: ['a01', 'a02', 'a03']

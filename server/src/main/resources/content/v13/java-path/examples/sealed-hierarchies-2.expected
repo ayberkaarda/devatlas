@@ -1,0 +1,6 @@
+created a
+deleted b
+custom Renamed
+Event permits  : [Created, Deleted, Custom]
+Custom isSealed: false
+Renamed is an Event: true

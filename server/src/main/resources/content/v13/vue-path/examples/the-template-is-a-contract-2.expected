@@ -1,0 +1,9 @@
+{{ number + 1 }} -> evaluated to 2
+{{ ok ? 'YES' : 'NO' }} -> evaluated to "YES"
+{{ Math.max(number, 41) }} -> evaluated to 41
+{{ var a = 1 }} -> rejected with SyntaxError
+{{ if (ok) { return message } }} -> rejected with SyntaxError
+{{ appName }} -> rejected with ReferenceError
+statements are rejected before running: true
+allow-listed globals reach the template: true
+a global nobody exposed does not: true

@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060202",
+  "title": "Duck typing with a safety net",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.python.org/3.13/glossary.html#term-duck-typing",
+    "https://docs.python.org/3.13/library/typing.html",
+    "https://docs.python.org/3.13/library/typing.html#typing.Protocol",
+    "https://docs.python.org/3.13/library/typing.html#typing.get_type_hints"
+  ],
+  "concepts": ["type hints", "structural typing"],
+  "code_examples": [
+    { "language": "python", "caption": "A hint the interpreter ignores", "file": "duck-typing-with-a-safety-net-1.py" },
+    { "language": "python", "caption": "A check built from the hints", "file": "duck-typing-with-a-safety-net-2.py" },
+    { "language": "python", "caption": "Matching a Protocol by shape", "file": "duck-typing-with-a-safety-net-3.py" }
+  ]
+}

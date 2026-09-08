@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040202",
+  "title": "Pattern matching",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.oracle.com/en/java/javase/21/language/pattern-matching-switch.html",
+    "https://docs.oracle.com/en/java/javase/21/language/record-patterns.html",
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-14.html"
+  ],
+  "concepts": ["record patterns"],
+  "code_examples": [
+    { "language": "java", "caption": "Type patterns and record patterns", "file": "pattern-matching-1.java" },
+    { "language": "java", "caption": "The null label and guarded patterns", "file": "pattern-matching-2.java" },
+    { "language": "java", "caption": "An evaluator over a sealed hierarchy", "file": "pattern-matching-3.java" }
+  ]
+}

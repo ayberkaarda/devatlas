@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000006",
+  "slug": "python-path",
+  "title": "The Python Path",
+  "description": "What Python does behind syntax that looks simple: names, shared state, laziness, the object model, cleanup and tests that mean something.",
+  "icon": null,
+  "order": 6,
+  "teaches_version": "Python 3.13",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000601",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 24,
+      "lessons": [
+        "names-objects-and-rebinding",
+        "mutable-default-arguments",
+        "iterables-iterators-generators"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000602",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 26,
+      "lessons": [
+        "everything-is-an-object",
+        "duck-typing-with-a-safety-net",
+        "context-managers"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000603",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 27,
+      "lessons": [
+        "dataclasses-and-your-data",
+        "errors-that-say-something",
+        "testing-and-the-lying-fixture"
+      ]
+    }
+  ]
+}

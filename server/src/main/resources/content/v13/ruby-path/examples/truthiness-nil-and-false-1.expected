@@ -1,0 +1,30 @@
+nil          NilClass   falsy
+false        FalseClass falsy
+true         TrueClass  truthy
+0            Integer    truthy
+0.0          Float      truthy
+-1           Integer    truthy
+NaN          Float      truthy
+""           String     truthy
+" "          String     truthy
+"false"      String     truthy
+[]           Array      truthy
+{}           Hash       truthy
+:sym         Symbol     truthy
+
+falsy values -> [nil, false]
+count falsy  -> 2
+
+nil == false -> false
+nil.nil?     -> true
+false.nil?   -> false
+0 == false   -> false
+
+nil || 8080    -> 8080
+0 || 8080      -> 0
+false || 8080  -> 8080
+1 && nil       -> nil
+1 && 2         -> 2
+
+!!nil          -> false
+!!0            -> true

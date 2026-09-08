@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170103",
+  "title": "Lifetime, and the dangling reference",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 12,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/language/lifetime",
+    "https://en.cppreference.com/w/cpp/language/storage_duration",
+    "https://en.cppreference.com/w/cpp/language/reference_initialization",
+    "https://en.cppreference.com/w/cpp/string/basic_string_view"
+  ],
+  "concepts": ["object lifetime", "lifetime extension"],
+  "code_examples": [
+    { "language": "cpp", "caption": "When objects die, and the one extension", "file": "lifetime-and-the-dangling-reference-1.cpp" },
+    { "language": "cpp", "caption": "Returning by value, and the safe reference returns", "file": "lifetime-and-the-dangling-reference-2.cpp" },
+    { "language": "cpp", "caption": "Borrowing versus owning", "file": "lifetime-and-the-dangling-reference-3.cpp" }
+  ]
+}

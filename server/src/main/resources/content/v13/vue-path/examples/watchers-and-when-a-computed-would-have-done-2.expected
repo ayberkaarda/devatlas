@@ -1,0 +1,7 @@
+watch(obj.count, ...) fired: 0
+watch(() => obj.count, ...) fired: 1
+watch(obj, ...) fired: 1
+after a nested mutation, the getter watcher fired: 1
+after a nested mutation, the deep watcher fired: 2
+deep watcher saw newValue === oldValue: true
+passing a plain value subscribes to nothing: true

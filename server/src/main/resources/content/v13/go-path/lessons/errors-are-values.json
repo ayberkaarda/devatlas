@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120103",
+  "title": "Errors are values",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://go.dev/ref/spec#Errors",
+    "https://pkg.go.dev/errors@go1.27.0",
+    "https://pkg.go.dev/fmt@go1.27.0#Errorf"
+  ],
+  "concepts": ["error as a return value", "wrapping and unwrapping"],
+  "code_examples": [
+    { "language": "go", "caption": "Sentinels and errors.Is", "file": "errors-are-values-1.go" },
+    { "language": "go", "caption": "Wrapping, errors.As and the chain", "file": "errors-are-values-2.go" },
+    { "language": "go", "caption": "errors.Join and the typed nil", "file": "errors-are-values-3.go" }
+  ]
+}

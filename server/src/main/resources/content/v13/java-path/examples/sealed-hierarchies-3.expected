@@ -1,0 +1,6 @@
+open   : start import
+open   : stop import
+open   : ignored
+sealed : start import
+sealed : stop import
+sealed : pause import

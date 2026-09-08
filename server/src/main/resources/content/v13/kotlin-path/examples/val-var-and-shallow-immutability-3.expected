@@ -1,0 +1,6 @@
+team sees the caller's write: [ada, grace]
+defensive copy: [ada, grace]
+caller's list:  [ada, grace, alan]
+read-only map, mutable values: [ada, grace]
+deep copy unaffected: [ada, grace]
+original moved on:   [ada, grace, alan]

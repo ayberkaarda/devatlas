@@ -1,0 +1,6 @@
+block value    -> 3
+raised         -> ArgumentError: bad entry
+closed anyway  -> true
+entries kept   -> ["opened", "credit 10", "closed"]
+no block open? -> true
+after close    -> IOError: ledger manual is closed

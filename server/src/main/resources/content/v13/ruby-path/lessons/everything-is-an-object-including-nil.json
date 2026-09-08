@@ -1,0 +1,34 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160101",
+  "title": "Everything is an object, including nil",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/NilClass.html",
+    "https://ruby-doc.org/3.4.1/Object.html",
+    "https://ruby-doc.org/3.4.1/BasicObject.html",
+    "https://ruby-doc.org/3.4.1/Class.html",
+    "https://ruby-doc.org/3.4.1/Comparable.html"
+  ],
+  "concepts": [
+    "the object model",
+    "nil as an object"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "Values, classes, and classes of classes",
+      "file": "everything-is-an-object-including-nil-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "What nil converts to and what it refuses",
+      "file": "everything-is-an-object-including-nil-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "A value class on the same chain",
+      "file": "everything-is-an-object-including-nil-3.rb"
+    }
+  ]
+}

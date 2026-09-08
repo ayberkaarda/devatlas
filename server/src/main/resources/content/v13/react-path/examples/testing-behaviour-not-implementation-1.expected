@@ -1,0 +1,6 @@
+before: role "button" named "Add to cart" found: true
+before: class "btn-primary" found: true
+before: second child of the root is the button: true
+after : role "button" named "Add to cart" found: true
+after : class "btn-primary" found: false
+after : second child of the root is the button: false

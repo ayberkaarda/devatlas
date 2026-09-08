@@ -1,0 +1,12 @@
+bool(true)
+first,second,third
+bool(false)
+zoe,ana,mo
+ana,mo,zoe
+0 => a
+1 => b
+'label' => x
+2 => c
+bool(false)
+int(4)
+int(2)

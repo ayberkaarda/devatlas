@@ -1,0 +1,5 @@
+const binding -> theme:dark
+let binding   -> theme:dark
+property      -> theme:dark
+as const      -> theme:dark
+reassigned    -> light

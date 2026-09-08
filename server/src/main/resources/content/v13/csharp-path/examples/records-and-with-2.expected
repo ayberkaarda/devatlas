@@ -1,0 +1,7 @@
+owners differ:            ada / grace
+same list instance:       True
+original item count:      2
+equal contents, distinct lists, records Equal: False
+record member, records Equal:                  True
+sequence-comparing member, records Equal:      True
+and a different sequence is not:               False

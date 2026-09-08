@@ -1,0 +1,8 @@
+call 1: ['a']
+call 2: ['a', 'b']
+call 3: ['a', 'b', 'c']
+the stored default is the list callers keep getting: True
+call 1: ['a']
+call 2: ['b']
+caller's own list is still honoured: ['seed', 'c']
+the safe default is: None

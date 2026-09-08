@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100103",
+  "title": "Lists and keys",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://react.dev/learn/rendering-lists",
+    "https://react.dev/learn/preserving-and-resetting-state"
+  ],
+  "concepts": ["reconciliation by key", "identity across renders"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Matching by key: identifiers against indexes, over the same insertion",
+      "file": "lists-and-keys-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "What travels with the key: a draft that ends up on the wrong row",
+      "file": "lists-and-keys-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Keys generated during render, and keys repeated among siblings",
+      "file": "lists-and-keys-3.js"
+    }
+  ]
+}

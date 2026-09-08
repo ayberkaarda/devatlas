@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110201",
+  "title": "How reactivity actually tracks",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://vuejs.org/guide/extras/reactivity-in-depth.html",
+    "https://vuejs.org/guide/essentials/watchers.html",
+    "https://vuejs.org/guide/essentials/template-syntax.html"
+  ],
+  "concepts": [
+    "dependency tracking",
+    "effect scope"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "The dependency map, printed after each run",
+      "file": "how-reactivity-actually-tracks-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The branch not taken, with and without dropping stale subscriptions",
+      "file": "how-reactivity-actually-tracks-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The absent property, the deleted one, and the read after await",
+      "file": "how-reactivity-actually-tracks-3.js"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320303",
+  "title": "Testing what you wrote",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 7,
+  "sources": ["https://docs.python.org/3/library/unittest.html", "https://www.postgresql.org/docs/16/sql-createtable.html"],
+  "concepts": ["arrange act assert", "fixtures"],
+  "code_examples": [
+    { "language": "python", "caption": "Arrange, act, assert in one case", "file": "testing-what-you-wrote-1.py" },
+    { "language": "sql", "caption": "The table the fixture creates", "file": "testing-what-you-wrote-2.sql" }
+  ]
+}

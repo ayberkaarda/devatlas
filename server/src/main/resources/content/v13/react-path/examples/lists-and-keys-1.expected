@@ -1,0 +1,8 @@
+id keys, instances reused: 2
+id keys, instances created: 1
+id keys, reused instances handed different data: 0
+index keys, instances reused: 2
+index keys, instances created: 1
+index keys, reused instances handed different data: 2
+  key 0 held "Ada Lovelace" and now holds "Linus Pauling"
+  key 1 held "Grace Hopper" and now holds "Ada Lovelace"

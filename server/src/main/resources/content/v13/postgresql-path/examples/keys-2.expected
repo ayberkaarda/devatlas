@@ -1,0 +1,7 @@
+psql:<stdin>:24: ERROR:  update or delete on table "account_natural" violates foreign key constraint "fk_payment_natural" on table "payment_natural"
+DETAIL:  Key (email)=(ada@old.example) is still referenced from table "payment_natural".
+      email      | payments | total 
+-----------------+----------+-------
+ ada@new.example |        2 | 30.00
+(1 row)
+

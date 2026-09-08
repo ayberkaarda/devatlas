@@ -1,0 +1,6 @@
+pass  an async success is reported as a pass
+FAIL  an async failure is reported because the runner awaits: expected '1', got '0'
+pass  asserting on an async throw needs the await inside the assertion
+FAIL  the same assertion with the await missing: expected InvalidOperationException, nothing was thrown
+pass  a test that forgets to await reports a pass
+5 tests, 2 failed

@@ -1,0 +1,8 @@
+valid            201 {"id":"a-1","name":"Lamp","price_cents":1999}
+unknown field    400 {"code":"MALFORMED_BODY","message":"the body could not be decoded"}
+wrong type       400 {"code":"WRONG_TYPE","message":"field price_cents has the wrong type"}
+not json         400 {"code":"MALFORMED_BODY","message":"the body could not be decoded"}
+missing name     422 {"code":"NAME_REQUIRED","message":"name must not be empty"}
+marshalled: {"id":"a-9","name":"Desk","price_cents":12500}
+map keys sorted by the encoder: {"alpha":2,"mu":3,"zeta":1}
+relaxed decode: {ID:a-5 Name:Chair Price:0 Notes:}

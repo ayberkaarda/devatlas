@@ -1,0 +1,7 @@
+Stream.toList     : UnsupportedOperationException on add
+Collectors.toList : [Ada, Grace, Edsger, Alan]
+groupingBy        : {engineering=[Ada, Grace], research=[Edsger]}
+toMap duplicate   : Duplicate key engineering (attempted merging values Ada and Grace)
+toMap with merge  : {engineering=Ada and Grace, research=Edsger}
+toList with null  : [a, null]
+toUnmodifiableList: NullPointerException

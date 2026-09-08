@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170203",
+  "title": "Move semantics, and the moved-from state",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 13,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/utility/move",
+    "https://en.cppreference.com/w/cpp/language/move_constructor",
+    "https://en.cppreference.com/w/cpp/container/vector/reserve",
+    "https://en.cppreference.com/w/cpp/utility/move_if_noexcept"
+  ],
+  "concepts": ["rvalue references", "valid but unspecified state"],
+  "code_examples": [
+    { "language": "cpp", "caption": "noexcept decides whether a container moves or copies", "file": "move-semantics-and-the-moved-from-state-1.cpp" },
+    { "language": "cpp", "caption": "std::move is a cast, and the const that defeats it", "file": "move-semantics-and-the-moved-from-state-2.cpp" },
+    { "language": "cpp", "caption": "What is left behind, specified and unspecified", "file": "move-semantics-and-the-moved-from-state-3.cpp" }
+  ]
+}

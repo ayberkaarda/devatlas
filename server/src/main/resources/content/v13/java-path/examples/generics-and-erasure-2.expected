@@ -1,0 +1,9 @@
+erased field type   : java.util.List
+declared field type : java.util.List<java.lang.String>
+declared field type : java.util.Map<java.lang.String, java.util.List<java.lang.Integer>>
+second argument     : java.util.List<java.lang.Integer>
+erased return type  : java.util.List
+declared return type: java.util.List<java.lang.String>
+declared parameter  : java.util.Map<java.lang.String, java.lang.Integer>
+erasures equal      : true
+declarations equal  : false

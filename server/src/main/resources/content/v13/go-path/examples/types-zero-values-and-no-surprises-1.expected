@@ -1,0 +1,15 @@
+int      0
+float64  0
+bool     false
+string   ""
+rune     0
+struct   {0 0}
+pointer  <nil>
+func     nil=true
+iface    <nil>
+slice    [] len=0 cap=0 nil=true
+map      map[] len=0 nil=true
+missing key reads as 0
+appended [append allocates for a nil slice]
+reset    {0 0}
+mutated  {3 0}

@@ -1,0 +1,20 @@
+plain block, two connections:
+  open  first (open now 1)
+  open  second (open now 2)
+  both usable: first and second
+  close second (open now 1)
+  close first (open now 0)
+a function that returns early:
+  open  ok (open now 1)
+  name too short, returning early
+  close ok (open now 0)
+  open  probe (open now 1)
+  past the guard
+  close probe (open now 0)
+a function that throws:
+  open  outer (open now 1)
+  open  inner (open now 2)
+  close inner (open now 1)
+  close outer (open now 0)
+  caught after unwinding
+acquired=6 released=6 still open=0

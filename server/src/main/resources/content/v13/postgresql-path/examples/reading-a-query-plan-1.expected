@@ -1,0 +1,32 @@
+                   QUERY PLAN                    
+-------------------------------------------------
+ Nested Loop
+   ->  Index Scan using pk_author on author a
+         Index Cond: (id = 7)
+   ->  Bitmap Heap Scan on post p
+         Recheck Cond: (author_id = 7)
+         ->  Bitmap Index Scan on ix_post_author
+               Index Cond: (author_id = 7)
+(7 rows)
+
+               QUERY PLAN                
+-----------------------------------------
+ HashAggregate
+   Group Key: a.name
+   ->  Hash Join
+         Hash Cond: (p.author_id = a.id)
+         ->  Seq Scan on post p
+         ->  Hash
+               ->  Seq Scan on author a
+(7 rows)
+
+             QUERY PLAN             
+------------------------------------
+ Limit
+   ->  Sort
+         Sort Key: (count(*)) DESC
+         ->  HashAggregate
+               Group Key: author_id
+               ->  Seq Scan on post
+(6 rows)
+

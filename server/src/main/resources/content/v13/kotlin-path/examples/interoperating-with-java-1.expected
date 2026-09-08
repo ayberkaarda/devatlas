@@ -1,0 +1,6 @@
+mapped type, declared String?: null
+mapped type, present key: yes
+platform type, declared String?: <unset>
+declaring it String threw NullPointerException: true
+present property: yes
+absent property: <unset>

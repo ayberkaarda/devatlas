@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170201",
+  "title": "RAII: ownership expressed as a destructor",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 12,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/language/raii",
+    "https://en.cppreference.com/w/cpp/language/destructor",
+    "https://en.cppreference.com/w/cpp/language/rule_of_three",
+    "https://en.cppreference.com/w/cpp/utility/exchange"
+  ],
+  "concepts": ["RAII", "rule of five"],
+  "code_examples": [
+    { "language": "cpp", "caption": "Release on every exit path, in reverse order", "file": "raii-ownership-as-a-destructor-1.cpp" },
+    { "language": "cpp", "caption": "The rule of five on a type that owns a resource", "file": "raii-ownership-as-a-destructor-2.cpp" },
+    { "language": "cpp", "caption": "The rule of zero, and a scope guard", "file": "raii-ownership-as-a-destructor-3.cpp" }
+  ]
+}

@@ -1,0 +1,5 @@
+closing over the loop variable: ['gamma', 'gamma', 'gamma']
+captured by default argument: ['alpha', 'beta', 'gamma']
+captured by a factory call:   ['alpha', 'beta', 'gamma']
+16 16 25
+body entered 3 times, cache holds 2 entries

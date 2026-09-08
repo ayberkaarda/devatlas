@@ -1,0 +1,7 @@
+checksum computed: 120
+microtask ran during the synchronous section: false
+timer ran during the synchronous section: false
+inside the async function, before await
+the caller continued while the async function was suspended
+after await, microtask queue had already drained: true
+timer ran after the synchronous section: true

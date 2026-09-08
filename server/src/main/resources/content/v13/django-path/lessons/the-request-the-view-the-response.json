@@ -1,0 +1,33 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070102",
+  "title": "The request, the view, the response",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/http/urls/",
+    "https://docs.djangoproject.com/en/6.1/topics/http/views/",
+    "https://docs.djangoproject.com/en/6.1/topics/http/middleware/",
+    "https://docs.djangoproject.com/en/6.1/ref/request-response/"
+  ],
+  "concepts": [
+    "URL resolution",
+    "middleware ordering"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "The whole path, end to end",
+      "file": "the-request-the-view-the-response-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "Resolution, reversal and converters",
+      "file": "the-request-the-view-the-response-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "Middleware order, and what a direct call skips",
+      "file": "the-request-the-view-the-response-3.py"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Passw0rdLong  accepted
+short         rejected: short=true digit=true upper=true
+alllowercase  rejected: short=false digit=true upper=true
+join of no errors is nil: true
+checkTrap on a good key returned err != nil: true
+checkFixed on a good key returned err != nil: false
+checkFixed on a bad key: bad config key (empty)

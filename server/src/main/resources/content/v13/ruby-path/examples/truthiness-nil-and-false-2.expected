@@ -1,0 +1,15 @@
+stored retries  -> 0
+|| gave         -> 0
+stored verbose  -> false
+|| gave         -> true
+retries correct -> true
+verbose correct -> false
+
+fetch present   -> false
+fetch absent    -> "auto"
+key? verbose    -> true
+key? colour     -> false
+fetch no default -> KeyError: key not found: :colour
+
+||= memoised    -> value false, computed 4 times
+defined? guard  -> value false, computed 1 times

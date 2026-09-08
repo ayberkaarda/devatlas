@@ -1,0 +1,10 @@
+migrations on disk: 2
+plan before the first migrate: 2
+recorded as applied: 2
+names recorded: ['0001_initial', '0002_currency']
+row created, currency: EUR
+plan before the second migrate: 0
+recorded after the second migrate: 2
+rows after the second migrate: 1
+balance unchanged: 100
+plan after deleting one ledger row: 1

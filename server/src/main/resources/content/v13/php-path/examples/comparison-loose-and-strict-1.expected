@@ -1,0 +1,17 @@
+0          'foo'       ==:false  ===:false
+0          ''          ==:false  ===:false
+0          '0'         ==:true   ===:false
+'1'        '01'        ==:true   ===:false
+'10'       '1e1'       ==:true   ===:false
+100        '1e2'       ==:true   ===:false
+'abc'      0           ==:false  ===:false
+NULL       false       ==:true   ===:false
+NULL       0           ==:true   ===:false
+[]         false       ==:true   ===:false
+'0'        false       ==:true   ===:false
+1          true        ==:true   ===:false
+bool(false)
+bool(false)
+bool(true)
+bool(true)
+bool(false)

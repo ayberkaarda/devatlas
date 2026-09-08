@@ -1,0 +1,10 @@
+bool(true)
+bool(true)
+bool(true)
+string(5) "Draft"
+Draft      editable:true  next:Review
+Review     editable:true  next:Published
+Published  editable:false next:(none)
+Published
+TypeError: advance(): Argument #1 ($stage) must be of type Stage, string given
+Error: Cannot instantiate enum Stage

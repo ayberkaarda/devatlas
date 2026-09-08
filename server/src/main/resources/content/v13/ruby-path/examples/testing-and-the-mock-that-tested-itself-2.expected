@@ -1,0 +1,5 @@
+test_with_a_mock_that_answers_the_question     pass
+test_with_a_mock_that_states_the_call          FAIL
+    MockExpectationError: mocked method :discounted called with unexpected arguments [10, 1000]
+test_against_the_real_collaborator             FAIL
+    Expected: 900 | Actual: -90

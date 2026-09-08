@@ -1,0 +1,6 @@
+lesson-a: 2048 bytes
+lesson-b: will retry, code DIGEST_MISMATCH
+lesson-c: will not retry, code ENTITY_NOT_IN_LIBRARY
+lesson-d: will retry, code NETWORK_UNAVAILABLE
+rendered for a log: DIGEST_MISMATCH: the package did not hash to what the manifest advertised
+the decision used the code, not the message: true

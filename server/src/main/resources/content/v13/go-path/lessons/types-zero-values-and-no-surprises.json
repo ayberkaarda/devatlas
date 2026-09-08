@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120101",
+  "title": "Types, zero values, and the absence of surprises",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://go.dev/ref/spec#The_zero_value",
+    "https://go.dev/ref/spec#Conversions",
+    "https://go.dev/ref/spec#Constants",
+    "https://go.dev/ref/spec#Arithmetic_operators"
+  ],
+  "concepts": ["zero value", "explicit conversion"],
+  "code_examples": [
+    { "language": "go", "caption": "The zero value of every kind of type", "file": "types-zero-values-and-no-surprises-1.go" },
+    { "language": "go", "caption": "Conversions, untyped constants and wrap-around", "file": "types-zero-values-and-no-surprises-2.go" },
+    { "language": "go", "caption": "Named types and struct values", "file": "types-zero-values-and-no-surprises-3.go" }
+  ]
+}

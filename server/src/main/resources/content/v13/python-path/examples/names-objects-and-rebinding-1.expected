@@ -1,0 +1,8 @@
+a is b after 'b = a': True
+mutated through b, read through a: [1, 2, 3, 4]
+after 'b = b + [5]', a is b: False
+a: [1, 2, 3, 4]
+b: [1, 2, 3, 4, 5]
+equal lists: True
+same object: False
+integers are immutable, so y kept its value: 5

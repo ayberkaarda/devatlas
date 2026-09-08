@@ -1,0 +1,8 @@
+"12" accepted as version 12
+" 7 " accepted as version 7
+"" rejected: Empty
+"x9" rejected: NotANumber("x9")
+"0" rejected: OutOfRange(0)
+newer of 12 and 7: Ok(12)
+newer with a bad second input: Err(NotANumber("x9"))
+propagation stopped at the first failure: true

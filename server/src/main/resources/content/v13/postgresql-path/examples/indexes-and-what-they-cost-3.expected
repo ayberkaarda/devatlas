@@ -1,0 +1,41 @@
+                        QUERY PLAN                        
+----------------------------------------------------------
+ Aggregate
+   ->  Bitmap Heap Scan on progress
+         Recheck Cond: (user_id = 42)
+         ->  Bitmap Index Scan on ix_progress_user_lesson
+               Index Cond: (user_id = 42)
+(5 rows)
+
+                           QUERY PLAN                            
+-----------------------------------------------------------------
+ Aggregate
+   ->  Index Only Scan using ix_progress_user_lesson on progress
+         Index Cond: ((user_id = 42) AND (lesson_id = 7))
+(3 rows)
+
+                        QUERY PLAN                        
+----------------------------------------------------------
+ Aggregate
+   ->  Bitmap Heap Scan on progress
+         Recheck Cond: (lesson_id = 7)
+         ->  Bitmap Index Scan on ix_progress_user_lesson
+               Index Cond: (lesson_id = 7)
+(5 rows)
+
+                        QUERY PLAN                        
+----------------------------------------------------------
+ Aggregate
+   ->  Bitmap Heap Scan on progress
+         Recheck Cond: (lesson_id = 7)
+         ->  Bitmap Index Scan on ix_progress_lesson_user
+               Index Cond: (lesson_id = 7)
+(5 rows)
+
+      indexrelname       | idx_scan 
+-------------------------+----------
+ ix_progress_done_at     |        0
+ ix_progress_lesson_user |        0
+ ix_progress_user_lesson |        0
+(3 rows)
+

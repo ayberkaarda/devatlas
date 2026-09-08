@@ -1,0 +1,10 @@
+taken: [0, 1, 2]
+items the source actually produced: 3
+a list comprehension takes all of them: 10
+items the source actually produced: 10
+eight values from an endless sequence: [0, 1, 1, 2, 3, 5, 8, 13]
+calling the function ran no body code: generator
+  body starts running only now
+got: one
+  body resumes where it stopped
+got: two

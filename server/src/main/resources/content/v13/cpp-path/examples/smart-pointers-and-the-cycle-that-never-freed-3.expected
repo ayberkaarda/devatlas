@@ -1,0 +1,8 @@
+in scope:  left use_count=2 right use_count=2
+reachable: right and left
+out of scope: nodes destroyed=0
+the cycle outlived its owners: true
+in scope:  left use_count=1 right use_count=1
+reachable through a weak_ptr: true
+out of scope: watchers destroyed=2
+breaking the cycle freed both: true

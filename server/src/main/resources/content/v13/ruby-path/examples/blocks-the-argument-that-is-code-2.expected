@@ -1,0 +1,14 @@
+captured class -> Proc
+arity          -> 1
+lambda?        -> false
+result         -> 6
+relayed        -> RELAYED
+
+proc   too few  -> [1, nil]
+proc   too many -> [1, 2]
+lambda too few  -> ArgumentError: wrong number of arguments (given 1, expected 2)
+
+proc return    -> :left_early
+lambda return  -> :reached_the_end
+block is lambda? -> false
+lambda is lambda? -> true

@@ -1,0 +1,8 @@
+queued entries: 2
+an entry started: true
+entries left in the vector: 1
+current is occupied: true
+finished id: a
+finished payload length: 3
+current is occupied after finish: false
+split into two owners: a and 3 bytes

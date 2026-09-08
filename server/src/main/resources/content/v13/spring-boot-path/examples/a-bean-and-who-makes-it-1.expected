@@ -1,0 +1,7 @@
+constructing LessonRepository
+constructing LessonService with a repository already in hand
+lessons visible to the service: 2
+asked twice, same instance: true
+constructing LessonRepository
+constructing LessonService with a repository already in hand
+built with new, no container: 2

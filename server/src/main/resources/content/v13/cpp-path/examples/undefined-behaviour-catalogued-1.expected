@@ -1,0 +1,9 @@
+int32 range: -2147483648 to 2147483647
+highest + 1 would overflow: true
+lowest - 1 would overflow:  true
+2 + 2 would overflow:       false
+widened before adding:      2147483648
+unsigned highest + 1:       0
+unsigned wrapping is specified: true
+uint32 has 32 value bits
+1u << 31 = 2147483648

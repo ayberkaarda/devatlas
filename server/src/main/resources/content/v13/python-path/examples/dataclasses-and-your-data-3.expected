@@ -1,0 +1,10 @@
+first: Basket(owner='Ada', items=['apple'])
+second: Basket(owner='Grace', items=[])
+each got its own list: True
+__post_init__ normalised the owner: 'Ada'
+note is excluded from repr but present: ''
+declaring a list default raises: ValueError
+message: mutable default <class 'list'> for field items is not allowed: use default_factory
+field names: ['owner', 'items', 'note']
+asdict: {'owner': 'Ada', 'items': ['apple'], 'note': ''}
+asdict copies the list: True

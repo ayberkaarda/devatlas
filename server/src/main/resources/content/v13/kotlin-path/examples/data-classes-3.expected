@@ -1,0 +1,8 @@
+1250 EUR
+original:   Money(amount=1250, currency=EUR)
+discounted: Money(amount=999, currency=EUR)
+currency carried over: true
+component1: 1250, component2: EUR
+EUR -> 100
+GBP -> 87
+amounts: [1250, 999]

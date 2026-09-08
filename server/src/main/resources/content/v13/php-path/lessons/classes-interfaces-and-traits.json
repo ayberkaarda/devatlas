@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150201",
+  "title": "Classes, interfaces and traits",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.php.net/manual/en/language.oop5.interfaces.php",
+    "https://www.php.net/manual/en/language.oop5.traits.php",
+    "https://www.php.net/manual/en/language.oop5.late-static-bindings.php"
+  ],
+  "concepts": ["composition", "single inheritance"],
+  "code_examples": [
+    { "language": "php", "caption": "Interfaces are the types", "file": "classes-interfaces-and-traits-1.php" },
+    { "language": "php", "caption": "Traits: copies, collisions and precedence", "file": "classes-interfaces-and-traits-2.php" },
+    { "language": "php", "caption": "Interface, trait and abstract class together", "file": "classes-interfaces-and-traits-3.php" }
+  ]
+}

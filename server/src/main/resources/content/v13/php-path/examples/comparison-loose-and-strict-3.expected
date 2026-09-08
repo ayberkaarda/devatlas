@@ -1,0 +1,15 @@
+bo,di,ana,cy
+ana,cy,bo,di
+int(-1)
+int(0)
+int(1)
+int(-1)
+int(0)
+bool(false)
+bool(true)
+bool(true)
+bool(true)
+Echo,alpha,delta
+alpha,delta,Echo
+int(-1)
+int(4)

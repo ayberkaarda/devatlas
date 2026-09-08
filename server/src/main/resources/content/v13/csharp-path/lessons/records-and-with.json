@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130103",
+  "title": "Records and with",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/with-expression",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/records"
+  ],
+  "concepts": ["value equality", "non-destructive mutation"],
+  "code_examples": [
+    { "language": "csharp", "caption": "What a positional record generates", "file": "records-and-with-1.cs" },
+    { "language": "csharp", "caption": "with is a shallow copy", "file": "records-and-with-2.cs" },
+    { "language": "csharp", "caption": "record struct and the equality contract", "file": "records-and-with-3.cs" }
+  ]
+}

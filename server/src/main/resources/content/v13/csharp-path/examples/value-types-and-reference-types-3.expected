@@ -1,0 +1,9 @@
+original after mutation: 99
+box still holds the old copy: 1
+box unaffected by the unboxed copy: 1
+two structs with equal fields are Equal: True
+two classes with equal fields are Equal: False
+the same class reference is Equal to itself: True
+IEquatable<T> comparison: True
+through the interface, the box moved: 1
+but the local it was copied from did not: 0

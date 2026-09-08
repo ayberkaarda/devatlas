@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320103",
+  "title": "Converting between types",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 6,
+  "sources": ["https://docs.python.org/3/library/functions.html", "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"],
+  "concepts": ["explicit conversion"],
+  "code_examples": [
+    { "language": "python", "caption": "Explicit conversion, both directions", "file": "converting-between-types-1.py" },
+    { "language": "typescript", "caption": "The same conversion in TypeScript", "file": "converting-between-types-2.ts" }
+  ]
+}

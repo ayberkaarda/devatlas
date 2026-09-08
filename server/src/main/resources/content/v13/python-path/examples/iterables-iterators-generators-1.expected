@@ -1,0 +1,9 @@
+iter(list) returns something new each time: True
+iter(iterator) returns the iterator itself: True
+1 2 3
+asking an exhausted iterator raises: StopIteration
+the list can still be walked again: [1, 2, 3]
+first pass over the generator: [0, 1, 4, 9]
+second pass over the generator: []
+a generator has no length: False
+a generator is its own iterator: True

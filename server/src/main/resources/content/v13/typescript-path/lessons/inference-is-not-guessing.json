@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030102",
+  "title": "Inference is not guessing",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://www.typescriptlang.org/docs/handbook/type-inference.html",
+    "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
+  ],
+  "concepts": ["type inference", "contextual typing"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "Widening, as const, and a literal union that refuses a widened string",
+      "file": "inference-is-not-guessing-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Best common type over an array and over two unrelated classes",
+      "file": "inference-is-not-guessing-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Contextual typing, and the implicit any it does not supply",
+      "file": "inference-is-not-guessing-3.ts"
+    }
+  ]
+}

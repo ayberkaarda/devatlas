@@ -1,0 +1,6 @@
+test_accumulates_the_same_item         pass  assertions=2
+test_adds_an_item                      pass  assertions=1
+test_keeps_insertion_order             pass  assertions=1
+test_rejects_a_non_positive_quantity   pass  assertions=2
+test_that_fails                        FAIL  assertions=1
+    Minitest::Assertion: Expected: 3 | Actual: 2

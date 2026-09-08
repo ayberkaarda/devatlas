@@ -1,0 +1,8 @@
+one owner:            use_count=1 alive=1
+a weak_ptr was added: use_count=1 expired=false
+two owners:           use_count=2 alive=1
+both name one object: true
+back to one owner:    use_count=1 alive=1
+lock() gave an owner: use_count=2 name=shared
+last owner released:  alive=0 expired=true
+lock() now gives null: true

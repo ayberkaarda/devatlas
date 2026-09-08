@@ -1,0 +1,9 @@
+combinations three booleans can represent: 8
+combinations that describe a real screen: 5
+combinations that cannot happen but can be reached: 3
+frames committed with three booleans: 4
+frames showing a spinner and an error at once, or an error beside results: 2
+states a status value can represent: 4
+frames committed with a status value: 4
+frames that describe two things at once: 0
+what the reader ends on: success

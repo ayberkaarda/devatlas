@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060201",
+  "title": "Everything is an object, including the class",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.python.org/3.13/reference/datamodel.html",
+    "https://docs.python.org/3.13/reference/datamodel.html#invoking-descriptors",
+    "https://docs.python.org/3.13/reference/datamodel.html#slots",
+    "https://docs.python.org/3.13/howto/descriptor.html"
+  ],
+  "concepts": ["attribute lookup", "descriptors"],
+  "code_examples": [
+    { "language": "python", "caption": "Classes and functions as objects", "file": "everything-is-an-object-1.py" },
+    { "language": "python", "caption": "The lookup order", "file": "everything-is-an-object-2.py" },
+    { "language": "python", "caption": "Fixed attribute names, and the silent typo", "file": "everything-is-an-object-3.py" }
+  ]
+}

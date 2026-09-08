@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000000010",
+  "title": "Testing a component without a browser",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 18,
+  "sources": [
+    "https://angular.dev/guide/testing/components-basics",
+    "https://angular.dev/api/core/ComponentRef"
+  ],
+  "concepts": ["TestBed", "structural assertions"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "The component under test, with an injected collaborator",
+      "file": "testing-without-a-browser-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A fake gateway, an input set through the fixture, structural assertions",
+      "file": "testing-without-a-browser-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Finding an element by test id and by text, before and after a rewording",
+      "file": "testing-without-a-browser-3.ts"
+    }
+  ]
+}

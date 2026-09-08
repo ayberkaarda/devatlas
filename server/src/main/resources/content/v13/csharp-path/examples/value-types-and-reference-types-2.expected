@@ -1,0 +1,7 @@
+after mutating a copy taken from the list: 0
+after writing the element back:            1
+array element mutated in place:            1
+class element through a List indexer:      1
+readonly struct value:                     7
+readonly struct 'increment' returns a new value: 8
+and leaves the original alone:                  7

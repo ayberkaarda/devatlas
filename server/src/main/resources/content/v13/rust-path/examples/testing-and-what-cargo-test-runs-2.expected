@@ -1,0 +1,5 @@
+cases run: 5
+cases failed: 0
+parses_a_version: Ok(())
+rejects_a_word:   Err("not a number")
+the second returned its reason rather than panicking: true

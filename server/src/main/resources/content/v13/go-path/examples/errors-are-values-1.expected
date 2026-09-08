@@ -1,0 +1,6 @@
+a-1: ok, 100 left
+a-1: refused: balance 120 is short of 500
+a-2: frozen, refusing
+a-9: no such account
+distinct values with equal text: false
+a sentinel compares to itself: true

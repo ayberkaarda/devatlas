@@ -1,0 +1,6 @@
+copyOf of List.of shares : true
+copyOf of ArrayList copies: true
+Arrays.asList allows set  : [z, b, c]
+Arrays.asList refuses add : UnsupportedOperationException
+the view follows the array: [changed in the array, b]
+List.of refuses null      : NullPointerException

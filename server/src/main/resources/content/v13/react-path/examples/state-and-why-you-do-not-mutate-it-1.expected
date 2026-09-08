@@ -1,0 +1,7 @@
+after mutating in place, x is 5
+renders caused by the mutation: 0
+after replacing, x is 5
+renders caused by the replacement: 1
+push handed back the same array: true
+renders caused by push: 0
+renders caused by a new array: 1

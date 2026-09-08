@@ -1,0 +1,12 @@
+Deprecated: Implicit conversion from float 1.7 to int loses precision
+1      (int) => bool true
+''     (string) => null
+'01'   (string) => leading zero is not an int-string
+bool(false)
+0,2
+0,2,3
+{"0":"a","2":"c"}
+["a","c"]
+bool(false)
+{"0":10,"2":8}
+[10,8]

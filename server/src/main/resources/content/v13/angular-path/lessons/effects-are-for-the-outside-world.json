@@ -1,0 +1,25 @@
+{
+  "id": "019205a0-3000-7000-8000-000000000006",
+  "title": "Effects are for the outside world",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 16,
+  "sources": ["https://angular.dev/guide/signals/effect", "https://angular.dev/api/core/effect"],
+  "concepts": ["side effects", "cleanup"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "The race a cleanup callback prevents, without a framework",
+      "file": "effects-are-for-the-outside-world-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Loading on a changed route input, and aborting the request it replaces",
+      "file": "effects-are-for-the-outside-world-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A mirrored store and a derived store, side by side",
+      "file": "effects-are-for-the-outside-world-3.ts"
+    }
+  ]
+}

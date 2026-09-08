@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170202",
+  "title": "Smart pointers, and the cycle that never freed",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 12,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/memory/unique_ptr",
+    "https://en.cppreference.com/w/cpp/memory/shared_ptr",
+    "https://en.cppreference.com/w/cpp/memory/weak_ptr",
+    "https://en.cppreference.com/w/cpp/memory/unique_ptr/make_unique"
+  ],
+  "concepts": ["exclusive ownership", "reference cycles"],
+  "code_examples": [
+    { "language": "cpp", "caption": "One owner, transferable, null after a move", "file": "smart-pointers-and-the-cycle-that-never-freed-1.cpp" },
+    { "language": "cpp", "caption": "Counting owners, and what weak_ptr adds", "file": "smart-pointers-and-the-cycle-that-never-freed-2.cpp" },
+    { "language": "cpp", "caption": "The cycle, and the weakened edge that breaks it", "file": "smart-pointers-and-the-cycle-that-never-freed-3.cpp" }
+  ]
+}

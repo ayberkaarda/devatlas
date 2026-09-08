@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000012",
+  "slug": "go-path",
+  "title": "The Go Path",
+  "description": "A small language read closely: zero values, slices and errors, then interfaces, goroutines and channels, then a service built from the standard library.",
+  "icon": null,
+  "order": 12,
+  "teaches_version": "Go 1.27.0",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000001201",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 27,
+      "lessons": [
+        "types-zero-values-and-no-surprises",
+        "slices-are-not-arrays",
+        "errors-are-values"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001202",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 29,
+      "lessons": [
+        "interfaces-are-satisfied-not-declared",
+        "goroutines",
+        "channels-and-select"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001203",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 30,
+      "lessons": [
+        "methods-and-the-pointer-receiver",
+        "the-standard-library-is-the-framework",
+        "testing-table-driven-and-the-race-detector"
+      ]
+    }
+  ]
+}

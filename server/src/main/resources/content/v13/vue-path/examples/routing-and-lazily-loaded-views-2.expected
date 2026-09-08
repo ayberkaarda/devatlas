@@ -1,0 +1,11 @@
+routes registered: 2
+modules evaluated before any navigation: 0
+loader calls before any navigation: 0
+navigate("/") rendered: <h1>HomeView</h1>
+modules evaluated: HomeView
+the other view is still unloaded: true
+navigate("/reports") rendered: <h1>ReportsView</h1>
+modules evaluated: HomeView, ReportsView
+loader calls after visiting each view twice: 2
+a resolved component is not fetched again: true
+each module body evaluated once: true

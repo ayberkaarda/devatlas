@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140103",
+  "title": "Data classes",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://kotlinlang.org/docs/data-classes.html",
+    "https://kotlinlang.org/docs/destructuring-declarations.html",
+    "https://kotlinlang.org/docs/equality.html"
+  ],
+  "concepts": ["value equality", "generated members"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "What the derived members change about lookup", "file": "data-classes-1.kt" },
+    { "language": "kotlin", "caption": "What the derivation ignores", "file": "data-classes-2.kt" },
+    { "language": "kotlin", "caption": "Copying, destructuring and the positional rule", "file": "data-classes-3.kt" }
+  ]
+}

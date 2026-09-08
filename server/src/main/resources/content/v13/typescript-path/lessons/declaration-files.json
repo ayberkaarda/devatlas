@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030303",
+  "title": "Declaration files",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html",
+    "https://www.typescriptlang.org/docs/handbook/declaration-merging.html"
+  ],
+  "concepts": ["declaration merging"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "An ambient declaration, and the member it deliberately omits",
+      "file": "declaration-files-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A declaration with no binding behind it, and one with the wrong type",
+      "file": "declaration-files-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Global augmentation paired with an implementation, and interface merging",
+      "file": "declaration-files-3.ts"
+    }
+  ]
+}

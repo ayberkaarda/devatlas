@@ -1,0 +1,14 @@
+psql:<stdin>:18: ERROR:  new row for relation "lesson_row" violates check constraint "ck_lesson_row_difficulty"
+DETAIL:  Failing row contains (1, what-a-table-promises, EASY, 1).
+psql:<stdin>:19: ERROR:  new row for relation "lesson_row" violates check constraint "ck_lesson_row_display_order"
+DETAIL:  Failing row contains (1, what-a-table-promises, BEGINNER, 0).
+psql:<stdin>:20: ERROR:  new row for relation "lesson_row" violates check constraint "ck_lesson_row_slug"
+DETAIL:  Failing row contains (1, What A Table Promises, BEGINNER, 1).
+psql:<stdin>:26: ERROR:  new row for relation "lesson_row" violates check constraint "ck_lesson_row_slug"
+DETAIL:  Failing row contains (3, Null Is Not A Value, BEGINNER, 3).
+CONTEXT:  COPY lesson_row, line 2: "3	Null Is Not A Value	BEGINNER	3"
+ id |         slug          | difficulty | display_order 
+----+-----------------------+------------+---------------
+  1 | what-a-table-promises | BEGINNER   |             1
+(1 row)
+

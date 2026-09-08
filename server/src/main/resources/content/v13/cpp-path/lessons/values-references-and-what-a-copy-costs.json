@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170101",
+  "title": "Values, references, and what a copy costs",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/language/reference",
+    "https://en.cppreference.com/w/cpp/language/copy_elision",
+    "https://en.cppreference.com/w/cpp/language/value_category",
+    "https://en.cppreference.com/w/cpp/language/copy_constructor"
+  ],
+  "concepts": ["value semantics", "copy elision"],
+  "code_examples": [
+    { "language": "cpp", "caption": "Counting what each kind of parameter costs", "file": "values-references-and-what-a-copy-costs-1.cpp" },
+    { "language": "cpp", "caption": "The copies the standard forbids", "file": "values-references-and-what-a-copy-costs-2.cpp" },
+    { "language": "cpp", "caption": "A reference is another name for an object", "file": "values-references-and-what-a-copy-costs-3.cpp" }
+  ]
+}

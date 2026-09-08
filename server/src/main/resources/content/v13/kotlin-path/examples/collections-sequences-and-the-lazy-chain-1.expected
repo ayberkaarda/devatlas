@@ -1,0 +1,6 @@
+eager result: [12, 14]
+eager map calls: 10, filter calls: 10
+lazy result: [12, 14]
+lazy map calls: 7, filter calls: 7
+same answer: true
+lazy did fewer map calls: true

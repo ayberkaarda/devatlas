@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100301",
+  "title": "Lifting state, and when to stop",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://react.dev/learn/sharing-state-between-components",
+    "https://react.dev/learn/passing-data-deeply-with-context",
+    "https://react.dev/learn/render-and-commit"
+  ],
+  "concepts": ["lifting state up", "controlled components"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Duplicated state against one owner, over the same click",
+      "file": "lifting-state-and-when-to-stop-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Uncontrolled and controlled, and the configuration each costs",
+      "file": "lifting-state-and-when-to-stop-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Where a value belongs, and what each choice renders",
+      "file": "lifting-state-and-when-to-stop-3.js"
+    }
+  ]
+}

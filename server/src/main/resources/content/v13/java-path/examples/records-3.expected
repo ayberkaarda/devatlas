@@ -1,0 +1,3 @@
+record lookup : Ada
+plain lookup  : null
+distinct seats: 2

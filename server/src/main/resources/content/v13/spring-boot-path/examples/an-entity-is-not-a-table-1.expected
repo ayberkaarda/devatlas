@@ -1,0 +1,5 @@
+before the key exists, the set contains it: true
+after the key is assigned, the set contains it: false
+the set still holds one element: 1
+and iterating finds it: spring-boot-path
+keyed on an immutable value, still found: true

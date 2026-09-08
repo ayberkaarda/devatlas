@@ -1,0 +1,11 @@
+typeof require: function
+typeof module: object
+typeof __filename: string
+typeof __dirname: string
+module.exports === exports at the top of the file: true
+property set through exports is on module.exports: reached the outside
+after reassigning exports, the two are the same object: false
+module.exports has 'second': false
+module.exports is now: {"third":"this one is exported"}
+require returned the same object twice: true
+require.resolve of a builtin is its specifier: true

@@ -1,0 +1,10 @@
+data equals: true
+data identity: false
+data hashCodes agree: true
+toString: Point(x=1, y=2)
+plain equals: false
+plain toString starts with the class name: true
+distinct points: 2
+set contains an equal but separate Point: true
+map key count: 1, value: 2
+distinct plains: 2

@@ -1,0 +1,8 @@
+FAIL  a synchronous failure is caught by the runner: expected 1, got 0
+pass  an async void failure is not
+operations the context was told about: 1
+failures delivered to the context:     1
+failures the runner saw:               1
+tests the runner called passing:       1
+actual failures:                       2
+with no context installed, Current is null: True

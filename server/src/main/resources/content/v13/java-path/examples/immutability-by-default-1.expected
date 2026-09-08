@@ -1,0 +1,4 @@
+leaky sees      : [java, jvm, added after construction]
+caller sees     : []
+guarded sees    : [java, jvm]
+mutating result : UnsupportedOperationException

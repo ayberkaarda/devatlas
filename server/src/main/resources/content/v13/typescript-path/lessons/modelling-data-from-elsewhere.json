@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030301",
+  "title": "Modelling data that arrives from elsewhere",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+    "https://www.typescriptlang.org/docs/handbook/2/functions.html"
+  ],
+  "concepts": ["boundary validation"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "An assertion, and the two runtime failures it permits",
+      "file": "modelling-data-from-elsewhere-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A validator returning a discriminated result, over five inputs",
+      "file": "modelling-data-from-elsewhere-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A shallow guard, the wrong total it allows, and the deep guard",
+      "file": "modelling-data-from-elsewhere-3.ts"
+    }
+  ]
+}

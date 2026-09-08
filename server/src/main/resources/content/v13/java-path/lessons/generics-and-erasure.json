@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040203",
+  "title": "Generics and erasure",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html",
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Field.html"
+  ],
+  "concepts": ["type erasure", "heap pollution"],
+  "code_examples": [
+    { "language": "java", "caption": "What the runtime does not know", "file": "generics-and-erasure-1.java" },
+    { "language": "java", "caption": "What declarations keep", "file": "generics-and-erasure-2.java" },
+    { "language": "java", "caption": "Bridge methods and the leftmost bound", "file": "generics-and-erasure-3.java" }
+  ]
+}

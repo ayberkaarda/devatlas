@@ -1,0 +1,17 @@
+a temporary used and discarded:
+  constructed temporary
+  length is 9
+  destroyed   temporary
+the semicolon has passed
+a temporary bound to a const reference:
+  constructed extended
+  read after the semicolon: extended
+  destroyed   extended
+the block has ended
+an ordinary automatic object:
+  constructed first
+  constructed second
+  both alive: first and second
+  destroyed   second
+  destroyed   first
+the block has ended

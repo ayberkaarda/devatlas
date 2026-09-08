@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050202",
+  "title": "Reading a query plan",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://www.postgresql.org/docs/16/using-explain.html",
+    "https://www.postgresql.org/docs/16/sql-explain.html",
+    "https://www.postgresql.org/docs/16/planner-stats.html",
+    "https://www.postgresql.org/docs/16/sql-createstatistics.html"
+  ],
+  "concepts": ["query planning"],
+  "code_examples": [
+    { "language": "sql", "caption": "Nested loop, hash join and sort, read as a tree", "file": "reading-a-query-plan-1.sql" },
+    { "language": "sql", "caption": "The sequential scan that was cheaper, and the proof", "file": "reading-a-query-plan-2.sql" },
+    { "language": "sql", "caption": "Estimate against actual, and the statistics that fix it", "file": "reading-a-query-plan-3.sql" }
+  ]
+}

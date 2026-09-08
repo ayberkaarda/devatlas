@@ -1,0 +1,4 @@
+/api/v1/tracks/x -> 404 {"error":"track 'x' does not exist"}
+/api/v1/lessons/y -> 404 {"status":404,"detail":"lesson 'y' does not exist","type":"not_found"}
+/api/v1/blog/z -> escaped as IllegalStateException
+   carrying: connection to db-primary.internal:5432 refused for user bytelore_app

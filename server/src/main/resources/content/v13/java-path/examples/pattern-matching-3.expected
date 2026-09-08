@@ -1,0 +1,5 @@
+printed   : ((1 * 6) + --4)
+evaluated : 10
+one pass  : (6 + 4)
+two passes: 10
+2*(3+4)   : 14

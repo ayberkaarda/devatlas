@@ -1,0 +1,22 @@
+   a    |   b    | a AND b | a OR b | NOT a  
+--------+--------+---------+--------+--------
+ true   | true   | true    | true   | false
+ true   | false  | false   | true   | false
+ true   | [null] | [null]  | true   | false
+ false  | true   | false   | true   | true
+ false  | false  | false   | false  | true
+ false  | [null] | false   | [null] | true
+ [null] | true   | [null]  | true   | [null]
+ [null] | false  | false   | [null] | [null]
+ [null] | [null] | [null]  | [null] | [null]
+(9 rows)
+
+         predicate         | rows_kept 
+---------------------------+-----------
+ value = NULL              |         0
+ value <> NULL             |         0
+ value IS NULL             |         1
+ value IS NOT NULL         |         2
+ value IS DISTINCT FROM 10 |         2
+(5 rows)
+

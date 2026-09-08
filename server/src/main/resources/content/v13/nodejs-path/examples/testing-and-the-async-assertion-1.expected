@@ -1,0 +1,12 @@
+runner that ignores the return value:
+  ok   synchronous, correct
+  FAIL synchronous, wrong
+  ok   asynchronous, wrong
+  failures reported: 1
+runner that awaits the return value:
+  ok   synchronous, correct
+  FAIL synchronous, wrong
+  FAIL asynchronous, wrong
+  failures reported: 2
+assertion failures the broken runner let escape: 1
+the escaped failure was: ERR_ASSERTION: 5 strictEqual 6

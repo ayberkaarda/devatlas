@@ -1,0 +1,33 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070101",
+  "title": "A model is the schema",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/db/models/",
+    "https://docs.djangoproject.com/en/6.1/ref/models/fields/",
+    "https://docs.djangoproject.com/en/6.1/ref/models/constraints/",
+    "https://docs.djangoproject.com/en/6.1/ref/models/instances/"
+  ],
+  "concepts": [
+    "field to column mapping",
+    "database constraints"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "Fields, columns, and the database asked whether it agrees",
+      "file": "a-model-is-the-schema-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "What save() skips and full_clean() catches",
+      "file": "a-model-is-the-schema-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "Constraints tested from both sides",
+      "file": "a-model-is-the-schema-3.py"
+    }
+  ]
+}

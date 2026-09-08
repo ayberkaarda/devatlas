@@ -1,0 +1,6 @@
+inline value, Object.is holds: false
+inline value, consumers re-rendered: ThemeToggle, Avatar
+stable value, Object.is holds: true
+stable value, consumers re-rendered: 0
+value actually changed, consumers re-rendered: ThemeToggle, Avatar
+memo kept Avatar out of that list: false

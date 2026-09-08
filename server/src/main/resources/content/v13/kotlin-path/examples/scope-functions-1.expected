@@ -1,0 +1,6 @@
+apply returns: Server(host=example.invalid, port=8080)
+also saw port 8080
+also returned the same object: true
+run returns: https://example.invalid:8080
+let returns: 15
+with returns: example.invalid/8080

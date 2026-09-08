@@ -1,0 +1,10 @@
+invoice rate
+Error: Class "Billing\Refund" not found
+Error: Class "Shipping\Label" not found
+Billing\Invoice: loading src/Invoice.php
+Billing\Tax\Rate: loading src/Tax/Rate.php
+Billing\Refund: no file at src/Refund.php
+Shipping\Label: not mine
+string(7) "Invoice"
+string(7) "Billing"
+bool(false)

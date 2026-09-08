@@ -1,0 +1,11 @@
+import() produced a promise: true
+named export: module scope
+default export: the default export
+namespace tag: Module
+namespace is sealed: true
+exported names: counter, default, increment, label
+counter before increment: 0
+counter after increment: 1
+destructured copy after a further increment: 1
+namespace after the same increment: 2
+assigning to a namespace property throws: TypeError

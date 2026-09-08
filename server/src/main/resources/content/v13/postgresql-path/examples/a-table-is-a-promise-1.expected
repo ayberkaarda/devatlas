@@ -1,0 +1,14 @@
+psql:<stdin>:22: ERROR:  new row for relation "account" violates check constraint "ck_account_email_lowercase"
+DETAIL:  Failing row contains (22222222-2222-4222-8222-222222222222, Ada@example.com, USER, en).
+psql:<stdin>:26: ERROR:  duplicate key value violates unique constraint "uq_account_email"
+DETAIL:  Key (email)=(ada@example.com) already exists.
+psql:<stdin>:30: ERROR:  new row for relation "account" violates check constraint "ck_account_role"
+DETAIL:  Failing row contains (44444444-4444-4444-8444-444444444444, grace@example.com, ROOT, en).
+psql:<stdin>:34: ERROR:  null value in column "email" of relation "account" violates not-null constraint
+DETAIL:  Failing row contains (55555555-5555-4555-8555-555555555555, null, USER, en).
+psql:<stdin>:38: ERROR:  value too long for type character varying(2)
+      email      | role  | locale 
+-----------------+-------+--------
+ ada@example.com | ADMIN | en
+(1 row)
+

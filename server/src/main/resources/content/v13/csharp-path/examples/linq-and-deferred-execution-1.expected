@@ -1,0 +1,14 @@
+predicate calls after building the query: 0
+predicate calls after one enumeration:    6
+result:                                   2,4,6
+predicate calls after two enumerations:   12
+same answer both times:                   True
+count:                                    3
+any:                                      True
+predicate calls for Count, Any, foreach:  14
+predicate calls for ToList:               6
+count:                                    3
+any:                                      True
+predicate calls after using it thrice:    6
+predicate calls for Any on the source:    2
+predicate calls for Count on the source:  6

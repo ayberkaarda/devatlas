@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060301",
+  "title": "Data classes and the shape of your data",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.python.org/3.13/library/dataclasses.html",
+    "https://docs.python.org/3.13/reference/datamodel.html#slots",
+    "https://docs.python.org/3.13/reference/datamodel.html#object.__hash__"
+  ],
+  "concepts": ["declared shape", "value equality"],
+  "code_examples": [
+    { "language": "python", "caption": "The typo a dictionary keeps", "file": "dataclasses-and-your-data-1.py" },
+    { "language": "python", "caption": "Frozen, ordered, and without a per-instance dictionary", "file": "dataclasses-and-your-data-2.py" },
+    { "language": "python", "caption": "Defaults built per instance", "file": "dataclasses-and-your-data-3.py" }
+  ]
+}

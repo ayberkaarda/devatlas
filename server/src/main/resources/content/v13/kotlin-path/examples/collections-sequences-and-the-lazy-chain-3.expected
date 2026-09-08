@@ -1,0 +1,10 @@
+first pass over an iterator-backed sequence: [1, 2, 3]
+second pass threw IllegalStateException: true
+collection-backed, first pass:  [1, 2, 3]
+collection-backed, second pass: [1, 2, 3]
+eager: [alpha, bravo, delta]
+lazy:  [alpha, bravo, delta]
+first after sorting: alpha
+elements visited to produce it: 4 of 4
+first match without sorting: alpha
+elements visited to produce it: 2 of 4

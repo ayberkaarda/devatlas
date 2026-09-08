@@ -1,0 +1,8 @@
+moved-from unique_ptr is empty: true
+the value travelled: 5
+moved-to balance: 100
+moved-from balance, as documented: 0
+moved-to string size: 15
+usable again after assignment: size=23
+moved-to vector size: 3
+reusable after clear: size=1 front=9

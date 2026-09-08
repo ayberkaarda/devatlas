@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000090203",
+  "title": "Blocking the loop",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://nodejs.org/docs/v22.23.2/api/crypto.html",
+    "https://nodejs.org/docs/v22.23.2/api/worker_threads.html",
+    "https://nodejs.org/docs/v22.23.2/api/perf_hooks.html"
+  ],
+  "concepts": [
+    "thread pool",
+    "worker threads"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "One long run against chunks",
+      "file": "blocking-the-loop-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The same derivation, on and off the thread pool",
+      "file": "blocking-the-loop-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Moving the work to a worker thread",
+      "file": "blocking-the-loop-3.js"
+    }
+  ]
+}

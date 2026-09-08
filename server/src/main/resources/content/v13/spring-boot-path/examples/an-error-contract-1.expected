@@ -1,0 +1,4 @@
+200 ok
+404 {"code":"TRACK_NOT_FOUND","message":"No track with that slug.","fields":[]}
+400 {"code":"VALIDATION_FAILED","message":"Request validation failed for 1 field(s).","fields":["trackSlug:NotBlank"]}
+500 {"code":"INTERNAL_ERROR","message":"An internal error occurred.","fields":[]}

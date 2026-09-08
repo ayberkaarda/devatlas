@@ -1,0 +1,5 @@
+state changes in Feed, components rendered: Feed, Post, Comments, Sidebar
+state changes in App, components rendered: App, Header, Logo, Nav, Feed, Post, Comments, Sidebar
+state changes in Nav, components rendered: Nav
+components rendered in that update: 3
+DOM nodes the commit had to touch: 1 (Post)

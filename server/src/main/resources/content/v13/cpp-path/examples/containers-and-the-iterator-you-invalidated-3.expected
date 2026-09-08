@@ -1,0 +1,4 @@
+map, in key order: alpha bravo charlie delta
+unordered_map size=4 total=100 every key found=true
+stable_sort by group: ada grace alan edsger
+equal keys kept their original relative order: true

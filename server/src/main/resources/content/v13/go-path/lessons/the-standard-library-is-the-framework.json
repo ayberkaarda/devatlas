@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120302",
+  "title": "The standard library is the framework",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://pkg.go.dev/net/http@go1.27.0",
+    "https://pkg.go.dev/net/http@go1.27.0#ServeMux",
+    "https://pkg.go.dev/encoding/json@go1.27.0",
+    "https://pkg.go.dev/context@go1.27.0"
+  ],
+  "concepts": ["http.Handler", "middleware as a wrapper"],
+  "code_examples": [
+    { "language": "go", "caption": "Routing with method and wildcard patterns", "file": "the-standard-library-is-the-framework-1.go" },
+    { "language": "go", "caption": "JSON in, JSON out, one error shape", "file": "the-standard-library-is-the-framework-2.go" },
+    { "language": "go", "caption": "Middleware, context and cancellation", "file": "the-standard-library-is-the-framework-3.go" }
+  ]
+}

@@ -1,0 +1,12 @@
+scope's own context, first:    'ada'
+scope's own context, second:   'grace'
+cache saw in the first scope:  '(unset)'
+cache saw in the second scope: '(unset)'
+cache reported the same value both times: True
+RequestContext instances created: 3
+resolving the singleton with ValidateScopes: InvalidOperationException
+resolving a scoped service from the root:    InvalidOperationException
+resolving it inside a scope:                 no exception
+building with ValidateOnBuild:               AggregateException
+factory-based cache, first scope:  'ada'
+factory-based cache, second scope: 'grace'

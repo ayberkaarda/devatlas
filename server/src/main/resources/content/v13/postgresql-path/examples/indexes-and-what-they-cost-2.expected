@@ -1,0 +1,45 @@
+ datcollate 
+------------
+ en_US.utf8
+(1 row)
+
+                      QUERY PLAN                      
+------------------------------------------------------
+ Index Scan using ix_account_email on account
+   Index Cond: (email = 'User4242@example.com'::text)
+(2 rows)
+
+                       QUERY PLAN                        
+---------------------------------------------------------
+ Seq Scan on account
+   Filter: (lower(email) = 'user4242@example.com'::text)
+(2 rows)
+
+                         QUERY PLAN                          
+-------------------------------------------------------------
+ Index Scan using ix_account_email_lower on account
+   Index Cond: (lower(email) = 'user4242@example.com'::text)
+(2 rows)
+
+                  QUERY PLAN                  
+----------------------------------------------
+ Aggregate
+   ->  Seq Scan on account
+         Filter: (email ~~ 'User4242%'::text)
+(3 rows)
+
+                                      QUERY PLAN                                      
+--------------------------------------------------------------------------------------
+ Aggregate
+   ->  Index Only Scan using ix_account_email_pattern on account
+         Index Cond: ((email ~>=~ 'User4242'::text) AND (email ~<~ 'User4243'::text))
+         Filter: (email ~~ 'User4242%'::text)
+(4 rows)
+
+                     QUERY PLAN                     
+----------------------------------------------------
+ Aggregate
+   ->  Seq Scan on account
+         Filter: (email ~~ '%42@example.com'::text)
+(3 rows)
+

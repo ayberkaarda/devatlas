@@ -1,0 +1,73 @@
+ second_session 
+----------------
+ OK
+(1 row)
+
+ this_session_sees_on_call 
+---------------------------
+                         2
+(1 row)
+
+ other_begins 
+--------------
+ BEGIN
+(1 row)
+
+ other_sees_on_call 
+--------------------
+                  2
+(1 row)
+
+ other_stands_down 
+-------------------
+ UPDATE 1
+(1 row)
+
+ other_commits 
+---------------
+ COMMIT
+(1 row)
+
+ doctors_left_on_call 
+----------------------
+                    0
+(1 row)
+
+ this_session_sees_on_call 
+---------------------------
+                         2
+(1 row)
+
+ other_begins 
+--------------
+ BEGIN
+(1 row)
+
+ other_sees_on_call 
+--------------------
+                  2
+(1 row)
+
+ other_stands_down 
+-------------------
+ UPDATE 1
+(1 row)
+
+ other_commits 
+---------------
+ COMMIT
+(1 row)
+
+psql:<stdin>:41: ERROR:  could not serialize access due to read/write dependencies among transactions
+DETAIL:  Reason code: Canceled on identification as a pivot, during write.
+HINT:  The transaction might succeed if retried.
+ doctors_left_on_call 
+----------------------
+                    1
+(1 row)
+
+ dblink_disconnect 
+-------------------
+ OK
+(1 row)
+

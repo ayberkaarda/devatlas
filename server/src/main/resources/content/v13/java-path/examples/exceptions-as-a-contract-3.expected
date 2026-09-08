@@ -1,0 +1,5 @@
+swallowing returned : -1
+  finally ran either way
+propagated          : this does reach the caller
+cause discarded     : null
+cause kept          : NumberFormatException: For input string: "x"

@@ -1,0 +1,4 @@
+the declaration compiles: true
+runtime failure: ReferenceError: BUILD_ID is not defined
+declared string, actually a number
+runtime failure: stamp.toUpperCase is not a function

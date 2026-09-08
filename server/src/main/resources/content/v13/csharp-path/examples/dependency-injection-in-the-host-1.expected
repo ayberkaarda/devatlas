@@ -1,0 +1,10 @@
+singleton, same scope, same instance: True
+scoped, same scope, same instance:    True
+transient, same scope, same instance: False
+singleton across scopes, same instance: True
+scoped across scopes, same instance:    False
+SingletonService constructed: 1
+ScopedService constructed:    3
+TransientService constructed: 2
+scoped instances disposed:    3
+singleton disposed so far:    0

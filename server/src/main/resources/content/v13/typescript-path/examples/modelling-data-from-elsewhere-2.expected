@@ -1,0 +1,5 @@
+ada has 1 role(s)
+rejected: id must be a string
+rejected: roles must be an array of strings
+rejected: roles must be an array of strings
+rejected: not JSON

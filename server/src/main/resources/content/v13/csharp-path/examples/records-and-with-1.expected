@@ -1,0 +1,13 @@
+same values are Equal:   True
+same values compare ==:  True
+but are distinct objects: False
+different values:        False
+equal values, equal hash: True
+ToString:                Money { Amount = 12.50, Currency = EUR }
+deconstructed:           12.50 EUR
+pattern matched:         12.50 in EUR
+pattern matched:         nothing in EUR
+with produced:           Money { Amount = 20, Currency = EUR }
+original unchanged:      Money { Amount = 12.50, Currency = EUR }
+with on all-same values is still a new object: False
+...but an equal one:     True

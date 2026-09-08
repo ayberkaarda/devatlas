@@ -1,0 +1,25 @@
+{
+  "id": "019205a0-3000-7000-8000-000000000001",
+  "title": "Signals, and why the framework stopped guessing",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 15,
+  "sources": ["https://angular.dev/guide/signals", "https://angular.dev/api/core/signal"],
+  "concepts": ["signal", "dependency tracking"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "The problem without signals: a stale copy and a missing notification",
+      "file": "signals-and-reactivity-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A store built from a writable signal and a read-only view",
+      "file": "signals-and-reactivity-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A component that reads the store and holds nothing",
+      "file": "signals-and-reactivity-3.ts"
+    }
+  ]
+}

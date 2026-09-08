@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140303",
+  "title": "Interoperating with Java",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://kotlinlang.org/docs/java-interop.html",
+    "https://kotlinlang.org/docs/java-to-kotlin-interop.html",
+    "https://kotlinlang.org/docs/fun-interfaces.html",
+    "https://kotlinlang.org/docs/exceptions.html"
+  ],
+  "concepts": ["platform type", "mapped type"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "A platform type beside a mapped one", "file": "interoperating-with-java-1.kt" },
+    { "language": "kotlin", "caption": "Single-method interfaces and the JVM annotations", "file": "interoperating-with-java-2.kt" },
+    { "language": "kotlin", "caption": "Declared exceptions, and read-only that is not immutable", "file": "interoperating-with-java-3.kt" }
+  ]
+}

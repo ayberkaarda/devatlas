@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070203",
+  "title": "Migrations that are safe to run twice",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/migrations/",
+    "https://docs.djangoproject.com/en/6.1/howto/writing-migrations/",
+    "https://docs.djangoproject.com/en/6.1/ref/migration-operations/"
+  ],
+  "concepts": [
+    "the migration ledger",
+    "idempotent data migrations"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "The ledger, and what deleting a row from it does",
+      "file": "migrations-that-are-safe-to-run-twice-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "A data migration that is not safe to re-apply, beside one that is",
+      "file": "migrations-that-are-safe-to-run-twice-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "The same migration on an empty table and on a populated one",
+      "file": "migrations-that-are-safe-to-run-twice-3.py"
+    }
+  ]
+}

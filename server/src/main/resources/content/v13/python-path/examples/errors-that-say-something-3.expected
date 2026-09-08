@@ -1,0 +1,18 @@
+good input: 8080
+read_port:
+  message:             port must be a whole number, got 'eight thousand'
+  __cause__:           ValueError
+  __context__:         ValueError
+  __suppress_context__: True
+read_port_losing_cause:
+  message:             port must be a whole number, got 'eight thousand'
+  __cause__:           none
+  __context__:         ValueError
+  __suppress_context__: True
+read_port_implicit:
+  message:             port must be a whole number, got 'eight thousand'
+  __cause__:           none
+  __context__:         ValueError
+  __suppress_context__: False
+the original text is still reachable: invalid literal for int() with base 10: 'nope'
+and its type is: ValueError

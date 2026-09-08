@@ -1,0 +1,5 @@
+maxAttempts: 5
+retryDelay seconds: 2
+mirrors: [eu-west, eu-north]
+userAgent (defaulted): bytelore
+record is immutable: true

@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060303",
+  "title": "Testing, and the fixture that made your test pass for the wrong reason",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.python.org/3.13/library/unittest.html",
+    "https://docs.python.org/3.13/library/unittest.html#organizing-test-code",
+    "https://docs.python.org/3.13/library/unittest.mock.html"
+  ],
+  "concepts": ["test isolation", "assertion strength"],
+  "code_examples": [
+    { "language": "python", "caption": "A fixture shared by the class", "file": "testing-and-the-lying-fixture-1.py" },
+    { "language": "python", "caption": "A fresh fixture, and order independence", "file": "testing-and-the-lying-fixture-2.py" },
+    { "language": "python", "caption": "Assertions that cannot fail", "file": "testing-and-the-lying-fixture-3.py" }
+  ]
+}

@@ -1,0 +1,9 @@
+float(4)
+string(5) "int#7"
+string(5) "str#7"
+string(6) "(none)"
+string(5) "hello"
+float(9)
+TypeError: halve(): Argument #1 ($count) must be of type int, string given
+TypeError: halve(): Argument #1 ($count) must be of type int, float given
+TypeError: label(): Argument #1 ($id) must be of type string|int, null given

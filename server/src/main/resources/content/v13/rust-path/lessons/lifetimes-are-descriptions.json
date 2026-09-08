@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000080103",
+  "title": "Lifetimes are descriptions, not instructions",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://doc.rust-lang.org/1.98.0/book/ch10-03-lifetime-syntax.html",
+    "https://doc.rust-lang.org/1.98.0/reference/lifetime-elision.html",
+    "https://doc.rust-lang.org/1.98.0/reference/subtyping.html"
+  ],
+  "concepts": ["lifetime parameters", "lifetime elision"],
+  "code_examples": [
+    { "language": "rust", "caption": "One shared lifetime, and two independent ones", "file": "lifetimes-are-descriptions-1.rs" },
+    { "language": "rust", "caption": "A struct that borrows, and two output regions", "file": "lifetimes-are-descriptions-2.rs" },
+    { "language": "rust", "caption": "Which input the result is tied to", "file": "lifetimes-are-descriptions-3.rs" }
+  ]
+}

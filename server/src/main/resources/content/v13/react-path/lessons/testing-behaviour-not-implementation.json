@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100303",
+  "title": "Testing behaviour, not implementation",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://react.dev/reference/react/act",
+    "https://react.dev/blog/2024/04/25/react-19-upgrade-guide",
+    "https://react.dev/warnings/react-dom-test-utils"
+  ],
+  "concepts": ["behavioural queries", "flushing updates"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Two queries over the same refactor: role and name, class, and position",
+      "file": "testing-behaviour-not-implementation-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The flush boundary, and the assertion that passed for the wrong reason",
+      "file": "testing-behaviour-not-implementation-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "A React 19 test with act and createRoot, written but not executed",
+      "file": "testing-behaviour-not-implementation-3.js"
+    }
+  ]
+}

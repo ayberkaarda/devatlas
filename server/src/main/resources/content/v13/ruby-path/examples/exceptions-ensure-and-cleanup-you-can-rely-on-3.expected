@@ -1,0 +1,17 @@
+  retrying after: connection refused (attempt 1)
+  retrying after: connection refused (attempt 2)
+value          -> "payload"
+attempts       -> 3
+opened/closed  -> 1/1
+
+caller saw     -> KeyError: no such record
+opened/closed  -> 1/1
+
+  retrying after: connection refused (attempt 1)
+  retrying after: connection refused (attempt 2)
+gave up after  -> 3 attempts
+final          -> FlakyConnection::Refused: connection refused (attempt 3)
+opened/closed  -> 0/0
+
+caller saw     -> ArgumentError: the cleanup problem
+original       -> IOError: the real problem

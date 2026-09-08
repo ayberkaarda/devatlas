@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150301",
+  "title": "Autoloading, and where a class comes from",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://www.php.net/manual/en/function.spl-autoload-register.php",
+    "https://www.php.net/manual/en/language.oop5.autoload.php",
+    "https://www.php.net/manual/en/language.namespaces.rules.php"
+  ],
+  "concepts": ["autoloading", "namespace resolution"],
+  "code_examples": [
+    { "language": "php", "caption": "The callback chain and what triggers it", "file": "autoloading-and-where-a-class-comes-from-1.php" },
+    { "language": "php", "caption": "A PSR-4 style autoloader over a real directory", "file": "autoloading-and-where-a-class-comes-from-2.php" },
+    { "language": "php", "caption": "Name resolution and the two fallbacks", "file": "autoloading-and-where-a-class-comes-from-3.php" }
+  ]
+}

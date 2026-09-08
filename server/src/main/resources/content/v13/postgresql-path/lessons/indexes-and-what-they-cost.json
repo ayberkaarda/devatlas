@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050201",
+  "title": "Indexes, and what they cost",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://www.postgresql.org/docs/16/indexes-types.html",
+    "https://www.postgresql.org/docs/16/indexes-multicolumn.html",
+    "https://www.postgresql.org/docs/16/indexes-expressional.html",
+    "https://www.postgresql.org/docs/16/indexes-opclass.html"
+  ],
+  "concepts": ["B-tree indexes", "selectivity"],
+  "code_examples": [
+    { "language": "sql", "caption": "The same query with an index and without", "file": "indexes-and-what-they-cost-1.sql" },
+    { "language": "sql", "caption": "Expressions, prefixes, and what no B-tree can do", "file": "indexes-and-what-they-cost-2.sql" },
+    { "language": "sql", "caption": "Column order, and the index nobody has used", "file": "indexes-and-what-they-cost-3.sql" }
+  ]
+}

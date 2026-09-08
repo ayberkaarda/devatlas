@@ -1,0 +1,6 @@
+found lesson-a with a known size: true
+size in KiB: Some(2)
+size of an entry whose size is unknown: None
+bytes or a default: 0
+as a Result: Err("ENTITY_NOT_IN_LIBRARY")
+lesson-b is present but unsized: true

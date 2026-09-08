@@ -1,0 +1,35 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160203",
+  "title": "Symbols and strings: two ways to name a thing",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/Symbol.html",
+    "https://ruby-doc.org/3.4.1/String.html",
+    "https://ruby-doc.org/3.4.1/Hash.html",
+    "https://ruby-doc.org/3.4.1/syntax/literals_rdoc.html",
+    "https://ruby-doc.org/3.4.1/syntax/comments_rdoc.html",
+    "https://ruby-doc.org/3.4.1/FrozenError.html"
+  ],
+  "concepts": [
+    "symbols",
+    "frozen objects"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "Identity, frozen-ness, and the shared interface",
+      "file": "symbols-and-strings-two-ways-to-name-a-thing-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "Hash keys, the string-keyed boundary, and insertion order",
+      "file": "symbols-and-strings-two-ways-to-name-a-thing-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "freeze, +str and -str, and the shared mutable constant",
+      "file": "symbols-and-strings-two-ways-to-name-a-thing-3.rb"
+    }
+  ]
+}

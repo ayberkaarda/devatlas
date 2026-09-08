@@ -1,0 +1,6 @@
+normalised : Money[currency=EUR, minorUnits=250]
+sum        : Money[currency=EUR, minorUnits=375]
+equal      : true
+rejected   : currency must be three letters, was: EURO
+rejected   : minorUnits must not be negative, was: -1
+rejected   : cannot add USD to EUR

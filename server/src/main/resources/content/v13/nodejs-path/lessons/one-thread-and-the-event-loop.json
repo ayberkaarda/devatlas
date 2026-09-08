@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000090101",
+  "title": "One thread, and why that is not a limitation",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://nodejs.org/docs/v22.23.2/api/process.html",
+    "https://nodejs.org/docs/v22.23.2/api/timers.html",
+    "https://nodejs.org/docs/v22.23.2/api/globals.html"
+  ],
+  "concepts": [
+    "event loop phases",
+    "microtask queue"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "The order the runtime guarantees",
+      "file": "one-thread-and-the-event-loop-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Ordering that is specified, and ordering that is not",
+      "file": "one-thread-and-the-event-loop-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Nothing interleaves with synchronous code",
+      "file": "one-thread-and-the-event-loop-3.js"
+    }
+  ]
+}

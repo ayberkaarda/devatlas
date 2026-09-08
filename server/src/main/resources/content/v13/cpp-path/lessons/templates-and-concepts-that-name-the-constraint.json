@@ -1,0 +1,19 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170302",
+  "title": "Templates and concepts",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 14,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/language/constraints",
+    "https://en.cppreference.com/w/cpp/concepts",
+    "https://en.cppreference.com/w/cpp/language/function_template",
+    "https://en.cppreference.com/w/cpp/language/if",
+    "https://en.cppreference.com/w/cpp/language/fold"
+  ],
+  "concepts": ["constrained templates", "compile-time branching"],
+  "code_examples": [
+    { "language": "cpp", "caption": "A constraint at the declaration, checked at the call", "file": "templates-and-concepts-that-name-the-constraint-1.cpp" },
+    { "language": "cpp", "caption": "A concept is a named, printable predicate", "file": "templates-and-concepts-that-name-the-constraint-2.cpp" },
+    { "language": "cpp", "caption": "The more constrained overload wins", "file": "templates-and-concepts-that-name-the-constraint-3.cpp" }
+  ]
+}

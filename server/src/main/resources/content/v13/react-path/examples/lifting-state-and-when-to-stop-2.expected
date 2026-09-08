@@ -1,0 +1,8 @@
+uncontrolled: panel open: true
+uncontrolled: parent can close it: false
+controlled: About open: true
+controlled: after Etymology asked, the parent holds: Etymology
+controlled: About open now: false
+controlled: parent could close it: true
+props an uncontrolled panel needs: 1
+props a controlled panel needs: 3

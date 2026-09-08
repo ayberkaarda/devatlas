@@ -1,0 +1,8 @@
+destructured CommonJS copy: 0
+property read through the module object: 1
+default is the module.exports object: true
+named exports detected: counter, default, increment
+dynamic module exported names: default
+its value is reachable through default: built at run time
+require of an .mjs file returned a namespace: Module
+its named export: hello from an ES module

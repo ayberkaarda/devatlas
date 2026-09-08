@@ -1,0 +1,6 @@
+correct async test passed: true
+wrong async test, promise returned to the runner, passed: false
+the report contained a failure line: true
+assertion thrown after the test ended, run passed: false
+assertion that never ran, run passed: true
+the same test with a declared plan, run passed: false

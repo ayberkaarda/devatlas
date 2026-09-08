@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000005",
+  "slug": "postgresql-path",
+  "title": "The PostgreSQL Path",
+  "description": "What the database refuses, what it stores, and how it answers: constraints, keys, unknowns, indexes, plans, isolation, joins and migrations. Teaches PostgreSQL 16.",
+  "icon": null,
+  "order": 5,
+  "teaches_version": "PostgreSQL 16",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000501",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 27,
+      "lessons": [
+        "a-table-is-a-promise",
+        "keys",
+        "null-is-not-a-value"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000502",
+      "title": "How the database thinks",
+      "order": 1,
+      "estimated_minutes": 33,
+      "lessons": [
+        "indexes-and-what-they-cost",
+        "reading-a-query-plan",
+        "transactions-and-isolation"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000503",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 34,
+      "lessons": [
+        "joins-that-mean-what-you-meant",
+        "aggregation-and-window-functions",
+        "migrations"
+      ]
+    }
+  ]
+}

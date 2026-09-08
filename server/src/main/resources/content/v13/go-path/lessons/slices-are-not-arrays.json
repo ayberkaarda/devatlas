@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120102",
+  "title": "Slices are not arrays",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://go.dev/ref/spec#Slice_expressions",
+    "https://go.dev/ref/spec#Appending_and_copying_slices",
+    "https://go.dev/ref/spec#For_statements"
+  ],
+  "concepts": ["slice header", "backing array aliasing"],
+  "code_examples": [
+    { "language": "go", "caption": "An array is a value, a slice is a header", "file": "slices-are-not-arrays-1.go" },
+    { "language": "go", "caption": "Sharing, append and the three-index form", "file": "slices-are-not-arrays-2.go" },
+    { "language": "go", "caption": "Range copies the element", "file": "slices-are-not-arrays-3.go" }
+  ]
+}

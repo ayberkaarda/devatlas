@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000090102",
+  "title": "Callbacks, promises, async/await",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://nodejs.org/docs/v22.23.2/api/util.html",
+    "https://nodejs.org/docs/v22.23.2/api/process.html",
+    "https://nodejs.org/docs/v22.23.2/api/cli.html"
+  ],
+  "concepts": [
+    "error-first callbacks",
+    "promise composition"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "One operation, three notations",
+      "file": "callbacks-promises-async-await-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Where an error goes in each notation",
+      "file": "callbacks-promises-async-await-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Sequential against concurrent",
+      "file": "callbacks-promises-async-await-3.js"
+    }
+  ]
+}

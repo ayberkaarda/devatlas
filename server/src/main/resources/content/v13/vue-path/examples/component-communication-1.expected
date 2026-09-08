@@ -1,0 +1,8 @@
+first render:  <button>Apples: 0</button>
+parent state:  0
+after the child emitted, parent state: 1
+the parent applied the change itself: true
+second render: <button>Apples: 1</button>
+third render:  <button>Apples: 3</button>
+the child never held the count: true
+every change went through the parent: true

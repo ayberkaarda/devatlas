@@ -1,0 +1,34 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160102",
+  "title": "Blocks: the argument that is a piece of code",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/syntax/methods_rdoc.html",
+    "https://ruby-doc.org/3.4.1/syntax/calling_methods_rdoc.html",
+    "https://ruby-doc.org/3.4.1/Proc.html",
+    "https://ruby-doc.org/3.4.1/Enumerator.html",
+    "https://ruby-doc.org/3.4.1/LocalJumpError.html"
+  ],
+  "concepts": [
+    "blocks",
+    "procs and lambdas"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "yield, block_given?, and the three one-argument spellings",
+      "file": "blocks-the-argument-that-is-code-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "Capturing a block, and proc against lambda",
+      "file": "blocks-the-argument-that-is-code-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "A method that lends a resource and takes it back",
+      "file": "blocks-the-argument-that-is-code-3.rb"
+    }
+  ]
+}

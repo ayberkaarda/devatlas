@@ -1,0 +1,5 @@
+constructor cycle refused: UnsatisfiedDependencyException
+  root cause: BeanCurrentlyInCreationException
+field cycle: started
+  catalogue sees pricing: true
+  pricing sees catalogue: true

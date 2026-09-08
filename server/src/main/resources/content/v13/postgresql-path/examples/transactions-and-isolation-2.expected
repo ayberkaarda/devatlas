@@ -1,0 +1,52 @@
+ second_session 
+----------------
+ OK
+(1 row)
+
+ this_session_read 
+-------------------
+            100.00
+(1 row)
+
+ other_withdrew_50 
+-------------------
+ UPDATE 1
+(1 row)
+
+ after_two_withdrawals_of_50_and_30 
+------------------------------------
+                              70.00
+(1 row)
+
+ this_session_read 
+-------------------
+            100.00
+(1 row)
+
+ other_withdrew_50 
+-------------------
+ UPDATE 1
+(1 row)
+
+ after_two_withdrawals_of_50_and_30 
+------------------------------------
+                              20.00
+(1 row)
+
+ locked_read 
+-------------
+      100.00
+(1 row)
+
+psql:<stdin>:52: ERROR:  could not obtain lock on row in relation "balance"
+CONTEXT:  while executing command on dblink connection named "other"
+ after_one_withdrawal_of_30 
+----------------------------
+                      70.00
+(1 row)
+
+ dblink_disconnect 
+-------------------
+ OK
+(1 row)
+

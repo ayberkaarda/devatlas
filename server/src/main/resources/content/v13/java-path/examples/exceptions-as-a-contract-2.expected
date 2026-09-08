@@ -1,0 +1,19 @@
+resources close in reverse order:
+  opened first
+  opened second
+  used first
+  used second
+  closing second
+  closing first
+a failure in the body wins; close failures are suppressed:
+  opened resource
+  used resource
+  closing resource
+caught     : IllegalArgumentException: the body failed
+suppressed : IllegalStateException: close failed for resource
+with no body failure, the close failure is thrown:
+  opened resource
+  used resource
+  closing resource
+caught     : IllegalStateException: close failed for resource
+suppressed count: 0

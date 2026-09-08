@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150302",
+  "title": "Handling a request safely",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://www.php.net/manual/en/function.filter-var.php",
+    "https://www.php.net/manual/en/function.htmlspecialchars.php",
+    "https://www.php.net/manual/en/pdo.prepared-statements.php"
+  ],
+  "concepts": ["input validation", "contextual escaping"],
+  "code_examples": [
+    { "language": "php", "caption": "Validating what arrived", "file": "handling-a-request-safely-1.php" },
+    { "language": "php", "caption": "Four destinations, four transformations", "file": "handling-a-request-safely-2.php" },
+    { "language": "php", "caption": "Concatenation against a prepared statement", "file": "handling-a-request-safely-3.php" }
+  ]
+}

@@ -1,0 +1,5 @@
+effect read a property that does not exist, runs: 1
+after the property was added, runs: 2
+after the property was deleted, runs: 3
+changing the property read after await woke the effect: false
+changing the property read before await woke the effect: true

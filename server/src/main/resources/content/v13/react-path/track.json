@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000010",
+  "slug": "react-path",
+  "title": "The React Path",
+  "description": "Rendering as a description of the screen, and the identity rules that decide what survives a render. Teaches React 19.",
+  "icon": null,
+  "order": 10,
+  "teaches_version": "React 19",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000001001",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 26,
+      "lessons": [
+        "a-component-is-a-function-of-its-props",
+        "state-and-why-you-do-not-mutate-it",
+        "lists-and-keys"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001002",
+      "title": "The rendering model",
+      "order": 1,
+      "estimated_minutes": 28,
+      "lessons": [
+        "when-a-component-re-renders",
+        "effects-are-an-escape-hatch",
+        "derived-state-is-a-smell"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001003",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 29,
+      "lessons": [
+        "lifting-state-and-when-to-stop",
+        "fetching-data",
+        "testing-behaviour-not-implementation"
+      ]
+    }
+  ]
+}

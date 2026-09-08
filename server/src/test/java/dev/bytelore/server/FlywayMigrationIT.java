@@ -41,7 +41,8 @@ class FlywayMigrationIT {
             String.class);
 
     assertThat(appliedVersions)
-        .containsExactly("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
+        .containsExactly(
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15");
   }
 
   @Test
@@ -169,6 +170,55 @@ class FlywayMigrationIT {
             jdbcTemplate.queryForObject(
                 "SELECT count(*) FROM users WHERE role = 'ADMIN'", Integer.class))
         .isGreaterThanOrEqualTo(1);
+  }
+
+  /**
+   * The retired sample lesson is hidden, not gone.
+   *
+   * <p>The sample seed made four Angular lessons and the authored track succeeds three of them; the
+   * fourth teaches a subject the track no longer covers, so a migration retires it. It is retired
+   * by setting {@code deleted_at} rather than by {@code DELETE}, because {@code user_progress}
+   * references lessons and a completion is a fact about a person's history that an editorial
+   * decision must not erase.
+   *
+   * <p>Both halves are asserted, because either one alone would pass for the wrong reason: a row
+   * that had been deleted outright would satisfy "not visible", and a row still visible would
+   * satisfy "still present". The retirement is only correct when it is both.
+   */
+  @Test
+  void theRetiredSampleLessonIsHiddenRatherThanRemoved() {
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+    Map<String, Object> lesson =
+        jdbcTemplate.queryForMap(
+            "SELECT slug, deleted_at FROM lessons WHERE id = '019205a0-3000-7000-8000-000000000003'");
+
+    assertThat(lesson.get("slug")).isEqualTo("route-configuration");
+    assertThat(lesson.get("deleted_at")).isNotNull();
+  }
+
+  /**
+   * The sample Angular track is not on the public surface.
+   *
+   * <p>It was seeded published, which was right while it held the four short lessons written to
+   * give the read endpoints something real to serve. The authored corpus replaced its content with
+   * nine lessons nobody has read, and a later migration withdrew it, because approval attaches to
+   * content rather than to a row.
+   *
+   * <p>This also happens to be the suite's only detector for a read test that publishes a track and
+   * forgets to put the flag back: two classes flip this row for the length of one test, and this
+   * assertion is what would notice one of them leaving it flipped.
+   */
+  @Test
+  void theRewrittenAngularTrackIsNotPublished() {
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+    Boolean published =
+        jdbcTemplate.queryForObject(
+            "SELECT published FROM tracks WHERE id = '019205a0-1000-7000-8000-000000000001'",
+            Boolean.class);
+
+    assertThat(published).isFalse();
   }
 
   /**

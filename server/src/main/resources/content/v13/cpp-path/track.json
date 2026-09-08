@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000017",
+  "slug": "cpp-path",
+  "title": "The Modern C++ Path",
+  "description": "Values, references and lifetime first, then RAII, smart pointers and moves, then containers, concepts and the undefined behaviour a sanitizer catches.",
+  "icon": null,
+  "order": 17,
+  "teaches_version": "C++23",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000001701",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 32,
+      "lessons": [
+        "values-references-and-what-a-copy-costs",
+        "const-means-two-different-things",
+        "lifetime-and-the-dangling-reference"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001702",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 37,
+      "lessons": [
+        "raii-ownership-as-a-destructor",
+        "smart-pointers-and-the-cycle-that-never-freed",
+        "move-semantics-and-the-moved-from-state"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001703",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 41,
+      "lessons": [
+        "containers-and-the-iterator-you-invalidated",
+        "templates-and-concepts-that-name-the-constraint",
+        "undefined-behaviour-catalogued"
+      ]
+    }
+  ]
+}

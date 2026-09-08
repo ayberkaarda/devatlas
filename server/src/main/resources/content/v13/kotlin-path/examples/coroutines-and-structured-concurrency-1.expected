@@ -1,0 +1,4 @@
+awaitAll follows the argument order: [16, 1, 9, 4]
+all four children finished: true
+sum of what they produced: 10
+sequential result: 13

@@ -1,0 +1,13 @@
+permissions Django created for one model: ['add_invoice', 'approve_invoice', 'change_invoice', 'delete_invoice', 'view_invoice']
+a permission is a row: billing.approve_invoice
+before granting: False
+the row exists now: True
+the same instance still says: False
+a freshly loaded instance says: True
+the same codename without its app label: False
+through a group: True
+bob holds no permission of his own: True
+superuser holds a permission nobody defined: True
+anonymous holds nothing: False
+inactive user answers: False
+while the group membership is untouched: 1

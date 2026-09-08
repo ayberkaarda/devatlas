@@ -1,0 +1,34 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160202",
+  "title": "Method missing, and the price of magic",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/BasicObject.html",
+    "https://ruby-doc.org/3.4.1/Object.html",
+    "https://ruby-doc.org/3.4.1/Module.html",
+    "https://ruby-doc.org/3.4.1/NoMethodError.html",
+    "https://ruby-doc.org/3.4.1/NameError.html"
+  ],
+  "concepts": [
+    "metaprogramming",
+    "respond_to_missing?"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "Dynamic attributes, and what reflection gets wrong",
+      "file": "method-missing-and-the-price-of-magic-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "respond_to_missing?, and define_method as the alternative",
+      "file": "method-missing-and-the-price-of-magic-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "The missing super, the name that cannot be caught, and honest forwarding",
+      "file": "method-missing-and-the-price-of-magic-3.rb"
+    }
+  ]
+}

@@ -48,6 +48,13 @@ abstract class ContentApiTestSupport {
   protected static final String ADMIN_EMAIL = "admin@bytelore.test";
   protected static final String ADMIN_PASSWORD = "seed-admin-password-for-tests";
 
+  /**
+   * The track the sample seed migration inserts, addressed by the identifier that migration fixes
+   * as a literal so that every environment names the same row.
+   */
+  protected static final UUID SEED_TRACK_ID =
+      UUID.fromString("019205a0-1000-7000-8000-000000000001");
+
   @Autowired protected MockMvc mockMvc;
   @Autowired protected JsonMapper jsonMapper;
   @Autowired protected UserRepository users;
@@ -113,6 +120,37 @@ abstract class ContentApiTestSupport {
 
   protected String errorCode(MvcResult result) throws Exception {
     return json(result).path("code").asString();
+  }
+
+  /**
+   * Sets a track's published flag directly and answers with the value it replaced.
+   *
+   * <p>Publication is an editorial decision about content, recorded on the row and changed by
+   * migrations whenever a person decides a track is ready. A suite that reads the public endpoints
+   * needs a published track to read; it has no opinion about which content an editor chose to
+   * publish, and inheriting that choice is what makes an editorial decision able to turn a read
+   * test red. So the arrangement is written here, explicitly, instead of being taken from whatever
+   * the database happens to hold.
+   *
+   * <p>The flag is written through SQL rather than the administration API on purpose: the API
+   * requires an editor session and would bump the track's content version, and a read test that
+   * changed the version of the content it is about to read would be arranging more than it needs.
+   *
+   * <p>The previous value is returned so that the caller can put it back. The Testcontainer is
+   * shared across test classes through Spring's context cache, so a flag left flipped is a flag the
+   * next class inherits.
+   *
+   * @return the value the column held before this call
+   */
+  protected boolean setTrackPublished(UUID trackId, boolean published) {
+    JdbcTemplate jdbc = new JdbcTemplate(dataSource);
+    Boolean previous =
+        jdbc.queryForObject("SELECT published FROM tracks WHERE id = ?", Boolean.class, trackId);
+    if (previous == null) {
+      throw new IllegalStateException("No track exists with id " + trackId);
+    }
+    jdbc.update("UPDATE tracks SET published = ? WHERE id = ?", published, trackId);
+    return previous;
   }
 
   /** Deletes a track and everything beneath it, child-first, bypassing every business rule. */

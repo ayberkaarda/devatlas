@@ -1,0 +1,7 @@
+settling b
+settling a
+Promise.all results: ["value-of-a","value-of-b"]
+results are ordered by input, not by settling order: true
+allSettled statuses: fulfilled, rejected
+allSettled kept the reason: refused
+Promise.all outcome: rejected with refused

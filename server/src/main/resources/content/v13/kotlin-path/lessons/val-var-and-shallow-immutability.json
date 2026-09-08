@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140102",
+  "title": "val, var, and immutability that is not deep",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://kotlinlang.org/docs/properties.html",
+    "https://kotlinlang.org/docs/basic-syntax.html",
+    "https://kotlinlang.org/docs/collections-overview.html"
+  ],
+  "concepts": ["read-only binding", "defensive copy"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "The binding, the object, and the read-only view", "file": "val-var-and-shallow-immutability-1.kt" },
+    { "language": "kotlin", "caption": "Computed vals, compile-time constants and lateinit", "file": "val-var-and-shallow-immutability-2.kt" },
+    { "language": "kotlin", "caption": "How deep a defensive copy goes", "file": "val-var-and-shallow-immutability-3.kt" }
+  ]
+}

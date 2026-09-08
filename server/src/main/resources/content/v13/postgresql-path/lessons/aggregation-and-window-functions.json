@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050302",
+  "title": "Aggregation and window functions",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://www.postgresql.org/docs/16/tutorial-window.html",
+    "https://www.postgresql.org/docs/16/functions-window.html",
+    "https://www.postgresql.org/docs/16/functions-aggregate.html",
+    "https://www.postgresql.org/docs/16/queries-table-expressions.html"
+  ],
+  "concepts": ["window functions"],
+  "code_examples": [
+    { "language": "sql", "caption": "Grouping, its error, and WHERE against HAVING", "file": "aggregation-and-window-functions-1.sql" },
+    { "language": "sql", "caption": "A running total, and the frame that swallowed a tie", "file": "aggregation-and-window-functions-2.sql" },
+    { "language": "sql", "caption": "Three numberings of a tie, and filtering on one", "file": "aggregation-and-window-functions-3.sql" }
+  ]
+}

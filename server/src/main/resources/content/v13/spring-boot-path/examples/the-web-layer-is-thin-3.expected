@@ -1,0 +1,4 @@
+valid       : status=201 serviceCalls=1
+blank slug  : status=400 serviceCalls=1
+missing body: status=400 serviceCalls=1
+not json    : status=400 serviceCalls=1

@@ -1,0 +1,23 @@
+{
+  "id": "019205a0-3000-7000-8000-000000000008",
+  "title": "Change detection when nothing is zone-driven",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 16,
+  "sources": [
+    "https://angular.dev/guide/zoneless",
+    "https://angular.dev/best-practices/skipping-subtrees"
+  ],
+  "concepts": ["zoneless change detection", "OnPush"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "A plain field and a signal incremented in the same callback",
+      "file": "change-detection-without-zones-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A configuration that says nothing, and the explicit escape hatch",
+      "file": "change-detection-without-zones-2.ts"
+    }
+  ]
+}

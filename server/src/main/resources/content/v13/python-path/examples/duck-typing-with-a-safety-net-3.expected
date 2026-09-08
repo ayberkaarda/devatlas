@@ -1,0 +1,8 @@
+Socket satisfies Closeable: True
+Rock satisfies Closeable:   False
+Socket inherits from Closeable: False
+  socket closed
+without the check: AttributeError | 'Rock' object has no attribute 'close'
+Person satisfies Named: True
+Rock satisfies Named:   False
+Person's bases: ['Person', 'object']

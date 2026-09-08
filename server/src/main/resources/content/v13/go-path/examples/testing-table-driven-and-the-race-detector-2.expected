@@ -1,0 +1,13 @@
+shared fixture:
+  one line    got 1 want 1 -> pass
+  two lines   got 4 want 3 -> FAIL
+  empty cart  got 4 want 0 -> FAIL
+  cart ended up holding [a b]
+fresh fixture per case:
+  one line    got 1 want 1 -> pass
+  two lines   got 3 want 3 -> pass
+  empty cart  got 0 want 0 -> pass
+fresh fixture, cases reversed:
+  empty cart  got 0 want 0 -> pass
+  two lines   got 3 want 3 -> pass
+  one line    got 1 want 1 -> pass

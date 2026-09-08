@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000080203",
+  "title": "Pattern matching and exhaustiveness",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://doc.rust-lang.org/1.98.0/book/ch06-02-match.html",
+    "https://doc.rust-lang.org/1.98.0/reference/patterns.html",
+    "https://doc.rust-lang.org/1.98.0/edition-guide/rust-2024/let-chains.html",
+    "https://doc.rust-lang.org/1.98.0/edition-guide/rust-2024/temporary-if-let-scope.html"
+  ],
+  "concepts": ["exhaustiveness checking", "let chains"],
+  "code_examples": [
+    { "language": "rust", "caption": "An exhaustive match with guards and ranges", "file": "pattern-matching-and-exhaustiveness-1.rs" },
+    { "language": "rust", "caption": "Patterns outside match", "file": "pattern-matching-and-exhaustiveness-2.rs" },
+    { "language": "rust", "caption": "Let chains and the edition 2024 scope change", "file": "pattern-matching-and-exhaustiveness-3.rs" }
+  ]
+}

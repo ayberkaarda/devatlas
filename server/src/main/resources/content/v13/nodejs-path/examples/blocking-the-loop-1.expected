@@ -1,0 +1,5 @@
+blocking run: marker had run by the time the loop ended: false
+blocking run: a callback ran before the work finished: false
+chunked run: a callback ran before the work finished: true
+both runs computed the same answer: true
+checksum: 999353

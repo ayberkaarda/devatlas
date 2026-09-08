@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000090103",
+  "title": "Modules: ESM, CommonJS, and the interop",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://nodejs.org/docs/v22.23.2/api/modules.html",
+    "https://nodejs.org/docs/v22.23.2/api/esm.html"
+  ],
+  "concepts": [
+    "module wrapper",
+    "live bindings"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "The CommonJS wrapper",
+      "file": "modules-esm-and-commonjs-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "An ES module loaded from CommonJS",
+      "file": "modules-esm-and-commonjs-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The interop in both directions",
+      "file": "modules-esm-and-commonjs-3.js"
+    }
+  ]
+}

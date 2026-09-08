@@ -1,0 +1,17 @@
+posix separator: /
+win32 separator: "\\"
+posix join: data/logs/app.log
+win32 join: "data\\logs\\app.log"
+win32 join of a posix-looking segment: "data\\logs\\app.log"
+win32 normalise with a parent segment: "data\\app.log"
+win32 resolve: "C:\\app\\data\\x.txt"
+posix resolve: /app/data/x.txt
+win32 join with a rooted segment: "uploads\\etc\\hosts"
+win32 resolve with a rooted segment: "C:\\etc\\hosts"
+'notes.txt' stays inside: true
+'../../etc/passwd' stays inside: false
+'sub/notes.txt' stays inside: true
+basename: notes.txt
+extname: .txt
+win32 treats a leading slash as absolute: true
+win32 treats 'C:notes.txt' as absolute: false

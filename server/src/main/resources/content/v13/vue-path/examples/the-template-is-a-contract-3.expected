@@ -1,0 +1,6 @@
+interpolated, trusted:  <p>Vue 3.5 &amp; the template</p>
+interpolated, hostile:  <p>&lt;img src=x onerror=&quot;steal()&quot;&gt;</p>
+v-html, hostile:        <p><img src=x onerror="steal()"></p>
+interpolation produced a tag: false
+v-html produced a tag: true
+an ampersand survives interpolation as text: true

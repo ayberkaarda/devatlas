@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070201",
+  "title": "QuerySets are lazy",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/db/queries/",
+    "https://docs.djangoproject.com/en/6.1/ref/models/querysets/",
+    "https://docs.djangoproject.com/en/6.1/topics/db/optimization/"
+  ],
+  "concepts": [
+    "lazy evaluation",
+    "the result cache"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "Zero queries while building, one when asked",
+      "file": "querysets-are-lazy-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "The result cache, and what ignores it",
+      "file": "querysets-are-lazy-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "The same rows fetched twice, and instances counted",
+      "file": "querysets-are-lazy-3.py"
+    }
+  ]
+}

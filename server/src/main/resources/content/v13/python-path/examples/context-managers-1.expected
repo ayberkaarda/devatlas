@@ -1,0 +1,21 @@
+enter outer
+enter inner
+body of inner
+exit  inner | exception: none
+exit  outer | exception: none
+---
+enter outer
+enter inner
+exit  inner | exception: ValueError
+exit  outer | exception: ValueError
+caught outside both: something went wrong
+---
+enter swallower
+exit  swallower | exception: KeyError
+execution continued: __exit__ returned True
+---
+enter a
+enter b
+one with statement, two managers
+exit  b | exception: none
+exit  a | exception: none

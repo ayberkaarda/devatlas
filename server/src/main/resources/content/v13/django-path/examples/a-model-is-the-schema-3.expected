@@ -1,0 +1,7 @@
+duplicate code through the ORM: refused with IntegrityError
+zero seats through the ORM: refused with IntegrityError
+negative seats through raw SQL: refused with IntegrityError
+a legitimate row: accepted
+named check constraint present: True
+rows: 2
+codes: ['A1', 'D4']

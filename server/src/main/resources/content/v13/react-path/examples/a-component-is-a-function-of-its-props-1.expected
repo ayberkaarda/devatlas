@@ -1,0 +1,5 @@
+<section><h1>Hello, Taylor!</h1><p>Age 31</p></section>
+same props, same output: true
+each call built its own description: true
+default prop applied: <h1>Hello, Sam!</h1>
+props the child received: {"className":"card"}

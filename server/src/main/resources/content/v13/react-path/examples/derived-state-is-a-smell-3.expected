@@ -1,0 +1,4 @@
+without a cache, filterTodos ran: 3
+with a cache, filterTodos ran: 2
+result of the last render: Cheese
+with a cache and a rebuilt list, filterTodos ran: 3

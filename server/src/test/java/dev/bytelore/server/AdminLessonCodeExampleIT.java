@@ -292,7 +292,7 @@ class AdminLessonCodeExampleIT extends ContentApiTestSupport {
     assertThat(errorCode(rejected)).isEqualTo("UNSUPPORTED_LANGUAGE");
 
     CreateCodeExampleRequest create =
-        new CreateCodeExampleRequest("typescript", "const x = 1;", "caption", null);
+        new CreateCodeExampleRequest("cpp", "int main() { return 0; }", "caption", null);
     MvcResult created =
         mockMvc
             .perform(

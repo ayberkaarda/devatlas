@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050203",
+  "title": "Transactions and isolation",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://www.postgresql.org/docs/16/transaction-iso.html",
+    "https://www.postgresql.org/docs/16/mvcc-intro.html",
+    "https://www.postgresql.org/docs/16/explicit-locking.html",
+    "https://www.postgresql.org/docs/16/errcodes-appendix.html"
+  ],
+  "concepts": ["isolation levels", "serialization failures"],
+  "code_examples": [
+    { "language": "sql", "caption": "The same read, twice, at two isolation levels", "file": "transactions-and-isolation-1.sql" },
+    { "language": "sql", "caption": "The lost update, and two ways to stop it", "file": "transactions-and-isolation-2.sql" },
+    { "language": "sql", "caption": "The rule both sessions checked, and SQLSTATE 40001", "file": "transactions-and-isolation-3.sql" }
+  ]
+}

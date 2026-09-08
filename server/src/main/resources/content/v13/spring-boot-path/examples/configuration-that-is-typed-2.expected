@@ -1,0 +1,4 @@
+valid: started, accessTtlMinutes=15
+invalid: refused at startup by BindValidationException
+  accessTtlMinutes violates Min
+  jwtSecret violates NotBlank

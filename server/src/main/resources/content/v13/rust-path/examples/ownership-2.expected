@@ -1,0 +1,6 @@
+a Copy value is usable after the call: true
+clone compares equal to the original: true
+the moved value reported size: 4
+the clone outlived the move of the original: true
+capacity is unchanged by the move: true
+capacity is at least what was requested: true

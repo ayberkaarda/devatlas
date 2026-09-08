@@ -1,0 +1,4 @@
+final field, changed object : [a.example, b.example]
+final array, changed content: 3
+String returns a new object : HELLO / hello
+same object                 : false

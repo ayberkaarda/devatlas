@@ -1,0 +1,10 @@
+assert.throws refused an async call: ERR_ASSERTION
+awaited assert.rejects matched the error code
+awaited assert.rejects refused a resolving call: ERR_ASSERTION
+un-awaited assert.rejects returned without complaining
+assertion failures that escaped instead: 1
+escaped failure code: ERR_ASSERTION
+deepEqual matched the whole record
+equal on two distinct objects failed with: ERR_ASSERTION
+assertions run when the test waited: 1
+assertions run when the test did not wait: 0

@@ -1,0 +1,33 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160103",
+  "title": "Truthiness, and the two things that are false",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/syntax/control_expressions_rdoc.html",
+    "https://ruby-doc.org/3.4.1/NilClass.html",
+    "https://ruby-doc.org/3.4.1/Hash.html",
+    "https://ruby-doc.org/3.4.1/KeyError.html"
+  ],
+  "concepts": [
+    "truthiness",
+    "defaulting with fetch"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "The whole table of truthiness",
+      "file": "truthiness-nil-and-false-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "The || defaulting bug, and fetch as the repair",
+      "file": "truthiness-nil-and-false-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "nil?, safe navigation, and empty?",
+      "file": "truthiness-nil-and-false-3.rb"
+    }
+  ]
+}

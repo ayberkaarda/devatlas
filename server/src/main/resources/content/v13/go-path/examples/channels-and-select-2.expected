@@ -1,0 +1,8 @@
+len=3 cap=3
+buffer full, send skipped
+drained: a b c
+len=0 cap=3
+nothing buffered
+sum of 0..5 = 15
+semaphore of capacity 2 admitted 2 of 4
+unbuffered cap = 0

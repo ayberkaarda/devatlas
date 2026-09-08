@@ -1,0 +1,20 @@
+nickname nil?   -> true
+admin nil?      -> false
+nickname falsy  -> true
+admin falsy     -> true
+
+name&.upcase     -> "ADA"
+nickname&.upcase -> nil
+admin&.upcase    -> NoMethodError: undefined method 'upcase' for false
+
+submitted truthy -> true
+empty?           -> true
+chosen           -> "anonymous"
+
+role_for         -> nil
+used as boolean  -> no
+
+if with no else  -> nil
+unless           -> none
+nil == nil       -> true
+"" == nil        -> false

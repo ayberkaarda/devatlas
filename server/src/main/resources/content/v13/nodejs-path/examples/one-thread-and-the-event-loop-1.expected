@@ -1,0 +1,5 @@
+1 synchronous, first statement
+2 synchronous, last statement
+3 process.nextTick callback
+4 promise microtask
+5 timers phase: setTimeout callback

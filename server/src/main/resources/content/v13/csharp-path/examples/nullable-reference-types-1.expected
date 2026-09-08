@@ -1,0 +1,9 @@
+int? is a distinct type:    True
+int? unwraps to:            System.Int32
+string and string? report:  System.String and System.String
+same runtime type:          True
+non-nullable parameter, null argument: NullReferenceException
+guarded:                              ArgumentNullException
+and it names the parameter:            text
+nullable parameter, null argument:     (nothing to say)
+nullable parameter, real argument:     HELLO

@@ -1,0 +1,7 @@
+before the data migrations: balance=100 tier=''
+after applying 0002 and 0003: balance=200 tier='standard'
+after running migrate again: balance=200 tier='standard'
+after rolling back to 0001: balance=200 tier='standard'
+after re-applying 0002 and 0003: balance=300 tier='standard'
+the relative update ran twice, so balance moved: True
+the guarded backfill reached the same state: True

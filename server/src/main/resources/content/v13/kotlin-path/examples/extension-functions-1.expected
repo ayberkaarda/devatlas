@@ -1,0 +1,5 @@
+declared Shape:  Shape
+declared Circle: Circle
+member through a Base reference: Derived.virtual
+labels through List<Shape>: [Shape, Shape]
+runtime classes: [Circle, Circle]

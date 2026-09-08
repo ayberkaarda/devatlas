@@ -1,0 +1,11 @@
+distinct states: 4
+queued seen: 3
+cancelled seen: 0
+contains a failed state: true
+done: 2
+failed: 1
+queued: 3
+verifying: 1
+keys: ["done", "failed", "queued", "verifying"]
+first and last key: Some("done") Some("verifying")
+keys before f: ["done"]

@@ -1,0 +1,6 @@
+WeakAssertions: ran 2, failures 0, errors 0
+StrongAssertions: ran 3, failures 2, errors 0
+  reported: test_mail_was_sent
+  reported: test_rejects_blank
+Signup.register never sends mail and never validates;
+only the second class noticed.

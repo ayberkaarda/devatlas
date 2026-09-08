@@ -1,0 +1,16 @@
+bare rescue caught -> ArgumentError
+
+StandardError chain    -> [ArgumentError, StandardError, Exception, Object]
+NotImplementedError    -> [NotImplementedError, ScriptError, Exception]
+SystemExit             -> [SystemExit, Exception]
+escaped to Exception -> NotImplementedError: no backend
+
+specific branch  -> Store::NotFound: no such key: missing
+family branch    -> Store::Conflict: key books already exists
+
+raised           -> Store::Error: config is unreadable
+cause            -> ArgumentError: invalid value for Integer(): "not a number"
+cause of cause   -> nil
+grouped clause   -> ArgumentError
+grouped clause   -> TypeError
+fallback clause  -> Store::NotFound

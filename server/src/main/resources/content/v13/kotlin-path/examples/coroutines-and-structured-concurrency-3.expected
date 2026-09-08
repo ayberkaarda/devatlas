@@ -1,0 +1,5 @@
+job is cancelled: true
+its body ran on past the cancellation: true
+the loop that checked isActive exited: true
+cleanup finished
+delay threw CancellationException: true

@@ -1,0 +1,10 @@
+type of an instance: Child
+type of the class:    type
+type of that type:    type
+a class is an object: True
+method resolution order: ['Child', 'Base', 'object']
+built by calling type(): Made | made at runtime
+and it inherits: ['Made', 'Base', 'object']
+a function has a name attribute: area
+and accepts new attributes: square metres
+stored in a dict and called: 12

@@ -3,6 +3,8 @@ package dev.bytelore.server;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MvcResult;
@@ -10,13 +12,50 @@ import tools.jackson.databind.JsonNode;
 
 /**
  * Public content read (§5.2): anonymous access, published-only visibility, locale resolution and
- * the {@code is_fallback} bookkeeping, against the fixed seed content of {@code
- * V5__seed_content.sql} (the published {@code angular-path} track, its lessons, and its mind map).
+ * the {@code is_fallback} bookkeeping.
+ *
+ * <p>The content read here is the fixed sample content the seed migration inserts -- the {@code
+ * angular-path} track, its two modules, its lessons and its mind map -- because a track with real
+ * modules, a real mind map and a real translation is what the locale and fallback assertions need
+ * to mean anything.
+ *
+ * <p><strong>The track is published by this class, not found published.</strong> Every assertion
+ * below is a statement about an endpoint: that a published track is listed, that its detail carries
+ * modules without lesson bodies, that a lesson read returns a body, that an untranslated locale
+ * falls back. None of them is a statement about which content an editor decided to publish, and a
+ * suite that inherited that decision would go red the day somebody withdrew a track for review --
+ * which is a correct editorial act, not a regression in the read API. So the flag is arranged here
+ * and restored afterwards, and the database's own publication state stays out of it.
+ *
+ * <p>Restoring matters as much as setting: the Testcontainer is shared across test classes through
+ * Spring's context cache, so a track left published would be published for every class that runs
+ * afterwards.
  */
 class PublicContentReadIT extends ContentApiTestSupport {
 
   private static final String SEED_TRACK_SLUG = "angular-path";
   private static final String SEED_LESSON_SLUG = "signals-and-reactivity";
+
+  /**
+   * Lessons the seed track shows a reader: the seed inserts four and a later migration retires the
+   * one the rewritten track no longer covers, and every read path scopes to lessons that have not
+   * been soft-deleted.
+   */
+  private static final int SEED_TRACK_VISIBLE_LESSONS = 3;
+
+  private static final int SEED_TRACK_MODULES = 2;
+
+  private boolean previouslyPublished;
+
+  @BeforeEach
+  void publishTheTrackUnderTest() {
+    previouslyPublished = setTrackPublished(SEED_TRACK_ID, true);
+  }
+
+  @AfterEach
+  void restorePublicationState() {
+    setTrackPublished(SEED_TRACK_ID, previouslyPublished);
+  }
 
   @Test
   void tracksListReturnsThePublishedSeedTrackAnonymously() throws Exception {
@@ -36,8 +75,8 @@ class PublicContentReadIT extends ContentApiTestSupport {
         found = true;
         assertThat(item.path("locale").asString()).isEqualTo("en");
         assertThat(item.path("is_fallback").asBoolean()).isFalse();
-        assertThat(item.path("module_count").asInt()).isEqualTo(2);
-        assertThat(item.path("lesson_count").asInt()).isEqualTo(4);
+        assertThat(item.path("module_count").asInt()).isEqualTo(SEED_TRACK_MODULES);
+        assertThat(item.path("lesson_count").asInt()).isEqualTo(SEED_TRACK_VISIBLE_LESSONS);
       }
     }
     assertThat(found).isTrue();
@@ -50,7 +89,7 @@ class PublicContentReadIT extends ContentApiTestSupport {
     JsonNode body = json(result);
     assertThat(body.path("slug").asString()).isEqualTo(SEED_TRACK_SLUG);
     assertThat(body.path("has_mind_map").asBoolean()).isTrue();
-    assertThat(body.path("modules")).hasSize(2);
+    assertThat(body.path("modules")).hasSize(SEED_TRACK_MODULES);
     JsonNode firstModule = body.path("modules").get(0);
     assertThat(firstModule.path("lessons")).isNotEmpty();
     assertThat(firstModule.path("lessons").get(0).has("body_markdown")).isFalse();

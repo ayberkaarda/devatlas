@@ -1,0 +1,16 @@
+create  outer
+create  first
+create  second
+-- inner scope ends --
+drop    second
+drop    first
+create  moved
+consume moved inside the function
+drop    moved
+consume returned and nothing is left in main to drop
+create  kept
+relay   kept
+still owned by main: kept
+-- main ends --
+drop    kept
+drop    outer

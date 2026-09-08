@@ -1,0 +1,9 @@
+struct assignment: a.X=1 b.X=99
+class assignment:  c.X=99 d.X=99
+class assignment aliases the same object: True
+struct by value:   s.X=1
+struct by ref:     s.X=11
+class by value:    o.X=11
+class reassigned inside callee: o.X=11
+default struct is an object with zeroed fields: X=0
+default class reference is null: True

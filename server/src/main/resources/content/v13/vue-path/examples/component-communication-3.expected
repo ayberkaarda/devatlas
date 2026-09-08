@@ -1,0 +1,6 @@
+rendered: <button>delete 7</button>
+after the grandchild emitted: parent 1, grandparent 0
+the event skipped a level: true
+with a re-emit: parent 2, grandparent 1
+re-emitting is what carries it up: true
+each hop is a listener somebody wrote: true

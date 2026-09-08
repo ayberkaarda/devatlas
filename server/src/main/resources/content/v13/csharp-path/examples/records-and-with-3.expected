@@ -1,0 +1,10 @@
+copies are Equal:                   True
+assignment copied the fields:       m1=MutablePixel { X = 1, Y = 2 } m2=MutablePixel { X = 9, Y = 2 }
+with on a record struct:            Pixel { X = 9, Y = 2 }
+original untouched:                 Pixel { X = 1, Y = 2 }
+base vs derived, same colour:       False
+and the comparison is symmetric:    False
+two circles with equal members:     True
+ToString names the runtime type:    Circle { Colour = red, Radius = 3 }
+with through a base reference:      Circle { Colour = blue, Radius = 3 }
+still a Circle:                     True

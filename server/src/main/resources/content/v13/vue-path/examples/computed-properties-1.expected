@@ -1,0 +1,9 @@
+getter calls before anyone reads it: 0
+first read: 6 (getter calls: 1)
+second read: 6 (getter calls: 1)
+third read: 6 (getter calls: 1)
+after the dependency changed, getter calls: 1
+read after the change: 10 (getter calls: 2)
+read again: 10 (getter calls: 2)
+an effect reading the computed re-ran: true
+and sees the new answer: true

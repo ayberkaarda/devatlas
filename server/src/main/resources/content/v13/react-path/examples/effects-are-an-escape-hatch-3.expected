@@ -1,0 +1,4 @@
+object dependency, effect runs over three renders: 3
+string dependency, effect runs over three renders: 1
+function dependency, effect runs over three renders: 3
+string dependency across general, general, music: 2

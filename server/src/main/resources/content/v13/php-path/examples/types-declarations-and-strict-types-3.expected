@@ -1,0 +1,9 @@
+NULL
+int(0)
+Error: Typed property Draft::$title must not be accessed before initialization
+string(12) "A first pass"
+TypeError: Cannot assign string to property Draft::$words of type int
+int(500)
+int(800)
+Error: Cannot modify readonly property Money::$amount
+InvalidArgumentException: currency mismatch

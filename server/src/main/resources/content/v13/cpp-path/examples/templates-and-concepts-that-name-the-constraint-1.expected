@@ -1,0 +1,6 @@
+doubled(21)        = 42
+doubled(2.5)       = 5
+doubled(1000000LL) = 2000000
+int is Doublable:         true
+double is Doublable:      true
+std::string is Doublable: false

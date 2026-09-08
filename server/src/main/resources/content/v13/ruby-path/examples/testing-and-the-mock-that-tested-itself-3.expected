@@ -1,0 +1,17 @@
+expectation set, never called    -> no error yet
+verify                           -> MockExpectationError: Expected save() => true
+unmocked call                    -> NoMethodError: unmocked method :anything_at_all, expected one of []
+
+matched by value                 -> ok
+verify                           -> true
+matched by class                 -> ok
+matched by block                 -> ok
+block rejects                    -> MockExpectationError: mocked method :charge failed block w/ [-1, "EUR"] {}
+
+stubbed method                   -> 2026-01-01
+untouched method                 -> the real zone
+after the block                  -> the real date
+
+real class responds to           -> [:discount_for]
+double answers                   -> 10
+real object would not            -> false

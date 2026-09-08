@@ -1,0 +1,8 @@
+total 7
+after Reset via interface: 0
+slice element updated: 11 2
+map entry updated: 6
+map of pointers updated: 6
+value receiver on a value: 7
+pointer receiver on an addressable value: 8
+through the interface after a later Add: 100

@@ -1,0 +1,7 @@
+inline props shallow-equal across two renders: false
+hoisted props shallow-equal across two renders: true
+nested objects look alike: true
+nested objects are shallow-equal: false
+memoised, props equal, own state changed: true
+memoised, props equal, context changed: true
+memoised, nothing changed: false

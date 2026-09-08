@@ -1,0 +1,14 @@
+books=5 queries=6 equals 1 + N: True
+books=10 queries=11 equals 1 + N: True
+books=20 queries=21 equals 1 + N: True
+read only fields of Book: 1
+read book.author.name: 11
+read book.author.publisher.name: 21
+read book.author_id (no join needed): 1
+first access to book.author: 1
+second access to book.author: 0
+fetch_mode(FETCH_ONE), the default: 11
+fetch_mode(FETCH_PEERS): 2
+fetch_mode(FETCH_PEERS) for a field only() deferred: 2
+fetch_mode(FETCH_RAISE): FieldFetchBlocked after 1 query
+fetch_mode(FETCH_PEERS) across a reverse many relation: 11

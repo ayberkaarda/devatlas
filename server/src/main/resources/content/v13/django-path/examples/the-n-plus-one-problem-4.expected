@@ -1,0 +1,10 @@
+prefetch, then .all() in the loop: 2
+prefetch, then .filter() in the loop: 12
+select_related, reading author.name: 1
+only('title'), then reading author.name: 21
+only('title'), then reading title: 1
+count in the loop: 11
+annotate the count into the first query: 1
+select_related on a queryset nobody kept: 11
+annotated counts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+they agree with the loop: True

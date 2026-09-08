@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020102",
+  "title": "Configuration that is typed",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.spring.io/spring-boot/reference/features/external-config.html",
+    "https://docs.spring.io/spring-boot/api/java/org/springframework/boot/context/properties/ConfigurationProperties.html",
+    "https://docs.spring.io/spring-framework/reference/core/validation/beanvalidation.html"
+  ],
+  "concepts": ["constructor binding", "startup validation"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "A record bound from properties",
+      "file": "configuration-that-is-typed-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "@Validated refusing a bad value at startup",
+      "file": "configuration-that-is-typed-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "Registration decides whether binding happens",
+      "file": "configuration-that-is-typed-3.java"
+    }
+  ]
+}

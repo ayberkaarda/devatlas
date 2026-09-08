@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020202",
+  "title": "What a transaction actually spans",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html",
+    "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/tx-propagation.html",
+    "https://docs.spring.io/spring-framework/reference/core/aop/proxying.html"
+  ],
+  "concepts": ["propagation", "rollback rules"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "REQUIRED joining, REQUIRES_NEW suspending",
+      "file": "what-a-transaction-actually-spans-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "Checked, unchecked, and rollbackFor",
+      "file": "what-a-transaction-actually-spans-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "Self-invocation against a call to a separate bean",
+      "file": "what-a-transaction-actually-spans-3.java"
+    }
+  ]
+}

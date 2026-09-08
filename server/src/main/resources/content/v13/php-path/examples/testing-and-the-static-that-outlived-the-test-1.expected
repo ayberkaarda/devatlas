@@ -1,0 +1,9 @@
+Slug
+  ok   lowercases
+  ok   joins words
+  ok   strips punctuation
+  ok   trims edges
+  ok   rejects empty
+  FAIL this one is wrong on purpose: slug: expected 'Hello', got 'hello'
+5 passed, 1 failed
+failures: this one is wrong on purpose

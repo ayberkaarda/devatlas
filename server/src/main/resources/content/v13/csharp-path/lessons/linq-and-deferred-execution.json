@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130202",
+  "title": "LINQ, deferred execution and the query that ran twice",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 12,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/",
+    "https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.orderby?view=net-10.0",
+    "https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.groupby?view=net-10.0"
+  ],
+  "concepts": ["deferred execution", "streaming and buffering operators"],
+  "code_examples": [
+    { "language": "csharp", "caption": "Counting when the predicate runs", "file": "linq-and-deferred-execution-1.cs" },
+    { "language": "csharp", "caption": "The source and the captured variable, read late", "file": "linq-and-deferred-execution-2.cs" },
+    { "language": "csharp", "caption": "Streaming, buffering and the terminal operators", "file": "linq-and-deferred-execution-3.cs" }
+  ]
+}

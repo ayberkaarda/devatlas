@@ -1,0 +1,5 @@
+tests: ['test_a_adding_counts', 'test_b_starts_empty', 'test_c_quantities_add_up']
+declaration order: ran 3, failures 0, errors 0
+reversed order  : ran 3, failures 0, errors 0
+second one alone: ran 1, failures 0, errors 0
+the result did not depend on the order: True

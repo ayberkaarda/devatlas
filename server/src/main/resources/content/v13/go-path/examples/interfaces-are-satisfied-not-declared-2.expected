@@ -1,0 +1,11 @@
+main.Rect area 12.000  rectangle 3.0 by 4.0
+main.Square area 25.000  square of side 5.0, diagonal 7.071
+main.Circle area  3.142  some shape of area 3.1
+main.Rect is not a Square
+found a square, diagonal 7.071
+main.Circle is not a Square
+nil interface: value=<nil> type=<nil> isNil=true
+typed nil:     type=*main.Rect isNil=false
+main.Rect satisfies Diagonaler: false
+main.Square satisfies Diagonaler: true (7.071)
+main.Circle satisfies Diagonaler: false

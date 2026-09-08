@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060203",
+  "title": "Context managers",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.python.org/3.13/reference/compound_stmts.html#the-with-statement",
+    "https://docs.python.org/3.13/reference/datamodel.html#with-statement-context-managers",
+    "https://docs.python.org/3.13/library/contextlib.html"
+  ],
+  "concepts": ["the context manager protocol", "deterministic cleanup"],
+  "code_examples": [
+    { "language": "python", "caption": "Enter, exit, and the exception in between", "file": "context-managers-1.py" },
+    { "language": "python", "caption": "Cleanup that has to be guarded", "file": "context-managers-2.py" },
+    { "language": "python", "caption": "A run-time number of resources", "file": "context-managers-3.py" }
+  ]
+}

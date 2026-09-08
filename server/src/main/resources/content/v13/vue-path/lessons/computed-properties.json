@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110103",
+  "title": "Computed properties",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://vuejs.org/guide/essentials/computed.html",
+    "https://vuejs.org/api/reactivity-core.html"
+  ],
+  "concepts": [
+    "derived state",
+    "dependency caching"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "A computed with its cache, its dirty flag, and a counter on the getter",
+      "file": "computed-properties-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Four renders, one computed and one method, both counted",
+      "file": "computed-properties-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Dependencies the tracker cannot see, and the snapshot you cannot edit",
+      "file": "computed-properties-3.js"
+    }
+  ]
+}

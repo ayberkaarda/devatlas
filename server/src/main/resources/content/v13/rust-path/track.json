@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000008",
+  "slug": "rust-path",
+  "title": "The Rust Path",
+  "description": "What the compiler refuses and why: ownership, borrowing and lifetimes, then the model behind Result, traits and matching, then real work.",
+  "icon": null,
+  "order": 8,
+  "teaches_version": "Rust 1.98, edition 2024",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000801",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 28,
+      "lessons": [
+        "ownership",
+        "borrowing",
+        "lifetimes-are-descriptions"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000802",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 28,
+      "lessons": [
+        "result-and-option",
+        "traits",
+        "pattern-matching-and-exhaustiveness"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000803",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 29,
+      "lessons": [
+        "collections-and-iterators",
+        "error-handling-across-a-program",
+        "testing-and-what-cargo-test-runs"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+3 is a Integer
+3.7 is a Float
+"text" is a String
+:name is a Symbol
+[] is a Array
+nil is a NilClass
+true is a TrueClass
+
+Integer.class  -> Class
+NilClass.class -> Class
+Class.class    -> Class
+
+NilClass.ancestors -> [NilClass, Object, Kernel, BasicObject]
+Integer.ancestors  -> [Integer, Numeric, Comparable, Object, Kernel, BasicObject]
+shared tail        -> [Object, Kernel, BasicObject]
+
+nil.respond_to?(:to_a) -> true
+nil.nil?               -> true
+3.nil?                 -> false
+nil.is_a?(Object)      -> true
+
+nil.equal?(nil) -> true
+NilClass.new    -> NoMethodError: undefined method 'new' for class NilClass
+nil.frozen?     -> true

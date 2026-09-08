@@ -1,0 +1,8 @@
+within capacity, nothing moved: true
+size=4 capacity is at least size: true
+capacity grew: true
+values survived: front=1 back=4 size=4
+a list reference survives insertion: true
+the list now holds 4 entries
+a map reference survives insertion: true
+the map now holds 4 entries, and one is still one

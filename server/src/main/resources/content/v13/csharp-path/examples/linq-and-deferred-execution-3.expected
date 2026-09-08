@@ -1,0 +1,13 @@
+First on a streaming chain:  value=5 projections=1
+Take(2):                     count=2 projections=2
+First after OrderBy:         value=1 projections=6
+First after GroupBy:         key=1 projections=6
+OrderBy then ThenBy:         ant,ape,bat,bee,cow
+stable on equal keys:        ant,ape,bee,bat,cow
+FirstOrDefault on empty:     0
+First on empty:              InvalidOperationException
+Single on two matches:       InvalidOperationException
+SingleOrDefault on two:      InvalidOperationException
+Single on exactly one:       9
+Max on empty:                InvalidOperationException
+Sum on empty:                0

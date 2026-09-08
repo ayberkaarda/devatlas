@@ -1,0 +1,4 @@
+first request status: 201
+first request body: {"trackSlug":"spring-boot-path","seatsLeft":0}
+second request refused by: SeatLimitReached
+service called directly refused: No seats left on typescript-path

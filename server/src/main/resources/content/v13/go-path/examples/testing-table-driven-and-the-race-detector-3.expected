@@ -1,0 +1,8 @@
+private slots:     sum=124750
+mutex:             guarded=500
+atomic:            counter=500
+guarded map:       bucket-0=125
+guarded map:       bucket-1=125
+guarded map:       bucket-2=125
+guarded map:       bucket-3=125
+collected errors:  5 of 500 workers failed

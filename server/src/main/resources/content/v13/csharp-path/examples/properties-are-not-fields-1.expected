@@ -1,0 +1,12 @@
+Balance is a property:      True
+Balance is a public field:  False
+get accessor is a method:   True
+set accessor exists:        True
+Summary has a setter:       False
+reads of Summary so far:    4
+interpolation read it too:  2
+setter refused:             ArgumentOutOfRangeException on value
+balance unchanged:          100
+reached through interface:  ada
+stored property:            100
+computed property:          False

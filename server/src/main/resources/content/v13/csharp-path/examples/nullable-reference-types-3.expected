@@ -1,0 +1,10 @@
+found, and dereferenced without a warning: 16
+missing key returns false: False
+before loading, IsLoaded:  False
+after loading, IsLoaded:   True
+and the value is readable: 7
+FirstOrNone on an empty string[]: none
+FirstOrNone on an empty int[]:    '0'
+FirstOrNone on one item:          'only'
+TryFirst on an empty int[]:       False
+TryFirst on a filled int[]:       True value=7

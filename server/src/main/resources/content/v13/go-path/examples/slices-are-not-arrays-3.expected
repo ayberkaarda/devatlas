@@ -1,0 +1,7 @@
+after ranging by value  [{write false} {review false} {ship false}]
+after ranging by index  [{write true} {review true} {ship true}]
+through pointer {Name:write Done:true}
+through pointer {Name:review Done:true}
+appended while ranging  [1 2 3 10 20 30]
+truncated len=0 capacity kept=true
+after deleting index 1  [a c d] len=3

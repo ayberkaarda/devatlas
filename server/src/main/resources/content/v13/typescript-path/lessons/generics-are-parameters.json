@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030203",
+  "title": "Generics are parameters",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.typescriptlang.org/docs/handbook/2/generics.html",
+    "https://www.typescriptlang.org/docs/handbook/2/functions.html"
+  ],
+  "concepts": ["generics"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "Keeping the caller's type, and the version that loses it",
+      "file": "generics-are-parameters-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Constraints, keyof, and the two diagnostics they produce",
+      "file": "generics-are-parameters-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Two independent parameters, and one parameter in two positions",
+      "file": "generics-are-parameters-3.ts"
+    }
+  ]
+}

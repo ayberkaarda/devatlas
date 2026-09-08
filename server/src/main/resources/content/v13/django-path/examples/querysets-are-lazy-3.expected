@@ -1,0 +1,6 @@
+queryset rebuilt for each use: 3
+evaluated once into a list: 1
+template loops twice over one queryset: 1
+len(qs) > 0: queries=1 instances=20 answer=True
+qs.count() > 0: queries=1 instances=0 answer=True
+qs.exists(): queries=1 instances=0 answer=True

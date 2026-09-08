@@ -1,0 +1,19 @@
+sort         -> ["Ada", "Dune", "Emma", "Ulysses"]
+map          -> [4, 4, 3, 7]
+select       -> ["Dune", "Emma"]
+reject       -> ["Ada", "Ulysses"]
+min_by       -> Ada
+sort_by      -> ["Ada", "Dune", "Emma", "Ulysses"]
+group_by     -> {4 => ["Dune", "Emma"], 3 => ["Ada"], 7 => ["Ulysses"]}
+partition    -> [["Dune", "Emma"], ["Ada", "Ulysses"]]
+each_slice   -> [["Dune", "Emma"], ["Ada", "Ulysses"]]
+include?     -> true
+first(2)     -> ["Dune", "Emma"]
+reduce       -> 18
+each_with_object -> {"D" => 4, "E" => 4, "A" => 3, "U" => 7}
+tally by size    -> {4 => 2, 3 => 1, 7 => 1}
+
+written here     -> [:each]
+arrived from mixin -> true
+
+no each defined  -> NoMethodError: undefined method 'each' for an instance of Empty

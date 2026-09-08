@@ -1,0 +1,5 @@
+connect general
+disconnect general
+connect music
+disconnect music
+connections still open: 0

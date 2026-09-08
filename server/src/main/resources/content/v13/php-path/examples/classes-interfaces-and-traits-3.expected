@@ -1,0 +1,7 @@
+Invoice:INV-42/6
+bool(true)
+bool(true)
+Error: Cannot instantiate abstract class Record
+Error: Call to protected method Record::checksum() from global scope
+Error: Cannot access private property Secretive::$token
+SubReporter Reporter

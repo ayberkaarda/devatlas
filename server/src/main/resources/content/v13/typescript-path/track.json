@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000003",
+  "slug": "typescript-path",
+  "title": "The TypeScript Path",
+  "description": "How the compiler decides what a value is, and how to keep that decision honest. Teaches TypeScript 5.9.",
+  "icon": null,
+  "order": 3,
+  "teaches_version": "TypeScript 5.9",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000301",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 24,
+      "lessons": [
+        "what-a-type-really-is",
+        "inference-is-not-guessing",
+        "any-unknown-and-the-difference"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000302",
+      "title": "The type system's own model",
+      "order": 1,
+      "estimated_minutes": 26,
+      "lessons": [
+        "narrowing",
+        "unions-and-the-exhaustive-check",
+        "generics-are-parameters"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000303",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 28,
+      "lessons": [
+        "modelling-data-from-elsewhere",
+        "strict-and-what-each-flag-buys",
+        "declaration-files"
+      ]
+    }
+  ]
+}

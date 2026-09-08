@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000001",
+  "slug": "angular-path",
+  "title": "The Angular Path",
+  "description": "Components, signals and the reactive model behind a modern Angular application, from a first component to a tested feature.",
+  "icon": "angular",
+  "order": 1,
+  "teaches_version": "Angular 22",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000001",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 42,
+      "lessons": [
+        "what-a-component-is",
+        "signals-and-reactivity",
+        "derived-state-with-computed"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000002",
+      "title": "The reactive model",
+      "order": 1,
+      "estimated_minutes": 48,
+      "lessons": [
+        "effects-are-for-the-outside-world",
+        "inputs-as-signals",
+        "change-detection-without-zones"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000003",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 54,
+      "lessons": [
+        "lazy-loading-routes",
+        "talking-to-a-server",
+        "testing-without-a-browser"
+      ]
+    }
+  ]
+}

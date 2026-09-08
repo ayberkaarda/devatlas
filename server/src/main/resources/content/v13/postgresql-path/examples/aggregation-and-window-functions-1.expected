@@ -1,0 +1,33 @@
+psql:<stdin>:18: ERROR:  column "sale.seller" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT region, seller, sum(amount) FROM sale GROUP BY region...
+                       ^
+ region | total  | sales | last_seller_alphabetically 
+--------+--------+-------+----------------------------
+ east   |  10.00 |     1 | dee
+ north  | 150.00 |     2 | bo
+ south  | 225.00 |     2 | cyd
+(3 rows)
+
+ region | total  
+--------+--------
+ north  | 150.00
+ south  | 200.00
+(2 rows)
+
+ region | total  
+--------+--------
+ north  | 150.00
+ south  | 225.00
+(2 rows)
+
+psql:<stdin>:39: ERROR:  aggregate functions are not allowed in WHERE
+LINE 1: SELECT region, sum(amount) FROM sale WHERE sum(amount) >= 50...
+                                                   ^
+ region | seller | total  
+--------+--------+--------
+ east   | dee    |  10.00
+ north  | ada    | 100.00
+ north  | bo     |  50.00
+ south  | cyd    | 225.00
+(4 rows)
+

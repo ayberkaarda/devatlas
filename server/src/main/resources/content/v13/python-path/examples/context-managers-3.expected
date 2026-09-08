@@ -1,0 +1,19 @@
+open  config
+open  cache
+open  socket
+opened: ['config', 'cache', 'socket']
+close socket
+close cache
+close config
+---
+open  config
+open  cache
+open  socket
+close socket
+close cache
+close config
+still closed everything, then propagated: the third one failed to be useful
+---
+about to divide by zero
+suppress swallowed only the listed exception
+passed through: not in the list

@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000002",
+  "slug": "spring-boot-path",
+  "title": "The Spring Boot Path",
+  "description": "Beans, typed configuration, transactions, queries, an error contract and a security chain, built the way a real service is.",
+  "icon": null,
+  "order": 2,
+  "teaches_version": "Spring Boot 4.1",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000000201",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 24,
+      "lessons": [
+        "a-bean-and-who-makes-it",
+        "configuration-that-is-typed",
+        "the-web-layer-is-thin"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000202",
+      "title": "Persistence and transactions",
+      "order": 1,
+      "estimated_minutes": 27,
+      "lessons": [
+        "an-entity-is-not-a-table",
+        "what-a-transaction-actually-spans",
+        "queries-you-can-defend"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000000203",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 29,
+      "lessons": [
+        "an-error-contract",
+        "security-that-says-no-by-default",
+        "testing-against-a-real-database"
+      ]
+    }
+  ]
+}

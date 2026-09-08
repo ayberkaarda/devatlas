@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100101",
+  "title": "A component is a function of its props",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://react.dev/learn/passing-props-to-a-component",
+    "https://react.dev/learn/keeping-components-pure",
+    "https://react.dev/reference/react/createElement"
+  ],
+  "concepts": ["rendering as description", "purity"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Props in, a description out, inspected as plain data",
+      "file": "a-component-is-a-function-of-its-props-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "A pure component and an impure one, each called twice",
+      "file": "a-component-is-a-function-of-its-props-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The React 19 component, with ref arriving as an ordinary prop",
+      "file": "a-component-is-a-function-of-its-props-3.js"
+    }
+  ]
+}

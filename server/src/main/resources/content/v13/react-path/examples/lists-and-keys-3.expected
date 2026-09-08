@@ -1,0 +1,5 @@
+keys generated during render, instances reused: 0 of 3
+stable keys, instances reused: 3 of 3
+rows rendered: 2, distinct keys: 1
+every row has a slot of its own: false
+the two lists share every key: true

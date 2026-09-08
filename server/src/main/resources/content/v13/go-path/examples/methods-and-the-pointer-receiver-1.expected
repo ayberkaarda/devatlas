@@ -1,0 +1,7 @@
+after two AddByValue:   hits=0
+after two AddByPointer: hits=2
+through a pointer:      hits=3
+after bound calls:      hits=4
+via method expression:  hits=5
+length of a nil list:   0
+length of a real list:  3

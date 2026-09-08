@@ -1,0 +1,6 @@
+stored item still reads: Cheese
+stored item is still in the list: false
+resolved during render: nothing selected
+discarded render: selection cleared, render again immediately
+committed render: selection is empty
+committed render: selection is 3

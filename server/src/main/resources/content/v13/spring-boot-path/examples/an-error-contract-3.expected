@@ -1,0 +1,2 @@
+status: 400
+body:   {"code":"VALIDATION_FAILED","message":"Request validation failed for 4 field(s).","errors":[{"field":"code_examples[1].caption","code":"REQUIRED"},{"field":"code_examples[1].language","code":"REQUIRED"},{"field":"estimated_minutes","code":"RANGE"},{"field":"slug","code":"REQUIRED"}]}

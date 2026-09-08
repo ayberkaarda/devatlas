@@ -1,0 +1,9 @@
+rows in risky: 0
+one step, empty table: applied
+rows in risky: 2
+one step, table with rows: refused with IntegrityError
+rows in careful: 2
+three steps, table with rows: applied
+values written into the existing rows: ['EUR', 'EUR']
+currency column allows null: False
+rows survived: 2

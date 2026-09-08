@@ -1,0 +1,9 @@
+plain, reading author.name: 11
+select_related('author'), reading author.name: 1
+select_related('author'), reading author.publisher.name: 11
+select_related('author__publisher'): 1
+select_related() with no arguments follows every non-null FK: 1
+select_related('author') but only titles are read: 1
+the join does not multiply rows for a forward FK: 1
+rows returned: 10 books in the table: 10
+first three titles: ['book00', 'book01', 'book02']

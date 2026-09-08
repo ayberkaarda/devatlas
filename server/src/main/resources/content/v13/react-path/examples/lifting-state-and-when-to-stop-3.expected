@@ -1,0 +1,8 @@
+components in the tree: 9
+draft text held in App, components rendered per keystroke: 9
+draft text held in Sidebar, components rendered per keystroke: 3
+draft text held in SearchBox, components rendered per keystroke: 1
+draftText is read by 1 component(s); it belongs in SearchBox
+  components rendered when it changes: 1
+submittedQuery is read by 3 component(s); it belongs in App
+  components rendered when it changes: 9

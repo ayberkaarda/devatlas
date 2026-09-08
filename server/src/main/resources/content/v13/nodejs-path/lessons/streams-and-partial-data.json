@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000090201",
+  "title": "Streams",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://nodejs.org/docs/v22.23.2/api/stream.html",
+    "https://nodejs.org/docs/v22.23.2/api/events.html"
+  ],
+  "concepts": [
+    "chunk boundaries",
+    "backpressure"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Chunk boundaries are not record boundaries",
+      "file": "streams-and-partial-data-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "A pipeline, and a link that fails",
+      "file": "streams-and-partial-data-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Backpressure, read from write()",
+      "file": "streams-and-partial-data-3.js"
+    }
+  ]
+}

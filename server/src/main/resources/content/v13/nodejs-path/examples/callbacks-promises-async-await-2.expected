@@ -1,0 +1,8 @@
+callback received an error object: true
+callback error message: no record with id -1
+callback value is undefined: true
+rejection message: no record with id -2
+try/catch around await caught: no record with id -3
+the try block finished before the callback ran
+escaped to uncaughtException: thrown from a timer callback
+the try/catch around setTimeout never saw it

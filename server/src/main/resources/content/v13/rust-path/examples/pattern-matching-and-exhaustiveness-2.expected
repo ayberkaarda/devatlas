@@ -1,0 +1,11 @@
+lesson-a  terminal: false
+lesson-b  terminal: true
+lesson-c  terminal: true
+lesson-a has received 512 bytes
+lesson-c failed with DIGEST_MISMATCH
+nothing yet
+512 bytes, under a KiB
+4096 bytes
+from content to lessons
+Ok(13)
+Err("not a number: thirteen")

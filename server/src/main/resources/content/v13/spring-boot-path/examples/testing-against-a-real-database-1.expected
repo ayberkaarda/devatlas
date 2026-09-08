@@ -1,0 +1,4 @@
+row inserted
+  slug=testing-against-a-real-database created_at set by the database=true
+  refused by the database: lessons_difficulty_known
+  refused by the database: lessons_slug_unique

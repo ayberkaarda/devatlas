@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320201",
+  "title": "Branching on conditions",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 5,
+  "sources": ["https://docs.python.org/3/library/stdtypes.html"],
+  "concepts": ["truthiness"],
+  "code_examples": [
+    { "language": "python", "caption": "Truthiness of empty containers", "file": "branching-on-conditions-1.py" },
+    { "language": "python", "caption": "Why None deserves its own test", "file": "branching-on-conditions-2.py" }
+  ]
+}

@@ -1,0 +1,7 @@
+destructured ref, effect runs: 2
+the destructured ref sees the new value: true
+destructured reactive property, effect runs: 1
+the copy still holds the old value: true
+after toRefs, effect runs: 2
+refs survive destructuring: true
+a plain property copy does not: true

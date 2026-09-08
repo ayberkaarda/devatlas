@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150101",
+  "title": "Types in a language that did not have them",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.php.net/manual/en/language.types.declarations.php",
+    "https://www.php.net/manual/en/language.types.type-juggling.php",
+    "https://www.php.net/manual/en/language.oop5.properties.php"
+  ],
+  "concepts": ["type declarations", "coercion modes"],
+  "code_examples": [
+    { "language": "php", "caption": "Strict mode, and the one widening it allows", "file": "types-declarations-and-strict-types-1.php" },
+    { "language": "php", "caption": "The same function in coercive mode", "file": "types-declarations-and-strict-types-2.php" },
+    { "language": "php", "caption": "Typed properties and a readonly class", "file": "types-declarations-and-strict-types-3.php" }
+  ]
+}

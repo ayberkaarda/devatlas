@@ -1,0 +1,4 @@
+reported: startup failed at stage settings
+links in the chain: 2
+caused by: configuration rejected (INVALID_ARGUMENT)
+recovered the concrete type: true

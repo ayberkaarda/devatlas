@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000080202",
+  "title": "Traits",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://doc.rust-lang.org/1.98.0/book/ch10-02-traits.html",
+    "https://doc.rust-lang.org/1.98.0/reference/items/traits.html",
+    "https://doc.rust-lang.org/1.98.0/reference/items/implementations.html",
+    "https://doc.rust-lang.org/1.98.0/edition-guide/rust-2024/rpit-lifetime-capture.html"
+  ],
+  "concepts": ["trait bounds", "static and dynamic dispatch"],
+  "code_examples": [
+    { "language": "rust", "caption": "A default body, two implementors, static dispatch", "file": "traits-1.rs" },
+    { "language": "rust", "caption": "Supertraits and dispatch through dyn", "file": "traits-2.rs" },
+    { "language": "rust", "caption": "Implementing Display and From", "file": "traits-3.rs" }
+  ]
+}

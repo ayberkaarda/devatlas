@@ -1,0 +1,25 @@
+ not_in_result 
+---------------
+             0
+(1 row)
+
+ not_exists_result 
+-------------------
+                 2
+(1 row)
+
+ in_result 
+-----------
+         1
+(1 row)
+
+ rows_total | rows_with_minutes | total_minutes |  average_minutes   | total_counting_unknown_as_zero | average_counting_unknown_as_zero 
+------------+-------------------+---------------+--------------------+--------------------------------+----------------------------------
+          3 |                 2 |            16 | 8.0000000000000000 |                             16 |               5.3333333333333333
+(1 row)
+
+ sum_of_nothing | count_of_nothing 
+----------------+------------------
+         [null] |                0
+(1 row)
+

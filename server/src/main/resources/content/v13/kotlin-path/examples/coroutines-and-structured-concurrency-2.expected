@@ -1,0 +1,6 @@
+the block that overran gave: null
+the block that fitted gave: finished
+both cleanup blocks ran: true
+parent is cancelled: true, completed: true
+scope active before cancel: true
+scope active after cancel:  false

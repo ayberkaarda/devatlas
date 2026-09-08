@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140101",
+  "title": "Null safety as a type",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://kotlinlang.org/docs/null-safety.html",
+    "https://kotlinlang.org/docs/typecasts.html",
+    "https://kotlinlang.org/docs/collection-filtering.html"
+  ],
+  "concepts": ["nullable types", "smart cast"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "The safe call, the elvis operator and a chain", "file": "null-safety-as-a-type-1.kt" },
+    { "language": "kotlin", "caption": "Smart casts, and what the not-null assertion costs", "file": "null-safety-as-a-type-2.kt" },
+    { "language": "kotlin", "caption": "Where the question mark sits in a collection type", "file": "null-safety-as-a-type-3.kt" }
+  ]
+}

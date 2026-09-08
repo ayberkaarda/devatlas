@@ -1,0 +1,7 @@
+200 hello
+302 -> /new
+404 not found
+waiting
+data object toString: Pending
+data object is one instance: true
+branches distinguish by type, not by a tag field: 200 x

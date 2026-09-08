@@ -1,0 +1,6 @@
+Callable via SAM conversion: 42
+sorted by length: [a, bb, ccc]
+Runnable ran
+render arities on the JVM: [1, 2, 3]
+a static method named of exists: true
+#42

@@ -1,0 +1,10 @@
+getFirst        : first
+getLast         : third
+reversed        : [third, second, first]
+original after  : [first, second, third-renamed]
+after addFirst  : [zeroth, first, second, third-renamed]
+firstEntry      : a=1
+lastEntry       : c=3
+reversed keys   : [c, b, a]
+pollFirstEntry  : a=1 leaves {b=2, c=3}
+set reversed    : [z, y, x]

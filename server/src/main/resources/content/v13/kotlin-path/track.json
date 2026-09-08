@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000014",
+  "slug": "kotlin-path",
+  "title": "The Kotlin Path",
+  "description": "Null safety, immutability and data classes; then extensions, scope functions and sealed types; then sequences, coroutines and the Java boundary.",
+  "icon": null,
+  "order": 14,
+  "teaches_version": "Kotlin 2.4.20",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000001401",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 26,
+      "lessons": [
+        "null-safety-as-a-type",
+        "val-var-and-shallow-immutability",
+        "data-classes"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001402",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 29,
+      "lessons": [
+        "extension-functions",
+        "scope-functions",
+        "sealed-classes-and-exhaustive-when"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001403",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 34,
+      "lessons": [
+        "collections-sequences-and-the-lazy-chain",
+        "coroutines-and-structured-concurrency",
+        "interoperating-with-java"
+      ]
+    }
+  ]
+}

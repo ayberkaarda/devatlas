@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020101",
+  "title": "A bean, and who makes it",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html",
+    "https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html",
+    "https://docs.spring.io/spring-boot/reference/using/spring-beans-and-dependency-injection.html"
+  ],
+  "concepts": ["dependency injection", "bean scope"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "Construction order, and the same instance twice",
+      "file": "a-bean-and-who-makes-it-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "A cycle the constructor refuses and the field admits",
+      "file": "a-bean-and-who-makes-it-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "Two candidates, @Primary and @Qualifier",
+      "file": "a-bean-and-who-makes-it-3.java"
+    }
+  ]
+}

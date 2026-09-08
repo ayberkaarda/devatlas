@@ -1,0 +1,38 @@
+{
+  "id": "019205a0-3000-7000-8000-000000070202",
+  "title": "The N+1 problem",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 12,
+  "sources": [
+    "https://docs.djangoproject.com/en/6.1/topics/db/optimization/",
+    "https://docs.djangoproject.com/en/6.1/ref/models/querysets/",
+    "https://docs.djangoproject.com/en/6.1/topics/db/fetch-modes/",
+    "https://docs.djangoproject.com/en/6.1/topics/db/aggregation/"
+  ],
+  "concepts": [
+    "related object fetching",
+    "query counting"
+  ],
+  "code_examples": [
+    {
+      "language": "python",
+      "caption": "Measuring 1 + N, and Django 6.1's fetch modes",
+      "file": "the-n-plus-one-problem-1.py"
+    },
+    {
+      "language": "python",
+      "caption": "select_related, and how deep it went",
+      "file": "the-n-plus-one-problem-2.py"
+    },
+    {
+      "language": "python",
+      "caption": "prefetch_related for reverse and many-to-many relations",
+      "file": "the-n-plus-one-problem-3.py"
+    },
+    {
+      "language": "python",
+      "caption": "Four ways to put the queries back",
+      "file": "the-n-plus-one-problem-4.py"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+' 8'     -> 8
+'8 '     -> 8
+'8.0'    -> 8
+Deprecated: Implicit conversion from float-string "8.5" to int loses precision
+'8.5'    -> 8
+'008'    -> 8
+'1e2'    -> 100
+'0x1A'   -> TypeError
+'eight'  -> TypeError
+true     -> 1
+false    -> 0
+Deprecated: Implicit conversion from float 8.5 to int loses precision
+8.5      -> 8
+Warning: A non-numeric value encountered
+int(9)
+TypeError: Unsupported operand types: string + int

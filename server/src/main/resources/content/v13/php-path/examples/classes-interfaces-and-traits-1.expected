@@ -1,0 +1,6 @@
+int(1749)
+Book                     Priced:true Describable:true
+Shipping                 Priced:true Describable:false
+book: Small Gods
+no label
+Priced,Describable

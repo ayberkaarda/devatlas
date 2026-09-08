@@ -1,0 +1,32 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000032",
+  "slug": "fixture-path",
+  "title": "The Fixture Path",
+  "description": "How Python binds names, chooses branches and groups code into modules.",
+  "icon": null,
+  "order": 32,
+  "teaches_version": "Python 3.13",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000003201",
+      "title": "Values and Types",
+      "order": 0,
+      "estimated_minutes": 17,
+      "lessons": ["what-a-value-holds", "naming-and-scope", "converting-between-types"]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000003202",
+      "title": "Control and Flow",
+      "order": 1,
+      "estimated_minutes": 18,
+      "lessons": ["branching-on-conditions", "looping-over-collections", "handling-failure"]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000003203",
+      "title": "Structuring Code",
+      "order": 2,
+      "estimated_minutes": 20,
+      "lessons": ["functions-as-contracts", "grouping-with-modules", "testing-what-you-wrote"]
+    }
+  ]
+}

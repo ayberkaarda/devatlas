@@ -1,0 +1,14 @@
+respond_to?(:title)  -> true
+respond_to?(:author) -> false
+method(:title).class -> Method
+method(:title).call  -> "Blocks"
+method name          -> :title
+render(row)          -> title: Blocks
+methods include?     -> false
+
+defined title        -> "Blocks"
+respond_to?          -> true
+methods include?     -> true
+instance_methods     -> [:title, :words]
+method object        -> "Blocks"
+unknown name         -> NoMethodError: undefined method 'author' for an instance of Defined

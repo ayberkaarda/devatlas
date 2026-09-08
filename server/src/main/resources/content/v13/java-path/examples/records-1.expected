@@ -1,0 +1,10 @@
+toString        : Point[x=3, y=4]
+accessors       : 3, 4
+a.equals(b)     : true
+hashCodes agree : true
+a == b          : false
+superclass      : java.lang.Record
+isRecord        : true
+implicitly final: true
+component       : int x
+component       : int y

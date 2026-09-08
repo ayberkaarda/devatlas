@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130102",
+  "title": "Nullable reference types",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-reference-types",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/attributes/nullable-analysis",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types"
+  ],
+  "concepts": ["null-state analysis", "nullable annotations"],
+  "code_examples": [
+    { "language": "csharp", "caption": "What the annotation is, and what it is not", "file": "nullable-reference-types-1.cs" },
+    { "language": "csharp", "caption": "Narrowing and the null operators", "file": "nullable-reference-types-2.cs" },
+    { "language": "csharp", "caption": "Postcondition attributes and generic default", "file": "nullable-reference-types-3.cs" }
+  ]
+}

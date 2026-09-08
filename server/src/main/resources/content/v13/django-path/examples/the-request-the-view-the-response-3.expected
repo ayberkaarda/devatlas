@@ -1,0 +1,10 @@
+status: 200
+body: set by TraceMiddleware
+order: ['trace: before', 'gate: before', 'view', 'gate: after', 'trace: after']
+status: 403
+order: ['trace: before', 'gate: before', 'gate: short circuit', 'trace: after']
+view ran: False
+outer middleware still edited the response: True
+direct call status: 200
+direct call body: nothing
+direct call has the header: False

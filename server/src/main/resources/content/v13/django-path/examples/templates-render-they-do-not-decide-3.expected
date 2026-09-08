@@ -1,0 +1,7 @@
+escaped by default: &lt;script&gt;alert(1)&lt;/script&gt;
+the safe filter turns it off: <script>alert(1)</script>
+mark_safe marks the value, not the template: <em>ok</em>
+autoescape block: <script>alert(1)</script>
+status: 200
+body: <li>desk: 100</li><li>lamp: 20</li>
+the negative line never reached the template: True

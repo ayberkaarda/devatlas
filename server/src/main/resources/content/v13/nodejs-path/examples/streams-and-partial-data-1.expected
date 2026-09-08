@@ -1,0 +1,7 @@
+chunks delivered: 3
+splitting each chunk on its own gives 6 rows:
+["id,name","1,al","ice","2,bo","b","3,carol"]
+carrying the remainder gives 4 rows:
+["id,name","1,alice","2,bob","3,carol"]
+the naive reader split a name in half: true
+buffering everything agrees with the streaming reader: true

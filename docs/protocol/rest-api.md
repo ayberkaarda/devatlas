@@ -1105,7 +1105,7 @@ Errors: `VALIDATION_FAILED`, `SLUG_ALREADY_EXISTS` (409), `MODULE_NOT_FOUND` (40
 }
 ```
 
-`language` required, from a closed list of highlighter-supported identifiers (`typescript`, `javascript`, `java`, `rust`, `sql`, `bash`, `json`, `yaml`, `html`, `css`, `xml`, `kotlin`, `python`, `csharp`, `go`, `php`, `ruby`, `text`); an unknown value is `400 UNSUPPORTED_LANGUAGE`. `code` required. `caption` optional/nullable. `order` optional.
+`language` required, from a closed list of highlighter-supported identifiers (`typescript`, `javascript`, `java`, `rust`, `sql`, `bash`, `json`, `yaml`, `html`, `css`, `xml`, `kotlin`, `python`, `csharp`, `cpp`, `go`, `php`, `ruby`, `text`); an unknown value is `400 UNSUPPORTED_LANGUAGE`. `code` required. `caption` optional/nullable. `order` optional.
 
 `201 Created` returns the code example plus the owning lesson's new `content_version`:
 

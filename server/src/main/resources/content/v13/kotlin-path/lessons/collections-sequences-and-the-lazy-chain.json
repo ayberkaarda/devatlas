@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140301",
+  "title": "Collections, sequences and the lazy chain",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://kotlinlang.org/docs/sequences.html",
+    "https://kotlinlang.org/docs/collections-overview.html",
+    "https://kotlinlang.org/docs/collection-transformations.html"
+  ],
+  "concepts": ["lazy evaluation", "terminal operation"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "The same chain twice, counted", "file": "collections-sequences-and-the-lazy-chain-1.kt" },
+    { "language": "kotlin", "caption": "When the work happens, and endless sequences", "file": "collections-sequences-and-the-lazy-chain-2.kt" },
+    { "language": "kotlin", "caption": "One-shot sequences and stages that see everything", "file": "collections-sequences-and-the-lazy-chain-3.kt" }
+  ]
+}

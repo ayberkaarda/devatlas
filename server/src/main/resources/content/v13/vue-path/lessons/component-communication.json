@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110203",
+  "title": "Component communication",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://vuejs.org/guide/components/props.html",
+    "https://vuejs.org/guide/components/events.html"
+  ],
+  "concepts": [
+    "one-way data flow",
+    "emitted events"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Props down and events up, with the parent applying every change",
+      "file": "component-communication-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The read-only binding and the object behind it",
+      "file": "component-communication-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Three levels, one emit, and the hop that has to be written by hand",
+      "file": "component-communication-3.js"
+    }
+  ]
+}

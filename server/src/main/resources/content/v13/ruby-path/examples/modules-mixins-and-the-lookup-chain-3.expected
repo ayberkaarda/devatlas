@@ -1,0 +1,12 @@
+class methods   -> [:title, :status]
+instance method -> {title: "Blocks", status: "draft"}
+after change    -> {title: "Blocks", status: "published"}
+
+Article fields  -> [:title, :status]
+Comment fields  -> [:body]
+Comment changes -> {body: "first"}
+
+Trackable count -> 1
+Article chain   -> [Article, Trackable, Object, Kernel]
+
+missing member  -> NoMethodError: undefined method 'missing' for an instance of Empty

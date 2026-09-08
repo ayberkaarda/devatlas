@@ -1,0 +1,10 @@
+dict keys after the typo: ['host', 'port', 'prot']
+reading the field that was meant: 5432
+a misread key raises: KeyError 'portt'
+repr for free: Endpoint(host='db.internal', port=5432, scheme='https')
+equality by value: True
+default applied: https
+the same typo raises: TypeError
+message: Endpoint.__init__() got an unexpected keyword argument 'prot'
+a missing field raises: TypeError
+message: Endpoint.__init__() missing 1 required positional argument: 'port'

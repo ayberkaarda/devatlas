@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120201",
+  "title": "Interfaces are satisfied, not declared",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://go.dev/ref/spec#Interface_types",
+    "https://go.dev/ref/spec#Type_assertions",
+    "https://pkg.go.dev/sort@go1.27.0#Interface"
+  ],
+  "concepts": ["implicit satisfaction", "interface value as a type and value pair"],
+  "code_examples": [
+    { "language": "go", "caption": "Nothing says implements", "file": "interfaces-are-satisfied-not-declared-1.go" },
+    { "language": "go", "caption": "Assertions, type switches and the nil pair", "file": "interfaces-are-satisfied-not-declared-2.go" },
+    { "language": "go", "caption": "Satisfying the standard library's interfaces", "file": "interfaces-are-satisfied-not-declared-3.go" }
+  ]
+}

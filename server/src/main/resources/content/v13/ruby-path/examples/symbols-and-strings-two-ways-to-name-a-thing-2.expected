@@ -1,0 +1,22 @@
+two distinct keys          -> 2
+symbol key                 -> "Ada"
+string key                 -> "Grace"
+inspect                    -> {name: "Ada", "name" => "Grace"}
+
+parsed[:name]              -> nil
+parsed["name"]             -> "Ada"
+after transform_keys       -> {name: "Ada", roles: ["admin"]}
+fetch(:name)               -> KeyError: key not found: :name
+
+insertion order            -> [:zoe, :ada, :bob]
+reassign keeps place       -> [:zoe, :ada, :bob]
+delete then re-add         -> [:ada, :bob, :zoe]
+sorted instead             -> [:ada, :bob, :zoe]
+
+map(&:upcase)              -> ["A", "B"]
+:upcase.to_proc.call       -> "A"
+to_proc is a Proc          -> Proc
+sort_by(&:last)            -> [[2, "a"], [1, "b"]]
+
+symbol as a name           -> {status: :published}
+string as data             -> {title: "Blocks and procs"}

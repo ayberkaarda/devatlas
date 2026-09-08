@@ -1,0 +1,8 @@
+the clock moved on: true
+the computed did not: true
+first read of the plain-variable computed: 0
+after the variable changed: 0
+a plain variable never invalidates the cache: true
+the snapshot accepted the push: true
+after the source changed, the computed holds: VUE,PROXY,REFLECT
+the hand edit survived: false

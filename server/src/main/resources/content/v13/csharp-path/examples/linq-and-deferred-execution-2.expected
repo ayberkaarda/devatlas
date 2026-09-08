@@ -1,0 +1,11 @@
+before adding:     2,4,6
+after adding 4:    2,4,6,8
+threshold 2:       3,4
+threshold 3:       4
+snapshot taken at threshold 2: 3,4
+mutating during enumeration: InvalidOperationException
+log entries before enumerating: 0
+first element:                  1
+log entries after First():      1
+elements from ToList():         2
+log entries after a full pass:  4

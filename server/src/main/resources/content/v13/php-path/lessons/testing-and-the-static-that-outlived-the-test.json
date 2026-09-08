@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150303",
+  "title": "Testing, and the global state that made a test order-dependent",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.php.net/manual/en/language.oop5.static.php",
+    "https://www.php.net/manual/en/language.variables.superglobals.php",
+    "https://www.php.net/manual/en/function.assert.php"
+  ],
+  "concepts": ["shared state", "test isolation"],
+  "code_examples": [
+    { "language": "php", "caption": "A harness small enough to read", "file": "testing-and-the-static-that-outlived-the-test-1.php" },
+    { "language": "php", "caption": "The same cases in two orders", "file": "testing-and-the-static-that-outlived-the-test-2.php" },
+    { "language": "php", "caption": "The state passed in as arguments", "file": "testing-and-the-static-that-outlived-the-test-3.php" }
+  ]
+}

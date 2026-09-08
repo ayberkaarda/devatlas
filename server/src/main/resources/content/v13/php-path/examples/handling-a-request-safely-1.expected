@@ -1,0 +1,18 @@
+{"page":2,"perPage":25,"email":"ana@example.com","sort":"name","admin":true}
+'12'                   int:12       bool:NULL  
+' 12 '                 int:12       bool:NULL  
+'12abc'                int:false    bool:NULL  
+''                     int:false    bool:false 
+'0'                    int:0        bool:false 
+'-3'                   int:-3       bool:NULL  
+'1e3'                  int:false    bool:NULL  
+'99999999999999999999' int:false    bool:NULL  
+https://example.com/x        syntactic:true   scheme:https       accepted:true
+javascript:alert(1)          syntactic:false  scheme:javascript  accepted:false
+data:text/html,<script>      syntactic:false  scheme:data        accepted:false
+ftp://example.com            syntactic:true   scheme:ftp         accepted:false
+bool(true)
+bool(false)
+bool(false)
+bool(false)
+string(6) "bcrypt"

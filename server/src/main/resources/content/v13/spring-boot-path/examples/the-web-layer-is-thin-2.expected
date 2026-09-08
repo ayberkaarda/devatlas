@@ -1,0 +1,4 @@
+http request 1: 201
+http request 2: 409 no seats left
+after the bulk enroller: seatsLeft=-40
+the rule the controller enforced was never applied here

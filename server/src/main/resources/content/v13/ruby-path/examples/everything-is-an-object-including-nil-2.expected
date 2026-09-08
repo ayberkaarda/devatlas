@@ -1,0 +1,14 @@
+nil.to_s.inspect -> ""
+nil.to_a.inspect -> []
+nil.to_i         -> 0
+nil.to_h.inspect -> {}
+nil.inspect      -> nil
+splatted        -> ["ruby"]
+joined          -> ""
+nil.upcase      -> NoMethodError: undefined method 'upcase' for nil
+name&.upcase    -> nil
+name&.upcase    -> "ADA"
+dig present     -> "localhost"
+dig absent      -> nil
+dig missing top -> nil
+[][] absent     -> NoMethodError: undefined method '[]' for nil

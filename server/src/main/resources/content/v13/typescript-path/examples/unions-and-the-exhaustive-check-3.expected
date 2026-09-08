@@ -1,0 +1,2 @@
+4
+runtime failure: unhandled shape: {"kind":"triangle","base":3,"height":4}

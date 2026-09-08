@@ -1,0 +1,2 @@
+@EnableConfigurationProperties: mirror.example.org:8443
+plain @Bean method       : localhost:0

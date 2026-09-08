@@ -1,0 +1,6 @@
+after mutate: [1, 2, 99]
+  inside rebind, local list: [1, 2, 99]
+after rebind: [1, 2]
+after slice assignment: [7, 8]
+  inside shout: ABC
+after shout: abc

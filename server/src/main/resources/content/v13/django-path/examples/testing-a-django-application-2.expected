@@ -1,0 +1,8 @@
+tests run: 5 failures: 0 errors: 0
+configured database name: :memory:
+the tests ran against a different name: True
+SimpleTestCase refused a query: True
+TestCase saw its own row: 1
+TransactionTestCase saw its own row: 1
+a later test found: 0 rows
+no test left a row behind for another: True

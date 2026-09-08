@@ -1,0 +1,12 @@
+tests collected:
+   __main__.ClientTest.test_a_write_here_does_not_reach_the_next_test
+   __main__.ClientTest.test_the_class_fixture_is_back_to_two
+   __main__.ClientTest.test_the_view_answers
+   __main__.ClientTest.test_the_view_runs_one_query
+   __main__.IsolationTest.test_a_writes_a_row
+   __main__.IsolationTest.test_b_starts_empty_again
+   __main__.NoDatabaseTest.test_reversing_a_url_needs_no_rows
+tests run: 7
+failures: 0
+errors: 0
+everything passed: True

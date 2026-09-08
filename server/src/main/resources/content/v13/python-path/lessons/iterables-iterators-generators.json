@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060103",
+  "title": "Iterables, iterators, generators",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.python.org/3.13/glossary.html#term-iterator",
+    "https://docs.python.org/3.13/library/stdtypes.html#iterator-types",
+    "https://docs.python.org/3.13/reference/expressions.html#yield-expressions",
+    "https://docs.python.org/3.13/library/tracemalloc.html"
+  ],
+  "concepts": ["the iterator protocol", "lazy evaluation"],
+  "code_examples": [
+    { "language": "python", "caption": "Iterable against iterator", "file": "iterables-iterators-generators-1.py" },
+    { "language": "python", "caption": "Laziness, counted", "file": "iterables-iterators-generators-2.py" },
+    { "language": "python", "caption": "Where the memory goes", "file": "iterables-iterators-generators-3.py" }
+  ]
+}

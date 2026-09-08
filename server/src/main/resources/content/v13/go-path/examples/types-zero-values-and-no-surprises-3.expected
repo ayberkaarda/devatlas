@@ -1,0 +1,10 @@
+100.0C = 212.0F
+reinterpreted, not converted: 100.0
+zero value      {Host: Port:0 Verbose:false}
+zero == Config{} true
+original {Host:localhost Port:8080 Verbose:false}
+copy     {Host:localhost Port:9090 Verbose:false}
+equal    false
+after call {Host:localhost Port:8080 Verbose:false}
+lookup   primary
+lookup   standby

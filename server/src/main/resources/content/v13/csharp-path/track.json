@@ -1,0 +1,44 @@
+{
+  "id": "019205a0-1000-7000-8000-000000000013",
+  "slug": "csharp-path",
+  "title": "The C# Path",
+  "description": "Copies and references, null as a compiler argument and records, then properties, LINQ and async, then collections, the container and a runner.",
+  "icon": null,
+  "order": 13,
+  "teaches_version": "C# 14 on .NET 10",
+  "modules": [
+    {
+      "id": "019205a0-2000-7000-8000-000000001301",
+      "title": "Foundations",
+      "order": 0,
+      "estimated_minutes": 31,
+      "lessons": [
+        "value-types-and-reference-types",
+        "nullable-reference-types",
+        "records-and-with"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001302",
+      "title": "The language's own model",
+      "order": 1,
+      "estimated_minutes": 36,
+      "lessons": [
+        "properties-are-not-fields",
+        "linq-and-deferred-execution",
+        "async-await-and-the-captured-context"
+      ]
+    },
+    {
+      "id": "019205a0-2000-7000-8000-000000001303",
+      "title": "Building something real",
+      "order": 2,
+      "estimated_minutes": 38,
+      "lessons": [
+        "collections-and-the-interface-to-accept",
+        "dependency-injection-in-the-host",
+        "testing-and-the-async-void-that-swallowed-a-failure"
+      ]
+    }
+  ]
+}

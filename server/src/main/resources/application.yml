@@ -137,6 +137,22 @@ bytelore:
     admin-email: ${BYTELORE_ADMIN_EMAIL:}
     admin-password: ${BYTELORE_ADMIN_PASSWORD:}
 
+  corpus:
+    # Where the migration that loads teaching content reads its corpus from.
+    # One directory per track, holding the markdown bodies, their metadata and
+    # the code listings; the migration normalizes and validates every value
+    # through the same predicates the administration API uses, and refuses the
+    # whole load rather than storing something the API would have rejected.
+    #
+    # This is a setting rather than a constant so the test suite can point the
+    # same loader at a fixture corpus. A hard-coded path would mean every
+    # refusal the loader is supposed to make could only be provoked by breaking
+    # the real corpus.
+    #
+    # An absent directory loads nothing and is not an error: the loader ships
+    # before the content it will carry.
+    location: classpath:content/v13/
+
 management:
   endpoints:
     web:

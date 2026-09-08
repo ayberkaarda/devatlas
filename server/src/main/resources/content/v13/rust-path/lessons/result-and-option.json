@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000080201",
+  "title": "Result and Option",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://doc.rust-lang.org/1.98.0/std/option/enum.Option.html",
+    "https://doc.rust-lang.org/1.98.0/std/result/enum.Result.html",
+    "https://doc.rust-lang.org/1.98.0/book/ch09-02-recoverable-errors-with-result.html",
+    "https://doc.rust-lang.org/1.98.0/reference/expressions/operator-expr.html"
+  ],
+  "concepts": ["absence as a value", "propagation with the question mark operator"],
+  "code_examples": [
+    { "language": "rust", "caption": "Absence, and the combinators that respect it", "file": "result-and-option-1.rs" },
+    { "language": "rust", "caption": "A custom error type and ? propagation", "file": "result-and-option-2.rs" },
+    { "language": "rust", "caption": "Many fallible steps gathered into one answer", "file": "result-and-option-3.rs" }
+  ]
+}

@@ -1,0 +1,22 @@
+psql:<stdin>:9: ERROR:  column "name" does not exist
+LINE 1: SELECT id, name FROM person ORDER BY id;
+                   ^
+ id |    name    | full_name  
+----+------------+------------
+  1 | Ada Byron  | Ada Byron
+  2 | Bo Nystrom | Bo Nystrom
+(2 rows)
+
+ id | full_name  
+----+------------
+  1 | Ada Byron
+  2 | Bo Nystrom
+(2 rows)
+
+psql:<stdin>:57: ERROR:  CREATE INDEX CONCURRENTLY cannot run inside a transaction block
+      indexname      
+---------------------
+ ix_person_full_name
+ person_pkey
+(2 rows)
+

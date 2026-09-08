@@ -1,0 +1,33 @@
+ true_order_total 
+------------------
+            50.00
+(1 row)
+
+ customer | rows_returned | total 
+----------+---------------+-------
+ ada      |             2 | 50.00
+(1 row)
+
+ customer | rows_returned | total  
+----------+---------------+--------
+ ada      |             4 | 100.00
+(1 row)
+
+ item_id | amount | shipment_id | carrier 
+---------+--------+-------------+---------
+      10 |  30.00 |          20 | road
+      10 |  30.00 |          21 | air
+      11 |  20.00 |          20 | road
+      11 |  20.00 |          21 | air
+(4 rows)
+
+ customer | total | items | parcels 
+----------+-------+-------+---------
+ ada      | 50.00 |     2 |       2
+(1 row)
+
+ customer | total_after_dividing_out | items | parcels 
+----------+--------------------------+-------+---------
+ ada      |      50.0000000000000000 |     2 |       2
+(1 row)
+

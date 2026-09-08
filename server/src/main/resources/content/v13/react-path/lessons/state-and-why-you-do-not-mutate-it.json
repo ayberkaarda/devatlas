@@ -1,0 +1,30 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100102",
+  "title": "State, and why you do not mutate it",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://react.dev/reference/react/useState",
+    "https://react.dev/learn/updating-objects-in-state",
+    "https://react.dev/learn/state-as-a-snapshot",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toSorted"
+  ],
+  "concepts": ["immutable updates", "state as a snapshot"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "The Object.is bail-out, measured in renders",
+      "file": "state-and-why-you-do-not-mutate-it-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The update queue: three plain set calls against three updaters",
+      "file": "state-and-why-you-do-not-mutate-it-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "One level of copying, and the nested object that was never copied",
+      "file": "state-and-why-you-do-not-mutate-it-3.js"
+    }
+  ]
+}

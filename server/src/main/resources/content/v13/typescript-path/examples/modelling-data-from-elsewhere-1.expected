@@ -1,0 +1,4 @@
+number 7
+undefined
+runtime failure: user.id.toUpperCase is not a function
+runtime failure: Cannot read properties of undefined (reading 'length')

@@ -1,0 +1,10 @@
+without cleanup run 1, effect runs: 1
+without cleanup branch was skipped, detail changed, runs: 1
+without cleanup branch now taken, runs: 2
+without cleanup detail changed while shown, runs: 3
+without cleanup detail changed after the branch closed, woke the effect: true
+with cleanup    run 1, effect runs: 1
+with cleanup    branch was skipped, detail changed, runs: 1
+with cleanup    branch now taken, runs: 2
+with cleanup    detail changed while shown, runs: 3
+with cleanup    detail changed after the branch closed, woke the effect: false

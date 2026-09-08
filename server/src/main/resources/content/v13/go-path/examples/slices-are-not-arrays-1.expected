@@ -1,0 +1,7 @@
+array      [10 20 30 40]  after copy was written [1 20 30 40]
+slice      [1 20 30 40]  after copy was written [1 20 30 40]
+array after mutateArray  [10 20 30 40]
+slice after mutateSlice  [999 20 30 40]
+slice after appendToSlice [999 20 30 40] len=4
+[4]int equality  true
+array [10 77 30 40]  window [77 30] len=2 cap=3

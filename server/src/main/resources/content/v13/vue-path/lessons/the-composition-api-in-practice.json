@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110301",
+  "title": "The composition API in practice",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://vuejs.org/guide/reusability/composables.html",
+    "https://vuejs.org/api/reactivity-utilities.html"
+  ],
+  "concepts": [
+    "composables",
+    "stateful logic reuse"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "State per call and state per module, counted",
+      "file": "the-composition-api-in-practice-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Refs versus a reactive object through a destructure, and the repair",
+      "file": "the-composition-api-in-practice-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "toValue, and the composable that read its argument once",
+      "file": "the-composition-api-in-practice-3.js"
+    }
+  ]
+}

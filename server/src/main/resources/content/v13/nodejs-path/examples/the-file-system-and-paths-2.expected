@@ -1,0 +1,10 @@
+read back 2 lines
+first line: first line
+without an encoding the result is a Buffer: true
+byte length matches the UTF-8 encoding: true
+entries: notes.txt:file, sub:dir
+notes.txt is a file: true
+size agrees with what was written: true
+access resolved for a file that exists
+access rejected for a missing file with code: ENOENT
+after rm, stat rejects with code: ENOENT

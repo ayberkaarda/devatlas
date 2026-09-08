@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150103",
+  "title": "Comparison, and the bug the loose one wrote",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.php.net/manual/en/language.operators.comparison.php",
+    "https://www.php.net/manual/en/types.comparisons.php",
+    "https://www.php.net/manual/en/control-structures.match.php"
+  ],
+  "concepts": ["loose comparison", "identity"],
+  "code_examples": [
+    { "language": "php", "caption": "Pairs under == and ===", "file": "comparison-loose-and-strict-1.php" },
+    { "language": "php", "caption": "The comparisons you did not write", "file": "comparison-loose-and-strict-2.php" },
+    { "language": "php", "caption": "Ordering, stable sorts, and floats", "file": "comparison-loose-and-strict-3.php" }
+  ]
+}

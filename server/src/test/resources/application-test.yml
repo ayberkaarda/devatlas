@@ -90,3 +90,17 @@ bytelore:
   seed:
     admin-email: admin@bytelore.test
     admin-password: seed-admin-password-for-tests
+
+  # The suite loads a fixture corpus rather than the real one. Two reasons, and
+  # both matter. The real corpus is written by people who are not writing the
+  # loader, so a suite pinned to it would go red for reasons that have nothing
+  # to do with the code under test. And a loader is only worth anything if it
+  # can be watched refusing things: the refusal tests take this fixture, change
+  # one value, and assert the load fails, which is not something anybody should
+  # do to shipping content.
+  #
+  # The fixture track is loaded unpublished, like every corpus track, so it is
+  # invisible to the public read paths and cannot disturb a test that reads
+  # them.
+  corpus:
+    location: classpath:corpus/fixture/

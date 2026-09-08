@@ -1,0 +1,9 @@
+promoted field: 7 7
+outer Label:    report-7-q3
+inner Label:    base-7
+promoted Describe: describe -> base-7
+composed Describe: wrapped -> report-7-q3 (composed)
+main.Report  report-7-q3
+main.Plain   base-2
+main.Base    base-7
+shared through two embeds: base-43 base-43

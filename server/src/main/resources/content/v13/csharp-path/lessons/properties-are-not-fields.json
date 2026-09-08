@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130201",
+  "title": "Properties, and why they are not fields",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/csharp/properties",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/field",
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/required"
+  ],
+  "concepts": ["encapsulation", "accessors"],
+  "code_examples": [
+    { "language": "csharp", "caption": "A property is a pair of methods", "file": "properties-are-not-fields-1.cs" },
+    { "language": "csharp", "caption": "Auto-properties, field, init and required", "file": "properties-are-not-fields-2.cs" },
+    { "language": "csharp", "caption": "Every read is a call, and it returns a value", "file": "properties-are-not-fields-3.cs" }
+  ]
+}

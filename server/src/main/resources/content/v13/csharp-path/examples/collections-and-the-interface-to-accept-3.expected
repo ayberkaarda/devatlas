@@ -1,0 +1,14 @@
+list keeps every occurrence:   5
+list keeps insertion order:    bee,ant,bee,cow,ant
+set keeps one of each:         3
+set membership:                True False
+dictionary keys:               3
+count for 'bee':               2
+sorted pairs:                  ant=2,bee=2,cow=1
+IEnumerable<string> as IEnumerable<object>: 5
+string[] assigned to object[]: 5
+writing an int into it threw:  ArrayTypeMismatchException
+Describe(list):  5 values, longest 3
+Describe(set):   3 values, longest 3
+Describe(array): 5 values, longest 3
+Describe(query): 5 values, longest 3

@@ -1,0 +1,2 @@
+REQUIRED:     [begin t1, commit t1]
+REQUIRES_NEW: [begin t2, suspend t2, begin t3, commit t3, resume t2, commit t2]

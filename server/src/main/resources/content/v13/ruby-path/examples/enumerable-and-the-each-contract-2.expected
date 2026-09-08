@@ -1,0 +1,19 @@
+reduce total      -> -1070
+sum shorthand     -> 1570
+each_with_object  -> {"books" => 370, "rent" => 900, "food" => 300}
+group_by kind     -> {credit: 1, debit: 3}
+partition sizes   -> debits 3, credits 1
+
+visit order       -> ["books", "rent", "books", "food"]
+hash key order    -> ["books", "rent", "food"]
+
+filter_map        -> ["books", "rent", "food"]
+flat_map          -> ["books", :credit, "rent", :debit]
+tally             -> {"books" => 2, "rent" => 1, "food" => 1}
+min_by / max_by   -> books debit 120 / rent debit 900
+sum by group      -> {"books" => 370, "rent" => 900, "food" => 300}
+
+hash map          -> ["books=370", "rent=900", "food=300"]
+hash select       -> {"books" => 370, "rent" => 900}
+hash sum          -> 1570
+hash to_a         -> [["books", 370], ["rent", 900], ["food", 300]]

@@ -1,0 +1,5 @@
+User satisfies Named: true
+Blob satisfies Named: false
+describe(user) = ada#7
+Blob has a usable name():    false
+Blob has an int-valued id(): false

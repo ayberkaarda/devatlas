@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130203",
+  "title": "async, await and the context it captures",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 13,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/await",
+    "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.configureawait?view=net-10.0",
+    "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.whenall?view=net-10.0"
+  ],
+  "concepts": ["continuations", "synchronization context"],
+  "code_examples": [
+    { "language": "csharp", "caption": "What await guarantees", "file": "async-await-and-the-captured-context-1.cs" },
+    { "language": "csharp", "caption": "A real context and ConfigureAwait(false)", "file": "async-await-and-the-captured-context-2.cs" },
+    { "language": "csharp", "caption": "Faults, AggregateException and cancellation", "file": "async-await-and-the-captured-context-3.cs" }
+  ]
+}

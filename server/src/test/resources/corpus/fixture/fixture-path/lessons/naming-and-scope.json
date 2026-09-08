@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320102",
+  "title": "Naming and scope",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 6,
+  "sources": ["https://docs.python.org/3/reference/executionmodel.html"],
+  "concepts": ["lexical scope", "closures"],
+  "code_examples": [
+    { "language": "python", "caption": "The lookup order in one function", "file": "naming-and-scope-1.py" },
+    { "language": "python", "caption": "A closure capturing a variable", "file": "naming-and-scope-2.py" }
+  ]
+}

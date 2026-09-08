@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150203",
+  "title": "Exceptions and errors, and what ends the request",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.php.net/manual/en/language.exceptions.php",
+    "https://www.php.net/manual/en/class.throwable.php",
+    "https://www.php.net/manual/en/function.set-error-handler.php"
+  ],
+  "concepts": ["Throwable hierarchy", "error handling"],
+  "code_examples": [
+    { "language": "php", "caption": "Which branch each failure lands on", "file": "exceptions-errors-and-what-is-catchable-1.php" },
+    { "language": "php", "caption": "finally, and the return that swallows", "file": "exceptions-errors-and-what-is-catchable-2.php" },
+    { "language": "php", "caption": "Diagnostics, promotion, and the fatal nobody catches", "file": "exceptions-errors-and-what-is-catchable-3.php" }
+  ]
+}

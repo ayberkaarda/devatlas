@@ -1,0 +1,13 @@
+bare except total: 0
+expected total:    22
+the bug was silent: True
+---
+  missing key: 'amont'
+  missing key: 'amont'
+  missing key: 'amont'
+specific except total: 0
+---
+the interpreter was told to exit and nobody let it
+SystemExit is not an Exception: False
+it is a BaseException: True
+except Exception let it through, code: 3

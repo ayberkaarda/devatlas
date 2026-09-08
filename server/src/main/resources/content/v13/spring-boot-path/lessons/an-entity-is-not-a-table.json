@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020201",
+  "title": "An entity is not a table",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.spring.io/spring-data/jpa/reference/jpa/entity-persistence.html",
+    "https://docs.spring.io/spring-boot/reference/data/sql.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html"
+  ],
+  "concepts": ["entity identity", "persistence context"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "Identity keyed on a generated id, and the set that loses it",
+      "file": "an-entity-is-not-a-table-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "A mapping that states each column",
+      "file": "an-entity-is-not-a-table-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "What ORDINAL stores, and the enum edit that reinterprets it",
+      "file": "an-entity-is-not-a-table-3.java"
+    }
+  ]
+}

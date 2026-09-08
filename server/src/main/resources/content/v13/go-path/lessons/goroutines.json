@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120202",
+  "title": "Goroutines",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://go.dev/ref/spec#Go_statements",
+    "https://go.dev/ref/mem",
+    "https://pkg.go.dev/sync@go1.27.0#WaitGroup",
+    "https://go.dev/ref/spec#For_statements"
+  ],
+  "concepts": ["goroutine", "waiting instead of sleeping"],
+  "code_examples": [
+    { "language": "go", "caption": "Fan-out with a WaitGroup", "file": "goroutines-1.go" },
+    { "language": "go", "caption": "What a goroutine captures", "file": "goroutines-2.go" },
+    { "language": "go", "caption": "A leak observed as a guarantee", "file": "goroutines-3.go" }
+  ]
+}

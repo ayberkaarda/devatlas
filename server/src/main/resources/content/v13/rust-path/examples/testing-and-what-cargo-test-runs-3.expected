@@ -1,0 +1,4 @@
+compiled with cfg(test): false
+the module above is in this binary: false
+both assertions held: true
+terminal states: 2 of 4

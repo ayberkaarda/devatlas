@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000090301",
+  "title": "An HTTP server without a framework",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://nodejs.org/docs/v22.23.2/api/http.html",
+    "https://nodejs.org/docs/v22.23.2/api/url.html"
+  ],
+  "concepts": [
+    "request routing",
+    "response lifecycle"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Routing, status codes and an error shape",
+      "file": "an-http-server-without-a-framework-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Reading a body, and capping it",
+      "file": "an-http-server-without-a-framework-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Headers, query strings and headersSent",
+      "file": "an-http-server-without-a-framework-3.js"
+    }
+  ]
+}

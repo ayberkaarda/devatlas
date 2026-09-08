@@ -1,0 +1,5 @@
+hints read off the function: {'text': 'str', 'times': 'int', 'return': 'str'}
+valid call: ababab
+argument rejected: repeat: times expected int, got str
+return rejected:   miscounts: declared -> str, returned int
+without the decorator nothing would have been checked: str

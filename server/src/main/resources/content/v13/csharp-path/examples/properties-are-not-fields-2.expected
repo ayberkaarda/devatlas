@@ -1,0 +1,8 @@
+clamped below absolute zero: -273.15
+ordinary value kept:         21.5
+writes so far:               2
+init-only property:          example.internal:8443
+required set, port defaulted: other.internal:443
+empty basket total:          0
+after two additions:         7
+and the count agrees:        2

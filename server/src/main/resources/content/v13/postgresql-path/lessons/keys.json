@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050102",
+  "title": "Keys",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.postgresql.org/docs/16/ddl-constraints.html",
+    "https://www.postgresql.org/docs/16/sql-createtable.html",
+    "https://www.postgresql.org/docs/16/indexes-unique.html",
+    "https://www.postgresql.org/docs/16/indexes-partial.html"
+  ],
+  "concepts": ["primary and foreign keys"],
+  "code_examples": [
+    { "language": "sql", "caption": "An orphan refused, a parent held, a cascade fired", "file": "keys-1.sql" },
+    { "language": "sql", "caption": "The address change a natural key cannot survive", "file": "keys-2.sql" },
+    { "language": "sql", "caption": "Unique with unknowns, and a partial unique index", "file": "keys-3.sql" }
+  ]
+}

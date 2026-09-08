@@ -1,0 +1,8 @@
+contains before : true
+contains after  : false
+size            : 1
+iteration finds : Tag[published]
+remove works    : false
+size now        : 1
+List.of + null  : NullPointerException
+ArrayList + null: false

@@ -1,0 +1,2 @@
+self-invocation: [begin t1, rollback t1]
+separate bean:   [begin t2, suspend t2, begin t3, commit t3, resume t2, rollback t2]

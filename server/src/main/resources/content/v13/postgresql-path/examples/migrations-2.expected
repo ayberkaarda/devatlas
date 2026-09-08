@@ -1,0 +1,28 @@
+psql:<stdin>:14: ERROR:  check constraint "ck_account_balance" of relation "account" is violated by some row
+      conname       | convalidated 
+--------------------+--------------
+ ck_account_balance | f
+(1 row)
+
+psql:<stdin>:23: ERROR:  new row for relation "account" violates check constraint "ck_account_balance"
+DETAIL:  Failing row contains (4, dee@example.com, -1.00).
+psql:<stdin>:26: ERROR:  new row for relation "account" violates check constraint "ck_account_balance"
+DETAIL:  Failing row contains (2, BO@example.com, -6.00).
+ id | balance 
+----+---------
+  2 |   -5.00
+(1 row)
+
+psql:<stdin>:33: ERROR:  check constraint "ck_account_balance" of relation "account" is violated by some row
+      conname       | convalidated 
+--------------------+--------------
+ ck_account_balance | t
+(1 row)
+
+psql:<stdin>:48: ERROR:  insert or update on table "payment" violates foreign key constraint "fk_payment_account"
+DETAIL:  Key (account_id)=(99) is not present in table "account".
+      conname       | convalidated 
+--------------------+--------------
+ fk_payment_account | t
+(1 row)
+

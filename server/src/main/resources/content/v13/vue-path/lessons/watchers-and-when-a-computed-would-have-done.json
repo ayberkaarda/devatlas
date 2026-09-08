@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110202",
+  "title": "Watchers, and when a computed would have done",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://vuejs.org/guide/essentials/watchers.html",
+    "https://vuejs.org/guide/essentials/computed.html"
+  ],
+  "concepts": [
+    "side effects on change",
+    "flush timing"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "watch and watchEffect, counted against the same writes",
+      "file": "watchers-and-when-a-computed-would-have-done-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Every source shape, including the one that subscribes to nothing",
+      "file": "watchers-and-when-a-computed-would-have-done-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "A derived value by watcher and by computed, with the stale window measured",
+      "file": "watchers-and-when-a-computed-would-have-done-3.js"
+    }
+  ]
+}

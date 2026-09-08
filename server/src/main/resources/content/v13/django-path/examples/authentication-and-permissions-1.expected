@@ -1,0 +1,16 @@
+user model: User
+password stored in the clear: False
+stored value names its hasher: md5
+check_password with the right one: True
+check_password with the wrong one: False
+authenticate returns a user: True
+authenticate with a bad password returns: None
+authenticate with an unknown user returns: None
+anonymous is_authenticated: False
+user is_authenticated: True
+anonymous is not None, so a truth test is not an auth test: True
+set_password changed the instance: True
+but nothing was written yet: True
+after save(): True
+authenticate refuses an inactive user: True
+the row is still there: True

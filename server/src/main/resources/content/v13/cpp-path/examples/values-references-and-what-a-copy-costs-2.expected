@@ -1,0 +1,6 @@
+prvalue initialiser  len=26 copies=0 moves=0
+prvalue from a call  len=21 copies=0 moves=0
+push_back(prvalue)   len=6 copies=0 moves=1
+emplace_back(args)   len=17 copies=0 moves=0
+returning a parameter is a move: true
+its length survived: 19

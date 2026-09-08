@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110101",
+  "title": "The template is a contract",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://vuejs.org/guide/essentials/template-syntax.html",
+    "https://vuejs.org/guide/essentials/reactivity-fundamentals.html"
+  ],
+  "concepts": [
+    "declarative rendering",
+    "template expressions"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Compiled once, rendered many times",
+      "file": "the-template-is-a-contract-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Expressions only, and the sandbox around them",
+      "file": "the-template-is-a-contract-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Text interpolation and raw HTML, given the same hostile string",
+      "file": "the-template-is-a-contract-3.js"
+    }
+  ]
+}

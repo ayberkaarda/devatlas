@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030101",
+  "title": "What a type really is",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://www.typescriptlang.org/docs/handbook/type-compatibility.html",
+    "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
+  ],
+  "concepts": ["structural typing", "type erasure"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "A class and an object literal that never mention the interface",
+      "file": "what-a-type-really-is-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "The excess property check, and the same value through a variable",
+      "file": "what-a-type-really-is-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "An alias is a name; a brand is a type",
+      "file": "what-a-type-really-is-3.ts"
+    }
+  ]
+}

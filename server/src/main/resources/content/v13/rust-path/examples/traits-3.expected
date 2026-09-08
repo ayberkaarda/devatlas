@@ -1,0 +1,5 @@
+Display: STORE_UNAVAILABLE: the database file could not be opened
+Debug:   StoreFailure { code: "STORE_UNAVAILABLE", detail: "the database file could not be opened" }
+to_string came from a blanket impl: true
+parsed: Ok(13)
+converted by ?: INVALID_ARGUMENT: a version column did not hold a number

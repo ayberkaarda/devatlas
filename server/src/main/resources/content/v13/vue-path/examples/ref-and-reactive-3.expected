@@ -1,0 +1,7 @@
+after rebinding the variable, effect runs: 1
+after mutating the new object, effect runs: 1
+after mutating the first object, effect runs: 2
+after replacing a ref's value, effect runs: 2
+the ref reports the new object: true
+reactive(raw) === raw: false
+the proxy reads through to the source: true

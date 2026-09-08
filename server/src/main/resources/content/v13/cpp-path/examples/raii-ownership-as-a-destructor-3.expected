@@ -1,0 +1,7 @@
+the copy is independent: true
+original events: 1, copy events: 2
+Session declares no special members: true
+two requests, one rejected:
+  handled, active=1
+  rejected, active=1
+active after both: 0

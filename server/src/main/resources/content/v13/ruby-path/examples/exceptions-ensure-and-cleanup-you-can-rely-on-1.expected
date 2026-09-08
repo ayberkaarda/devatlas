@@ -1,0 +1,26 @@
+parse("42"):
+  body
+  else
+  ensure
+-> :parsed_cleanly
+
+parse("abc"):
+  body
+  rescue: ArgumentError
+  ensure
+-> -1
+
+body computed Integer("42") -> 42
+  body
+  else
+  ensure
+but the method returned     -> :parsed_cleanly
+
+  ensure ran while unwinding
+caller still saw -> IOError: disk gone
+
+  ensure before the value leaves
+early -> :from_body
+
+swallowing -> :nothing_happened
+the IOError never reached the caller

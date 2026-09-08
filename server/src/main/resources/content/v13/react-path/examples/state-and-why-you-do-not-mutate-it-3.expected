@@ -1,0 +1,8 @@
+outer objects differ: true
+nested objects are the same object: true
+the value we meant to leave alone now reads: Nice
+previous value preserved: Hamburg
+next value: Nice
+nested reference changed: true
+changed branch is new: true
+untouched branch is shared: true

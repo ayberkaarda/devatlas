@@ -1,0 +1,8 @@
+first use  : 3
+second use : stream has already been operated upon or closed
+side effect: [a, b, c]
+plainly    : [a, b, c]
+loop found : 12
+stream found: 12
+weighted   : 81
+same, boxed: 81

@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050103",
+  "title": "NULL is not a value",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.postgresql.org/docs/16/functions-comparison.html",
+    "https://www.postgresql.org/docs/16/functions-subquery.html",
+    "https://www.postgresql.org/docs/16/functions-aggregate.html",
+    "https://www.postgresql.org/docs/16/ddl-constraints.html"
+  ],
+  "concepts": ["three-valued logic"],
+  "code_examples": [
+    { "language": "sql", "caption": "The truth table, and what WHERE keeps", "file": "null-is-not-a-value-1.sql" },
+    { "language": "sql", "caption": "NOT IN returning nothing, and what aggregates skip", "file": "null-is-not-a-value-2.sql" },
+    { "language": "sql", "caption": "The CHECK that admits it, and grouping that does not", "file": "null-is-not-a-value-3.sql" }
+  ]
+}

@@ -27,6 +27,26 @@
 *.mjs           text eol=lf
 *.js            text eol=lf
 
+# Corpus listings and their recorded output. The runner compares a listing's
+# actual output against its .expected byte for byte, so a checkout that
+# rewrote either one's line endings would report a difference that is not
+# there.
+*.py            text eol=lf
+*.kt            text eol=lf
+*.go            text eol=lf
+*.rb            text eol=lf
+*.php           text eol=lf
+*.cs            text eol=lf
+*.cpp           text eol=lf
+*.txt           text eol=lf
+*.expected      text eol=lf
+
+# The corpus tree, whatever extension a future track brings. The rules above name
+# the extensions in use today; this one holds when a track arrives in a language
+# nobody has listed yet, which is exactly when a silent CRLF rewrite would be
+# hardest to notice.
+server/src/main/resources/content/**  text eol=lf
+
 # Shell scripts must stay LF or they will not execute on Linux/macOS.
 *.sh            text eol=lf
 mvnw            text eol=lf

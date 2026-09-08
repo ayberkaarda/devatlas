@@ -1,0 +1,8 @@
+loop   : [Ada, Grace, Barbara]
+stream : [Ada, Grace, Barbara]
+equal  : true
+lazily, element at a time:
+  testing Ada
+  testing Grace
+result : Grace
+no terminal operation, no output above

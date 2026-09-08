@@ -1,0 +1,6 @@
+borrow sees 15 characters
+owned copy has 15 characters
+after growth: borrow 37, owned copy 15
+the borrow names the source: true
+owning outlived the block: a source string
+owned size: 15

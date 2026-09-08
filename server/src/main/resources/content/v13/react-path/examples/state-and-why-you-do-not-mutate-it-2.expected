@@ -1,0 +1,6 @@
+three plain set calls queue: [1,1,1]
+next state from plain set calls: 1
+next state from three updaters: 3
+next state from a mixed queue: 47
+queued result: 3
+the handler's own variable still reads: 0

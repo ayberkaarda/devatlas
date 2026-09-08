@@ -1,0 +1,9 @@
+6
+-1
+6
+null
+string of length 2
+int doubled to 42
+other
+!! on null threw NullPointerException: true
+requireNotNull: config name is required

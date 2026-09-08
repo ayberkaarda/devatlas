@@ -1,0 +1,16 @@
+ constant_default_left_the_file_alone 
+--------------------------------------
+ t
+(1 row)
+
+ volatile_default_left_the_file_alone 
+--------------------------------------
+ f
+(1 row)
+
+psql:<stdin>:33: ERROR:  column "author_id" of relation "lesson" contains null values
+ rows_total | rows_with_author 
+------------+------------------
+      50000 |            50000
+(1 row)
+

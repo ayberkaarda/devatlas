@@ -1,0 +1,22 @@
+ name |  title  
+------+---------
+ ada  | indexes
+ bo   | [null]
+ cyd  | [null]
+(3 rows)
+
+ name |  title  
+------+---------
+ ada  | indexes
+(1 row)
+
+ name 
+------
+ cyd
+(1 row)
+
+ predicate_in_on | predicate_in_where | plain_inner_join 
+-----------------+--------------------+------------------
+               3 |                  1 |                1
+(1 row)
+

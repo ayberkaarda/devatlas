@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040103",
+  "title": "Immutability by default",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 7,
+  "sources": [
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html"
+  ],
+  "concepts": ["defensive copying"],
+  "code_examples": [
+    { "language": "java", "caption": "A record that leaked its list", "file": "immutability-by-default-1.java" },
+    { "language": "java", "caption": "What final actually freezes", "file": "immutability-by-default-2.java" },
+    { "language": "java", "caption": "What a copy costs", "file": "immutability-by-default-3.java" }
+  ]
+}

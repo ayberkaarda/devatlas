@@ -1,0 +1,7 @@
+render 1: Hello, Ada - 3 items
+render 2: Hello, Ada - 3 items
+same state, same output: true
+after new state: Hello, Grace - 4 items
+compiled once, rendered many: true
+static chunks: 3
+expressions the compiler found: user.name | items.length

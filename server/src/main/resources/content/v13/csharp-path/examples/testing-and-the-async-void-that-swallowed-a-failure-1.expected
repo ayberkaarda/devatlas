@@ -1,0 +1,6 @@
+pass  a new basket is empty
+pass  adding an item raises the count
+pass  the clock is injected, not read from the machine
+FAIL  a failing test reports rather than crashing the run: expected '1', got '0'
+pass  removing what is not there throws
+5 tests, 1 failed

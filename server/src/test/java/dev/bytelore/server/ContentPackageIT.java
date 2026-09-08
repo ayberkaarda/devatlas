@@ -270,44 +270,53 @@ class ContentPackageIT extends ManifestFixtureSupport {
    *
    * <p>Deliberately run against <strong>seeded</strong> content rather than a fixture this class
    * builds. A fixture proves the endpoint can serve a translation someone remembered to create; the
-   * seed proves a fresh database ships one, which is what every other suite, and every client
-   * pointed at a new deployment, actually reads. A translated body that exists only inside one test
-   * class is a field the rest of the system never sees, and a field nothing populates is one whose
-   * absence is indistinguishable from success.
+   * seed proves a fresh database ships one, which is what every other suite reads. A translated
+   * body that exists only inside one test class is a field the rest of the system never sees, and a
+   * field nothing populates is one whose absence is indistinguishable from success.
+   *
+   * <p>Publication is arranged here rather than inherited. Whether that track is on the public
+   * surface is an editorial decision about its content; whether a package spells a translated body
+   * {@code body} is not, and this test is only about the second. The flag is put back in a {@code
+   * finally} because the Testcontainer is shared across test classes.
    */
   @Test
   void aTranslationEntryCarriesBodyWhileTheLessonsOwnMarkdownStaysBodyMarkdown() throws Exception {
-    UUID seedTrackId = trackIdBySlug("angular-path");
-    JsonNode manifest = trackManifest(seedTrackId);
-    UUID translatedLesson = lessonIdBySlug(manifest, "signals-and-reactivity");
-    int version = versionOf(manifest, translatedLesson);
+    boolean previouslyPublished = setTrackPublished(SEED_TRACK_ID, true);
+    try {
+      UUID seedTrackId = trackIdBySlug("angular-path");
+      JsonNode manifest = trackManifest(seedTrackId);
+      UUID translatedLesson = lessonIdBySlug(manifest, "signals-and-reactivity");
+      int version = versionOf(manifest, translatedLesson);
 
-    MvcResult result = fetchPackage("LESSON", translatedLesson.toString(), version);
-    assertThat(result.getResponse().getStatus()).isEqualTo(200);
-    String raw = result.getResponse().getContentAsString();
-    JsonNode pkg = jsonMapper.readTree(result.getResponse().getContentAsByteArray());
+      MvcResult result = fetchPackage("LESSON", translatedLesson.toString(), version);
+      assertThat(result.getResponse().getStatus()).isEqualTo(200);
+      String raw = result.getResponse().getContentAsString();
+      JsonNode pkg = jsonMapper.readTree(result.getResponse().getContentAsByteArray());
 
-    JsonNode translations = pkg.path("translations");
-    assertThat(translations.size()).isEqualTo(2);
-    for (JsonNode translation : translations) {
-      assertThat(translation.properties())
-          .extracting(java.util.Map.Entry::getKey)
-          .containsExactlyInAnyOrder("locale", "title", "body");
-      assertThat(translation.path("body").asString()).isNotBlank();
+      JsonNode translations = pkg.path("translations");
+      assertThat(translations.size()).isEqualTo(2);
+      for (JsonNode translation : translations) {
+        assertThat(translation.properties())
+            .extracting(java.util.Map.Entry::getKey)
+            .containsExactlyInAnyOrder("locale", "title", "body");
+        assertThat(translation.path("body").asString()).isNotBlank();
+      }
+      // Sorted by locale, so a second locale is what distinguishes a correct sort from no sort.
+      assertThat(translations.get(0).path("locale").asString()).isEqualTo("fr");
+      assertThat(translations.get(1).path("locale").asString()).isEqualTo("tr");
+      assertThat(translations.get(1).path("title").asString()).isEqualTo("Sinyaller ve Reaktivite");
+      assertThat(translations.get(1).path("body").asString()).contains("Bir sinyal");
+
+      // Exactly one body_markdown in the whole document, and it is the lesson's own.
+      assertThat(raw.split("\"body_markdown\"", -1).length - 1).isEqualTo(1);
+      assertThat(pkg.path("body_markdown").asString()).contains("What is a signal?");
+
+      // The served bytes still hash to what the manifest advertised, translation and all.
+      assertThat(sha256Hex(result.getResponse().getContentAsByteArray()))
+          .isEqualTo(entityDigest(manifest, translatedLesson));
+    } finally {
+      setTrackPublished(SEED_TRACK_ID, previouslyPublished);
     }
-    // Sorted by locale, so a second locale is what distinguishes a correct sort from no sort.
-    assertThat(translations.get(0).path("locale").asString()).isEqualTo("fr");
-    assertThat(translations.get(1).path("locale").asString()).isEqualTo("tr");
-    assertThat(translations.get(1).path("title").asString()).isEqualTo("Sinyaller ve Reaktivite");
-    assertThat(translations.get(1).path("body").asString()).contains("Bir sinyal");
-
-    // Exactly one body_markdown in the whole document, and it is the lesson's own.
-    assertThat(raw.split("\"body_markdown\"", -1).length - 1).isEqualTo(1);
-    assertThat(pkg.path("body_markdown").asString()).contains("What is a signal?");
-
-    // The served bytes still hash to what the manifest advertised, translation and all.
-    assertThat(sha256Hex(result.getResponse().getContentAsByteArray()))
-        .isEqualTo(entityDigest(manifest, translatedLesson));
   }
 
   /** No credentials, on either endpoint family (§3.7). */

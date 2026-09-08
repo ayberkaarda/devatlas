@@ -1,0 +1,9 @@
+kind(1)            = signed number
+kind(1u)           = number
+kind(1.5)          = signed number
+render(true)       = yes
+render(42)         = 42
+render("literal")  = literal
+total()            = 0
+total(1, 2, 3, 4)  = 10
+total(1.5, 2.5)    = 4

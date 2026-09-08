@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040201",
+  "title": "Interfaces and the sealed hierarchy",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.oracle.com/en/java/javase/21/language/sealed-classes-and-interfaces.html",
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html"
+  ],
+  "concepts": ["sealed types", "exhaustiveness"],
+  "code_examples": [
+    { "language": "java", "caption": "A sealed interface and a switch with no default", "file": "sealed-hierarchies-1.java" },
+    { "language": "java", "caption": "Inferred permits, and reopening one branch", "file": "sealed-hierarchies-2.java" },
+    { "language": "java", "caption": "The case an open hierarchy dropped", "file": "sealed-hierarchies-3.java" }
+  ]
+}

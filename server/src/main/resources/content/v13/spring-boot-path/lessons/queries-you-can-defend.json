@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000020203",
+  "title": "Queries you can defend",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html",
+    "https://docs.spring.io/spring-data/jpa/reference/repositories/query-methods-details.html",
+    "https://www.postgresql.org/docs/16/textsearch-controls.html"
+  ],
+  "concepts": ["derived queries", "JPQL"],
+  "code_examples": [
+    {
+      "language": "java",
+      "caption": "What Spring Data parses out of a method name",
+      "file": "queries-you-can-defend-1.java"
+    },
+    {
+      "language": "java",
+      "caption": "The wrong property, and the underscore that settles it",
+      "file": "queries-you-can-defend-2.java"
+    },
+    {
+      "language": "java",
+      "caption": "Derived, JPQL and native in one repository",
+      "file": "queries-you-can-defend-3.java"
+    }
+  ]
+}

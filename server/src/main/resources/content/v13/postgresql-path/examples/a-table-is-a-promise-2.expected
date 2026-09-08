@@ -1,0 +1,22 @@
+ float_agrees | numeric_agrees 
+--------------+----------------
+ f            | t
+(1 row)
+
+psql:<stdin>:14: ERROR:  numeric field overflow
+DETAIL:  A field with precision 10, scale 2 must round to an absolute value less than 10^8.
+   sku   | price 
+---------+-------
+ rounded | 12.35
+(1 row)
+
+  label  |        naive        |         aware          
+---------+---------------------+------------------------
+ release | 2026-03-29 02:30:00 | 2026-03-29 01:30:00+00
+(1 row)
+
+  label  |        naive        |         aware          
+---------+---------------------+------------------------
+ release | 2026-03-29 02:30:00 | 2026-03-29 04:30:00+03
+(1 row)
+

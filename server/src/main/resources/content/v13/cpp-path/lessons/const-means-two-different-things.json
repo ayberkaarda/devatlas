@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170102",
+  "title": "const means two different things",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/language/cv",
+    "https://en.cppreference.com/w/cpp/language/member_functions",
+    "https://en.cppreference.com/w/cpp/language/overload_resolution",
+    "https://en.cppreference.com/w/cpp/language/declarations"
+  ],
+  "concepts": ["const correctness", "cv-qualified member functions"],
+  "code_examples": [
+    { "language": "cpp", "caption": "Where const binds in a pointer declaration", "file": "const-means-two-different-things-1.cpp" },
+    { "language": "cpp", "caption": "Const member functions and mutable", "file": "const-means-two-different-things-2.cpp" },
+    { "language": "cpp", "caption": "Const describes the path, one level deep", "file": "const-means-two-different-things-3.cpp" }
+  ]
+}

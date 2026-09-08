@@ -1,0 +1,3 @@
+chosen: configured
+either, given a 'static argument: configured
+both arguments outlive the result: true

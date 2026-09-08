@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060101",
+  "title": "Names, objects, and rebinding",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.python.org/3.13/reference/executionmodel.html",
+    "https://docs.python.org/3.13/reference/simple_stmts.html#assignment-statements",
+    "https://docs.python.org/3.13/reference/datamodel.html#objects-values-and-types"
+  ],
+  "concepts": ["name binding", "object identity"],
+  "code_examples": [
+    { "language": "python", "caption": "Two names, one object", "file": "names-objects-and-rebinding-1.py" },
+    { "language": "python", "caption": "What a call passes", "file": "names-objects-and-rebinding-2.py" },
+    { "language": "python", "caption": "The assignment that raises and mutates", "file": "names-objects-and-rebinding-3.py" }
+  ]
+}

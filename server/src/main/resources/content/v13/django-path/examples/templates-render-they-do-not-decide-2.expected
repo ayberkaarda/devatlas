@@ -1,0 +1,10 @@
+comparison in if: rendered 'many'
+boolean operators: rendered 'needs a note'
+in operator: rendered 'substring'
+addition: TemplateSyntaxError
+calling with an argument: TemplateSyntaxError
+assignment: TemplateSyntaxError
+add filter: rendered '5'
+with tag names a value: rendered '4'
+for with empty: rendered 'nothing here'
+forloop counter: rendered '12'

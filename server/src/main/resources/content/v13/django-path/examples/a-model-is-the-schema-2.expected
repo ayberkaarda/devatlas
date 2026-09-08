@@ -1,0 +1,7 @@
+save() stored a name of length: 40
+the model said max_length was: 10
+full_clean() rejected fields: ['name']
+null=True but blank=False still required: ['website']
+the same instance saves without complaint: True
+bio=None refused by the database: IntegrityError
+rows now: 2

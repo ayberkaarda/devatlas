@@ -1,0 +1,11 @@
+declaration order
+  euro                   ok
+  pound                  ok
+reversed
+  pound                  ok
+  euro                   ok
+bool(true)
+bool(true)
+2024-01-01 JPY 500
+2024-01-01 JPY 500
+int(2)

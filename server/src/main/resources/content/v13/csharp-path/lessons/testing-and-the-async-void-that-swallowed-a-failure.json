@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130303",
+  "title": "Testing, and the async void that swallowed a failure",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 13,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/async-return-types",
+    "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+    "https://learn.microsoft.com/en-us/dotnet/api/system.threading.synchronizationcontext.operationstarted?view=net-10.0"
+  ],
+  "concepts": ["async void", "deterministic tests"],
+  "code_examples": [
+    { "language": "csharp", "caption": "A runner, assertions and an injected clock", "file": "testing-and-the-async-void-that-swallowed-a-failure-1.cs" },
+    { "language": "csharp", "caption": "Async tests the runner awaits", "file": "testing-and-the-async-void-that-swallowed-a-failure-2.cs" },
+    { "language": "csharp", "caption": "The async void failure and where it goes", "file": "testing-and-the-async-void-that-swallowed-a-failure-3.cs" }
+  ]
+}

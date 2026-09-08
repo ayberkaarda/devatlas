@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100202",
+  "title": "Effects are an escape hatch",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://react.dev/learn/synchronizing-with-effects",
+    "https://react.dev/learn/you-might-not-need-an-effect",
+    "https://react.dev/reference/react/useEffect"
+  ],
+  "concepts": ["synchronising with external systems", "effect cleanup"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "The lifecycle: setup, an unchanged render, a changed dependency, unmount",
+      "file": "effects-are-an-escape-hatch-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The same effect with and without a cleanup function",
+      "file": "effects-are-an-escape-hatch-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "An object dependency against the string the effect actually reads",
+      "file": "effects-are-an-escape-hatch-3.js"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030302",
+  "title": "strict, and what each flag buys",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.typescriptlang.org/tsconfig/",
+    "https://www.typescriptlang.org/tsconfig/strictNullChecks.html",
+    "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-9.html"
+  ],
+  "concepts": ["strict mode flags"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "strictNullChecks, and the index access it does not cover",
+      "file": "strict-and-what-each-flag-buys-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "useUnknownInCatchVariables and noImplicitAny, over three thrown values",
+      "file": "strict-and-what-each-flag-buys-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "strictPropertyInitialization, the assertion that silences it, and the fix",
+      "file": "strict-and-what-each-flag-buys-3.ts"
+    }
+  ]
+}

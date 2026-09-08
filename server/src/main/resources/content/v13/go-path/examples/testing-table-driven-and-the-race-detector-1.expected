@@ -1,0 +1,6 @@
+ok   host and port      "example.com" 8080
+ok   empty host         "" 443
+ok   no colon           refused as expected
+ok   port not a number  refused as expected
+4 case(s), 0 failure(s)
+FAIL alt: port = 8080, want 8000

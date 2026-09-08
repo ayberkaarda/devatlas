@@ -1,0 +1,5 @@
+the read-only name sees the write: 7
+both names denote one object: true
+and again: 8
+a const object changed the world: reading=102
+the pointer member itself never moved: true

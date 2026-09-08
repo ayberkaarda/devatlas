@@ -1,0 +1,9 @@
+total before: 0
+total after:  5
+captured at construction: -1
+MAX_ITEMS: 3
+ceiling: 30
+ready before assignment: false
+reading before assignment threw: true
+ready after assignment: true
+GET /health

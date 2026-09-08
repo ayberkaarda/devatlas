@@ -1,0 +1,14 @@
+fields the form built from the model: ['email', 'seats', 'note']
+email field class: EmailField
+note is optional because blank=True: False
+is_valid: True
+saved with a primary key: True
+rows: 1
+is_valid: False
+fields with errors: ['email', 'seats']
+save() on an invalid form raises: ValueError
+rows unchanged: 1
+rows after going round the form: 2
+the row that no form would have accepted: not-an-email
+model full_clean() caught: ['email']
+model full_clean() knows nothing of clean_seats: True

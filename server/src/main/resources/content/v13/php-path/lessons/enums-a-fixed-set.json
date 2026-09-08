@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150202",
+  "title": "Enums, a fixed set the type system enforces",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.php.net/manual/en/language.enumerations.php",
+    "https://www.php.net/manual/en/language.enumerations.backed.php",
+    "https://www.php.net/manual/en/class.backedenum.php"
+  ],
+  "concepts": ["closed sets", "exhaustive matching"],
+  "code_examples": [
+    { "language": "php", "caption": "A pure enum with behaviour", "file": "enums-a-fixed-set-1.php" },
+    { "language": "php", "caption": "A backed enum at a boundary", "file": "enums-a-fixed-set-2.php" },
+    { "language": "php", "caption": "Three things an enum case is not", "file": "enums-a-fixed-set-3.php" }
+  ]
+}

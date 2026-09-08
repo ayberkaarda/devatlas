@@ -1,0 +1,6 @@
+arrays are different : true
+element 0 is shared  : true
+original[0]          : Box[mutated through copy]
+original[1]          : Box[two]
+list.get(0)          : Box[mutated through list copy]
+lists are different  : true

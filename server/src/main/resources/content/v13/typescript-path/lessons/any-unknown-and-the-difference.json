@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030103",
+  "title": "any, unknown, and the difference that matters",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://www.typescriptlang.org/docs/handbook/2/functions.html",
+    "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
+  ],
+  "concepts": ["unknown"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "any compiles everything, including the call that throws",
+      "file": "any-unknown-and-the-difference-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "unknown refuses, and what narrowing gives back",
+      "file": "any-unknown-and-the-difference-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "The any from JSON.parse, and unknown as the honest boundary type",
+      "file": "any-unknown-and-the-difference-3.ts"
+    }
+  ]
+}

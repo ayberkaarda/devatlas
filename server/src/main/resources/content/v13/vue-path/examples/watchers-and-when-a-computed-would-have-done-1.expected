@@ -1,0 +1,6 @@
+on creation: watchEffect runs 1, watch callbacks 0
+price changed: watchEffect runs 2, watch callbacks 1
+taxRate changed: watchEffect runs 3, watch callbacks 1
+watchEffect subscribed to both properties: true
+watch ignored the value only its callback reads: true
+watch did not fire its callback on creation: true

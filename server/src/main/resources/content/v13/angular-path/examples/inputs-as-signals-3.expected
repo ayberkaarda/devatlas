@@ -1,0 +1,4 @@
+undefined -> loose: create, strict: create
+'019205a0' -> loose: edit, strict: edit
+'' -> loose: create, strict: malformed
+'   ' -> loose: edit, strict: malformed

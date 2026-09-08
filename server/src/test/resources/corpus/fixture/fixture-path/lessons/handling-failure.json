@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320203",
+  "title": "Handling failure",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 7,
+  "sources": ["https://docs.python.org/3/library/exceptions.html"],
+  "concepts": ["exception hierarchy"],
+  "code_examples": [
+    { "language": "python", "caption": "Catching one thing on purpose", "file": "handling-failure-1.py" },
+    { "language": "python", "caption": "else and finally in one block", "file": "handling-failure-2.py" }
+  ]
+}

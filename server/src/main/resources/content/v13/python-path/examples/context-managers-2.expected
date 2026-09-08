@@ -1,0 +1,14 @@
+acquire first
+body sees first
+release first
+---
+acquire second
+release second
+propagated: failure inside the body
+---
+acquire third
+propagated: failure inside the body
+---
+released: ['first', 'second']
+every guarded resource was released: True
+the unguarded one was not: True

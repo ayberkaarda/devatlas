@@ -1,0 +1,12 @@
+{
+  "id": "019205a0-3000-7000-8000-000000320101",
+  "title": "What a value holds",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 5,
+  "sources": ["https://docs.python.org/3/reference/datamodel.html"],
+  "concepts": ["object identity", "mutability"],
+  "code_examples": [
+    { "language": "python", "caption": "Two names, one object", "file": "what-a-value-holds-1.py" },
+    { "language": "python", "caption": "Rebinding leaves the object untouched", "file": "what-a-value-holds-2.py" }
+  ]
+}

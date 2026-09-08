@@ -1,0 +1,11 @@
+narrowed to null: nothing to read
+narrowed to non-null: 5
+chain on null is null:      True
+chain on a real order:      Ada
+length through ?. is int?:  True
+?? on null used the fallback: (default), calls=1
+?? on a value skipped it:     given, calls=1
+??= assigned once:            first
+4 + null is null:             True
+and HasValue reports it:      False
+GetValueOrDefault supplies 0: 0

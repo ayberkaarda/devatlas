@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000000009",
+  "title": "Talking to a server",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 18,
+  "sources": [
+    "https://angular.dev/guide/http/making-requests",
+    "https://angular.dev/guide/http/interceptors"
+  ],
+  "concepts": ["interceptor chain", "error contract"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "Two interceptors and the registration whose order decides their meaning",
+      "file": "talking-to-a-server-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A typed client that turns transport failures into one domain error",
+      "file": "talking-to-a-server-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "From status and code to a translation key, over five failures",
+      "file": "talking-to-a-server-3.ts"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+elements nullable, size: 3
+sum of non-null elements: 4
+list nullable, size: null
+total of a null list: 0
+total of a real list: 6
+both: [5]
+parsed: [1, 3]
+toInt on "x" threw NumberFormatException: true
+firstOrNull on empty: null
+first on empty threw NoSuchElementException: true

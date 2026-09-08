@@ -1,0 +1,33 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160303",
+  "title": "Testing, and the mock that tested itself",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/gems/minitest/Minitest/Test.html",
+    "https://ruby-doc.org/3.4.1/gems/minitest/Minitest/Assertions.html",
+    "https://ruby-doc.org/3.4.1/gems/minitest/Minitest/Mock.html",
+    "https://ruby-doc.org/3.4.1/gems/minitest/Minitest.html"
+  ],
+  "concepts": [
+    "unit testing",
+    "test doubles"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "A Minitest class run explicitly, and what a failure reports",
+      "file": "testing-and-the-mock-that-tested-itself-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "One bug seen by three tests",
+      "file": "testing-and-the-mock-that-tested-itself-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "verify, argument matching, stub, and a double that outlived its interface",
+      "file": "testing-and-the-mock-that-tested-itself-3.rb"
+    }
+  ]
+}

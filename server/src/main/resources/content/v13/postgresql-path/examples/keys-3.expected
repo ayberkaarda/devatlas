@@ -1,0 +1,17 @@
+psql:<stdin>:11: ERROR:  duplicate key value violates unique constraint "uq_contact_phone"
+DETAIL:  Key (phone)=(555-0100) already exists.
+ rows_with_unknown_phone 
+-------------------------
+                       2
+(1 row)
+
+psql:<stdin>:26: ERROR:  duplicate key value violates unique constraint "uq_contact_strict_phone"
+DETAIL:  Key (phone)=(null) already exists.
+psql:<stdin>:48: ERROR:  duplicate key value violates unique constraint "ux_lesson_slug"
+DETAIL:  Key (slug)=(keys) already exists.
+ id | slug | live 
+----+------+------
+  1 | keys | f
+  2 | keys | t
+(2 rows)
+

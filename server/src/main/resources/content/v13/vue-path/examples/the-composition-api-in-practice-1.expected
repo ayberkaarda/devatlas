@@ -1,0 +1,7 @@
+cart starts at 0, wishlist at 10
+after two increments on the cart: cart 2, wishlist 10
+each call built its own state: true
+resetting the wishlist left the cart alone: true
+shared composable: header 1, footer 1
+the shared one handed back the same ref: true
+a ref returned from a composable is still reactive: true

@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000130302",
+  "title": "Dependency injection in the host",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 13,
+  "sources": [
+    "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection",
+    "https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0",
+    "https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.serviceprovideroptions?view=net-10.0"
+  ],
+  "concepts": ["service lifetimes", "captured dependency"],
+  "code_examples": [
+    { "language": "csharp", "caption": "The three lifetimes, counted", "file": "dependency-injection-in-the-host-1.cs" },
+    { "language": "csharp", "caption": "The captured dependency and the validation that finds it", "file": "dependency-injection-in-the-host-2.cs" },
+    { "language": "csharp", "caption": "Multiple registrations, TryAdd and disposal", "file": "dependency-injection-in-the-host-3.cs" }
+  ]
+}

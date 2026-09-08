@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040302",
+  "title": "Streams without cleverness",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/package-summary.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Stream.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Collectors.html"
+  ],
+  "concepts": ["stream laziness"],
+  "code_examples": [
+    { "language": "java", "caption": "The same job as a loop and as a pipeline", "file": "streams-without-cleverness-1.java" },
+    { "language": "java", "caption": "Collecting, and what you get back", "file": "streams-without-cleverness-2.java" },
+    { "language": "java", "caption": "Where a loop is the clearer code", "file": "streams-without-cleverness-3.java" }
+  ]
+}

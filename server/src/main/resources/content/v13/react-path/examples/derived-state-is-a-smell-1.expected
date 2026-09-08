@@ -1,0 +1,7 @@
+effect  : frames committed: 6
+effect  : frames where the shown name disagreed with the inputs: 3
+computed: frames committed: 3
+computed: frames where the shown name disagreed with the inputs: 0
+  inputs said "Taylor" but the screen said ""
+  inputs said "Taylor Swift" but the screen said "Taylor"
+  inputs said "Tay Swift" but the screen said "Taylor Swift"

@@ -1,0 +1,4 @@
+findByName -> Person.name
+findByAddressZipCode -> refused: PropertyReferenceException
+   No property 'code' found for type 'String'; Did you mean 'coder'; Traversed path: Person.addressZip
+findByAddress_ZipCode -> Person.address.zipCode

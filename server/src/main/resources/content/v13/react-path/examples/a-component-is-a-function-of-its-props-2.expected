@@ -1,0 +1,8 @@
+impure, first call:  Alice, Bob
+impure, second call: Alice, Bob, Bob
+impure stable across two calls: false
+pure, first call:  Alice, Bob
+pure, second call: Alice, Bob
+pure stable across two calls: true
+sloppy mode: assignment ignored, name still reads Taylor
+strict mode: threw TypeError

@@ -1,0 +1,3 @@
+nothrow move: elements=3 relocated by move=3 by copy=0
+throwing move: elements=3 relocated by move=0 by copy=3
+the container preserved every element: true

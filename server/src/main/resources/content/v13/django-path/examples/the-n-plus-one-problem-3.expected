@@ -1,0 +1,9 @@
+reverse FK, plain: 11
+reverse FK, prefetch_related('books'): 2
+m2m, plain: 11
+m2m, prefetch_related('tags'): 2
+forward FK with prefetch_related: 2
+forward FK with select_related: 1
+Prefetch with a filtered inner queryset: 2
+books: 10
+tag labels on the last book: ['tag0']

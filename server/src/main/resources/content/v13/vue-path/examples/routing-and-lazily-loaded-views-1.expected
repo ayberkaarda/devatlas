@@ -1,0 +1,11 @@
+routes registered: 4
+/ -> home (HomeView)
+/books -> books (BookListView)
+/books/42 -> book (BookDetailView) id=42
+/books/42/notes/7 -> note (NoteView) id=42,noteId=7
+/books/42/notes -> not-found (NotFoundView)
+/nothing-here -> not-found (NotFoundView)
+a longer path does not match a shorter pattern: true
+params arrive as strings: true
+the static route wins over nothing else: true
+an unmatched path falls through: true

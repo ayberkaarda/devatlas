@@ -1,0 +1,10 @@
+try/catch without await caught something: false
+try/catch with await caught code: ENOENT
+rejections reported as unhandled: 1
+reported code: ENOENT
+log when the un-awaited call returned: caller continued
+log once the promise was awaited: caller continued -> write finished
+order with await: write finished -> caller continued
+written when forEach returned: 0
+written when the for..of loop returned: 3
+Promise.all over map awaited all of them: a.txt, b.txt, c.txt

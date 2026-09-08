@@ -1,0 +1,11 @@
+before navigation, the view is: ""
+while the loader is pending: <p>Loading...</p>
+after the loader resolved: <h1>Settings</h1>
+after a failed load: <p class="error">the chunk could not be fetched</p>
+the error component was handed the reason: true
+loader calls so far: 1
+after a retry: <h1>Settings</h1>
+loader calls after the retry: 2
+a retry replaced the error view: true
+with no loading state declared, pending renders: ""
+with no error state declared, failure renders: ""

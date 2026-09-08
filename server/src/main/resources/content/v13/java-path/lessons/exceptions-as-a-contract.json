@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000040303",
+  "title": "Exceptions as a contract",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-11.html",
+    "https://docs.oracle.com/javase/specs/jls/se21/html/jls-14.html",
+    "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html"
+  ],
+  "concepts": ["checked exceptions"],
+  "code_examples": [
+    { "language": "java", "caption": "Checked out, unchecked in", "file": "exceptions-as-a-contract-1.java" },
+    { "language": "java", "caption": "try-with-resources and suppression", "file": "exceptions-as-a-contract-2.java" },
+    { "language": "java", "caption": "Two ways to lose a failure", "file": "exceptions-as-a-contract-3.java" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000080101",
+  "title": "Ownership",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://doc.rust-lang.org/1.98.0/book/ch04-01-what-is-ownership.html",
+    "https://doc.rust-lang.org/1.98.0/reference/destructors.html",
+    "https://doc.rust-lang.org/1.98.0/std/marker/trait.Copy.html"
+  ],
+  "concepts": ["ownership and move", "drop at end of scope"],
+  "code_examples": [
+    { "language": "rust", "caption": "Scopes, drop order, and a consumed value", "file": "ownership-1.rs" },
+    { "language": "rust", "caption": "Move, Copy and clone side by side", "file": "ownership-2.rs" },
+    { "language": "rust", "caption": "Ownership inside a container", "file": "ownership-3.rs" }
+  ]
+}

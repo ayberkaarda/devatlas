@@ -1,0 +1,34 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160302",
+  "title": "Exceptions, ensure, and cleanup you can rely on",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 11,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/syntax/exceptions_rdoc.html",
+    "https://ruby-doc.org/3.4.1/Exception.html",
+    "https://ruby-doc.org/3.4.1/StandardError.html",
+    "https://ruby-doc.org/3.4.1/syntax/control_expressions_rdoc.html",
+    "https://ruby-doc.org/3.4.1/Kernel.html"
+  ],
+  "concepts": [
+    "exception hierarchy",
+    "ensure and retry"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "The four clauses, in the order they run",
+      "file": "exceptions-ensure-and-cleanup-you-can-rely-on-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "The hierarchy, a bare rescue, and #cause",
+      "file": "exceptions-ensure-and-cleanup-you-can-rely-on-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "A bounded retry with cleanup on every path",
+      "file": "exceptions-ensure-and-cleanup-you-can-rely-on-3.rb"
+    }
+  ]
+}

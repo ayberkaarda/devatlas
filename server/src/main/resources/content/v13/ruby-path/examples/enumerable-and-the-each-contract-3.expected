@@ -1,0 +1,23 @@
+each without block -> Enumerator
+next               -> 10
+next               -> 20
+next               -> 30
+past the end       -> StopIteration: iteration reached an end
+
+before consuming   -> []
+first(2)           -> [0, 1]
+after first(2)     -> [0, 1]
+
+lazy squares       -> [4, 16, 36, 64]
+lazy is lazy       -> Enumerator::Lazy
+take then force    -> [3, 6, 9]
+
+eager block calls  -> 20
+lazy block calls   -> 4
+
+with a block       -> [4, 3, 2, 1]
+without a block    -> Enumerator
+size known ahead   -> 4
+external, kept     -> [4, 3]
+external, fresh    -> [4, 4]
+with_index         -> [[4, 0], [3, 1], [2, 2], [1, 3]]

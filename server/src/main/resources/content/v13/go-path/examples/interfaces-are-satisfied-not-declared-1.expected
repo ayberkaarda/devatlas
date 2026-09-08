@@ -1,0 +1,5 @@
+email to ops@example.com: disk is filling up
+[warn] disk is filling up
+WRITTEN THROUGH A CUSTOM WRITER
+stored in any: {ops@example.com}
+Verbose channel | verbose: both methods present

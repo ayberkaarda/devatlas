@@ -1,0 +1,15 @@
+Error                Throwable:true  Error:true  Exception:false
+Exception            Throwable:true  Error:false Exception:true
+TypeError            Throwable:true  Error:true  Exception:false
+ValueError           Throwable:true  Error:true  Exception:false
+DivisionByZeroError  Throwable:true  Error:true  Exception:false
+intdiv by zero         DivisionByZeroError: Division by zero
+modulo by zero         DivisionByZeroError: Modulo by zero
+divide by zero         DivisionByZeroError: Division by zero
+bad argument value     ValueError: array_chunk(): Argument #2 ($length) must be greater than 0
+too few arguments      ArgumentCountError: Too few arguments to function needsTwo(), 1 passed and exactly 2 expected
+undefined function     Error: Call to undefined function nosuchfunction()
+method on null         Error: Call to a member function go() on null
+missing class          Error: Class "NoSuchClass" not found
+bad json               JsonException: Syntax error
+escaped to the Error handler: DivisionByZeroError: Division by zero

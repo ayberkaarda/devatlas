@@ -1,0 +1,10 @@
+instance dictionary starts empty: {}
+read from the class: class attribute
+instance dictionary now: {'source': 'instance attribute'}
+the instance wins: instance attribute
+the class is unchanged: class attribute
+the entry really is there: smuggled into the instance dictionary
+but attribute access gives: computed by the property
+assigning to it raises: AttributeError
+unknown attribute: no attribute named 'missing_entirely'; falling back
+after deleting the instance entry: class attribute

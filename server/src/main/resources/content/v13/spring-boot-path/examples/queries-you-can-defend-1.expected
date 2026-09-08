@@ -1,0 +1,20 @@
+findBySlugAndDeletedAtIsNull
+  property=LessonRow.slug type=SIMPLE_PROPERTY (1): [Is, Equals] args=1
+  property=LessonRow.deletedAt type=IS_NULL (0): [IsNull, Null] args=0
+  sort=UNSORTED
+  limiting=false maxResults=null
+findByModuleIdAndDeletedAtIsNullOrderByDisplayOrderAsc
+  property=LessonRow.moduleId type=SIMPLE_PROPERTY (1): [Is, Equals] args=1
+  property=LessonRow.deletedAt type=IS_NULL (0): [IsNull, Null] args=0
+  sort=displayOrder: ASC
+  limiting=false maxResults=null
+findTop3BySlugContainingIgnoreCaseOrderBySlugAsc
+  property=LessonRow.slug type=CONTAINING (1): [IsContaining, Containing, Contains] args=1
+  sort=slug: ASC
+  limiting=true maxResults=3
+existsBySlugAndDeletedAtIsNullAndIdNot
+  property=LessonRow.slug type=SIMPLE_PROPERTY (1): [Is, Equals] args=1
+  property=LessonRow.deletedAt type=IS_NULL (0): [IsNull, Null] args=0
+  property=LessonRow.id type=NEGATING_SIMPLE_PROPERTY (1): [IsNot, Not] args=1
+  sort=UNSORTED
+  limiting=false maxResults=null

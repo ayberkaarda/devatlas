@@ -1,0 +1,4 @@
+broad rule first : anonymous GET /api/v1/tracks -> 403
+narrow rule first: anonymous GET /api/v1/tracks -> 200
+after anyRequest : refused to build -> IllegalStateException
+   Can't configure requestMatchers after anyRequest

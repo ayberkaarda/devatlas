@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000060102",
+  "title": "Mutable default arguments and other shared state",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://docs.python.org/3.13/reference/compound_stmts.html#function-definitions",
+    "https://docs.python.org/3.13/tutorial/controlflow.html#default-argument-values",
+    "https://docs.python.org/3.13/faq/programming.html"
+  ],
+  "concepts": ["shared mutable state", "closures"],
+  "code_examples": [
+    { "language": "python", "caption": "A default evaluated once", "file": "mutable-default-arguments-1.py" },
+    { "language": "python", "caption": "A class attribute every instance shares", "file": "mutable-default-arguments-2.py" },
+    { "language": "python", "caption": "Closing over a loop variable", "file": "mutable-default-arguments-3.py" }
+  ]
+}

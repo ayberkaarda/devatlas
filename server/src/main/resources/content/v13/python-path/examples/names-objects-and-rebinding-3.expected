@@ -1,0 +1,7 @@
+before: ([1, 2],)
+raised: TypeError
+message: 'tuple' object does not support item assignment
+after the failed statement: ([1, 2, 3],)
+list += keeps the same object: True
+str += produces a new object: False
+the other name still sees: ab

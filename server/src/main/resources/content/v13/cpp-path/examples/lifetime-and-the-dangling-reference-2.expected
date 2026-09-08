@@ -1,0 +1,7 @@
+longer of two temporaries: alpha
+borrowed from the caller's vector: first
+it is the caller's element: true
+static storage survives the call: 2
+view size before growth: 19
+view size after re-seating: 30
+view still describes the owner: true

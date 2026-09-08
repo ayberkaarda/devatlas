@@ -1,0 +1,4 @@
+captured [0 1 2 3 4]
+guarded increments: 1000
+sync.Once ran the initialiser 1 time(s)
+received [first second third]

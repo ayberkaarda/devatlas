@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000120301",
+  "title": "Structs, methods and the pointer receiver question",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://go.dev/ref/spec#Method_declarations",
+    "https://go.dev/ref/spec#Method_sets",
+    "https://go.dev/ref/spec#Selectors",
+    "https://go.dev/ref/spec#Struct_types"
+  ],
+  "concepts": ["method set", "embedding is not inheritance"],
+  "code_examples": [
+    { "language": "go", "caption": "Value receiver against pointer receiver", "file": "methods-and-the-pointer-receiver-1.go" },
+    { "language": "go", "caption": "Method sets, interfaces and addressability", "file": "methods-and-the-pointer-receiver-2.go" },
+    { "language": "go", "caption": "Embedding promotes, it does not override", "file": "methods-and-the-pointer-receiver-3.go" }
+  ]
+}

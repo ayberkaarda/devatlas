@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000000007",
+  "title": "Inputs as signals",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 16,
+  "sources": [
+    "https://angular.dev/guide/components/inputs",
+    "https://angular.dev/api/router/withComponentInputBinding",
+    "https://angular.dev/errors/NG0950"
+  ],
+  "concepts": ["signal inputs", "route input binding"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "Required, optional, transformed and aliased inputs",
+      "file": "inputs-as-signals-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "One editor behind two routes, told apart by an absent input",
+      "file": "inputs-as-signals-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "Absent versus empty, printed side by side",
+      "file": "inputs-as-signals-3.ts"
+    }
+  ]
+}

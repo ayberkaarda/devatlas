@@ -1,0 +1,13 @@
+first iteration of a held queryset: 1
+second iteration of the same object: 0
+len() once it is cached: 0
+bool() once it is cached: 0
+cached rows: 10
+the same filter written again: 1
+filtering the cached one produces a new query: 1
+the cached one is still cached: 0
+count() on an unevaluated queryset: 1
+len() after that count(): 1
+count() once the cache is full: 0
+exists() on a fresh queryset: 1
+iterator() ignores the cache: 1

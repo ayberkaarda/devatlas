@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000150102",
+  "title": "Arrays are two things at once",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://www.php.net/manual/en/language.types.array.php",
+    "https://www.php.net/manual/en/function.array-is-list.php",
+    "https://www.php.net/manual/en/control-structures.foreach.php"
+  ],
+  "concepts": ["ordered map", "value semantics"],
+  "code_examples": [
+    { "language": "php", "caption": "List and map, and how to tell them apart", "file": "arrays-are-list-and-map-1.php" },
+    { "language": "php", "caption": "Key conversion, gaps, and what JSON makes of them", "file": "arrays-are-list-and-map-2.php" },
+    { "language": "php", "caption": "Copies, handles, and the reference that outlived its loop", "file": "arrays-are-list-and-map-3.php" }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "019205a0-3000-7000-8000-000000100203",
+  "title": "Derived state is a smell",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://react.dev/learn/you-might-not-need-an-effect",
+    "https://react.dev/reference/react/useMemo",
+    "https://react.dev/reference/react/useState"
+  ],
+  "concepts": ["derived values", "computing during render"],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "Every committed frame, mirrored in an effect against computed during render",
+      "file": "derived-state-is-a-smell-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "A stored selection that outlived its row, and two repairs",
+      "file": "derived-state-is-a-smell-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "The useMemo cache, and the rebuilt array that defeats it",
+      "file": "derived-state-is-a-smell-3.js"
+    }
+  ]
+}

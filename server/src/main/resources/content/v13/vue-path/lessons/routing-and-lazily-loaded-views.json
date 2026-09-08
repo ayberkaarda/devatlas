@@ -1,0 +1,31 @@
+{
+  "id": "019205a0-3000-7000-8000-000000110302",
+  "title": "Routing and lazily loaded views",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://vuejs.org/guide/scaling-up/routing.html",
+    "https://vuejs.org/guide/components/async.html"
+  ],
+  "concepts": [
+    "route matching",
+    "code splitting"
+  ],
+  "code_examples": [
+    {
+      "language": "javascript",
+      "caption": "A route table and the matcher over it, including the fall-through",
+      "file": "routing-and-lazily-loaded-views-1.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Deferred loading, watched: real modules that announce when they evaluate",
+      "file": "routing-and-lazily-loaded-views-2.js"
+    },
+    {
+      "language": "javascript",
+      "caption": "Pending, failed and retried, with the blank screen you get without them",
+      "file": "routing-and-lazily-loaded-views-3.js"
+    }
+  ]
+}

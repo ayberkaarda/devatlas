@@ -1,0 +1,9 @@
+message: load accounts.csv: field "name" at line 4
+errors.Is ErrMissingField: true
+errors.As found field=name line=4
+one layer down: field "name" at line 4
+two layers down: missing field
+three layers down: <nil>
+formatted with %v: load accounts.csv: field "name" at line 4
+errors.Is through %v: false
+errors.As through %v: false

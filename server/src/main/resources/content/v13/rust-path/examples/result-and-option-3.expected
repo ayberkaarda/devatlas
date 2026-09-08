@@ -1,0 +1,7 @@
+every input valid: Ok([1, 2, 3])
+one input invalid: Err(Rejected { code: "NOT_A_NUMBER", input: "two" })
+accepted: 2
+rejected: 2
+option to result: Ok(3)
+result to option: None
+a default computed only when needed: 7

@@ -1,0 +1,7 @@
+effect ran on creation: 1
+after count.value = 1, runs: 2
+after state.temperature = 21, runs: 3
+after a nested mutation through a ref, runs: 4
+a ref can hold a primitive: true
+reactive() given a number hands it back unwrapped: true
+a ref is deeply reactive: true

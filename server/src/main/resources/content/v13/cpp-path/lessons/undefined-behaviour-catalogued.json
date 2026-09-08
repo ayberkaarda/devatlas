@@ -1,0 +1,19 @@
+{
+  "id": "019205a0-3000-7000-8000-000000170303",
+  "title": "Undefined behaviour, catalogued",
+  "difficulty": "ADVANCED",
+  "estimated_minutes": 14,
+  "sources": [
+    "https://en.cppreference.com/w/cpp/language/ub",
+    "https://en.cppreference.com/w/cpp/language/operator_arithmetic",
+    "https://en.cppreference.com/w/cpp/language/initialization",
+    "https://en.cppreference.com/w/cpp/numeric/bit_cast",
+    "https://en.cppreference.com/w/cpp/container/span"
+  ],
+  "concepts": ["undefined behaviour", "sanitizers"],
+  "code_examples": [
+    { "language": "cpp", "caption": "Arithmetic that stays defined", "file": "undefined-behaviour-catalogued-1.cpp" },
+    { "language": "cpp", "caption": "Initialisation that leaves nothing indeterminate", "file": "undefined-behaviour-catalogued-2.cpp" },
+    { "language": "cpp", "caption": "Bounds that travel with the data, and a defined pun", "file": "undefined-behaviour-catalogued-3.cpp" }
+  ]
+}

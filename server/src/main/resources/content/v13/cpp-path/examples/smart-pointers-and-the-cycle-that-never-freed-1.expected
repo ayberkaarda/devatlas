@@ -1,0 +1,8 @@
+alive at the start: 0
+after make_unique:  alive=1 owner holds one=true
+after the move:     source is null=true target holds one=true
+still one object:   alive=1 name=primary
+after the block:    alive=0
+after release():    pointer is null=true alive=1
+after reset(p):     pointer holds one=true alive=1
+after reset():      alive=0

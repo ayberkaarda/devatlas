@@ -1,0 +1,13 @@
+ 0 DisableEncodeUrlFilter
+ 1 WebAsyncManagerIntegrationFilter
+ 2 SecurityContextHolderFilter
+ 3 HeaderWriterFilter
+ 4 TokenAuthenticationFilter   <- establishes the principal
+ 5 PerUserRateLimitFilter   <- needs the principal, so it comes after
+ 6 RequestCacheAwareFilter
+ 7 SecurityContextHolderAwareRequestFilter
+ 8 AnonymousAuthenticationFilter
+ 9 SessionManagementFilter
+10 ExceptionTranslationFilter
+11 AuthorizationFilter   <- decides, last, on what the earlier filters left
+AuthorizationFilter is the last one: true

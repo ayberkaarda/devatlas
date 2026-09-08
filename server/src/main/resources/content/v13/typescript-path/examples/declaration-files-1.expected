@@ -1,0 +1,4 @@
+version is a string: true
+version starts with: v
+argv is an array: true
+platform exists at runtime: true

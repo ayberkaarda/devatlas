@@ -1,0 +1,9 @@
+psql:<stdin>:34: ERROR:  insert or update on table "module" violates foreign key constraint "fk_module_track"
+DETAIL:  Key (track_id)=(99) is not present in table "track".
+psql:<stdin>:38: ERROR:  update or delete on table "track" violates foreign key constraint "fk_module_track" on table "module"
+DETAIL:  Key (id)=(1) is still referenced from table "module".
+ tracks | modules | lessons 
+--------+---------+---------
+      1 |       0 |       0
+(1 row)
+

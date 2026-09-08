@@ -1,0 +1,9 @@
+console app starts with no context: True
+posted while suspended:            0
+posted once the task completed:    1
+method finished before pumping:    False
+method finished after pumping:     True
+resumed on the captured context:   True
+posts added by ConfigureAwait(false): 0
+resumed on the captured context:   False
+context removed:                   True

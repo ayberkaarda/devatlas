@@ -1,0 +1,6 @@
+value-initialised scalars: 0 and 0
+defaults applied: retries=3 verbose=false name empty=true
+designated initialisers: retries=5 verbose=true name=run
+value-initialised aggregate: count=0 weight=0
+array and vector elements start at zero: 0 and 0
+a default-constructed string is empty: true

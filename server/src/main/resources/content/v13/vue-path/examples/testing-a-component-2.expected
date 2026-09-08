@@ -1,0 +1,10 @@
+--- before the refactor ---
+behaviour suite: PASS
+internals suite: PASS
+--- after the refactor ---
+behaviour suite: PASS
+internals suite: FAIL (visibleTags is not an array)
+rendered output identical across the refactor: true
+emitted events identical across the refactor: true
+the behaviour suite survived: true
+the internals suite did not: true

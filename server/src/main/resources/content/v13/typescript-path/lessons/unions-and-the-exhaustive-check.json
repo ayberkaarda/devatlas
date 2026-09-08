@@ -1,0 +1,28 @@
+{
+  "id": "019205a0-3000-7000-8000-000000030202",
+  "title": "Unions, and the exhaustive check",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 8,
+  "sources": [
+    "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+    "https://www.typescriptlang.org/docs/handbook/2/functions.html"
+  ],
+  "concepts": ["exhaustiveness checking"],
+  "code_examples": [
+    {
+      "language": "typescript",
+      "caption": "A complete switch and the never assignment that stays quiet",
+      "file": "unions-and-the-exhaustive-check-1.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "A union member added, and the wrong answer if the diagnostic is silenced",
+      "file": "unions-and-the-exhaustive-check-2.ts"
+    },
+    {
+      "language": "typescript",
+      "caption": "assertNever, and the payload that reaches it",
+      "file": "unions-and-the-exhaustive-check-3.ts"
+    }
+  ]
+}

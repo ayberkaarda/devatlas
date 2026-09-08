@@ -1,0 +1,9 @@
+GET    /items/alpha           -> 404
+PUT    /items/alpha?value=one -> 201 stored alpha
+PUT    /items/beta?value=two  -> 201 stored beta
+GET    /items/alpha           -> 200 alpha=one
+GET    /items                 -> 200 alpha,beta
+DELETE /items/alpha           -> 405
+GET    /nowhere               -> 404
+recorder -> 200 gamma=three
+content type header set by net/http: "text/plain; charset=utf-8"

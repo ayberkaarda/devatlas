@@ -1,0 +1,9 @@
+anonymous     /api/v1/tracks                     200
+role USER     /api/v1/tracks                     200
+role ADMIN    /api/v1/tracks                     200
+anonymous     /api/v1/sync/progress              403
+role USER     /api/v1/sync/progress              200
+role ADMIN    /api/v1/sync/progress              200
+anonymous     /api/v1/admin/whitelist-sources    403
+role USER     /api/v1/admin/whitelist-sources    403
+role ADMIN    /api/v1/admin/whitelist-sources    200

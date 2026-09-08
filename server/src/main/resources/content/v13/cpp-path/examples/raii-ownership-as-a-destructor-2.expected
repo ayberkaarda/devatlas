@@ -1,0 +1,7 @@
+after construction: open=1 primary owns=true
+after the move:     open=1 source owns=false target owns=true
+the name travelled: primary
+two live handles:   open=2
+after move-assign:  open=1 released=1
+the survivor is:    primary
+after the block:    open=0 released=2

@@ -1,0 +1,17 @@
+{
+  "id": "019205a0-3000-7000-8000-000000140201",
+  "title": "Extension functions",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://kotlinlang.org/docs/extensions.html",
+    "https://kotlinlang.org/docs/java-to-kotlin-interop.html",
+    "https://kotlinlang.org/docs/visibility-modifiers.html"
+  ],
+  "concepts": ["static dispatch", "extension receiver"],
+  "code_examples": [
+    { "language": "kotlin", "caption": "Static dispatch beside a virtual member", "file": "extension-functions-1.kt" },
+    { "language": "kotlin", "caption": "Nullable receivers, generics and extension properties", "file": "extension-functions-2.kt" },
+    { "language": "kotlin", "caption": "Extensions in ordinary use, including a member extension", "file": "extension-functions-3.kt" }
+  ]
+}

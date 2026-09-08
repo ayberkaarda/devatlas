@@ -1,0 +1,8 @@
+literalA == literalB      : true
+literalA == built         : false
+literalA.equals(built)    : true
+built.intern() == literalA: true
+boxed 127 == 127          : true
+boxed 128 == 128          : false
+boxed 128 equals 128      : true
+unboxing null             : NullPointerException

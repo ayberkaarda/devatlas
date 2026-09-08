@@ -1,0 +1,34 @@
+{
+  "id": "019205a0-3000-7000-8000-000000160201",
+  "title": "Modules and mixins, and the lookup chain",
+  "difficulty": "INTERMEDIATE",
+  "estimated_minutes": 10,
+  "sources": [
+    "https://ruby-doc.org/3.4.1/syntax/modules_and_classes_rdoc.html",
+    "https://ruby-doc.org/3.4.1/Module.html",
+    "https://ruby-doc.org/3.4.1/Comparable.html",
+    "https://ruby-doc.org/3.4.1/Object.html",
+    "https://ruby-doc.org/3.4.1/syntax/calling_methods_rdoc.html"
+  ],
+  "concepts": [
+    "method lookup",
+    "mixins"
+  ],
+  "code_examples": [
+    {
+      "language": "ruby",
+      "caption": "include, prepend and extend against one module",
+      "file": "modules-mixins-and-the-lookup-chain-1.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "Comparable from a single <=>",
+      "file": "modules-mixins-and-the-lookup-chain-2.rb"
+    },
+    {
+      "language": "ruby",
+      "caption": "The included hook and per-class state",
+      "file": "modules-mixins-and-the-lookup-chain-3.rb"
+    }
+  ]
+}

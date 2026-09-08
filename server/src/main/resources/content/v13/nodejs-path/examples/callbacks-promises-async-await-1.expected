@@ -1,0 +1,6 @@
+callback style: record-1
+promise style: record-2
+await style: record-3
+promisify returned a function: true
+an async function always returns a promise: true
+awaiting it yields the returned value: 7

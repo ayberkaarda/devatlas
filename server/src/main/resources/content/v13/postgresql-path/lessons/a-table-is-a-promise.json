@@ -1,0 +1,18 @@
+{
+  "id": "019205a0-3000-7000-8000-000000050101",
+  "title": "A table is a promise",
+  "difficulty": "BEGINNER",
+  "estimated_minutes": 9,
+  "sources": [
+    "https://www.postgresql.org/docs/16/ddl-constraints.html",
+    "https://www.postgresql.org/docs/16/datatype-numeric.html",
+    "https://www.postgresql.org/docs/16/datatype-datetime.html",
+    "https://www.postgresql.org/docs/16/sql-copy.html"
+  ],
+  "concepts": ["constraints", "data types"],
+  "code_examples": [
+    { "language": "sql", "caption": "Five bad rows and five different refusals", "file": "a-table-is-a-promise-1.sql" },
+    { "language": "sql", "caption": "What the type promises: base ten, width, instants", "file": "a-table-is-a-promise-2.sql" },
+    { "language": "sql", "caption": "The same constraint on UPDATE and on COPY", "file": "a-table-is-a-promise-3.sql" }
+  ]
+}

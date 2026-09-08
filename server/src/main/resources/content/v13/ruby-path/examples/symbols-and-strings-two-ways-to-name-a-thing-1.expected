@@ -1,0 +1,24 @@
+:name.equal?(:name)       -> true
+"name".equal?("name")     -> false
+:name == :name            -> true
+"name" == "name"          -> true
+
+:name.frozen?             -> true
+"name".frozen?            -> false
+1.frozen?                 -> true
+nil.frozen?               -> true
+(1..3).frozen?            -> true
+[].frozen?                -> false
+{}.frozen?                -> false
+
+built string              -> "name"
+upcase! on String         -> "NAME"
+upcase! on Symbol         -> NoMethodError: undefined method 'upcase!' for an instance of Symbol
+:name.upcase              -> :NAME
+:name.length              -> 4
+:name.start_with?("na")   -> true
+
+:name.to_s                -> "name"
+"name".to_sym             -> :name
+round trip identical      -> true
+:name == "name"           -> false

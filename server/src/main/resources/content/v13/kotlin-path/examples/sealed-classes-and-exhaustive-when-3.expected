@@ -1,0 +1,6 @@
+8080 -> port 8080
+0 -> rejected: out of range
+http -> rejected: not a number
+65536 -> rejected: out of range
+[ok(1), not a number]
+covariance: not a number
