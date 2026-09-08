@@ -132,20 +132,28 @@ jobs:
           echo $! > ../server-sync.pid
 
       # Polls the protocol's own manifest endpoint rather than an actuator
-      # health check, because a 200 there is the actual precondition every
-      # live test depends on: the seed data is loaded and the sync surface is
-      # up, not merely that the JVM started.
-      - name: Wait for the server to answer the catalog endpoint
+      # health check, because the sync surface being up is what the live tests
+      # depend on, not merely that the JVM started.
+      #
+      # The catalog has to carry a track, not merely answer 200. An empty
+      # catalog is a perfectly valid 200 -- it is what the endpoint returns
+      # when nothing is published -- so a status-only check passes and then
+      # every live test fails on its own first assertion, describing the
+      # protocol instead of the missing precondition. Waiting for a track puts
+      # that failure here, next to the server log that explains it.
+      - name: Wait for the server to answer the catalog endpoint with a track
         run: |
           for _ in $(seq 1 120); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:18080/api/v1/manifest/catalog || true)
-            if [ "$code" = "200" ]; then
-              echo "server answered 200 after ${SECONDS}s"
-              exit 0
-            fi
+            body=$(curl -s --fail http://localhost:18080/api/v1/manifest/catalog || true)
+            case "$body" in
+              *'"track_id"'*)
+                echo "catalog carried a track after ${SECONDS}s: $body"
+                exit 0
+                ;;
+            esac
             sleep 1
           done
-          echo "server never answered 200 on /api/v1/manifest/catalog within 120s"
+          echo "the catalog never carried a track within 120s; last body: ${body:-<none>}"
           cat server-sync.log || true
           exit 1
 

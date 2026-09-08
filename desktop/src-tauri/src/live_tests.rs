@@ -18,9 +18,15 @@
 //! ```
 //!
 //! They assume the server is seeded with the `angular-path` track described in
-//! the sync protocol's worked examples: two modules, four `LESSON` entities and
-//! one `MIND_MAP`, with the `signals-and-reactivity` lesson carrying `tr` and
-//! `fr` translations.
+//! the sync protocol's worked examples, minus the one lesson a later migration
+//! retired: two modules, three `LESSON` entities and one `MIND_MAP`, with the
+//! `signals-and-reactivity` lesson carrying `tr` and `fr` translations.
+//!
+//! The retired lesson is soft-deleted rather than removed, and every read path
+//! and manifest scopes to rows that are not deleted, so it is simply absent
+//! from what these tests see. Nothing here depends on which lessons those are
+//! -- the counts are asserted only so that a manifest silently losing or
+//! gaining an entity is noticed rather than absorbed.
 
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -176,7 +182,7 @@ fn describe_recent_events(sink: &RecordingSink, limit: usize) -> String {
         .join("\n")
 }
 
-/// The full track, all five entities, end to end against the real server.
+/// The full track, all four entities, end to end against the real server.
 ///
 /// This is the test the translation bug described at the top of the module
 /// would have caught: `content_translations` rows are asserted to actually
@@ -189,8 +195,8 @@ async fn live_full_track_download_lands_in_the_replica() {
     let manifest = fetch_manifest(&harness.client).await;
     assert_eq!(
         manifest.entities.len(),
-        5,
-        "this test is written against the documented seed: four lessons and one mind map"
+        4,
+        "this test is written against the documented seed: three lessons and one mind map"
     );
 
     harness
@@ -230,7 +236,7 @@ async fn live_full_track_download_lands_in_the_replica() {
         describe_rows(&not_done),
         describe_recent_events(&harness.sink, 40),
     );
-    assert_eq!(rows.len(), 5, "one queue row per manifest entity");
+    assert_eq!(rows.len(), 4, "one queue row per manifest entity");
 
     // Every lesson's stored digest matches what the manifest advertised for
     // it -- the bookkeeping half of "the bytes verified", the cryptographic
@@ -272,8 +278,8 @@ async fn live_full_track_download_lands_in_the_replica() {
         .expect("query lesson bodies");
     assert_eq!(
         lesson_bodies.len(),
-        4,
-        "expected four downloaded lessons, found {}",
+        3,
+        "expected three downloaded lessons, found {}",
         lesson_bodies.len()
     );
     for body in &lesson_bodies {
@@ -517,8 +523,8 @@ async fn live_refresh_fills_a_fresh_store_from_the_catalog_and_then_the_manifest
 
     assert_eq!(
         (count("modules"), count("lessons"), count("mind_maps")),
-        (2, 4, 1),
-        "the seeded track publishes two modules, four lessons and one mind map"
+        (2, 3, 1),
+        "the seeded track publishes two modules, three lessons and one mind map"
     );
 
     let entities: i64 = harness
@@ -533,7 +539,7 @@ async fn live_refresh_fills_a_fresh_store_from_the_catalog_and_then_the_manifest
         })
         .expect("count manifest entities");
     assert_eq!(
-        entities, 5,
+        entities, 4,
         "every manifest entity must land with a version the engine can download"
     );
 }
