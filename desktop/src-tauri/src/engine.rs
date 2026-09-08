@@ -964,8 +964,12 @@ mod tests {
 
         harness.run().await;
 
+        // Collapsed, because the byte-progress ticks a transfer happens to
+        // produce between two transitions depend on how long it ran, not on
+        // the engine. What is being asserted is the transition sequence
+        // itself: all three, in order, none lost to the throttle.
         assert_eq!(
-            harness.sink.states(),
+            harness.sink.state_changes(),
             vec![
                 QueueState::Downloading,
                 QueueState::Verifying,

@@ -116,6 +116,9 @@ pub mod testing {
     }
 
     impl RecordingSink {
+        /// The state carried by every published event, in order, one entry per
+        /// event. Use this only where the number of events is itself the
+        /// subject, such as asserting that the throttle suppressed some.
         pub fn states(&self) -> Vec<QueueState> {
             self.progress
                 .lock()
@@ -123,6 +126,31 @@ pub mod testing {
                 .iter()
                 .map(|event| event.state)
                 .collect()
+        }
+
+        /// The same sequence with consecutive repeats collapsed, leaving the
+        /// state changes and nothing else.
+        ///
+        /// Byte progress is published under whatever state the entry is
+        /// already in, and how many such ticks a transfer produces depends on
+        /// how long the transfer took against a periodic timer. That is a
+        /// property of the machine, not of the engine: the same code publishes
+        /// one `DOWNLOADING` event on a host that finishes inside the interval
+        /// and several on a slower one. Asserting the raw sequence therefore
+        /// pins the speed of whoever runs the test, and fails without any
+        /// defect behind it.
+        ///
+        /// Collapsing runs keeps everything the rule is actually about — each
+        /// transition published, in the right order, none swallowed by the
+        /// throttle — and discards only the tick count, which the engine never
+        /// promised. A dropped or reordered transition still changes this
+        /// sequence and still fails. Do not "tighten" a caller back to
+        /// [`Self::states`] to pin an exact event count; that count is not a
+        /// guarantee.
+        pub fn state_changes(&self) -> Vec<QueueState> {
+            let mut states = self.states();
+            states.dedup();
+            states
         }
     }
 
