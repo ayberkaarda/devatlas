@@ -8,7 +8,7 @@ import { BundledTranslateLoader } from '../../core/i18n/translations';
 import type { Availability, LessonSummary, MindMapNode } from '../../core/platform/models';
 import { contentAvailability } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
-import { MindMapTree } from './mind-map-tree';
+import { MindMapTree, type NodeCompletion } from './mind-map-tree';
 
 function node(id: string, children: readonly MindMapNode[] = []): MindMapNode {
   return { id, label: id, lessonId: null, children };
@@ -55,6 +55,7 @@ describe('MindMapTree', () => {
     fixture.componentRef.setInput('root', node('root', [node('a'), node('b')]));
     fixture.componentRef.setInput('lessonIndex', new Map<string, LessonSummary>());
     fixture.componentRef.setInput('completedLessonIds', new Set<string>());
+    fixture.componentRef.setInput('completionByNode', new Map<string, NodeCompletion>());
     fixture.componentRef.setInput('trackTitle', 'Signals');
     fixture.componentRef.setInput('trackSlug', 'signals');
     fixture.detectChanges();
@@ -93,6 +94,13 @@ describe('MindMapTree', () => {
       ]),
     );
     fixture.componentRef.setInput('completedLessonIds', new Set<string>(['lesson-done']));
+    fixture.componentRef.setInput(
+      'completionByNode',
+      new Map<string, NodeCompletion>([
+        ['root', { completed: 1, total: 3 }],
+        ['module', { completed: 1, total: 3 }],
+      ]),
+    );
     fixture.componentRef.setInput('trackTitle', 'Signals');
     fixture.componentRef.setInput('trackSlug', 'signals');
     fixture.detectChanges();
@@ -222,6 +230,122 @@ describe('MindMapTree', () => {
     // Nothing to click through to, so nothing that offers to be clicked.
     expect(concept.classList.contains('cursor-pointer')).toBe(false);
     expect(nodeFor('stored').classList.contains('cursor-pointer')).toBe(true);
+  });
+
+  /**
+   * A map whose headings are in every state a count can be in at once — part
+   * read, fully read, untouched, and a heading with no lessons under it at all
+   * — because what is being checked is that they are told apart, which is a
+   * claim about them side by side.
+   *
+   * The counts are handed in rather than derived here: this component is given
+   * them by the screen that loads the map, and a test that computed them again
+   * would be asserting its own arithmetic.
+   */
+  async function renderCounted() {
+    const fixture = TestBed.createComponent(MindMapTree);
+    fixture.componentRef.setInput(
+      'root',
+      node('root', [
+        node('partial', [
+          lessonNode('l1', 'lesson-1'),
+          lessonNode('l2', 'lesson-2'),
+          lessonNode('l3', 'lesson-3'),
+        ]),
+        node('full', [lessonNode('l4', 'lesson-4')]),
+        node('untouched', [lessonNode('l5', 'lesson-5'), lessonNode('l6', 'lesson-6')]),
+        node('notes', [node('note-1')]),
+      ]),
+    );
+    fixture.componentRef.setInput('lessonIndex', new Map<string, LessonSummary>());
+    fixture.componentRef.setInput('completedLessonIds', new Set<string>(['lesson-1', 'lesson-4']));
+    fixture.componentRef.setInput(
+      'completionByNode',
+      new Map<string, NodeCompletion>([
+        ['root', { completed: 2, total: 6 }],
+        ['partial', { completed: 1, total: 3 }],
+        ['full', { completed: 1, total: 1 }],
+        ['untouched', { completed: 0, total: 2 }],
+        ['notes', { completed: 0, total: 0 }],
+      ]),
+    );
+    fixture.componentRef.setInput('trackTitle', 'Signals');
+    fixture.componentRef.setInput('trackSlug', 'signals');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const nodeFor = (id: string) => element.querySelector<SVGGElement>(`[data-node-id="${id}"]`)!;
+    const countFor = (id: string) =>
+      nodeFor(id).querySelector('[data-testid="mind-map-completion"]')?.textContent?.trim() ?? null;
+    return { nodeFor, countFor };
+  }
+
+  it('says how much of each heading has been read, whatever state it is in', async () => {
+    const { countFor } = await renderCounted();
+
+    expect(countFor('partial')).toBe('1/3');
+    expect(countFor('full')).toBe('1/1');
+    // Nothing finished is a count, not an absence: a heading with no fraction
+    // beside its neighbours' would read as one that cannot be finished.
+    expect(countFor('untouched')).toBe('0/2');
+  });
+
+  it('totals the whole track at its root', async () => {
+    const { countFor } = await renderCounted();
+
+    // The sum of the headings beneath it, which is the one number on this
+    // canvas a reader can check by eye against the others.
+    expect(countFor('root')).toBe('2/6');
+  });
+
+  it('leaves a heading with no lessons under it uncounted', async () => {
+    const { countFor, nodeFor } = await renderCounted();
+
+    // "0/0" would describe a section begun and abandoned rather than one with
+    // nothing in it to finish. The track detail page hides its counts in the
+    // same case, and one screen counting where the other does not would look
+    // like a disagreement about the data rather than about the wording.
+    expect(countFor('notes')).toBeNull();
+    expect(nodeFor('notes').getAttribute('aria-label')).toBe('notes');
+  });
+
+  it('counts headings only, not the lessons and concepts under them', async () => {
+    const { nodeFor } = await renderCounted();
+
+    // A lesson already carries whether it is finished, in a mark; "1/1" beside
+    // it would say the same thing again in a second vocabulary.
+    for (const id of ['l1', 'l4', 'note-1']) {
+      expect(nodeFor(id).querySelector('[data-testid="mind-map-completion"]')).toBeNull();
+    }
+  });
+
+  it('places the count under the heading it belongs to, in the supporting style', async () => {
+    const { nodeFor } = await renderCounted();
+    const heading = nodeFor('partial');
+
+    const label = heading.querySelector('text')!;
+    const count = heading.querySelector('[data-testid="mind-map-completion"]')!;
+
+    // Under the label rather than after it: an SVG canvas cannot measure the
+    // text it just drew, so a count placed beside a long heading would have to
+    // guess a width and would eventually land on top of one.
+    expect(count.getAttribute('x')).toBe(label.getAttribute('x'));
+    expect(Number(count.getAttribute('y'))).toBeGreaterThan(Number(label.getAttribute('y')));
+    // The style this canvas already uses for a node's second line, with
+    // tabular figures so the fractions line up digit over digit down a column.
+    expect(count.getAttribute('class')).toBe('fill-text-muted text-xs tabular-nums');
+  });
+
+  it('says the count in words as well as in digits', async () => {
+    const { nodeFor } = await renderCounted();
+
+    // The group carries an accessible name, which replaces the text drawn
+    // inside it: a fraction that was only drawn would be seen and not heard.
+    // Said in the sentence the track page uses for the same fact.
+    expect(nodeFor('partial').getAttribute('aria-label')).toBe('partial, 1 of 3 completed');
+    expect(nodeFor('root').getAttribute('aria-label')).toBe('root, 2 of 6 completed');
   });
 
   it('gives a module heading more weight than the lessons listed under it', async () => {

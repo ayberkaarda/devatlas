@@ -162,7 +162,21 @@
   --bl-danger-soft: #fbe7e8;
   --bl-danger-strong: #a12a31;
 
-  --bl-code-bg: #f4f5f7;
+  /*
+   * The code well. One step off the page in the same direction as every other
+   * light surface -- darker, since white is the ceiling -- measured at 1.11
+   * against the page, with the 1px edge (1.42 against the page) carrying the
+   * rest of the box.
+   *
+   * The value is bounded from the other side by the text printed on it: the
+   * syntax theme's comment colour is the faintest thing a code block contains,
+   * and it clears 4.5:1 here at 4.54. Every step darker trades that margin for
+   * box contrast one-for-one -- 1.12 would leave the comment at exactly 4.50 --
+   * so this is very nearly the whole usable band, and the two requirements are
+   * genuinely in tension in a light palette. Retuning this value means
+   * re-measuring the comment colour, not only the box.
+   */
+  --bl-code-bg: #f2f3f6;
 
   --bl-focus: #082036;
   --bl-badge-bg: #fdf3dd;
@@ -235,7 +249,18 @@
   --bl-danger-soft: #3a1a1e;
   --bl-danger-strong: #f08a92;
 
-  --bl-code-bg: #10151d;
+  /*
+   * The code well, one step off the page the way the dark surfaces are: by
+   * adding light, not by removing it. It used to sit below the page instead
+   * (#10151d, measured 1.03 against the page), and a well sunk into a
+   * near-black page has nowhere to go -- pure black would reach only 1.11 --
+   * so the box was carried by its 1px edge alone. Lifting it instead gives
+   * 1.13, matching the step the light palette gets, and leaves the syntax
+   * theme's comment colour at 9.5 here rather than the 3.80 it measured
+   * before. Above surface (1.09) and below surface-hover (1.23), so the well
+   * is not mistaken for a row under the pointer.
+   */
+  --bl-code-bg: #181e28;
 
   --bl-focus: #ffffff;
   --bl-badge-bg: #3a2f14;
@@ -281,7 +306,7 @@
     --bl-danger-soft: #3a1a1e;
     --bl-danger-strong: #f08a92;
 
-    --bl-code-bg: #10151d;
+    --bl-code-bg: #181e28;
 
     --bl-focus: #ffffff;
     --bl-badge-bg: #3a2f14;

@@ -43,6 +43,7 @@
         @let downloading = isDownloading(node);
         @let completed = isCompleted(node);
         @let concept = isConceptLeaf(node);
+        @let completion = completionFor(node);
         <!--
           The accessible name appends the completion as a second clause rather
           than folding it into a fourth hint sentence, because it is a second,
@@ -52,6 +53,12 @@
           reader the pause that belongs there in all four catalogue languages.
           The word itself is the same key the reading-state mark uses
           elsewhere, so one state is said one way everywhere.
+
+          A grouping node's name takes the same treatment for its count: the
+          name here overrides the text drawn inside the node, so a fraction
+          that is only drawn would be seen and not heard. It is said in the
+          same sentence the track page says it in, from the same key, rather
+          than spelled out as "three slash three".
 
           Only a lesson node offers a pointer cursor. A module heading and a
           concept leaf are both inert on click; showing a hand over them
@@ -68,7 +75,12 @@
           [attr.tabindex]="focusedId() === node.id ? 0 : -1"
           [attr.aria-label]="
             !node.lessonId
-              ? node.label
+              ? node.label +
+                (completion
+                  ? ', ' +
+                    ('track.completedCount'
+                      | translate: { completed: completion.completed, total: completion.total })
+                  : '')
               : ((readable
                   ? 'mindMap.nodeHint'
                   : downloading
@@ -122,7 +134,9 @@
                 [attr.r]="glyphRingRadius"
                 class="fill-surface-raised"
               />
-              <path [attr.d]="glyphTickPath" />
+              @for (d of glyphPaths; track d) {
+                <path [attr.d]="d" />
+              }
             </g>
           } @else {
             <circle
@@ -157,6 +171,31 @@
           >
             {{ node.label }}
           </text>
+          @if (completion) {
+            <!--
+              How much of this heading has been read, under its label rather
+              than beside it: an SVG canvas cannot measure the label it just
+              drew, so anything placed after the text would have to guess a
+              width and would collide with the long ones. The line below the
+              label is a position this canvas already uses for a node's second
+              line, and a grouping node never draws that one — it belongs to
+              lessons that are not stored yet.
+
+              Set in the same supporting style as that line: a bare fraction
+              under a heading is read as a count without a word introducing it,
+              and giving it the weight of a label would put it in competition
+              with the name of the thing it counts. Tabular figures so the
+              fractions down the column line up digit over digit.
+            -->
+            <text
+              [attr.x]="node.cx + 14"
+              [attr.y]="node.cy + 18"
+              class="fill-text-muted text-xs tabular-nums"
+              data-testid="mind-map-completion"
+            >
+              {{ completion.completed }}/{{ completion.total }}
+            </text>
+          }
           @if (node.lessonId && !readable) {
             <text [attr.x]="node.cx + 14" [attr.y]="node.cy + 18" class="fill-text-muted text-xs">
               {{ (downloading ? 'mindMap.nodeQueuedHint' : 'mindMap.notInLibrary') | translate }}

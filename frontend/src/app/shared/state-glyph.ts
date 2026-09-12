@@ -37,12 +37,21 @@ function assertNever(value: never): never {
  * and `failed` put a mark inside the same ring, and the rest are paths
  * with no ring at all.
  */
-interface GlyphShape {
+export interface GlyphShape {
   readonly circle?: true;
   readonly paths: readonly string[];
 }
 
-function shapeFor(kind: StateGlyphKind): GlyphShape {
+/**
+ * Exported as well as used by the component below, for the one caller that
+ * cannot embed the component: a canvas already drawing its own `<svg>` in its
+ * own coordinate system, which needs the geometry without a second viewport
+ * and a second 16px sizing around it. Such a caller reading the shape from
+ * here keeps one drawing for one fact — the alternative is a hand-copied path
+ * string that stops matching this one the first time either is adjusted, in
+ * two places that no longer know about each other.
+ */
+export function shapeFor(kind: StateGlyphKind): GlyphShape {
   switch (kind) {
     case 'completed':
       // A tick inside a closed ring. The ring is what separates this mark

@@ -15,7 +15,20 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { DownloadStore } from '../../core/library/download-store';
 import type { LessonSummary, MindMapNode } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
+import { shapeFor } from '../../shared/state-glyph';
 import { buildMindMapLayout, type LayoutNode } from './mind-map-layout';
+
+/**
+ * How much of one grouping node has been read: how many lesson nodes beneath
+ * it this reader has finished, out of how many there are.
+ *
+ * Declared here, next to the input that receives it, rather than where it is
+ * computed: this component owns the shape of what it is handed.
+ */
+export interface NodeCompletion {
+  readonly completed: number;
+  readonly total: number;
+}
 
 /**
  * The radius every node disc on this canvas is drawn at.
@@ -40,17 +53,20 @@ const CONCEPT_RADIUS = 3.5;
  * hand-written SVG in one coordinate system, and an `<svg>`-rooted component
  * dropped into it would bring its own viewport and its own 16px sizing.
  *
- * Copying the geometry instead of the element keeps one drawing for one fact.
- * The glyph is authored on a 16x16 box centred on (8, 8) with a ring of radius
- * 6.25; scaling the whole group uniformly by `NODE_RADIUS / 6.25` puts its ring
- * exactly where every other node's disc edge is, so the marks line up down the
- * column, and preserves every proportion inside it — including the stroke
- * weight, which is why the tick keeps the same relationship to its ring that it
- * has at 16px on the track detail page.
+ * Borrowing the geometry instead of the element keeps one drawing for one
+ * fact: the strokes come from the shared shape below rather than from a copy
+ * of them made here, so the two renderings of "this lesson is finished" cannot
+ * be adjusted apart. The glyph is authored on a 16x16 box centred on (8, 8)
+ * with a ring of radius 6.25; scaling the whole group uniformly by
+ * `NODE_RADIUS / 6.25` puts its ring exactly where every other node's disc edge
+ * is, so the marks line up down the column, and preserves every proportion
+ * inside it — including the stroke weight, which is why the tick keeps the same
+ * relationship to its ring that it has at 16px on the track detail page.
  */
 const GLYPH_CENTER = 8;
 const GLYPH_RING_RADIUS = 6.25;
 const GLYPH_SCALE = NODE_RADIUS / GLYPH_RING_RADIUS;
+const COMPLETED_GLYPH_PATHS = shapeFor('completed').paths;
 
 /**
  * The rendered tree: an SVG drawn from `buildMindMapLayout`'s output using
@@ -83,7 +99,11 @@ const GLYPH_SCALE = NODE_RADIUS / GLYPH_RING_RADIUS;
  *
  * Grouping nodes (the track root and its modules) keep the plain outlined
  * disc but carry a heavier label, because their disc differs from an unread
- * lesson's by nothing but a dash pattern on a 1.5px stroke.
+ * lesson's by nothing but a dash pattern on a 1.5px stroke. Each also carries
+ * how much of it has been read, as a fraction under its label: the marks on
+ * the lessons already say which ones are finished, but a reader counting ticks
+ * down a branch to answer "is this section done" is doing arithmetic the page
+ * can do for them.
  */
 @Component({
   selector: 'app-mind-map-tree',
@@ -106,6 +126,14 @@ export class MindMapTree {
    * the reader did.
    */
   readonly completedLessonIds = input.required<ReadonlySet<string>>();
+  /**
+   * How much of each grouping node has been read, keyed by node id. Handed
+   * down for the same reason the completed set is: the counting is one
+   * question about the whole map, asked once where the map is loaded, so that
+   * a module's fraction and the root's total can never be derived two
+   * different ways and disagree.
+   */
+  readonly completionByNode = input.required<ReadonlyMap<string, NodeCompletion>>();
   readonly trackTitle = input.required<string>();
   readonly trackSlug = input.required<string>();
 
@@ -115,8 +143,13 @@ export class MindMapTree {
   protected readonly conceptRadius = CONCEPT_RADIUS;
   protected readonly glyphRingRadius = GLYPH_RING_RADIUS;
   protected readonly glyphCenter = GLYPH_CENTER;
-  /** The tick inside the ring, in the glyph's own 16x16 coordinates. */
-  protected readonly glyphTickPath = 'm5.15 8.2 2 2 3.7-4.4';
+  /**
+   * The strokes inside the ring, in the glyph's own 16x16 coordinates. Drawn
+   * as the list the shared shape declares rather than as the single tick it
+   * happens to hold today, so that a mark which grows a second stroke grows it
+   * on both canvases at once.
+   */
+  protected readonly glyphPaths = COMPLETED_GLYPH_PATHS;
 
   protected readonly layout = computed(() => buildMindMapLayout(this.root()));
   protected readonly focusedId = signal<string>('');
@@ -194,6 +227,29 @@ export class MindMapTree {
   /** A grouping node: the track root, or a module heading over its lessons. */
   protected isGroup(node: LayoutNode): boolean {
     return node.lessonId === null && !this.isConceptLeaf(node);
+  }
+
+  /**
+   * The read count to draw beside a grouping node, or null when there is none
+   * to draw.
+   *
+   * A heading with no lessons under it draws nothing rather than "0/0". The
+   * fraction reports progress through a set of lessons, and over an empty set
+   * there is no progress to report — "0/0" would read as a path that has been
+   * started and abandoned rather than as one with nothing in it. The track
+   * detail page already answers this question the same way for the same fact,
+   * hiding its counts when a module lists no lessons; one screen showing a
+   * count where the other shows none would look like a disagreement about the
+   * data. The maps derived from the corpus cannot produce this case — a module
+   * there is built from its lessons and an empty one is refused before it is
+   * stored — but a hand-authored map can.
+   */
+  protected completionFor(node: LayoutNode): NodeCompletion | null {
+    if (!this.isGroup(node)) {
+      return null;
+    }
+    const completion = this.completionByNode().get(node.id);
+    return completion && completion.total > 0 ? completion : null;
   }
 
   /**

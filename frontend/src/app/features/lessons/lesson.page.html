@@ -197,16 +197,47 @@
                 author and not editable from here, and the number is what ties
                 a line of that list to the figure it describes.
 
-                Both sit outside the panel rather than inside its top edge,
-                where a line of prose above a code block reads as a comment in
-                the first line of the code.
+                The language trails the caption rather than leading it. The
+                caption is the sentence the reader wants before the code, and
+                putting a tag of varying width between the number and that
+                sentence would start every caption at a different place down
+                the column. It is printed exactly as the content carries it,
+                with no display names invented here: the value comes from a
+                closed set the content format defines, and a table mapping a
+                handful of them to prettier spellings would leave the rest
+                looking like an oversight while disagreeing with what the
+                corpus actually says.
+
+                It renders alongside the number whether or not there is a
+                caption, because it describes the listing and not the caption.
+
+                All three sit outside the panel rather than inside its top
+                edge, where a line of prose above a code block reads as a
+                comment in the first line of the code.
               -->
               <figcaption
-                class="mb-2 flex flex-wrap items-baseline gap-x-2 text-xs text-text-muted"
+                class="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs text-text-muted"
               >
                 <span class="tabular-nums">{{ $index + 1 }}.</span>
                 @if (example.caption) {
                   <span>{{ example.caption }}</span>
+                }
+                <!--
+                  The same quiet pill the concept labels above wear, so the two
+                  read as one kind of thing rather than as two small-tag styles
+                  on one screen. Size and colour come from the row, which
+                  already states both.
+
+                  Guarded only against having no value at all: the format
+                  requires a language on every listing, and an empty pill would
+                  be a stray mark with nothing in it.
+                -->
+                @if (example.language) {
+                  <span
+                    class="rounded-full bg-surface-hover px-2 py-0.5 font-medium"
+                    data-testid="lesson-example-language"
+                    >{{ example.language }}</span
+                  >
                 }
               </figcaption>
               <!--

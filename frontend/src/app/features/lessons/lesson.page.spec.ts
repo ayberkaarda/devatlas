@@ -295,6 +295,80 @@ describe('LessonPage', () => {
     expect(figures[1].querySelector('.tabular-nums')?.textContent?.trim()).toBe('2.');
   });
 
+  it("names a listing's language beside its number, after the caption", async () => {
+    fake.lessons.set(
+      'signals',
+      lesson({
+        codeExamples: [
+          {
+            language: 'rust',
+            code: 'fn main() {}',
+            caption: 'Ownership moves into the callee',
+            order: 0,
+          },
+        ],
+      }),
+    );
+    const element = (await render()).nativeElement as HTMLElement;
+
+    const caption = element.querySelector('figure figcaption')!;
+    const tag = caption.querySelector('[data-testid="lesson-example-language"]')!;
+    // Printed as the content carries it. The set of identifiers is closed and
+    // defined by the content format; spelling them differently here would put
+    // a word on the screen that the corpus does not contain.
+    expect(tag.textContent?.trim()).toBe('rust');
+    // The sentence the reader needs before the code comes first; the tag is
+    // what the listing is written in, which is worth less than that. Read off
+    // the children rather than the caption's text, because the row is spaced
+    // by its own gap and carries no whitespace between them to read.
+    expect(Array.from(caption.children).map((part) => part.textContent?.trim())).toEqual([
+      '1.',
+      'Ownership moves into the callee',
+      'rust',
+    ]);
+  });
+
+  it('names the language of a listing its author gave no caption', async () => {
+    fake.lessons.set(
+      'signals',
+      lesson({
+        codeExamples: [{ language: 'csharp', code: 'class C {}', caption: null, order: 0 }],
+      }),
+    );
+    const element = (await render()).nativeElement as HTMLElement;
+
+    // The language describes the listing, not the caption, so it does not
+    // disappear along with one the author never wrote.
+    const caption = element.querySelector('figure figcaption')!;
+    expect(caption.querySelector('[data-testid="lesson-example-language"]')?.textContent).toBe(
+      'csharp',
+    );
+    expect(Array.from(caption.children).map((part) => part.textContent?.trim())).toEqual([
+      '1.',
+      'csharp',
+    ]);
+  });
+
+  it('draws no empty tag for a listing that arrived without a language', async () => {
+    fake.lessons.set(
+      'signals',
+      lesson({
+        codeExamples: [{ language: '', code: 'plain', caption: 'No language', order: 0 }],
+      }),
+    );
+    const element = (await render()).nativeElement as HTMLElement;
+
+    // Not a shape the content format permits — every listing carries one of a
+    // closed set of identifiers — but a pill with nothing inside it would be a
+    // stray mark next to the caption rather than a fact about the listing.
+    const caption = element.querySelector('figure figcaption')!;
+    expect(caption.querySelector('[data-testid="lesson-example-language"]')).toBeNull();
+    expect(Array.from(caption.children).map((part) => part.textContent?.trim())).toEqual([
+      '1.',
+      'No language',
+    ]);
+  });
+
   it('names the concepts the map hangs under this lesson, two levels down', async () => {
     fake.lessons.set('signals', lesson());
     fake.trackDetails.set('angular', track());

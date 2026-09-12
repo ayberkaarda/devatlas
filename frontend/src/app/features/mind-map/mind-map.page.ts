@@ -14,10 +14,10 @@ import type { DownloadUnit } from '../../core/library/aggregate';
 import { LibraryDiscovery } from '../../core/library/library-discovery';
 import { errorKey } from '../../core/platform/error-key';
 import { PlatformError } from '../../core/platform/errors';
-import type { LessonSummary, MindMap, TrackDetail } from '../../core/platform/models';
+import type { LessonSummary, MindMap, MindMapNode, TrackDetail } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { ContainerDownloadAction } from '../../shared/container-download-action';
-import { MindMapTree } from './mind-map-tree';
+import { MindMapTree, type NodeCompletion } from './mind-map-tree';
 
 /**
  * Loads a track's mind map and hands it to the renderer, or explains why
@@ -67,6 +67,57 @@ export class MindMapPage {
       map.set(lesson.id, lesson);
     }
     return map;
+  });
+
+  /**
+   * How much of each grouping node has been read, keyed by node id: the number
+   * of lesson nodes beneath it this reader has finished, out of how many there
+   * are. The same count the track detail page puts beside a module heading,
+   * read off the map's own shape instead of the track's module list, because
+   * the map is what this screen draws and the two need not agree node for node
+   * — a hand-authored map is free to leave a lesson out.
+   *
+   * One rule serves both levels: a heading is scored over every lesson node
+   * beneath it, however deep. Over the maps derived from the corpus — root,
+   * modules, lessons, then concepts hanging off the lessons — that is exactly
+   * "the module's own lessons" and "every lesson in the track", because a
+   * module's children are its lessons and nothing below them carries a lesson
+   * of its own. Counting a module's immediate children instead would agree
+   * here and lose lessons in a hand-authored map that nests them one level
+   * deeper, and the root's total would then no longer be the sum of the
+   * headings drawn beneath it, which is the one thing a reader can check by
+   * eye.
+   *
+   * Nodes that are lessons themselves get no entry: a lesson already says
+   * whether it is finished with its own mark, and "1/1" beside it would say
+   * the same thing a second time in a different vocabulary.
+   */
+  protected readonly completionByNode = computed<ReadonlyMap<string, NodeCompletion>>(() => {
+    const root = this.mindMap()?.root;
+    const done = this.completedLessonIds();
+    const counts = new Map<string, NodeCompletion>();
+    if (!root) {
+      return counts;
+    }
+    const visit = (node: MindMapNode): NodeCompletion => {
+      let completed = 0;
+      let total = 0;
+      if (node.lessonId !== null) {
+        total = 1;
+        completed = done.has(node.lessonId) ? 1 : 0;
+      }
+      for (const child of node.children) {
+        const below = visit(child);
+        completed += below.completed;
+        total += below.total;
+      }
+      if (node.lessonId === null) {
+        counts.set(node.id, { completed, total });
+      }
+      return { completed, total };
+    };
+    visit(root);
+    return counts;
   });
 
   protected readonly allLessons = computed<readonly LessonSummary[]>(() => {
