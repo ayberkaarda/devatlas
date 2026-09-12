@@ -50,6 +50,17 @@ export class MindMapPage {
   /** A discovery attempt that failed. Non-blocking: the track above still renders. */
   protected readonly noteKey = signal<string | null>(null);
 
+  /**
+   * The lessons this reader has finished, by identifier.
+   *
+   * Read from the progress store rather than from the lessons themselves,
+   * because the summary model a mind map node resolves to carries no
+   * completion field and only the full lesson does. One read answers for every
+   * node on the canvas, which is why it is owned here alongside the map rather
+   * than inside the renderer: the renderer draws what it is given.
+   */
+  protected readonly completedLessonIds = signal<ReadonlySet<string>>(new Set<string>());
+
   protected readonly lessonIndex = computed<ReadonlyMap<string, LessonSummary>>(() => {
     const map = new Map<string, LessonSummary>();
     for (const lesson of this.allLessons()) {
@@ -91,6 +102,12 @@ export class MindMapPage {
     this.noteKey.set(null);
     this.mindMap.set(null);
     this.mindMapNotDownloaded.set(false);
+    this.completedLessonIds.set(new Set<string>());
+
+    // Started here and awaited in `finally`, so the progress read overlaps the
+    // track read instead of queueing behind it.
+    const completionPromise = this.loadCompletions();
+
     try {
       const initial = await this.platform.getTrack(slug);
       const outcome = await this.discovery.discoverTrack(initial);
@@ -116,7 +133,29 @@ export class MindMapPage {
       this.track.set(null);
       this.failureKey.set(errorKey(error));
     } finally {
+      this.completedLessonIds.set(await completionPromise);
       this.loading.set(false);
+    }
+  }
+
+  /**
+   * Reads which lessons are finished, and says nothing when it cannot.
+   *
+   * Failing here is an ordinary condition rather than a fault: a reader with
+   * no session gets a refusal from the progress endpoint every time, and there
+   * is no progress of theirs to show because there is none. The map renders
+   * exactly as it would for a reader who has finished nothing, with no error
+   * and no note — the map itself is still perfectly readable without it, and
+   * announcing a failure to someone who never signed in explains nothing.
+   */
+  private async loadCompletions(): Promise<ReadonlySet<string>> {
+    try {
+      const entries = await this.platform.listProgress();
+      return new Set(
+        entries.filter((entry) => entry.completedAt !== null).map((entry) => entry.lessonId),
+      );
+    } catch {
+      return new Set<string>();
     }
   }
 }

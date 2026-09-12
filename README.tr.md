@@ -26,7 +26,7 @@ Henüz bir sürüm çıkılmadı ve barındırılan bir örnek yok.
 
 ## İçindekiler
 
-- [Nedir](#nedir) · [Kütüphane](#kütüphane) · [İçerik nasıl giriyor](#i̇çerik-nasıl-giriyor)
+- [Nedir](#nedir) · [Ekran görüntüleri](#ekran-görüntüleri) · [Kütüphane](#kütüphane) · [İçerik nasıl giriyor](#i̇çerik-nasıl-giriyor)
 - [Mimari](#mimari) · [Çevrimdışı modeli](#çevrimdışı-modeli) · [Tasarım değişmezleri](#tasarım-değişmezleri)
 - [Başlangıç](#başlangıç) · [Denetimleri çalıştırma](#denetimleri-çalıştırma)
 - [Depo düzeni](#depo-düzeni) · [Dokümantasyon](#dokümantasyon)
@@ -61,6 +61,50 @@ dosya değişimiyle üretilir.
   yayınlanan** blogu oku.
 - **Dili ve temayı çalışma zamanında değiştir** — İngilizce, Türkçe, Fransızca ve
   Almanca; sayfa yenilenmeden ve açılışta yanlış tema parlaması olmadan.
+
+---
+
+## Ekran görüntüleri
+
+Aşağıdaki beşi de masaüstü uygulaması, gönderilen korpusa karşı çalışırken.
+
+<table>
+<tr><td width="50%">
+
+**Kütüphane**
+Her izlek kaç ders taşıdığını ve kaçının çevrimdışı okuma için zaten kayıtlı olduğunu gösteriyor.
+
+<img src="docs/screenshots/library.png" alt="Sekiz öğrenme yolunu kart olarak gösteren kütüphane ekranı" width="100%">
+
+</td><td width="50%">
+
+**Açılmış bir izlek**
+Modüller ve dersler, her birinin kendi indirme kontrolü ve izleğin akıl haritasına giden bir bağlantıyla.
+
+<img src="docs/screenshots/track-detail.png" alt="Rust izleğinin modüllerini ve derslerini gösteren detay ekranı" width="100%">
+
+</td></tr>
+<tr><td width="50%">
+
+**Bir ders, okuma sırasında**
+Gerçek kod, dersi yazan makinede gerçekten derlenmiş, ardından bir okuyucunun büyük olasılıkla karşılaşacağı tanı.
+
+<img src="docs/screenshots/lesson-reader.png" alt="Vurgulanmış Rust kodu ve bir derleyici tanısı gösteren ders gövdesi" width="100%">
+
+</td><td width="50%">
+
+**Aynı izlek, akıl haritası olarak**
+İzleğin kendi yapısından türetilmiş, elle yazılmamış, ders başına bir yaprak.
+
+<img src="docs/screenshots/mind-map.png" alt="Rust izleği için etkileşimli bir akıl haritası" width="100%">
+
+</td></tr>
+</table>
+
+**İndirmeler**
+Bu cihazda saklanan her şey, ve son kontrolden bu yana ne değişti — aşağıda anlatılan senkron protokolünün yerel yarısı.
+
+<img src="docs/screenshots/downloads.png" alt="İzlek başına saklanan dersleri listeleyen indirmeler ekranı" width="70%">
 
 ---
 

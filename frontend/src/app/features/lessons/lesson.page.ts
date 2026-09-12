@@ -14,7 +14,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { MarkdownService } from '../../core/markdown/markdown.service';
 import { errorKey } from '../../core/platform/error-key';
 import { PlatformError } from '../../core/platform/errors';
-import type { LessonSummary, Lesson, TrackDetail } from '../../core/platform/models';
+import type {
+  LessonSummary,
+  Lesson,
+  MindMap,
+  MindMapNode,
+  TrackDetail,
+} from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { ProgressSyncService } from '../../core/sync/progress-sync.service';
 import { ThemeService } from '../../core/theme/theme.service';
@@ -59,6 +65,49 @@ function readingOrder(track: TrackDetail | null): readonly SequencedLesson[] {
     );
 }
 
+/**
+ * Finds the node a lesson owns in a mind map, wherever in the tree it sits.
+ *
+ * A map is derived from its track's structure — the track, its modules, their
+ * lessons, and the concept leaves under each lesson — so a lesson node is two
+ * levels below the root as the content format stands. The walk does not rely
+ * on that: the depth is a fact about today's corpus, not about the format, and
+ * a lookup that indexed straight into the second level would quietly find
+ * nothing on the day a level is added rather than fail where it could be seen.
+ *
+ * Recursive rather than iterative because the format caps a map's depth at
+ * eight, so there is no stack to run out of, and the recursion says what the
+ * search is in one line where a hand-rolled stack would not.
+ */
+function findLessonNode(node: MindMapNode, lessonId: string): MindMapNode | null {
+  if (node.lessonId === lessonId) {
+    return node;
+  }
+  for (const child of node.children) {
+    const found = findLessonNode(child, lessonId);
+    if (found) {
+      return found;
+    }
+  }
+  return null;
+}
+
+/**
+ * The labels hanging under a lesson's node, which are the concepts it teaches:
+ * a mind map is derived from the track, so the leaves beneath a lesson are
+ * that lesson's concepts and nothing else.
+ *
+ * Every way of having no answer — no map, no node for this lesson, a node with
+ * no leaves — comes out as the same empty list, because the screen does the
+ * same thing with all three.
+ */
+function conceptsOf(map: MindMap | null, lessonId: string): readonly string[] {
+  if (!map) {
+    return [];
+  }
+  return findLessonNode(map.root, lessonId)?.children.map((child) => child.label) ?? [];
+}
+
 @Component({
   selector: 'app-lesson-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,6 +128,20 @@ export class LessonPage {
   protected readonly examples = signal<readonly RenderedExample[]>([]);
   protected readonly loading = signal(true);
   protected readonly failure = signal<string | null>(null);
+
+  /**
+   * The concepts this lesson teaches, read from its own node in the track's
+   * mind map, where they are the leaves hanging beneath it.
+   *
+   * Empty whenever the map could not be read at all, or holds no node for this
+   * lesson, or that node has no leaves — three different facts with one
+   * consequence, because a row with nothing in it is worth less than the space
+   * it takes. Nothing derived from it is ever an error: these labels repeat, in
+   * two words, something the lesson itself says at length, so a reader who
+   * never sees them has lost nothing, while a message about a map they did not
+   * ask for would take their place in the article away from them.
+   */
+  protected readonly concepts = signal<readonly string[]>([]);
 
   /**
    * A failure to record a completion, kept apart from the load failure above.
@@ -249,10 +312,15 @@ export class LessonPage {
     this.toggleFailureKey.set(null);
     this.notDownloaded.set(false);
     this.track.set(null);
+    this.concepts.set([]);
 
-    // Started before the lesson read and awaited after it, so the two run
-    // together rather than one after the other.
+    // Started before the lesson read and awaited after it, so the three run
+    // together rather than one after the other. The map rides along with them
+    // rather than being fetched once the lesson is on screen: arriving late, it
+    // would push the article down under the reader's eyes a moment after they
+    // began reading it.
     const trackPromise = this.loadTrack(this.trackSlug());
+    const mindMapPromise = this.loadMindMap(this.trackSlug());
 
     try {
       const lesson = await this.platform.getLesson(slug);
@@ -271,6 +339,7 @@ export class LessonPage {
         ),
       );
       this.track.set(await trackPromise);
+      this.concepts.set(conceptsOf(await mindMapPromise, lesson.id));
     } catch (error) {
       this.lesson.set(null);
       this.body.set(null);
@@ -301,6 +370,24 @@ export class LessonPage {
   private async loadTrack(slug: string): Promise<TrackDetail | null> {
     try {
       return await this.platform.getTrack(slug);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Reads the track's mind map, for the concepts it hangs under this lesson.
+   *
+   * Best-effort in the strongest sense on this screen: a track whose map was
+   * never downloaded, a client with no network, a session that has expired —
+   * every one of them ends here as null and leaves the article exactly as it
+   * was. A map is a whole separate unit of content with its own download state,
+   * so not having one is an ordinary condition rather than a fault, and this is
+   * the only read on the page whose failure the reader is told nothing about.
+   */
+  private async loadMindMap(slug: string): Promise<MindMap | null> {
+    try {
+      return await this.platform.getMindMap(slug);
     } catch {
       return null;
     }

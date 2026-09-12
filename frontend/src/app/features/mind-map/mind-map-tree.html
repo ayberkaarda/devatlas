@@ -41,6 +41,22 @@
         @let lesson = lessonFor(node);
         @let readable = !!lesson?.availability?.readable;
         @let downloading = isDownloading(node);
+        @let completed = isCompleted(node);
+        @let concept = isConceptLeaf(node);
+        <!--
+          The accessible name appends the completion as a second clause rather
+          than folding it into a fourth hint sentence, because it is a second,
+          independent fact: whether a node can be opened and whether it has
+          been read vary separately. The comma is punctuation joining two
+          translated fragments, not wording of its own — it gives a screen
+          reader the pause that belongs there in all four catalogue languages.
+          The word itself is the same key the reading-state mark uses
+          elsewhere, so one state is said one way everywhere.
+
+          Only a lesson node offers a pointer cursor. A module heading and a
+          concept leaf are both inert on click; showing a hand over them
+          promised something the click does not do.
+        -->
         <g
           role="treeitem"
           [attr.data-node-id]="node.id"
@@ -58,28 +74,87 @@
                   : downloading
                     ? 'mindMap.nodeQueuedHint'
                     : 'mindMap.nodeDownloadHint'
-                ) | translate: { title: node.label })
+                ) | translate: { title: node.label }) +
+                (completed ? ', ' + ('progress.completed' | translate) : '')
           "
-          class="cursor-pointer"
+          [class.cursor-pointer]="!!node.lessonId"
           (click)="setFocus(node.id); activate(node)"
           (focus)="setFocus(node.id)"
           (keydown)="onKeydown($event, node)"
         >
-          <circle
-            [attr.cx]="node.cx"
-            [attr.cy]="node.cy"
-            r="8"
+          @if (concept) {
+            <!--
+              A dot, not a disc: no stroke, filled in the muted text colour so
+              it reads as the anchor of the word beside it rather than as one
+              more thing in the column of lesson nodes.
+            -->
+            <circle
+              [attr.cx]="node.cx"
+              [attr.cy]="node.cy"
+              [attr.r]="conceptRadius"
+              class="fill-text-muted"
+              data-testid="mind-map-concept"
+            />
+          } @else if (completed) {
+            <!--
+              The reading-state mark, borrowed shape and colour intact from the
+              one the track detail page draws. The ring is filled with the
+              surface colour the other node discs use, which the flat 16px
+              version has no need of: here a connector curve passes behind the
+              node, and an unfilled ring would let it cross the tick.
+
+              A finished lesson that is not stored on this device keeps this
+              mark rather than the dashed outline — the two facts are
+              independent, and the one that is lost from the disc is still said
+              in the line of text below it.
+            -->
+            <g
+              [attr.transform]="completedGlyphTransform(node)"
+              class="fill-none stroke-success"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              data-testid="mind-map-completed"
+            >
+              <circle
+                [attr.cx]="glyphCenter"
+                [attr.cy]="glyphCenter"
+                [attr.r]="glyphRingRadius"
+                class="fill-surface-raised"
+              />
+              <path [attr.d]="glyphTickPath" />
+            </g>
+          } @else {
+            <circle
+              [attr.cx]="node.cx"
+              [attr.cy]="node.cy"
+              [attr.r]="nodeRadius"
+              [attr.class]="
+                node.lessonId && readable ? 'fill-accent' : 'fill-surface-raised stroke-border'
+              "
+              [attr.stroke-dasharray]="node.lessonId && !readable ? '3,2' : null"
+              stroke-width="1.5"
+            />
+          }
+          <!--
+            The label sits closer to a concept dot than to a full disc, so the
+            gap stays proportional to the mark it belongs to, and is set in the
+            smaller, muted style that the rest of the interface uses for
+            supporting text. A grouping node's label carries the extra weight:
+            its disc is distinguishable from an unread lesson's by a dash
+            pattern alone, which is not enough to scan a column by.
+          -->
+          <text
+            [attr.x]="node.cx + (concept ? 9 : 14)"
+            [attr.y]="node.cy + 4"
             [attr.class]="
-              !node.lessonId
-                ? 'fill-surface-raised stroke-border'
-                : readable
-                  ? 'fill-accent'
-                  : 'fill-surface-raised stroke-border'
+              concept
+                ? 'fill-text-muted text-xs'
+                : isGroup(node)
+                  ? 'fill-text text-sm font-medium'
+                  : 'fill-text text-sm'
             "
-            [attr.stroke-dasharray]="node.lessonId && !readable ? '3,2' : null"
-            stroke-width="1.5"
-          />
-          <text [attr.x]="node.cx + 14" [attr.y]="node.cy + 4" class="fill-text text-sm">
+          >
             {{ node.label }}
           </text>
           @if (node.lessonId && !readable) {

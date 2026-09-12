@@ -73,4 +73,67 @@ describe('MarkdownService', () => {
     expect(html).toContain('signal(0)');
     expect(html).not.toContain('<script');
   });
+
+  describe('fenced blocks that quote tool output', () => {
+    it('leaves a block tagged with a real language unwrapped', async () => {
+      const html = await markdown.render('```rust\nlet total = 1 + 1;\n```\n', 'light');
+
+      expect(html).not.toContain('lesson-output');
+      expect(html).toContain('<pre');
+      expect(html).toContain('let total = 1 + 1;');
+    });
+
+    it('wraps a block with no language tag', async () => {
+      const html = await markdown.render(
+        '```\nerror[E0382]: borrow of moved value\n```\n',
+        'light',
+      );
+
+      expect(html).toContain('<div class="lesson-output">');
+      expect(html).toContain('error[E0382]: borrow of moved value');
+    });
+
+    it('wraps a block tagged text', async () => {
+      const html = await markdown.render('```text\nthread panicked at src/main.rs\n```\n', 'light');
+
+      expect(html).toContain('<div class="lesson-output">');
+      expect(html).toContain('thread panicked at src/main.rs');
+    });
+
+    it('wraps a tag that differs only by surrounding space or case', async () => {
+      const html = await markdown.render('```  TEXT  \nrecorded output\n```\n', 'light');
+      expect(html).toContain('<div class="lesson-output">');
+    });
+
+    it('leaves a tag that merely contains text alone', async () => {
+      // `plaintext` names a grammar the highlighter knows, so a substring test
+      // here would take a real language for a transcript.
+      const html = await markdown.render('```plaintext\nsome configured value\n```\n', 'light');
+
+      expect(html).not.toContain('lesson-output');
+      expect(html).toContain('some configured value');
+    });
+
+    it('keeps the wrapper through sanitization', async () => {
+      // The assertion is on what render returns, which is the sanitized
+      // string: what a stylesheet can reach is only what survived here.
+      const html = await markdown.render('```\nexit status 1\n```\n', 'light');
+
+      expect(html).toMatch(/<div class="lesson-output">\s*<pre/);
+      expect(html).toContain('</div>');
+    });
+
+    it('distinguishes two blocks whose text is identical but whose tags differ', async () => {
+      const source = 'value: 3\n';
+      const html = await markdown.render(
+        `\`\`\`yaml\n${source}\`\`\`\n\n\`\`\`text\n${source}\`\`\`\n`,
+        'light',
+      );
+
+      const wrappers = html.match(/<div class="lesson-output">/g) ?? [];
+      expect(wrappers).toHaveLength(1);
+      // Both blocks are still rendered; only one of them is marked.
+      expect(html.match(/<pre/g) ?? []).toHaveLength(2);
+    });
+  });
 });

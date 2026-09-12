@@ -118,6 +118,20 @@
                   }}
                 </span>
               }
+              <!-- What the whole module costs, next to how much of it is done,
+                   so the two numbers a reader weighs before starting a section
+                   sit together. The same key a lesson row uses for its own
+                   minutes: one module is the sum of its lessons, and phrasing
+                   the sum differently would suggest it measures something
+                   else. -->
+              @if (module.estimatedMinutes; as moduleMinutes) {
+                <span
+                  class="text-xs tabular-nums text-text-muted"
+                  data-testid="module-estimated-minutes"
+                >
+                  {{ 'common.minutes' | translate: { count: moduleMinutes } }}
+                </span>
+              }
             </div>
             @if (canDownload) {
               <app-container-download-action
@@ -130,7 +144,19 @@
 
           <ul class="mt-4 divide-y divide-border">
             @for (lesson of module.lessons; track lesson.id) {
-              <li class="flex flex-wrap items-center gap-2 py-3">
+              <!--
+                The row to resume at is tinted rather than moved or repeated at
+                the top of the page, so the path keeps its one reading order
+                and the reader's place is shown inside it. The tint is drawn
+                wider than the text column and pulled back by the matching
+                negative margin, which keeps the highlighted row's left edge
+                flush with every other row's instead of stepping it inward.
+              -->
+              <li
+                class="flex flex-wrap items-center gap-2 py-3"
+                [class]="isUpNext(lesson.id) ? '-mx-3 rounded-md bg-accent-soft px-3' : ''"
+                [attr.data-testid]="isUpNext(lesson.id) ? 'lesson-up-next-row' : null"
+              >
                 <!--
                   Ahead of the title rather than after it, so the state is
                   read before the thing it describes instead of arriving as an
@@ -141,6 +167,25 @@
                 @if (isCompleted(lesson.id)) {
                   <app-state-glyph [kind]="'completed'" data-testid="lesson-completed" />
                 }
+                <!--
+                  In the same leading slot as the completion mark, and for the
+                  same reason: the two are mutually exclusive — the row to
+                  resume at is by definition unfinished — so every row in the
+                  list opens with its state and then names itself.
+
+                  It is a word, not only a tint. A reader who cannot separate
+                  the tinted row from the plain ones, or who is looking at a
+                  greyscale screenshot, still gets the answer. It is set in the
+                  ordinary text colour rather than the accent: on this tinted
+                  ground the accent falls below the contrast a normal-size
+                  string needs, and the weight already separates it from the
+                  muted meta around it.
+                -->
+                @if (isUpNext(lesson.id)) {
+                  <span class="text-xs font-medium text-text" data-testid="lesson-up-next">
+                    {{ 'track.upNext' | translate }}
+                  </span>
+                }
                 <a
                   class="text-sm leading-snug text-text no-underline hover:underline"
                   [routerLink]="['/tracks', detail.slug, 'lessons', lesson.slug]"
@@ -149,6 +194,29 @@
                   {{ lesson.title }}
                 </a>
                 <app-fallback-badge [state]="lesson.translation" />
+
+                <!--
+                  A neutral label, in the shape the badge beside it already
+                  uses, so the row carries one kind of small tag rather than
+                  two. Neutral on purpose: a difficulty is a property of the
+                  lesson, not a warning or a success, and giving the three
+                  levels a colour ramp would read as a judgement on the reader.
+
+                  The level alone is ambiguous in a dense row — "Beginner"
+                  could qualify almost anything on the screen — so the word
+                  that says which property this is travels with it for anyone
+                  listening, using the label the reading view already prints
+                  in full. Both keys exist; this adds none.
+                -->
+                @if (lesson.difficulty; as difficulty) {
+                  <span
+                    class="inline-flex items-center rounded-sm bg-surface-hover px-2 py-0.5 text-xs font-medium text-text-muted"
+                    data-testid="lesson-difficulty"
+                  >
+                    <span class="sr-only">{{ 'lesson.difficultyLabel' | translate }}: </span>
+                    {{ 'lesson.difficulty.' + difficulty | translate }}
+                  </span>
+                }
 
                 @if (lesson.estimatedMinutes) {
                   <span class="text-xs tabular-nums text-text-muted">

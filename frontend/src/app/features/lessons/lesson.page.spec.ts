@@ -11,7 +11,14 @@ import { AUTH_TOKEN_DELIVERY } from '../../core/auth/auth-models';
 import { API_BASE_URL } from '../../core/platform/api';
 import { PlatformError } from '../../core/platform/errors';
 import { contentAvailability } from '../../core/platform/models';
-import type { Lesson, LessonSummary, ModuleDetail, TrackDetail } from '../../core/platform/models';
+import type {
+  Lesson,
+  LessonSummary,
+  MindMap,
+  MindMapNode,
+  ModuleDetail,
+  TrackDetail,
+} from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { LessonPage } from './lesson.page';
@@ -73,6 +80,34 @@ function track(overrides: Partial<TrackDetail> = {}): TrackDetail {
     ],
     translation: { locale: 'en', requestedLocale: 'en', isFallback: false },
     ...overrides,
+  };
+}
+
+function node(
+  id: string,
+  label: string,
+  lessonId: string | null,
+  children: readonly MindMapNode[] = [],
+): MindMapNode {
+  return { id, label, lessonId, children };
+}
+
+/**
+ * A map shaped the way the content format derives one: the track at the root,
+ * its modules beneath it, their lessons beneath those, and each lesson's
+ * concepts as leaves. The lesson therefore sits two levels down, which is the
+ * whole point of the fixture — a lookup that only read the root's own children
+ * would find a lesson in no real map.
+ */
+function mindMap(lessonNode: MindMapNode): MindMap {
+  return {
+    id: 'map-1',
+    trackId: 'track-1',
+    contentVersion: 1,
+    root: node('n-root', 'Angular', null, [
+      node('n-module-1', 'Basics', null, [node('n-intro', 'Introduction', 'id-intro'), lessonNode]),
+    ]),
+    translation: { locale: 'en', requestedLocale: 'en', isFallback: false },
   };
 }
 
@@ -211,18 +246,124 @@ describe('LessonPage', () => {
     expect(toggle.textContent?.trim()).not.toBe('');
   });
 
-  it('lets a wide code example scroll inside its own box', async () => {
+  it('puts the code inside the panel and leaves the caption outside it', async () => {
     fake.lessons.set(
       'signals',
-      lesson({ codeExamples: [{ language: 'ts', code: 'const x = 1;', caption: null, order: 0 }] }),
+      lesson({
+        codeExamples: [{ language: 'ts', code: 'const x = 1;', caption: 'A signal', order: 0 }],
+      }),
     );
     const element = (await render()).nativeElement as HTMLElement;
 
-    // These examples sit outside the rendered-markdown container, so the
-    // stylesheet's overflow rule for code does not reach them and one long
-    // line would otherwise widen the page body itself.
+    // The box itself — border, background, padding, and the horizontal scroll
+    // these examples need because they sit outside the rendered-markdown
+    // container the stylesheet's overflow rule covers — belongs to the
+    // stylesheet. What this file decides is which element wears it, and the
+    // caption is not part of the code: inside the box it would read as a
+    // comment on the first line.
     const figure = element.querySelector('figure')!;
-    expect(figure.querySelector('.overflow-x-auto')).not.toBeNull();
+    const panel = figure.querySelector('.code-panel')!;
+    expect(panel).not.toBeNull();
+    expect(panel.querySelector('figcaption')).toBeNull();
+    expect(figure.querySelector('figcaption')).not.toBeNull();
+  });
+
+  it('leads a listing with its number and caption rather than trailing them', async () => {
+    fake.lessons.set(
+      'signals',
+      lesson({
+        codeExamples: [
+          { language: 'ts', code: 'const x = 1;', caption: 'A writable signal', order: 0 },
+          { language: 'ts', code: 'const y = 2;', caption: null, order: 1 },
+        ],
+      }),
+    );
+    const element = (await render()).nativeElement as HTMLElement;
+
+    const figures = Array.from(element.querySelectorAll('figure'));
+    expect(figures).toHaveLength(2);
+    // A caption under the code is a footnote to something the reader has
+    // already been through; what it says is what they needed beforehand.
+    for (const figure of figures) {
+      expect(figure.firstElementChild?.tagName).toBe('FIGCAPTION');
+    }
+    expect(figures[0].querySelector('figcaption')?.textContent).toContain('A writable signal');
+    // The number stands even where there is no caption text: the body above
+    // ends with the author's own numbered list of these listings, and the
+    // number is the only thing tying a line of it to the figure it describes.
+    expect(figures[0].querySelector('.tabular-nums')?.textContent?.trim()).toBe('1.');
+    expect(figures[1].querySelector('.tabular-nums')?.textContent?.trim()).toBe('2.');
+  });
+
+  it('names the concepts the map hangs under this lesson, two levels down', async () => {
+    fake.lessons.set('signals', lesson());
+    fake.trackDetails.set('angular', track());
+    fake.getMindMap = async () =>
+      mindMap(
+        node('n-signals', 'Signals', 'lesson-1', [
+          node('n-c1', 'signals are values', null),
+          node('n-c2', 'reads are glitch-free', null),
+        ]),
+      );
+    const element = (await render()).nativeElement as HTMLElement;
+
+    const row = element.querySelector('[data-testid="lesson-concepts"]')!;
+    expect(
+      Array.from(row.querySelectorAll('span')).map((pill) => pill.textContent?.trim()),
+    ).toEqual(['signals are values', 'reads are glitch-free']);
+
+    const translate = TestBed.inject(TranslateService);
+    // The catalogue's own word for the map, checked against the key so that a
+    // missing entry cannot make the lookup agree with a screen showing the key
+    // itself to the reader.
+    expect(translate.instant('track.mindMap')).not.toBe('track.mindMap');
+    const link = element.querySelector('[data-testid="lesson-mind-map-link"]')!;
+    expect(link.textContent?.trim()).toBe(translate.instant('track.mindMap'));
+    expect(link.getAttribute('href')).toBe('/tracks/angular/mindmap');
+  });
+
+  it('says nothing when the map holds no node for this lesson', async () => {
+    fake.lessons.set('signals', lesson());
+    fake.trackDetails.set('angular', track());
+    fake.getMindMap = async () =>
+      mindMap(
+        node('n-other', 'Something else', 'a-different-lesson', [node('n-c1', 'a leaf', null)]),
+      );
+    const element = (await render()).nativeElement as HTMLElement;
+
+    // A search that ran off the end of the tree must come back empty-handed
+    // rather than throw: the throw would land in the lesson read's own catch
+    // and replace a perfectly readable article with an error card.
+    expect(element.querySelector('[data-testid="lesson-concepts"]')).toBeNull();
+    expect(element.querySelector('article')).not.toBeNull();
+    expect(element.querySelector('[role="alert"]')?.textContent?.trim()).toBe('');
+  });
+
+  it('leaves out the row entirely for a lesson node carrying no concepts', async () => {
+    fake.lessons.set('signals', lesson());
+    fake.trackDetails.set('angular', track());
+    fake.getMindMap = async () => mindMap(node('n-signals', 'Signals', 'lesson-1'));
+    const element = (await render()).nativeElement as HTMLElement;
+
+    // Not an empty row with a link in it. A lesson contributes nought to two
+    // concepts, so having none is ordinary, and a container holding only its
+    // own gap is worth less than the space it takes.
+    expect(element.querySelector('[data-testid="lesson-concepts"]')).toBeNull();
+    expect(element.querySelector('[data-testid="lesson-mind-map-link"]')).toBeNull();
+  });
+
+  it('shows nothing extra when the mind map cannot be read at all', async () => {
+    // Which is what the fake does unless a test says otherwise, and what a
+    // reader offline or on a track whose map was never downloaded gets. A map
+    // is its own unit of content with its own download state, so not having
+    // one is a normal condition and not a fault to report.
+    fake.lessons.set('signals', lesson());
+    fake.trackDetails.set('angular', track());
+    const element = (await render()).nativeElement as HTMLElement;
+
+    expect(element.querySelector('[data-testid="lesson-concepts"]')).toBeNull();
+    expect(element.querySelector('article')).not.toBeNull();
+    expect(element.querySelector('[role="alert"]')?.textContent?.trim()).toBe('');
   });
 
   it('reads the track on a build that cannot download anything', async () => {

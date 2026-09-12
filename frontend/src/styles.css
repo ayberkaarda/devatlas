@@ -133,15 +133,48 @@ body {
   line-height: var(--leading-reading);
 }
 
+/*
+ * Heading ladder. The renderer shifts every markdown heading down one level so
+ * it nests under the page title, which makes `##` an h3 and `###` an h4 -- so
+ * the two levels a body actually uses are h3 and h4, and they are the two that
+ * have to be unmistakable. Each step down moves both axes at once, size and
+ * the space above it, because a reader scanning for the next section finds it
+ * by the gap before they read the words.
+ *
+ * The size scale jumps from 1.125rem straight to 1.5rem with nothing between,
+ * so a three-level ladder has to start at 2rem: an h3 one step below its h2 and
+ * still clearly above body text leaves the h2 no room at 1.5rem.
+ */
 .lesson-body h2,
 .markdown-body h2 {
-  margin-top: var(--spacing-8);
+  margin-top: var(--spacing-12);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+}
+
+/*
+ * A body's top-level section ("Common mistakes", "Check yourself"). It was one
+ * step of the scale above the prose around it -- 1.125rem against 1.0625rem,
+ * a difference small enough to read as an accident -- which left a section
+ * heading looking no heavier than the bold run-in text inside the section.
+ */
+.lesson-body h3,
+.markdown-body h3 {
+  margin-top: var(--spacing-10);
   font-size: var(--text-xl);
   font-weight: 600;
 }
 
-.lesson-body h3,
-.markdown-body h3 {
+/*
+ * A subsection inside one of those sections. It had no rule at all, so it
+ * inherited the reset's font-size:inherit/font-weight:inherit/margin:0 and
+ * rendered as an ordinary paragraph -- the deepest heading a body can contain
+ * was the only one that did not look like a heading. It takes the size the h3
+ * used to have, and a smaller gap above it than the h3 gets, so the pair reads
+ * as one level nested inside another rather than as two unrelated headings.
+ */
+.lesson-body h4,
+.markdown-body h4 {
   margin-top: var(--spacing-6);
   font-size: var(--text-lg);
   font-weight: 600;
@@ -208,16 +241,49 @@ body {
   text-align: left;
 }
 
+/*
+ * The source-code box, in one place.
+ *
+ * Three things draw it: a fenced block inside a rendered lesson body, the same
+ * inside a rendered post body, and a standalone code example, which is not
+ * rendered from markdown at all but built from a stored record and placed by a
+ * template. They are the same object and have to look it, so .code-panel joins
+ * the selector list rather than the template restating the box in utility
+ * classes that then drift from these values.
+ *
+ * background carries !important because the highlighter writes its own
+ * background-color into a style attribute on the <pre> it emits (measured:
+ * style="background-color:#fff;color:#24292e" for the light syntax theme,
+ * #24292e for the dark one). An attribute style outranks every selector, so
+ * without this the box is painted by the syntax theme instead of by the token
+ * -- and in the light palette the syntax theme's white is the page colour
+ * exactly, which leaves the code well invisible but for its 1px edge. The
+ * declaration only reclaims the background; the foreground stays the syntax
+ * theme's, because that is the part the theme is there for.
+ */
+.lesson-body pre,
+.lesson-body .shiki,
+.markdown-body pre,
+.markdown-body .shiki,
+.code-panel {
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-code-bg) !important;
+  overflow-x: auto;
+}
+
+/*
+ * Flow spacing is not part of the box, so it is not shared with .code-panel: a
+ * block inside prose is separated from the paragraph above it, while a
+ * standalone example is placed by the template around it and would be pushed
+ * off its own first line by a margin it never asked for.
+ */
 .lesson-body pre,
 .lesson-body .shiki,
 .markdown-body pre,
 .markdown-body .shiki {
   margin-top: var(--spacing-4);
-  padding: var(--spacing-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: var(--color-code-bg);
-  overflow-x: auto;
 }
 
 .lesson-body pre code,
@@ -226,10 +292,159 @@ body {
   padding: 0;
 }
 
+/*
+ * Program output, not source: a compiler diagnostic or a run the author pasted
+ * in. The renderer wraps a fence with no language, or one tagged text, in this
+ * element, and the distinction is worth drawing because a reader who cannot
+ * tell the two apart reads an error message as something to type in.
+ *
+ * So it is deliberately not a box. A rule down the left and a quieter text
+ * colour say "this came back from somewhere" the way the quote style does,
+ * without the filled, bordered, rounded panel that means "this is code you
+ * write". The rule is the strong line weight rather than the divider weight so
+ * that a transcript and a blockquote, which sit a step apart in meaning, do not
+ * arrive looking identical.
+ */
+.lesson-body .lesson-output,
+.markdown-body .lesson-output {
+  margin-top: var(--spacing-4);
+  padding-left: var(--spacing-4);
+  border-left: 3px solid var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+/*
+ * The highlighter's <pre> is still inside these wrappers and still matches the
+ * box rule above, so it would draw a second, bordered, filled box within the
+ * one the wrapper just drew. Flattening it is what leaves a single container
+ * visible in each case.
+ *
+ * Same !important, same reason as above, and here it is the whole point: a
+ * transcript with the syntax theme's fill behind it is a box again.
+ */
+.lesson-body .lesson-output pre,
+.lesson-body .lesson-output .shiki,
+.markdown-body .lesson-output pre,
+.markdown-body .lesson-output .shiki,
+.code-panel pre,
+.code-panel .shiki {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+/*
+ * The muted tone is set on the <code> rather than on the wrapper because the
+ * <pre> between them carries the syntax theme's foreground as an attribute
+ * style, which an inherited value cannot outrank. A declaration on a
+ * descendant can, and needs no !important to do it. Untagged and text-tagged
+ * fences are the only content this wrapper ever holds, and the highlighter
+ * leaves their spans uncoloured, so nothing inside overrides it back.
+ */
+.lesson-body .lesson-output code,
+.markdown-body .lesson-output code {
+  color: var(--color-text-muted);
+}
+
 .lesson-body blockquote,
 .markdown-body blockquote {
   margin-top: var(--spacing-4);
   padding-left: var(--spacing-4);
   border-left: 3px solid var(--color-border);
   color: var(--color-text-muted);
+}
+
+/*
+ * The self-check questions that close a lesson, each a question the reader is
+ * meant to answer before they open the answer. Both sanitizers pass these tags
+ * through, and both classes get the rules: a post body is author-written
+ * markdown too, and the same source must not be a panel on one screen and
+ * unstyled browser furniture on another.
+ *
+ * The inline padding is on the container, not on the answer, because the
+ * answer is loose text: the markdown source puts nothing around it, so there
+ * is no element of its own to pad. The summary then pulls back out through
+ * that padding with a negative inline margin, so the row it forms still runs
+ * edge to edge.
+ */
+.lesson-body details,
+.markdown-body details {
+  margin-top: var(--spacing-4);
+  padding: 0 var(--spacing-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* Closed, the summary is the whole box and there is nothing to pad below it. */
+.lesson-body details[open],
+.markdown-body details[open] {
+  padding-bottom: var(--spacing-3);
+}
+
+.lesson-body summary,
+.markdown-body summary {
+  /* display:block and list-style:none between them retire the default
+     disclosure triangle across the engines this ships on; the -webkit- marker
+     is the older WebKit spelling and matters because one of the two desktop
+     webviews is WebKit. */
+  display: block;
+  list-style: none;
+
+  /* Cancels the container's inline padding so the clickable row, its hover
+     fill and the rule under it reach the container's edges. Not overflow
+     clipping on the container, which would also cut off the focus ring this
+     element gets as a natively focusable control. */
+  margin: 0 calc(var(--spacing-3) * -1);
+  padding: var(--spacing-3) var(--spacing-8) var(--spacing-3) var(--spacing-3);
+  /* Matched to the container's radius less its 1px edge, so the corners of the
+     fill follow the corners of the box instead of squaring them off. */
+  border-radius: calc(var(--radius-md) - 1px);
+  cursor: pointer;
+  font-weight: 500;
+
+  /* The same arrow as the styled select, built the same way: two 5px squares,
+     each half-filled on the diagonal, meeting as a chevron, drawn in the muted
+     text tone. There is no icon package in this project, and a second
+     hand-rolled arrow technique would be a second thing to keep in step -- the
+     geometry, the offsets and the right-hand padding are taken from that rule
+     unchanged so the two arrows are the same arrow. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--color-text-muted) 50%),
+    linear-gradient(135deg, var(--color-text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) center,
+    calc(100% - 13px) center;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+}
+
+.lesson-body summary::-webkit-details-marker,
+.markdown-body summary::-webkit-details-marker {
+  display: none;
+}
+
+.lesson-body summary:hover,
+.markdown-body summary:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.lesson-body details[open] summary,
+.markdown-body details[open] summary {
+  /* An answer that begins directly under the question reads as part of it, so
+     the open state draws the boundary the closed state does not need. */
+  margin-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+
+  /* The same two squares mirrored, pointing up: the arrow keeps saying which
+     way the next click goes. Position, size and repeat are unchanged from the
+     rule above, so only the fill direction differs. */
+  background-image:
+    linear-gradient(135deg, transparent 50%, var(--color-text-muted) 50%),
+    linear-gradient(45deg, var(--color-text-muted) 50%, transparent 50%);
 }

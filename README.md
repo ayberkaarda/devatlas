@@ -27,7 +27,7 @@ No release has been cut, and there is no hosted instance yet.
 
 ## Contents
 
-- [What it is](#what-it-is) · [The library](#the-library) · [How content gets in](#how-content-gets-in)
+- [What it is](#what-it-is) · [Screenshots](#screenshots) · [The library](#the-library) · [How content gets in](#how-content-gets-in)
 - [Architecture](#architecture) · [The offline model](#the-offline-model) · [Design invariants](#design-invariants)
 - [Getting started](#getting-started) · [Running the checks](#running-the-checks)
 - [Repository layout](#repository-layout) · [Documentation](#documentation)
@@ -62,6 +62,50 @@ source with a compile-time file replacement.
   a person.
 - **Switch language and theme** at runtime, in English, Turkish, French or German,
   with no page reload and no flash of the wrong theme at startup.
+
+---
+
+## Screenshots
+
+All five below are the desktop application, running against the shipped corpus.
+
+<table>
+<tr><td width="50%">
+
+**The library**
+Every track shows how many lessons it has and how many are already stored for offline reading.
+
+<img src="docs/screenshots/library.png" alt="The library screen, showing eight learning paths as cards" width="100%">
+
+</td><td width="50%">
+
+**A track, opened**
+Modules and lessons, each with its own download control, and a link to the track's mind map.
+
+<img src="docs/screenshots/track-detail.png" alt="The Rust Path track detail screen, showing its modules and lessons" width="100%">
+
+</td></tr>
+<tr><td width="50%">
+
+**A lesson, mid-read**
+Real code, really compiled on the machine that wrote the lesson, followed by the diagnostic a reader is likely to hit.
+
+<img src="docs/screenshots/lesson-reader.png" alt="A lesson body showing highlighted Rust code and a compiler diagnostic" width="100%">
+
+</td><td width="50%">
+
+**The same track, as a mind map**
+One leaf per lesson, derived from the track's own structure rather than authored by hand.
+
+<img src="docs/screenshots/mind-map.png" alt="An interactive mind map for the Rust track" width="100%">
+
+</td></tr>
+</table>
+
+**Downloads**
+Everything stored on this device, and what changed since the last check — the local half of the sync protocol described below.
+
+<img src="docs/screenshots/downloads.png" alt="The downloads screen, listing stored lessons per track" width="70%">
 
 ---
 

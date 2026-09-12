@@ -248,6 +248,107 @@ describe('TrackDetailPage', () => {
     );
   });
 
+  it("shows a module's own estimated time, in the same words a lesson's minutes use", async () => {
+    const [basics, beyond] = twoModules();
+    fake.trackDetails.set(
+      'signals',
+      trackDetail({ modules: [{ ...basics, estimatedMinutes: 45 }, beyond] }),
+    );
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    const totals = element.querySelectorAll('[data-testid="module-estimated-minutes"]');
+    // Only the module that has a figure renders one: a null total is unknown,
+    // not zero, and "0 min" would be a claim the data does not make.
+    expect(totals).toHaveLength(1);
+    expect(totals[0].textContent?.trim()).toBe('45 min');
+  });
+
+  it("names a lesson's difficulty through the catalogue, not as a literal", async () => {
+    const [basics, beyond] = twoModules();
+    const [intro, signals] = basics.lessons;
+    fake.trackDetails.set(
+      'signals',
+      trackDetail({
+        modules: [
+          { ...basics, lessons: [{ ...intro, difficulty: 'INTERMEDIATE' }, signals] },
+          beyond,
+        ],
+      }),
+    );
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    const labels = element.querySelectorAll('[data-testid="lesson-difficulty"]');
+    expect(labels).toHaveLength(1);
+    // The translated wording, which is what proves the key was resolved: the
+    // stored value is `INTERMEDIATE` and appears nowhere on the screen.
+    expect(labels[0].textContent).toContain('Intermediate');
+    expect(labels[0].textContent).not.toContain('INTERMEDIATE');
+    // Which property the level describes, for a reader who hears the row
+    // rather than seeing it next to the minutes.
+    expect(labels[0].querySelector('.sr-only')?.textContent?.trim()).toBe('Difficulty:');
+  });
+
+  it('points at the first unfinished lesson when part of the path is behind the reader', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    // The first module is finished, so the resume point is in the second one
+    // — proof that the walk crosses a module boundary rather than stopping at
+    // the end of the first list.
+    fake.listProgress = async () => [
+      progressEntry('lesson-1', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-2', '2026-09-06T20:14:00.000Z'),
+    ];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    const marked = element.querySelectorAll('[data-testid="lesson-up-next"]');
+    expect(marked).toHaveLength(1);
+    expect(marked[0].textContent?.trim()).toBe('Up next');
+
+    const rows = element.querySelectorAll('li');
+    expect(rows[2].getAttribute('data-testid')).toBe('lesson-up-next-row');
+    expect(rows[2].textContent).toContain('Testing');
+    // The tint is a class on that row and only that row, and the row keeps
+    // the layout classes it shares with every other one.
+    expect(rows[2].className).toContain('bg-accent-soft');
+    expect(rows[2].className).toContain('py-3');
+    expect(rows[0].className).not.toContain('bg-accent-soft');
+    expect(rows[3].className).not.toContain('bg-accent-soft');
+  });
+
+  it('points at the very first lesson when nothing has been finished yet', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    fake.listProgress = async () => [];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    // Where to resume and where to begin are the same question, so an
+    // untouched path is not a case to suppress the hint for.
+    const rows = element.querySelectorAll('li');
+    expect(rows[0].getAttribute('data-testid')).toBe('lesson-up-next-row');
+    expect(rows[0].textContent).toContain('Introduction');
+    expect(element.querySelectorAll('[data-testid="lesson-up-next"]')).toHaveLength(1);
+  });
+
+  it('points at nothing once every lesson is finished', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    fake.listProgress = async () => [
+      progressEntry('lesson-1', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-2', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-3', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-4', '2026-09-06T20:14:00.000Z'),
+    ];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    // There is no next lesson, and tinting the last one would invite a reader
+    // back into something they have already closed out.
+    expect(element.querySelectorAll('[data-testid="lesson-up-next"]')).toHaveLength(0);
+    expect(element.querySelectorAll('[data-testid="lesson-up-next-row"]')).toHaveLength(0);
+    expect(element.querySelectorAll('[data-testid="lesson-completed"]')).toHaveLength(4);
+  });
+
   it('renders the path with nothing marked when progress cannot be read', async () => {
     fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
     fake.listProgress = async () => {

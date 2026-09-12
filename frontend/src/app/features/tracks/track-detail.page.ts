@@ -93,6 +93,39 @@ export class TrackDetailPage {
   });
 
   /**
+   * The one lesson to resume at: the first unfinished one, in the order the
+   * path itself is written.
+   *
+   * It walks the modules and their lessons exactly as they render rather than
+   * sorting by `order`, because the rendered sequence *is* the author's
+   * sequence; a second ordering rule here would let the highlight land on a
+   * row other than the one a reader's eye reaches first.
+   *
+   * It reads the same completed set the row marks and the counts read, so
+   * "which lessons are done" is asked once and answered once. Two independent
+   * derivations of that question would eventually disagree — one row marked
+   * finished while the resume hint still points at it.
+   *
+   * Null when every lesson is finished. Nothing is highlighted then, and that
+   * is the intended reading: there is no next lesson, and tinting the last
+   * one would invite a reader to re-read something they have already closed
+   * out. A path with nothing finished yields its very first lesson, which is
+   * the correct answer rather than a case to suppress — for a reader who has
+   * not started, where to resume is where to begin.
+   */
+  protected readonly upNextLessonId = computed<string | null>(() => {
+    const done = this.completedLessonIds();
+    for (const module of this.track()?.modules ?? []) {
+      for (const lesson of module.lessons) {
+        if (!done.has(lesson.id)) {
+          return lesson.id;
+        }
+      }
+    }
+    return null;
+  });
+
+  /**
    * The mind map as one more unit the track-level action can fetch. Counting
    * it is what keeps the download button on a track whose lessons are all
    * stored but whose mind map is not.
@@ -114,6 +147,10 @@ export class TrackDetailPage {
 
   protected isCompleted(lessonId: string): boolean {
     return this.completedLessonIds().has(lessonId);
+  }
+
+  protected isUpNext(lessonId: string): boolean {
+    return this.upNextLessonId() === lessonId;
   }
 
   private async load(slug: string): Promise<void> {

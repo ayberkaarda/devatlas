@@ -57,7 +57,8 @@
     "openLesson": "Ouvrir la leçon {{title}}",
     "mindMap": "Carte mentale",
     "mindMapHint": "Ouvrir la carte mentale de {{title}}",
-    "completedCount": "{{completed}} sur {{total}} terminées"
+    "completedCount": "{{completed}} sur {{total}} terminées",
+    "upNext": "À suivre"
   },
   "lesson": {
     "backToTrack": "Retour au parcours",

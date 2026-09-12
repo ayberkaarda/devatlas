@@ -57,7 +57,8 @@
     "openLesson": "{{title}} dersini aç",
     "mindMap": "Zihin haritası",
     "mindMapHint": "{{title}} için zihin haritasını aç",
-    "completedCount": "{{total}} dersin {{completed}} tanesi tamamlandı"
+    "completedCount": "{{total}} dersin {{completed}} tanesi tamamlandı",
+    "upNext": "Sıradaki"
   },
   "lesson": {
     "backToTrack": "Öğrenme yoluna dön",

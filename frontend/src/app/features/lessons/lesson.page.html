@@ -109,6 +109,55 @@
     </div>
 
     <!--
+      The concepts the track's mind map hangs under this lesson, beside a way
+      into the map itself.
+
+      The row is decoration in the precise sense that the article does not
+      depend on it: a reader with no network, or one whose track never had its
+      map downloaded, gets the lesson with this row simply absent. That is why
+      nothing here reports a failure and nothing holds space for one — an
+      error line about a map the reader never asked for would cost them their
+      place in the article and tell them nothing they can act on.
+
+      No heading over the labels. The link beside them names what they belong
+      to, and a word introducing two short phrases would be a third piece of
+      text in a row whose whole job is to stay out of the way of the title
+      above it.
+
+      The labels are printed as they arrive rather than looked up: mind map
+      labels are plain text and are not translated in this version of the
+      content format, so a lookup could only ever miss.
+    -->
+    @if (concepts().length > 0) {
+      <div class="mt-3 flex flex-wrap items-center gap-2" data-testid="lesson-concepts">
+        <!--
+          Tracked by position rather than by label. The list is replaced whole
+          on every load, so identity buys nothing here, while two concepts
+          sharing a label — which the format permits and no loader rejects —
+          would be duplicate keys and would throw instead of rendering.
+        -->
+        @for (concept of concepts(); track $index) {
+          <span
+            class="inline-flex items-center rounded-full bg-surface-hover px-2 py-0.5 text-xs font-medium text-text-muted"
+            >{{ concept }}</span
+          >
+        }
+        <!--
+          inline-block with vertical padding for the same reason as the crumbs
+          above: this link stands on its own rather than inside a sentence, so
+          the exception that lets inline links be small does not cover it and
+          the bare 12px line is well under the minimum target.
+        -->
+        <a
+          class="inline-block py-1 text-xs text-accent underline-offset-2 hover:underline"
+          data-testid="lesson-mind-map-link"
+          [routerLink]="['/tracks', trackSlug(), 'mindmap']"
+          >{{ 'track.mindMap' | translate }}</a
+        >
+      </div>
+    }
+
+    <!--
       The 70ch cap lives here, on this page's own wrapper, rather than on the
       shared .lesson-body/.markdown-body selector in the global stylesheet:
       that class also styles the admin review panels, and capping it there
@@ -136,18 +185,42 @@
         </h2>
         <div class="mt-3 space-y-4">
           @for (example of examples(); track example.html) {
-            <figure class="rounded-md border border-border bg-code-bg p-3">
+            <figure>
               <!--
-                Sanitized by the same path as the lesson body. The horizontal
-                scroll is on this container because these examples are outside
-                .lesson-body, so the stylesheet's overflow rule for rendered code
-                does not reach them, and one long line would otherwise widen the
-                page itself at a narrow window.
+                The caption leads the listing instead of trailing it: it says
+                what the code is for, which is what a reader needs before
+                reading it rather than a footnote once they already have.
+
+                The number renders even when there is no caption text, because
+                it is the listing's only identity on the page. The lesson body
+                above ends with its own list of these listings, written by the
+                author and not editable from here, and the number is what ties
+                a line of that list to the figure it describes.
+
+                Both sit outside the panel rather than inside its top edge,
+                where a line of prose above a code block reads as a comment in
+                the first line of the code.
               -->
-              <div class="overflow-x-auto" [innerHTML]="example.html"></div>
-              @if (example.caption) {
-                <figcaption class="mt-2 text-xs text-text-muted">{{ example.caption }}</figcaption>
-              }
+              <figcaption
+                class="mb-2 flex flex-wrap items-baseline gap-x-2 text-xs text-text-muted"
+              >
+                <span class="tabular-nums">{{ $index + 1 }}.</span>
+                @if (example.caption) {
+                  <span>{{ example.caption }}</span>
+                }
+              </figcaption>
+              <!--
+                Through DOMPurify and only then marked trusted, by the same path
+                as the lesson body above.
+
+                The box is one class rather than a handful of utilities because
+                it has to carry a horizontal scroll as well as its border and
+                padding: these examples sit outside .lesson-body, so the
+                stylesheet's overflow rule for rendered code does not reach
+                them, and one long line would otherwise widen the page itself at
+                a narrow window.
+              -->
+              <div class="code-panel" [innerHTML]="example.html"></div>
             </figure>
           }
         </div>
