@@ -50,6 +50,17 @@ jobs:
 
       # The toolchain version comes from rust-toolchain.toml, which also pins
       # rustfmt and clippy, so it is not repeated here.
+      #
+      # The key carries a "-v2" suffix because the cached `target` directory
+      # holds absolute paths: Tauri's build script writes the checkout path
+      # into generated files under `target/debug/build/**/out`, and those
+      # keep pointing at wherever the repository was checked out when the
+      # cache entry was written. Renaming the repository moves the checkout
+      # path (`/home/runner/work/<name>/<name>`), so a cache written before
+      # the rename fails after it with a file-not-found from inside `target`,
+      # not a compile error -- the build script itself cannot find what it
+      # wrote last time. Bumping the suffix discards every cache keyed by the
+      # old path; only needed again if the repository is renamed again.
       - name: Cache cargo
         uses: actions/cache@v6
         with:
@@ -57,8 +68,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             desktop/src-tauri/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('desktop/src-tauri/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
+          key: ${{ runner.os }}-cargo-v2-${{ hashFiles('desktop/src-tauri/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-v2-
 
       - name: Check formatting
         working-directory: desktop/src-tauri
@@ -109,6 +120,9 @@ jobs:
           cache: maven
           cache-dependency-path: server/pom.xml
 
+      # See the "check" job's identical cache step for why this key carries
+      # a version suffix: the cached `target` directory holds absolute
+      # checkout paths, which a repository rename invalidates from under it.
       - name: Cache cargo
         uses: actions/cache@v6
         with:
@@ -116,8 +130,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             desktop/src-tauri/target
-          key: ${{ runner.os }}-cargo-sync-${{ hashFiles('desktop/src-tauri/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-sync-
+          key: ${{ runner.os }}-cargo-sync-v2-${{ hashFiles('desktop/src-tauri/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-sync-v2-
 
       # Started in the background on the fixed test port so it does not
       # collide with anything else the runner might have bound to 8080.
@@ -206,6 +220,9 @@ jobs:
             frontend/package-lock.json
             desktop/package-lock.json
 
+      # See the "check" job's identical cache step for why this key carries
+      # a version suffix: the cached `target` directory holds absolute
+      # checkout paths, which a repository rename invalidates from under it.
       - name: Cache cargo
         uses: actions/cache@v6
         with:
@@ -213,8 +230,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             desktop/src-tauri/target
-          key: ${{ runner.os }}-cargo-package-${{ hashFiles('desktop/src-tauri/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-package-
+          key: ${{ runner.os }}-cargo-package-v2-${{ hashFiles('desktop/src-tauri/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-package-v2-
 
       # tauri.conf.json points frontendDist at frontend/dist/tauri/browser, so
       # the web assets have to exist before the application can be packaged.
